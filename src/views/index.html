@@ -5,10 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>ehdev shell</title>
+  {% if production %}
+  <link rel="stylesheet" href="/assets/lib.css" />
+  <link rel="stylesheet" href="/assets/app.css" />
+  {% endif %}
 </head>
 <body>
   <div id="root"></div>
-  <script src="/assets/dll.js"></script>
-  <script src="/assets/app.bundle.js"></script>
+  {% if production %}
+  <script src="/assets/dll/dll.prod.js"></script>
+  <script src="/assets/app.min.js"></script>
+  {% else %}
+  <script src="/assets/dll/dll.dev.js"></script>
+  <script src="/assets/app.js"></script>
+  {% endif %}
 </body>
 </html>

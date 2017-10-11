@@ -7,7 +7,7 @@ const render = (Component, store) => {
     <Provider store={store}>
       <Component store={store} />
     </Provider>,
-    document.getElementById('App')
+    document.getElementById('root')
   );
 }
 

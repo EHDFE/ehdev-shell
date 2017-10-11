@@ -11,6 +11,7 @@ import MdRemoveRedEye from 'react-icons/lib/md/remove-red-eye';
 import MdDelete from 'react-icons/lib/md/delete';
 import MdContentCopy from 'react-icons/lib/md/content-copy';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import moment from 'moment';
 
 import FileCard from '../component.fileCard/';
 
@@ -73,13 +74,21 @@ export default class ListView extends Component {
       message: '复制成功！',
     });
   }
-  renderCardMask(item) {
+  renderItemActions(item, asMask) {
     const IconProps = {
-      size: 24,
-      style: {
-        color: '#fff',
-      },
     };
+    if (asMask) {
+      Object.assign(IconProps, {
+        size: 24,
+        style: {
+          color: '#fff',
+        },
+      });
+    } else {
+      Object.assign(IconProps, {
+        size: 18
+      });
+    }
     const actionButtons = [];
     if (item.temp) {
       actionButtons.push(
@@ -131,12 +140,12 @@ export default class ListView extends Component {
       <Row>
         {
           data.map(d =>
-            <Col span={6} key={d._id}>
+            <Col xs={8} sm={6} lg={4} xl={3} key={d._id}>
               <FileCard
                 url={d.url}
                 name={d.name}
                 type={d.type}
-                mask={this.renderCardMask(d)}
+                mask={this.renderItemActions(d, true)}
               />
             </Col>
           )
@@ -146,14 +155,19 @@ export default class ListView extends Component {
   }
   renderListView(data) {
     return (
-      <div>
+      <div className={styles.ListView__list}>
         {
           data.map(d =>
-            <div key={d._id}>
-              {d.name}
+            <div className={styles.ListView__listItem} key={d._id}>
+              <div>
+                <p className={styles.ListView__listName}>{ d.name }</p>
+                <p className={styles.ListView__listTime}>{ moment(d.lastModified).format('YYYY-MM-DD HH:mm') }</p>
+              </div>
+              <div className={styles.ListView__listItemAction}>
               {
-                !d.uploaded ? <Button size={'small'}>上传</Button> : null
+                this.renderItemActions(d)
               }
+              </div>
             </div>
           )
         }
@@ -165,8 +179,9 @@ export default class ListView extends Component {
     const { previewModalVisible, previewDataId } = this.state;
     const previewItem = data.find(d => d._id === previewDataId);
     const modalProps = {
-      width: APP_CONFIG.WIDTH - 100,
+      width: APP_CONFIG.WIDTH - 130,
       visible: previewModalVisible,
+      closable: false,
       onCancel: () => {
         this.setState({
           previewModalVisible: false,

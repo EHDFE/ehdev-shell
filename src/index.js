@@ -8,16 +8,12 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const views = require('koa-views');
 const send = require('koa-send');
-const { devMiddleware, hotMiddleware } = require('koa-webpack-middleware');
-const webpack = require('webpack');
 const Boom = require('boom');
 const isDev = require('electron-is-dev');
 const DataStore = require('nedb');
 
 const apiRouter = require('./apiConfiger');
 const responser = require('./utils/responser');
-
-const webpackConfig = require('../config/webpack.dev.config');
 
 // ENVIRONMENT VARIABLES
 const PORT = process.env.PORT || 3000;
@@ -54,13 +50,24 @@ router.use('/assets', assetsRouter.routes(), assetsRouter.allowedMethods());
 
 // RENDER PAGES
 router.get(/^\/.*(?:\/|$)/, async ctx => {
-  await ctx.render('index.html');
+  await ctx.render('index.html', {
+    production: !isDev,
+  });
 });
 
-APP.use(views(__dirname + '/views'));
+APP.use(views(__dirname + '/views', {
+  map: {
+    html: 'nunjucks',
+  },
+}));
 
 if (isDev) {
-  const compile = webpack(webpackConfig);
+  const { devMiddleware, hotMiddleware } = require('koa-webpack-middleware');
+  const webpack = require('webpack');
+  const webpackConfig = require('../config/webpack.config');
+  const compile = webpack(webpackConfig({
+    dev: true
+  }));
 
   APP.use(devMiddleware(compile, {
     publicPath: '/assets/',

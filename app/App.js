@@ -3,6 +3,10 @@
  */
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
+moment.locale('zh-cn');
 
 import 'antd/dist/antd.less';
 

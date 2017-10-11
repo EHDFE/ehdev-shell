@@ -17,19 +17,24 @@ const shouldQuit = app.makeSingleInstance((otherInstArgv, otherInstWorkingDir) =
 if (shouldQuit) app.quit();
 
 function createWindow() {
-  const server = require('./src/index');
-  win = new BrowserWindow({
+  require('./src/index');
+  win = new BrowserWindow(Object.assign(APP_CONFIG.BROWSER_CONFIG, {
     width: APP_CONFIG.WIDTH,
     height: APP_CONFIG.HEIGHT,
-  });
+    minWidth: APP_CONFIG.MIN_WIDTH,
+    minHeight: APP_CONFIG.MIN_HEIGHT,
+  }));
   win.loadURL('http://localhost:3000');
 
+  // if (process.env.NODE_ENV === 'development') {
+  // }
   win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;
   });
 }
+
 
 app.on('ready', createWindow);
 

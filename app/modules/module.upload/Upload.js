@@ -80,7 +80,7 @@ class UploadModule extends Component {
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
+          <Col span={24} className={styles.UploadModule__controllerBar}>
             <div className={styles.UploadModule__viewMode}>
               <RadioGroup
                 size="small"
@@ -88,10 +88,14 @@ class UploadModule extends Component {
                 onChange={this.handleChangeListType}
               >
                 <RadioButton value="grid">
-                  <MdViewModule size={18} />
+                  <MdViewModule size={18} style={{
+                    transform: 'translateY(-1px)',
+                  }} />
                 </RadioButton>
                 <RadioButton value="list">
-                  <MdViewHeadline size={18} />
+                  <MdViewHeadline size={18} style={{
+                    transform: 'translateY(-1px)',
+                  }} />
                 </RadioButton>
               </RadioGroup>
             </div>

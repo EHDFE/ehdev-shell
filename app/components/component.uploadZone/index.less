@@ -1,0 +1,26 @@
+@import '~antd/es/style/themes/default.less';
+
+.UploadZone {
+  &__wrapper {
+    padding: 20px 8px;
+    border: 1px dashed @border-color-base;
+    border-radius: @border-radius-base;
+    text-align: center;
+
+    &:hover, &--active {
+      border-color: @primary-color;
+      color: @primary-color;
+    }
+
+    &--active {
+      * {
+        pointer-events: none;
+      }
+    }
+  }
+
+  &__trigger {
+    display: block;
+    cursor: pointer;
+  }
+}

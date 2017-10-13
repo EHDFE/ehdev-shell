@@ -67,6 +67,15 @@ function setupMenu() {
       ],
     },
   ];
+  if (process.env.NODE_ENV === 'development') {
+    template[0].submenu.unshift({
+      role: 'reload',
+    }, {
+      role: 'forcereload',
+    }, {
+      type: 'separator'
+    });
+  }
   if (process.platform === 'darwin') {
     template.unshift({
       label: app.getName(),

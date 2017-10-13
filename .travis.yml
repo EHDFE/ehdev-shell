@@ -1,13 +1,24 @@
 language: node_js
 node_js:
-  - "node"
-  - "8"
-  
-  
+- node
+- '8'
+
+install:
+  - npm install
+
+script:
+  - npm run dll-prod && npm run build-prod && npm run dist-all
+
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
-  file: "FILE TO UPLOAD"
+  api_key:
+    secure: CNy5yaefVd+sITwBY2mvwZa+Zv0KVY0KQJU1cM8t9YUbW5TaYe0j6Vh8DVCoUXy1tqUPa5HWa7aRBKf1pi5pnW75Ntk3GoWxcPBi4SV5nZjhGi1sFTskVV70szdSlbnTS1luOSkKOIxawlzJJ2Dqg26pV61bcOniv0jugCPcGw6afVwt9ZjN1WhvnAkcDCSzKQHkhcBx0E2o3l/wt15Q5hXukfsG3ADrBrg6Bb3XeyxjC/TAblhBCD9IHrMl42JqYjfjpnGxma/siofhWGIVONEsKr+XRENUv4fLXkw6ZPE2lzNFJ/Q5kw8EepiYs2LLWXRXjvcqvs+HZKneGfjEGYe6Sz6yYBvsuazjoiQ5NOP6OMuINRNsLckeQEjAc/rVa1WJVkcPYAP1cRCH6HbBCeFJpfNZoV7ys4JT46I8FZ1pwJ5jxHXwTb+WTUvBY2yVHm5ZEChA3aL2XwY2iFBh//x7PWBM/KbfwcEjTjCZEiA5acMQJjU8A3EjWo3TRvdUeNtXoSITwnJc/4tAlMR9DYnDxu6E9gLtWeXfKPYB/ROM2hQWePJ4U2XLplTHqq5AEbmMEgVd1loHAU94Z16hpN6gk2FvQirh7raRsrdKNC6vYGO5FusPbrclvyMyUh+H1LmcWBFYgeF23glVFuaTv/LNO2MtkPG2otqvCHaW2Hc=
+  file_glob: true
+  file:
+    - "dist/**.zip"
+    - "dist/**.dmg"
+    - "dist/**.exe"
   skip_cleanup: true
   on:
+    repo: EHDFE/ehdev-shell
     tags: true

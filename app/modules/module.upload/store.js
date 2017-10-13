@@ -134,12 +134,14 @@ const fileReducer = handleActions({
     const newId = payload.file._id;
     // delete old file object
     delete state.fileMap[payload.oldId];
+    const newFileIds = state.fileIds.slice(0);
+    newFileIds.splice(idx, 1, newId);
     return {
       fileMap: Object.assign({}, state.fileMap, {
         [newId]: payload.file,
       }),
       // replace old id with newId
-      fileIds: state.fileIds.slice(0).splice(idx, 1, newId),
+      fileIds: newFileIds,
     };
   },
 }, defaultState.files);

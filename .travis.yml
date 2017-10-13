@@ -1,17 +1,27 @@
-language: node_js
-node_js:
-- node
-- '8'
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode9.0
+      language: node_js
+      node_js: "8"
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
 cache:
   directories:
   - node_modules
+  - $HOME/.cache/electron
+  - $HOME/.cache/electron-builder
 
 install:
   - npm install
 
 script:
   - npm run dll-prod && npm run build-prod && npm run dist-all
+
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
 
 deploy:
   provider: releases

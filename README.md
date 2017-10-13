@@ -1,6 +1,6 @@
 # EHD SHELL
 ---
-[![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg?branch=master)](https://travis-ci.org/EHDFE/ehdev-shell)
+[![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
 
 ## INIT
 

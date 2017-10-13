@@ -29,6 +29,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "classnames": "^2.2.5",
+    "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
     "electron": "^1.7.8",
@@ -69,13 +70,12 @@
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "start": "NODE_ENV=development electron .",
-    "debug": "NODE_ENV=development electron --inspect=5858 .",
+    "start": "cross-env NODE_ENV=development electron .",
+    "debug": "cross-env NODE_ENV=development electron --inspect=5858 .",
     "lint": "eslint ./",
     "dll-dev": "webpack --env.dev --config ./config/webpack.config.dll.js --progress --verbose",
     "dll-prod": "webpack --env.prod --config ./config/webpack.config.dll.js --progress --verbose",
     "build-prod": "webpack --env.prod --config ./config/webpack.config.js --progress --verbose",
-    "build-main": "webpack --config ./config/webpack.config.main.js --progress",
     "pack": "electron-builder --dir",
     "dist-all": "electron-builder -mw",
     "dist-mac": "electron-builder -m",

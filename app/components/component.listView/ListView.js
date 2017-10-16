@@ -132,7 +132,7 @@ export default class ListView extends Component {
       >
         <MdDelete {...IconProps} />
       </button>
-    )
+    );
     return actionButtons;
   }
   renderGridView(data) {
@@ -164,9 +164,9 @@ export default class ListView extends Component {
                 <p className={styles.ListView__listTime}>{ moment(d.lastModified).format('YYYY-MM-DD HH:mm') }</p>
               </div>
               <div className={styles.ListView__listItemAction}>
-              {
-                this.renderItemActions(d)
-              }
+                {
+                  this.renderItemActions(d)
+                }
               </div>
             </div>
           )
@@ -208,6 +208,6 @@ export default class ListView extends Component {
           this.renderImagePreview()
         }
       </div>
-    )
+    );
   }
 }

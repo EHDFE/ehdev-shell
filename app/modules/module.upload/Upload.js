@@ -111,7 +111,7 @@ const uploadPageSelector = state => state['page.upload'];
 const listTypeSelector = createSelector(
   uploadPageSelector,
   pageState => pageState.layout.listType,
-)
+);
 const fileListSelector = createSelector(
   uploadPageSelector,
   pageState => Object.keys(pageState.files.fileMap).map(id => pageState.files.fileMap[id]),

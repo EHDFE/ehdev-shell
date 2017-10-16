@@ -4,6 +4,6 @@
  */
 const SettingReducer = (state = {}, action) => {
   return state;
-}
+};
 
 export default SettingReducer;

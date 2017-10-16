@@ -54,7 +54,7 @@ class ListAPI {
             resolve();
           }
         );
-      })
+      });
     } catch (e) {
       ctx.body = ctx.app.responser(e.message, false);
     }

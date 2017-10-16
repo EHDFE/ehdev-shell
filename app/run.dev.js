@@ -17,6 +17,6 @@ const render = (Component, store) => {
     </AppContainer>,
     document.getElementById('root')
   );
-}
+};
 
 export default render;

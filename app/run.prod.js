@@ -9,6 +9,6 @@ const render = (Component, store) => {
     </Provider>,
     document.getElementById('root')
   );
-}
+};
 
 export default render;

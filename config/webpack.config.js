@@ -95,16 +95,16 @@ module.exports = env => {
   return {
     entry: {
       app: env.prod ?
-      [
-        'babel-polyfill',
-        process.cwd() + '/app/index',
-      ] : [
-        'babel-polyfill',
-        'react-hot-loader/patch',
-        'webpack-hot-middleware/client',
-        'webpack/hot/only-dev-server',
-        process.cwd() + '/app/index',
-      ],
+        [
+          'babel-polyfill',
+          process.cwd() + '/app/index',
+        ] : [
+          'babel-polyfill',
+          'react-hot-loader/patch',
+          'webpack-hot-middleware/client',
+          'webpack/hot/only-dev-server',
+          process.cwd() + '/app/index',
+        ],
     },
     output: {
       path: path.resolve(__dirname, '../assets'),
@@ -178,5 +178,5 @@ module.exports = env => {
     devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
-  }
+  };
 };

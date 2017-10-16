@@ -32,7 +32,7 @@ export const handleResponse = async (response, config = {
   }
   config.successNotification && message.success(config.successMsg);
   return result.data;
-}
+};
 
 /**
  * serialize parameters to search string

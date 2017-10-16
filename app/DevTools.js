@@ -20,7 +20,7 @@ const DevTools = createDevTools(
     changeMonitorKey={'ctrl-m'}
     defaultIsVisible={false}
   >
-  <Dispatcher actionCreators={actionCreators} />
+    <Dispatcher actionCreators={actionCreators} />
   </DockMonitor>
 );
 

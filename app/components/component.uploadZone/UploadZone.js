@@ -59,7 +59,7 @@ export default class UploadZone extends Component {
     if (clipboardData && clipboardData.files && clipboardData.files.length > 0) {
       const { accept } = this.props;
       if (!clipboardData.files[0].type.startsWith(accept)) return;
-      this.onAddFiles(clipboardData.files)
+      this.onAddFiles(clipboardData.files);
     }
   }
   onAddFiles(files) {

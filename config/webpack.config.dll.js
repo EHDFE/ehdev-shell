@@ -50,5 +50,5 @@ module.exports = env => {
       library: '[name]',
     },
     plugins,
-  }
+  };
 };

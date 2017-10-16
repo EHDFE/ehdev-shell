@@ -81,6 +81,6 @@ export default class FileCard extends Component {
           <Tooltip title={name}>{name}</Tooltip>
         </div>
       </div>
-    )
+    );
   }
 }

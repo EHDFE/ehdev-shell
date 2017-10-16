@@ -30,7 +30,7 @@ export const actions = createActions({
         files: content,
         limit,
         start,
-      }
+      };
     },
   },
   // files action
@@ -110,7 +110,7 @@ const fileReducer = handleActions({
         [file._id]: file,
       },
       fileIds: state.fileIds.concat(file._id),
-    }
+    };
   },
   'FILES/DEL': (state, { payload, error }) => {
     if (error) return state;

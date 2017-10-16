@@ -71,7 +71,7 @@ export default class SiderBar extends Component {
         onCollapse={this.onCollapse}
         width={100}
         trigger={this.renderTrigger()}
-        >
+      >
         <button
           type="button"
           className={styles.SiderBar__avatar}

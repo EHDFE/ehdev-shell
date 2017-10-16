@@ -85,5 +85,5 @@ module.exports = PORT => {
 
   APP.listen(PORT);
 
-}
+};
 

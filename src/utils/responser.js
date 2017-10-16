@@ -13,5 +13,5 @@ module.exports = (content, successful = false) => {
   return {
     success: false,
     errorMsg: content,
-  }
+  };
 };

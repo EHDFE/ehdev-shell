@@ -2,19 +2,24 @@
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
 
-## INIT
+## Dev Environment Setup
 
-```sh
-ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ npm i electron -d --save-exact
-npm init
-```
+1. Install dependence: `ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ npm i`.
+2. Precompile the dll bundle: `npm run dll-dev`.
+3. Start the app: `npm run debug` or use vscode's debugger
+  ![](https://image.tf56.com/dfs/group1/M00/39/4E/CiFBClnkCzqABJhqAAGYIokpzjs880.png)
 
-## BUILD
+## Test the production package locally
 
-```sh
-ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ npm run dist
-```
+1. Precompile the dll build for production: `npm run dll-prod`.
+2. Compile the app bundle: `npm run build-prod`.
+2. `npm run pack`.
 
-## POSSIBLE ISSUES
+## Publish
+
+1. npm version patch
+2. git push origin v0.x.x master
+
+## Possible Issues
 
 - `Cannot download winCodeSign, attempt #1: Error: Request timed out` refer to [https://github.com/electron-userland/electron-builder/issues/1859#issuecomment-320922905](https://github.com/electron-userland/electron-builder/issues/1859#issuecomment-320922905)

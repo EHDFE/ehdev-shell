@@ -13,7 +13,7 @@ module.exports = env => {
       name: '[name]',
     }),
     new webpack.ContextReplacementPlugin(/^\.\/locale$/, (context) => {
-      if ( !/[\/\\]moment[\/\\]/.test(context.context) ) return;
+      if ( !/[/\\]moment[/\\]/.test(context.context) ) return;
       Object.assign(context, {
         regExp: /^\.\/\w+/,
         request: '../../locale' // resolved relatively

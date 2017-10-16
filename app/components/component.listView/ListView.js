@@ -192,7 +192,7 @@ export default class ListView extends Component {
     return (
       <Modal {...modalProps}>
         <div className={styles.ListView__imagePreview}>
-          <img src={previewItem && previewItem.url} />
+          <img alt="" src={previewItem && previewItem.url} />
         </div>
       </Modal>
     );

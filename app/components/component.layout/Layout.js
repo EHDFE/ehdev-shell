@@ -11,6 +11,9 @@ import SiderBar from '../component.siderBar/';
 const { Content } = Layout;
 
 export default class LayoutComponent extends Component {
+  static propTypes = {
+    children: PropTypes.element,
+  }
   render() {
     return (
       <Layout style={{ height: '100vh' }}>

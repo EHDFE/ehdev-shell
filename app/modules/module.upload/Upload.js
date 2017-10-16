@@ -23,6 +23,11 @@ class UploadModule extends Component {
   static propTypes = {
     listType: PropTypes.oneOf(['grid', 'list']),
     fileList: PropTypes.array.isRequired,
+    fetchFileList: PropTypes.func,
+    setListType: PropTypes.func,
+    upload: PropTypes.func,
+    addFile: PropTypes.func,
+    delFile: PropTypes.func,
   }
   componentWillMount() {
     const { fetchFileList } = this.props;
@@ -71,7 +76,6 @@ class UploadModule extends Component {
   }
   render() {
     const { listType } = this.props;
-    console.log(this.props);
     return (
       <div>
         <Row>

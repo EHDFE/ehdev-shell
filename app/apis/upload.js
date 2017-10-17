@@ -1,12 +1,11 @@
 /**
  * upload apis
- * @author: ryan.bian
+ * @author ryan.bian
  */
 import { handleResponse, serialize } from './utils';
 
 const LIST_PATH = '/api/upload/list';
 const FILE_PATH = '/api/upload/file';
-
 
 
 const UPLOAD_API = {
@@ -16,12 +15,12 @@ const UPLOAD_API = {
       limit: 100,
     }) {
       const urlParams = serialize(params);
-      const res = await fetch(`${LIST_PATH}?${urlParams}`);
+      const res = await fetch(`${LIST_PATH}/?${urlParams}`);
       return handleResponse(res);
     },
-    async put(files) {
-      const res = await fetch(LIST_PATH, {
-        method: 'put',
+    async post(files) {
+      const res = await fetch(`${LIST_PATH}/`, {
+        method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -36,18 +35,18 @@ const UPLOAD_API = {
       const urlParams = serialize({
         ids: ids.join(','),
       });
-      const res = await fetch(`${LIST_PATH}?${urlParams}`, {
+      const res = await fetch(`${LIST_PATH}/${ids.join(',')}`, {
         method: 'delete',
       });
       return handleResponse(res);
     }
   },
   file: {
-    async put(file) {
+    async post(file) {
       const fd = new FormData();
       fd.append('file', file);
       const res = await fetch(FILE_PATH, {
-        method: 'put',
+        method: 'post',
         body: fd,
       });
       return handleResponse(res);

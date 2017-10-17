@@ -32,13 +32,13 @@ class ListAPI {
         });
     });
   }
-  // async post() {
+  // async put() {
   // }
   /**
-   * insert files to the list
+   * update files in the list
    * files: Array<Object>
    */
-  async put(ctx) {
+  async post(ctx) {
     const { files } = ctx.request.body;
     try {
       const insertData = JSON.parse(files);
@@ -64,7 +64,7 @@ class ListAPI {
    * ids: Array<String>
    */
   async del(ctx) {
-    const ids = ctx.query.ids ? ctx.query.ids.split(',') : [];
+    const ids = ctx.params.ids ? ctx.params.ids.split(',') : [];
     await new Promise(resolve => {
       ctx.app.db.upload.remove(
         {

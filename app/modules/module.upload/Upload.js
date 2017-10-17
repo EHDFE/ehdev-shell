@@ -124,7 +124,7 @@ const fileListSelector = createSelector(
 const mapStateToProps = (state, ownProps) => createSelector(
   listTypeSelector,
   fileListSelector,
-  (listType, fileList, pageData) => ({
+  (listType, fileList) => ({
     listType,
     fileList,
   })

@@ -51,8 +51,8 @@ export const actions = createActions({
     // delete multiple files
     BATCH_DEL: ids => ({ ids }),
     UPLOAD: async (oldId, data) => {
-      const url = await UPLOAD_API.file.put(data.file);
-      const storageData = await UPLOAD_API.list.put([{
+      const url = await UPLOAD_API.file.post(data.file);
+      const storageData = await UPLOAD_API.list.post([{
         url,
         name: data.file.name,
         type: data.file.type,

@@ -126,7 +126,7 @@ module.exports = env => {
                       'env',
                       {
                         targets: {
-                          chrome: 58,
+                          chrome: 59,
                         },
                         useBuiltIns: true,
                         modules: false,

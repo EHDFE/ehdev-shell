@@ -13,7 +13,7 @@ const UPLOAD_SERVICE_CONFIG = {
 };
 
 class FileAPI {
-  put(ctx, next) {
+  post(ctx, next) {
     return proxy(UPLOAD_SERVICE_CONFIG.host, {
       proxyReqOptDecorator(proxyReqOpts) {
         proxyReqOpts.method = UPLOAD_SERVICE_CONFIG.method;

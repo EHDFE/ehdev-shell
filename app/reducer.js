@@ -4,11 +4,11 @@
  */
 import { combineReducers } from 'redux';
 
-import { DashboardReducer } from './modules/module.dashboard/';
+import { ProjectReducer } from './modules/module.project/';
 import { UploadReducer } from './modules/module.upload/';
 
 const reducer = combineReducers({
-  'page.dashboard': DashboardReducer,
+  'page.project': ProjectReducer,
   'page.upload': UploadReducer,
 });
 

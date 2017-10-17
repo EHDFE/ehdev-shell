@@ -11,14 +11,16 @@
     "koa": "^2.3.0",
     "koa-better-http-proxy": "^0.2.4",
     "koa-body": "^2.5.0",
+    "koa-morgan": "^1.0.1",
     "koa-router": "^7.2.1",
     "koa-send": "^4.1.1",
     "koa-views": "^6.1.0",
     "nedb": "^1.8.0",
+    "npm": "^5.5.1",
     "nunjucks": "^3.0.1"
   },
   "devDependencies": {
-    "antd": "^2.13.4",
+    "antd": "^2.13.6",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-loader": "^7.1.2",
@@ -29,10 +31,10 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "classnames": "^2.2.5",
-    "cross-env": "^5.0.5",
+    "cross-env": "^5.1.0",
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
-    "electron": "^1.7.8",
+    "electron": "^1.8.1",
     "electron-builder": "^19.35.1",
     "electron-react-devtools": "^0.4.0",
     "eslint": "^4.8.0",
@@ -52,7 +54,7 @@
     "react": "^16.0.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.0.0",
-    "react-hot-loader": "^3.0.0-beta.7",
+    "react-hot-loader": "^3.1.1",
     "react-icons": "^2.2.7",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
@@ -68,9 +70,12 @@
     "shebang-loader": "0.0.1",
     "style-loader": "^0.19.0",
     "uglifyjs-webpack-plugin": "^1.0.0-beta.3",
-    "webpack": "^3.6.0"
+    "webpack": "^3.7.1"
   },
-  "pre-commit": ["precommit-msg", "lint"],
+  "pre-commit": [
+    "precommit-msg",
+    "lint"
+  ],
   "scripts": {
     "start": "cross-env NODE_ENV=development electron .",
     "debug": "cross-env NODE_ENV=development electron --inspect=5858 .",

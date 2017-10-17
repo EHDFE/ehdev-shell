@@ -15,6 +15,7 @@ import Layout from './components/component.layout/';
 
 // Pages
 import { DashboardModule } from './modules/module.dashboard/';
+import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
 
 
@@ -22,6 +23,7 @@ const App = () => (
   <BrowserRouter basename="/">
     <Layout>
       <Route exact path="/" component={DashboardModule}/>
+      <Route path="/project" component={ProjectModule}/>
       <Route path="/upload" component={UploadModule}/>
     </Layout>
   </BrowserRouter>

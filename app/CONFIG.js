@@ -11,14 +11,9 @@ export const GLOBAL_NAV_CONFIG = [
     text: '主页',
   },
   {
-    to: '/server',
-    icon: 'global',
-    text: 'Server',
-  },
-  {
-    to: '/build',
+    to: '/project',
     icon: 'code',
-    text: 'Build',
+    text: '项目',
   },
   {
     to: '/upload',

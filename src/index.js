@@ -3,6 +3,7 @@
  * @author ryan.bian
  */
 const path = require('path');
+const fs = require('fs');
 const { app } = require('electron');
 const Koa = require('koa');
 const Router = require('koa-router');
@@ -11,13 +12,15 @@ const send = require('koa-send');
 const Boom = require('boom');
 const isDev = require('electron-is-dev');
 const DataStore = require('nedb');
+const morgan = require('koa-morgan');
 
 const apiRouter = require('./apiConfiger');
-const responser = require('./utils/responser');
+const { responser } = require('./utils/');
 
 module.exports = PORT => {
 
   const APP = new Koa();
+  const APPDATA_PATH = app.getPath('appData');
   const USERDATA_PATH = app.getPath('userData');
   const DB_LIST = [
     'upload',
@@ -53,6 +56,15 @@ module.exports = PORT => {
       production: !isDev,
     });
   });
+
+  const logStream = fs.createWriteStream(path.join(APPDATA_PATH + 'ehd-shell.log'),
+    { flags: 'a' });
+  const devLogger = morgan('combined');
+
+  if (isDev) {
+    APP.use(devLogger);
+  }
+  APP.use(morgan('combined', { stream: logStream }));
 
   APP.use(views(__dirname + '/views', {
     map: {

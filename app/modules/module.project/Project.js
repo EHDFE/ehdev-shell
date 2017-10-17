@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import { Tabs, Layout } from 'antd';
 
 import { actions } from './store';
 
@@ -15,9 +16,15 @@ import styles from './index.less';
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
 
+import Profile from './Profile';
+
+const { TabPane } = Tabs;
+const { Sider, Content } = Layout;
+
 class ProjectModule extends Component {
   propTypes = {
     rootPath: PropTypes.string,
+    pkg: PropTypes.object,
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
   }
@@ -32,15 +39,45 @@ class ProjectModule extends Component {
       this.props.getEnvData(nextProps.rootPath);
     }
   }
+  renderProfile() {
+    const { pkg } = this.props;
+    const profileProps = {};
+    if (pkg) {
+      Object.assign(profileProps, {
+        name: pkg.name,
+        version: pkg.version,
+      });
+    }
+    return <Profile {...profileProps} />;
+  }
   render() {
-    const { setRootPath } = this.props;
-    return <div>
-      ProjectModule
-      <FolderPicker onChange={value => {
-        setRootPath(value);
-      }} />
-      <DependencyManager />
-    </div>;
+    const { rootPath, setRootPath } = this.props;
+    return (
+      <Layout>
+        <Sider style={{ backgroundColor: '#fff' }}>
+          <FolderPicker
+            onChange={value => {
+              setRootPath(value);
+            }}
+            value={rootPath}
+          />
+          <DependencyManager />
+        </Sider>
+        <Content>
+          <Tabs defaultActiveKey="profile" animated={false}>
+            <TabPane tab="基础信息" key="profile">
+              { this.renderProfile() }
+            </TabPane>
+            <TabPane tab="运行配置" key="config">
+              运行配置xxx
+            </TabPane>
+            <TabPane tab="运行日志" key="logger">
+              运行日志
+            </TabPane>
+          </Tabs>
+        </Content>
+      </Layout>
+    );
   }
 }
 

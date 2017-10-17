@@ -16,7 +16,7 @@ class ProjectEnvAPI {
         path.join(rootPath, 'abc.json')
       );
       ctx.body = ctx.app.responser({
-        package: pkg,
+        pkg,
         config: projectConfig,
       }, true);
     } catch (e) {

@@ -10,7 +10,7 @@ const PROJECT_API = {
   root: {
     async put(rootPath) {
       const res = await fetch(`${PROJECT_PATH}/root/${encodeURIComponent(rootPath)}`, {
-        method: 'post',
+        method: 'put',
       });
       return handleResponse(res);
     }

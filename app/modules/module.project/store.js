@@ -10,7 +10,7 @@ import PROJECT_API from '../../apis/project';
 const defaultState = {
   env: {
     rootPath: undefined,
-    project: undefined,
+    pkg: undefined,
     config: {},
   },
 };
@@ -19,9 +19,9 @@ export const actions = createActions({
   ENV: {
     SET_ROOT_PATH: rootPath => rootPath,
     GET_ENV: async rootPath => {
-      const { project, config } = await PROJECT_API.root(rootPath);
+      const { pkg, config } = await PROJECT_API.root.put(rootPath);
       return {
-        project,
+        pkg,
         config,
       };
     },

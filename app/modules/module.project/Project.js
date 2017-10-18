@@ -46,6 +46,8 @@ class ProjectModule extends Component {
       Object.assign(profileProps, {
         name: pkg.name,
         version: pkg.version,
+        author: pkg.author,
+        description: pkg.description,
       });
     }
     return <Profile {...profileProps} />;
@@ -53,7 +55,7 @@ class ProjectModule extends Component {
   render() {
     const { rootPath, setRootPath } = this.props;
     return (
-      <Layout>
+      <Layout className={styles.Project__Layout}>
         <Sider style={{ backgroundColor: '#fff' }}>
           <FolderPicker
             onChange={value => {

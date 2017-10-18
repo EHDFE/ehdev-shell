@@ -3,6 +3,16 @@
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
 
+## Introduction
+EHD SHELL aims to provide an easy to use gui tool for developers.
+
+TL;DR
+
+- Provide the project scarffold with pre-defined structure.
+- Support dev server & bundle project.
+- Dependency management.
+- Images upload.
+
 ## Dev Environment Setup
 
 1. Install dependence: `ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ npm i`.

@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'antd';
+import { Input, Icon } from 'antd';
 
 import styles from './index.less';
 
@@ -52,7 +52,7 @@ export default class FolderPicker extends Component {
       <div>
         <Input
           type="text"
-          addonBefore={label}
+          prefix={<Icon type="folder" />}
           value={value}
           onClick={this.handleClick}
         />

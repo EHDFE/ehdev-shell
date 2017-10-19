@@ -104,7 +104,6 @@ function createWindow() {
   fp(3100, 3200, (err, freePort) => {
     if (err) throw Error(err);
 
-    require('./src/index')(freePort);
     win = new BrowserWindow(
       Object.assign(APP_CONFIG.BROWSER_CONFIG, {
         width: APP_CONFIG.WIDTH,
@@ -113,6 +112,7 @@ function createWindow() {
         minHeight: APP_CONFIG.MIN_HEIGHT,
       })
     );
+    require('./src/index')(freePort, win.webContents);
     win.loadURL(`http://localhost:${freePort}`);
 
     if (process.env.NODE_ENV === 'development') {

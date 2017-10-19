@@ -13,6 +13,8 @@ const UploadFileAPI = require('./models/upload/file');
 const ProjectEnvAPI = require('./models/project/env');
 const ProjectNpmAPI = require('./models/project/npm');
 
+const ServiceAPI = require('./models/service/');
+
 const apiRouter = Router();
 
 const uploadList = new UploadListAPI();
@@ -57,10 +59,19 @@ npmRouter
   .post('/outdated/', koaBody(), projectNpm.outdated)
   .post('/outdated/:packageName', koaBody(), projectNpm.outdated);
 
+// service router
+const serviceRouter = Router();
+const service = new ServiceAPI();
+
+serviceRouter
+  .post('/server', koaBody(), service.startServer)
+  .delete('/server/:pid', service.stopServer)
+  .post('/build', koaBody(), service.startBuilder);
+
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
 apiRouter.use('/project', projectRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
-
+apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
 
 module.exports = apiRouter;

@@ -17,7 +17,7 @@ const morgan = require('koa-morgan');
 const apiRouter = require('./apiConfiger');
 const { responser } = require('./utils/');
 
-module.exports = PORT => {
+module.exports = (PORT, webContent) => {
 
   const APP = new Koa();
   const APPDATA_PATH = app.getPath('appData');
@@ -36,6 +36,7 @@ module.exports = PORT => {
   // Usage:
   // ctx.app.responser(content, successful)
   APP.responser = responser;
+  APP.webContent = webContent;
 
   // ROUTER CONFIG
   const router = Router();

@@ -147,7 +147,7 @@ module.exports = env => {
               },
             },
             {
-              test: /\.less$/,
+              test: /\.(c|le)ss$/,
               oneOf: [
                 {
                   include: /node_modules/,

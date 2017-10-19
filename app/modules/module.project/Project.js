@@ -25,7 +25,7 @@ const { TabPane } = Tabs;
 const { Sider, Content } = Layout;
 
 class ProjectModule extends Component {
-  static propTypes = {
+  propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
     service: PropTypes.object,
@@ -33,6 +33,7 @@ class ProjectModule extends Component {
     setRootPath: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
+    getOutdated: PropTypes.func,
   }
   componentDidMount() {
     const { rootPath } = this.props;
@@ -138,6 +139,7 @@ const mapDispatchToProps = dispatch => ({
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
   startBuilder: params => dispatch(actions.service.startBuilder(params)),
   stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
+  getOutdated: packageName => dispatch(actions.env.getOutdated(packageName))
 });
 
 export default connect(

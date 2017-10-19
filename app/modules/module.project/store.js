@@ -14,6 +14,7 @@ const defaultState = {
     rootPath: undefined,
     pkg: undefined,
     config: {},
+    test:{}
   },
   service: {
     currentService: null,
@@ -30,6 +31,12 @@ export const actions = createActions({
       return {
         pkg,
         config,
+      };
+    },
+    GET_OUTDATED: async packageName => {
+      const data = await PROJECT_API.pkg.outdated(packageName);
+      return {
+        test:data
       };
     },
   },
@@ -78,6 +85,13 @@ const envReducer = handleActions({
     rootPath: payload,
   }),
   'ENV/GET_ENV': (state, { payload, error }) => {
+    if (error) return state;
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  'ENV/GET_OUTDATED': (state, { payload, error }) => {
     if (error) return state;
     return {
       ...state,

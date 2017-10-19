@@ -27,12 +27,14 @@ class ProjectModule extends Component {
     pkg: PropTypes.object,
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
+    getOutdated: PropTypes.func,
   }
   componentDidMount() {
     const { rootPath } = this.props;
     if (rootPath) {
       this.props.getEnvData(rootPath);
     }
+    this.props.getOutdated('koa');
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
@@ -98,6 +100,7 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
+  getOutdated: packageName => dispatch(actions.env.getOutdated(packageName))
 });
 
 export default connect(

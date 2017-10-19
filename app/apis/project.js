@@ -15,6 +15,14 @@ const PROJECT_API = {
       return handleResponse(res);
     }
   },
+  pkg: {
+    async outdated(packageName) {
+      const res = await fetch(`/outdated/${packageName}`, {
+        method: 'post',
+      });
+      return handleResponse(res);
+    }
+  },
 };
 
 export default PROJECT_API;

@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tabs, Layout } from 'antd';
+import { Button, Tabs, Layout } from 'antd';
+import MdPlayCircleOutline from 'react-icons/lib/md/play-circle-outline';
+import MdPauseCircleOutline from 'react-icons/lib/md/pause-circle-outline';
 
 import { actions } from './store';
 
@@ -26,8 +28,11 @@ class ProjectModule extends Component {
   static propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
+    service: PropTypes.object,
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
+    startServer: PropTypes.func,
+    stopServer: PropTypes.func,
   }
   componentDidMount() {
     const { rootPath } = this.props;
@@ -39,6 +44,14 @@ class ProjectModule extends Component {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
       this.props.getEnvData(nextProps.rootPath);
     }
+  }
+  handleStartServer = () => {
+    this.props.startServer({
+      root: this.props.rootPath,
+    });
+  }
+  handleStopServer = () => {
+    this.props.stopServer(this.props.service.pid);
   }
   renderProfile() {
     const { pkg } = this.props;
@@ -53,8 +66,23 @@ class ProjectModule extends Component {
     }
     return <Profile {...profileProps} />;
   }
+  renderActionBar() {
+    const { service } = this.props;
+    return (
+      <div className={styles.Project__ActionBar}>
+        <Button disabled={!!service.currentServer} onClick={this.handleStartServer}>
+          <MdPlayCircleOutline size={22} />
+          启动
+        </Button>
+        <Button disabled={!service.currentServer} onClick={this.handleStopServer}>
+          <MdPauseCircleOutline size={22} />
+          停止
+        </Button>
+      </div>
+    );
+  }
   render() {
-    const { rootPath, setRootPath } = this.props;
+    const { rootPath, setRootPath, service } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Sider style={{ backgroundColor: '#fff' }}>
@@ -67,6 +95,7 @@ class ProjectModule extends Component {
           <DependencyManager />
         </Sider>
         <Content>
+          { this.renderActionBar() }
           <Tabs defaultActiveKey="profile" animated={false}>
             <TabPane tab="基础信息" key="profile">
               { this.renderProfile() }
@@ -75,7 +104,7 @@ class ProjectModule extends Component {
               运行配置xxx
             </TabPane>
             <TabPane tab="运行日志" key="logger">
-              <Console />
+              <Console value={service.log} />
             </TabPane>
           </Tabs>
         </Content>
@@ -89,16 +118,26 @@ const envSelector = createSelector(
   projectPageSelector,
   pageState => pageState.env,
 );
+const serviceSelector = createSelector(
+  projectPageSelector,
+  pageState => pageState.service,
+);
 
 const mapStateToProps = (state) => createSelector(
   envSelector,
-  (env) => ({
+  serviceSelector,
+  (env, service) => ({
     ...env,
+    service,
   }),
 );
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
+  startServer: params => dispatch(actions.service.startServer(params, dispatch)),
+  stopServer: pid => dispatch(actions.service.stopServer(pid)),
+  startBuilder: params => dispatch(actions.service.startBuilder(params)),
+  stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
 });
 
 export default connect(

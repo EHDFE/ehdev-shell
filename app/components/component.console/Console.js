@@ -44,6 +44,6 @@ export default class Console extends Component {
     this.terminal.destroy();
   }
   render() {
-    return <div ref={node => this.root = node} />;
+    return <div className={styles.Console__Wrapper} ref={node => this.root = node} />;
   }
 }

@@ -7,7 +7,6 @@ import { handleResponse, serialize } from './utils';
 const LIST_PATH = '/api/upload/list';
 const FILE_PATH = '/api/upload/file';
 
-
 const UPLOAD_API = {
   list: {
     async get(params = {

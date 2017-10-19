@@ -37,8 +37,8 @@ class Service {
         FORCE_COLOR: true,
       }),
     };
-    this.command = 'ehdev';
-    this.args = ['server'];
+    this.command = 'ls';
+    this.args = ['-a'];
     this.webContent = webContent;
     this.store = store;
   }

@@ -16,6 +16,7 @@ class ServiceAPI {
     serviceStore.set(pid, server);
     ctx.body = ctx.app.responser({
       pid,
+      serviceName: server.serviceName,
     }, true);
   }
   stopServer(ctx) {

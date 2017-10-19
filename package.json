@@ -47,6 +47,7 @@
     "koa-webpack-middleware": "^1.0.7",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "lodash": "^4.17.4",
     "moment": "^2.19.0",
     "pre-commit": "^1.2.2",
     "pretty-file-icons": "^2.2.0",
@@ -71,7 +72,8 @@
     "shebang-loader": "0.0.1",
     "style-loader": "^0.19.0",
     "uglifyjs-webpack-plugin": "^1.0.0-beta.3",
-    "webpack": "^3.7.1"
+    "webpack": "^3.7.1",
+    "xterm": "^2.9.2"
   },
   "pre-commit": [
     "precommit-msg",

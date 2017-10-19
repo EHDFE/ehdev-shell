@@ -12,7 +12,10 @@ const { Content } = Layout;
 
 export default class LayoutComponent extends Component {
   static propTypes = {
-    children: PropTypes.element,
+    children: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.array,
+    ]),
   }
   render() {
     return (

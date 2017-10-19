@@ -15,6 +15,7 @@ import styles from './index.less';
 
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
+import Console from '../../components/component.console/';
 
 import Profile from './Profile';
 
@@ -22,7 +23,7 @@ const { TabPane } = Tabs;
 const { Sider, Content } = Layout;
 
 class ProjectModule extends Component {
-  propTypes = {
+  static propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
     getEnvData: PropTypes.func,
@@ -74,7 +75,7 @@ class ProjectModule extends Component {
               运行配置xxx
             </TabPane>
             <TabPane tab="运行日志" key="logger">
-              运行日志
+              <Console />
             </TabPane>
           </Tabs>
         </Content>

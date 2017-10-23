@@ -2,14 +2,14 @@
  * Server Service
  * @author ryan.bian
  */
-const { Service } = require('./base');
+const Commander = require('./commander');
 
-class Server extends Service {
-  constructor(...args) {
-    super(...args);
-    this.serviceName = 'server';
-  }
-}
-
-module.exports = Server;
-
+module.exports = (rootPath, webContent) => {
+  return Commander.run('ls -la', {
+    cwd: rootPath,
+    commandName: 'Server',
+    stdio: true,
+    json: false,
+    webContent,
+  });
+};

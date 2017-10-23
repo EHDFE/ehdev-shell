@@ -8,8 +8,8 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Button, Tabs, Layout } from 'antd';
-import MdPlayCircleOutline from 'react-icons/lib/md/play-circle-outline';
-import MdPauseCircleOutline from 'react-icons/lib/md/pause-circle-outline';
+import MdPlayCircle from 'react-icons/lib/md/play-circle-filled';
+import MdPauseCircle from 'react-icons/lib/md/pause-circle-filled';
 
 import { actions } from './store';
 
@@ -72,11 +72,11 @@ class ProjectModule extends Component {
     return (
       <div className={styles.Project__ActionBar}>
         <Button disabled={!!service.currentServer} onClick={this.handleStartServer}>
-          <MdPlayCircleOutline size={22} />
+          <MdPlayCircle size={22} />
           启动
         </Button>
         <Button disabled={!service.currentServer} onClick={this.handleStopServer}>
-          <MdPauseCircleOutline size={22} />
+          <MdPauseCircle size={22} />
           停止
         </Button>
       </div>

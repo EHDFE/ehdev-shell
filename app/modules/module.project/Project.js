@@ -20,6 +20,7 @@ import DependencyManager from '../../components/component.dependencyManager/';
 import Console from '../../components/component.console/';
 
 import Profile from './Profile';
+import Setup from './Setup';
 
 const { TabPane } = Tabs;
 const { Sider, Content } = Layout;
@@ -28,6 +29,7 @@ class ProjectModule extends Component {
   propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
+    config:PropTypes.object,
     service: PropTypes.object,
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
@@ -67,6 +69,16 @@ class ProjectModule extends Component {
     }
     return <Profile {...profileProps} />;
   }
+  renderSetup(){
+    const {config} = this.props;
+    const setupProps = {};
+    if(config){
+      Object.assign(setupProps,
+        {config},
+      );
+    }
+    return <Setup {...setupProps}></Setup>;
+  }
   renderActionBar() {
     const { service } = this.props;
     return (
@@ -102,7 +114,7 @@ class ProjectModule extends Component {
               { this.renderProfile() }
             </TabPane>
             <TabPane tab="运行配置" key="config">
-              运行配置xxx
+              { this.renderSetup() }
             </TabPane>
             <TabPane tab="运行日志" key="logger">
               <Console value={service.log} />

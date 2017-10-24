@@ -43,8 +43,9 @@ module.exports = {
 
     if (config.json) {
       return new Promise((resolve, reject) => {
+        let res = '';
         ps.stdout.on('data', data => {
-          resolve(JSON.parse(data));
+          res += data.toString();
         });
         ps.stderr.on('data', data => {
           reject(data);
@@ -54,7 +55,11 @@ module.exports = {
           serviceStore.delete(pid);
         });
         ps.on('close', code => {
-          resolve(code);
+          try {
+            resolve(JSON.parse(res));
+          } catch (e) {
+            reject(e);
+          }
           serviceStore.delete(pid);
         });
       });

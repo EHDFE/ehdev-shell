@@ -20,4 +20,9 @@ export const GLOBAL_NAV_CONFIG = [
     icon: 'cloud-upload',
     text: '上传',
   },
+  {
+    to: '/configer',
+    icon: 'api',
+    text: '引擎库',
+  },
 ];

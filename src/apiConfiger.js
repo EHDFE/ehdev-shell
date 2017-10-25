@@ -13,7 +13,11 @@ const UploadFileAPI = require('./models/upload/file');
 const ProjectEnvAPI = require('./models/project/env');
 const ProjectNpmAPI = require('./models/project/npm');
 
+// Service Model
 const ServiceAPI = require('./models/service/');
+
+// Configer Model
+const ConfigerAPI = require('./models/configer/');
 
 const apiRouter = Router();
 
@@ -68,10 +72,23 @@ serviceRouter
   .delete('/server/:pid', service.stopServer)
   .post('/build', koaBody(), service.startBuilder);
 
+// configer router
+const configerRouter = Router();
+const configer = new ConfigerAPI();
+
+configerRouter
+  .get('/configs', configer.getConfigs)
+  .get('/remoteConfigs', configer.getRemoteConfigs)
+  .post('/config/:configName', configer.add)
+  .post('/upload', configer.upload)
+  .put('/config/:configName', configer.upgrade)
+  .delete('/config/:configName', configer.remove);
+
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
 apiRouter.use('/project', projectRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
+apiRouter.use('/configer', configerRouter.routes(), configerRouter.allowedMethods());
 
 module.exports = apiRouter;

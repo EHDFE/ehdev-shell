@@ -2,14 +2,12 @@
  * Builder Service
  * @author ryan.bian
  */
-const { Service } = require('./base');
+const Commander = require('./commander');
 
-class Builder extends Service {
-  constructor(...args) {
-    super(...args);
-    this.serviceName = 'builder';
-  }
-}
-
-module.exports = Builder;
-
+module.exports = (rootPath, webContent) => {
+  return Commander.run('ls -la', {
+    cwd: rootPath,
+    parseResult: false,
+    webContent,
+  });
+};

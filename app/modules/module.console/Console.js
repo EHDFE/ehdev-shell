@@ -1,14 +1,16 @@
 /**
- * Profile of project
+ * console
  * @author ryan.bian
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
+import { ipcRenderer } from 'electron';
 
 import { Popover, Button } from 'antd';
 
+import { actions } from './store';
 
 import styles from './index.less';
 import Console from '../../components/component.console/';
@@ -19,9 +21,15 @@ class ConsoleModule extends Component {
   }
   propTypes = {
     service: PropTypes.object,
+    updateLog: PropTypes.func
   }
   componentDidMount() {
-
+    const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+    ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
+      if (arg.action === 'log' || arg.action === 'error') {
+        this.props.updateLog(arg.data);
+      }
+    });
   }
   componentWillReceiveProps(nextProps) {
   }
@@ -49,25 +57,24 @@ class ConsoleModule extends Component {
   }
 }
 
-const projectPageSelector = state => state['page.project'];
-const envSelector = createSelector(
-  projectPageSelector,
-  pageState => pageState.env,
-);
+const consolePageSelector = state => {
+  return state['page.console'];
+};
+  
+
 const serviceSelector = createSelector(
-  projectPageSelector,
+  consolePageSelector,
   pageState => pageState.service,
 );
 
 const mapStateToProps = (state) => createSelector(
-  envSelector,
   serviceSelector,
-  (env, service) => ({
-    ...env,
+  (service) => ({
     service,
   }),
 );
 const mapDispatchToProps = dispatch => ({
+  updateLog: data => dispatch(actions.service.updateLog(data))
 });
 
 export default connect(

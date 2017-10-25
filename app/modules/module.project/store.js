@@ -17,11 +17,12 @@ const defaultState = {
     test:{}
   },
   service: {
-    currentService: null,
     pid: null,
     log: '',
   },
 };
+
+const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
 export const actions = createActions({
   ENV: {
@@ -47,17 +48,16 @@ export const actions = createActions({
       };
     },
     START_SERVER: async (params, dispatch) => {
-      const { pid, serviceName } = await SERVICE_API.server.start(params);
-      ipcRenderer.on(`${serviceName}:${pid}`, (event, arg) => {
-        if (arg.action === 'log') {
+      const { pid } = await SERVICE_API.server.start(params);
+      ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
+        if (arg.action === 'log' || arg.action === 'error') {
           dispatch(actions.service.updateLog(arg.data));
-        } else if (arg.action === 'stop') {
+        } else if (arg.action === 'exit') {
           dispatch(actions.service.stopServer(pid, true));
         }
       });
       return {
         pid,
-        currentService: serviceName,
       };
     },
     STOP_SERVER: async (pid, stopped) => {
@@ -66,8 +66,7 @@ export const actions = createActions({
       } else {
         return {};
       }
-      const listener = `server:${pid}`;
-      ipcRenderer.on(listener, (event, arg) => {
+      ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
         ipcRenderer.removeAllListeners([listener]);
       });
     },
@@ -113,10 +112,9 @@ const serviceReducer = handleActions({
   },
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid, currentService } = payload;
+    const { pid } = payload;
     return {
       ...state,
-      currentService,
       pid,
     };
   },
@@ -125,7 +123,6 @@ const serviceReducer = handleActions({
     return {
       ...state,
       pid: null,
-      currentService: null,
     };
   },
 }, defaultState.service);

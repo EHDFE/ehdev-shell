@@ -17,8 +17,10 @@ const CONFIGER_API = {
   },
   async add(name) {
     const fd = new FormData();
+    fd.append('configName', name);
     const res = await fetch(`${API_PATH}/config`, {
       method: 'post',
+      body: fd,
     });
     return handleResponse(res);
   },

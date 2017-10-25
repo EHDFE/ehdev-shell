@@ -7,9 +7,7 @@ const Commander = require('./commander');
 module.exports = (rootPath, webContent) => {
   return Commander.run('ls -la', {
     cwd: rootPath,
-    commandName: 'Server',
-    stdio: true,
-    json: false,
+    parseResult: false,
     webContent,
   });
 };

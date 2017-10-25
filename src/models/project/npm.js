@@ -13,15 +13,13 @@ class ProjectNpmAPI {
   async install(ctx) {
     const packageName = ctx.params.packageName || '';
     const { rootPath, args } = ctx.request.body;
-    const { pid, commandName } = Commander.run(`npm i ${packageName} ${args || ''}`, {
+    const { pid } = Commander.run(`npm i ${packageName} ${args || ''}`, {
       cwd: rootPath,
-      stdio: true,
-      json: false,
+      parseResult: false,
       webContent: ctx.app.webContent,
     });
     ctx.body = ctx.app.responser({
       pid,
-      commandName,
     }, true);
   }
   async ls(ctx) {

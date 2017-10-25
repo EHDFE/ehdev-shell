@@ -79,8 +79,8 @@ const configer = new ConfigerAPI();
 configerRouter
   .get('/configs', configer.getConfigs)
   .get('/remoteConfigs', configer.getRemoteConfigs)
-  .post('/config', configer.add)
-  .post('/config/upload', configer.upload)
+  .post('/config/:configName', configer.add)
+  .post('/upload', configer.upload)
   .put('/config/:configName', configer.upgrade)
   .delete('/config/:configName', configer.remove);
 

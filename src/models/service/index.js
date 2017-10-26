@@ -2,18 +2,26 @@
  * Service Model
  * @author ryan.bian
  */
-const builderRunner = require('../../service/builder');
-const serverRunner = require('../../service/server');
+const path = require('path');
 const { serviceStore } = require('../../service/index');
+const Commander = require('../../service/commander');
+const { ConfigerFolderPath } = require('../../utils/env');
+
+const builderScriptPath = require.resolve('../../service/builder');
+const serverScriptPath = require.resolve('../../service/server');
 
 class ServiceAPI {
   startServer(ctx) {
-    const { root } = ctx.body;
-    const { pid } = serverRunner(root, ctx.app.webContent);
-    ctx.body = ctx.app.responser({
-      pid,
-      serviceName: 'Server',
-    }, true);
+    const { root } = ctx.request.body;
+    Commander.run(`node ${serverScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=ehdev-configer-spa --port=3000`, {
+      cwd: root,
+      webContent: ctx.app.webContent,
+    });
+    // const { pid } = serverRunner(root, ctx.app.webContent);
+    // ctx.body = ctx.app.responser({
+    //   pid,
+    //   serviceName: 'Server',
+    // }, true);
   }
   stopServer(ctx) {
     const { pid } = ctx.params;

@@ -3,14 +3,10 @@
  * @author ryan.bian
  */
 const path = require('path');
-const fs = require('fs');
-const { app } = require('electron');
 const Commander = require('../../service/commander');
 const { hasDir, hasFile, mkdir } = require('../../utils/');
+const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 
-const UserDataPath = app.getPath('userData');
-const ConfigerFolderPath = path.join(UserDataPath, 'configs');
-const ConfigerFolderPackagePath = path.join(ConfigerFolderPath, 'package.json');
 const initFolder = () => {
   hasFile(ConfigerFolderPackagePath).catch(() => {
     Commander.run('npm init --yes', {
@@ -36,7 +32,11 @@ class ConfigerAPI {
   }
   async getRemoteConfigs(ctx) {
     try {
-      const result = await Commander.run('npm search --json ehdev-configs');
+      const result = await Commander.run('npm search --json ehdev-configs', {
+        cwd: ConfigerFolderPath,
+        webContent: ctx.app.webContent,
+        useCnpm: false,
+      });
       ctx.body = ctx.app.responser(result, true);
     } catch(e) {
       ctx.body = ctx.app.responser(e.toString(), false);
@@ -45,10 +45,12 @@ class ConfigerAPI {
   async add(ctx) {
     const { configName } = ctx.params;
     try {
-      const result = await Commander.run(`npm i ${configName}  --save-exact --production --progress=false`, {
+      const res = await Commander.run(`npm i ${configName} --save-exact --production --progress=false`, {
         cwd: ConfigerFolderPath,
+        webContent: ctx.app.webContent,
+        parseResult: true,
       });
-      ctx.body = ctx.app.responser('Install Successfully!', true);
+      ctx.body = ctx.app.responser(res, true);
     } catch(e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }

@@ -42,6 +42,20 @@ exports.readJSON = file => new Promise((resolve, reject) => {
 });
 
 /**
+ * write a JSON format file
+ * @param {string} file - file path
+ * @param {string} json - input json
+ */
+exports.writeJSON = (file,json)=>new Promise((resolve,reject)=>{
+  fs.writeFile(file, json, 'utf-8', err=>{
+    if(err){
+      return reject(err);
+    }
+    resolve(err);
+  });
+});
+
+/**
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path
  */

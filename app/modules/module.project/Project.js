@@ -32,6 +32,7 @@ class ProjectModule extends Component {
     config:PropTypes.object,
     service: PropTypes.object,
     getEnvData: PropTypes.func,
+    setEnvData:PropTypes.func,
     setRootPath: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
@@ -56,6 +57,12 @@ class ProjectModule extends Component {
   handleStopServer = () => {
     this.props.stopServer(this.props.service.pid);
   }
+  handleUpdateConfig = (config)=>{
+    const {rootPath} = this.props;
+    const configs = {rootPath,...config};
+    this.props.setEnvData(configs);
+  }
+
   renderProfile() {
     const { pkg } = this.props;
     const profileProps = {};
@@ -74,7 +81,10 @@ class ProjectModule extends Component {
     const setupProps = {};
     if(config){
       Object.assign(setupProps,
-        {config},
+        {
+          config,
+          onSubmit:this.handleUpdateConfig
+        },
       );
     }
     return <Setup {...setupProps}></Setup>;
@@ -147,6 +157,7 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
+  setEnvData: config => dispatch(actions.env.setEnv(config)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
   startBuilder: params => dispatch(actions.service.startBuilder(params)),

@@ -82,11 +82,11 @@ const fileReducer = handleActions({
       Object.assign(fileMap, {
         [file._id]: file,
       });
-      fileIds.push(file._id);
+      fileIds.unshift(file._id);
     });
     return {
       fileMap: Object.assign({}, state.fileMap, fileMap),
-      fileIds: state.fileIds.concat(fileIds),
+      fileIds: fileIds.concat(state.fileIds),
     };
   },
   'FILES/ADD': (state, { payload }) => {
@@ -106,10 +106,11 @@ const fileReducer = handleActions({
     }
     return {
       fileMap: {
-        ...state.fileMap,
         [file._id]: file,
+        ...state.fileMap,
       },
-      fileIds: state.fileIds.concat(file._id),
+      // fileIds: state.fileIds.concat(file._id),
+      fileIds: [file._id].concat(state.fileIds),
     };
   },
   'FILES/DEL': (state, { payload, error }) => {
@@ -137,9 +138,9 @@ const fileReducer = handleActions({
     const newFileIds = state.fileIds.slice(0);
     newFileIds.splice(idx, 1, newId);
     return {
-      fileMap: Object.assign({}, state.fileMap, {
+      fileMap: Object.assign({}, {
         [newId]: payload.file,
-      }),
+      }, state.fileMap),
       // replace old id with newId
       fileIds: newFileIds,
     };

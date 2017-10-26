@@ -17,6 +17,7 @@ import Layout from './components/component.layout/';
 import { DashboardModule } from './modules/module.dashboard/';
 import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
+import { ConsoleModule } from './modules/module.console';
 import { ConfigerModule } from './modules/module.configer/';
 
 
@@ -27,6 +28,7 @@ const App = () => (
       <Route path="/project" component={ProjectModule}/>
       <Route path="/upload" component={UploadModule}/>
       <Route path="/configer" component={ConfigerModule}/>
+      <ConsoleModule />
     </Layout>
   </BrowserRouter>
 );

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { ipcRenderer } from 'electron';
+import Terminal from 'xterm';
 
 import { Popover, Button } from 'antd';
 
@@ -14,7 +15,7 @@ import { actions } from './store';
 
 import styles from './index.less';
 import Console from '../../components/component.console/';
-
+const term = new Terminal();
 class ConsoleModule extends Component {
   state = {
     isShow: null
@@ -27,7 +28,8 @@ class ConsoleModule extends Component {
     const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
     ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
       if (arg.action === 'log' || arg.action === 'error') {
-        this.props.updateLog(arg.data);
+        let log = arg.data.replace(/\n/g, '\r\n');
+        this.props.updateLog(log + '\r\n');
       }
     });
   }
@@ -38,9 +40,13 @@ class ConsoleModule extends Component {
     });
   }
 
+  clearTerminal() {
+    term.clearSelection();
+  }
+
   render() {
     const { service } = this.props;
-    const content = 'show/hide console';
+    const content = 'SHOW/HIDE CONSOLE';
 
     return (
       <div className={styles.Console}>

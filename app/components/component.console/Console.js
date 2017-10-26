@@ -30,9 +30,10 @@ export default class Console extends Component {
       cols: 30,
     });
     this.terminal.open(this.root);
-    this.terminal.write(this.props.value);
+    this.terminal.writeln(this.props.value);
     window.addEventListener('resize', this.resize, false);
     this.resize();
+
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {

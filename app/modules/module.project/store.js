@@ -34,6 +34,9 @@ export const actions = createActions({
         config,
       };
     },
+    SET_ENV: async (configs) =>{
+      await PROJECT_API.root.set(configs);
+    },
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);
       return {
@@ -84,6 +87,13 @@ const envReducer = handleActions({
     rootPath: payload,
   }),
   'ENV/GET_ENV': (state, { payload, error }) => {
+    if (error) return state;
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  'ENV/SET_ENV': (state, { payload, error }) => {
     if (error) return state;
     return {
       ...state,

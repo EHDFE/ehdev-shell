@@ -13,6 +13,20 @@ const PROJECT_API = {
         method: 'put',
       });
       return handleResponse(res);
+    },
+    async set(configs) {
+      const {rootPath,...config} = configs;
+      const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
+        method: 'put',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `config=${JSON.stringify(config)}`,
+      });
+      return handleResponse(res, {
+        successNotification: true,
+        successMsg: '更新成功！',
+      });
     }
   },
   pkg: {

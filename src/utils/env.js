@@ -11,3 +11,6 @@ const UserDataPath = exports.UserDataPath = app.getPath('userData');
 const ConfigerFolderPath = exports.ConfigerFolderPath = path.join(UserDataPath, 'configs');
 // configs's package.json path
 const ConfigerFolderPackagePath = exports.ConfigerFolderPackagePath = path.join(ConfigerFolderPath, 'package.json');
+
+const WebpackPath = exports.WebpackPath = require.resolve('webpack');
+const WebpackDevServerPath = exports.WebpackDevServerPath = require.resolve('webpack-dev-server');

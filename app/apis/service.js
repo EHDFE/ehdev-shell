@@ -9,13 +9,12 @@ const SERVICE_PATH = '/api/service';
 const SERVICE_API = {
   server: {
     async start(params) {
-      const fd = new FormData();
-      Object.keys(params).forEach(key => {
-        fd.append(key, params[key]);
-      });
       const res = await fetch(`${SERVICE_PATH}/server`, {
         method: 'post',
-        body: fd,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
       });
       return handleResponse(res);
     },

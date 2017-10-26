@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const Commander = require('../../service/commander');
-const { hasDir, hasFile, mkdir } = require('../../utils/');
+const { hasDir, hasFile, mkdir, readJSON } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 
 const initFolder = () => {
@@ -25,14 +25,17 @@ hasDir(ConfigerFolderPath).then(() => {
 
 class ConfigerAPI {
   async getConfigs(ctx) {
-    ctx.body = ctx.app.responser([
-      { id: 'ehdev-configer-test', name: 'test', version: '1.0', },
-      { id: 'ehdev-configer-test222', name: 'test222', version: '1.1', },
-    ], true);
+    const pkg = await readJSON(ConfigerFolderPackagePath);
+    const deps = Object.keys(pkg.dependencies).map(pkgName => ({
+      id: pkgName,
+      name: pkgName,
+      version: pkg.dependencies[pkgName],
+    }));
+    ctx.body = ctx.app.responser(deps, true);
   }
   async getRemoteConfigs(ctx) {
     try {
-      const result = await Commander.run('npm search --json ehdev-configs', {
+      const result = await Commander.run('npm search --json ehdev-configer-', {
         cwd: ConfigerFolderPath,
         webContent: ctx.app.webContent,
         useCnpm: false,
@@ -43,9 +46,9 @@ class ConfigerAPI {
     }
   }
   async add(ctx) {
-    const { configName } = ctx.params;
+    const { configerName } = ctx.request.body;
     try {
-      const res = await Commander.run(`npm i ${configName} --save-exact --production --progress=false`, {
+      const res = await Commander.run(`npm i ${configerName} --save-exact --production`, {
         cwd: ConfigerFolderPath,
         webContent: ctx.app.webContent,
         parseResult: true,

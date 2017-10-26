@@ -80,9 +80,9 @@ const configer = new ConfigerAPI();
 configerRouter
   .get('/configs', configer.getConfigs)
   .get('/remoteConfigs', configer.getRemoteConfigs)
-  .post('/config/:configName', configer.add)
+  .post('/config', koaBody(), configer.add)
   .post('/upload', configer.upload)
-  .put('/config/:configName', configer.upgrade)
+  .put('/config', koaBody(),  configer.upgrade)
   .delete('/config/:configName', configer.remove);
 
 // combine all subrouters

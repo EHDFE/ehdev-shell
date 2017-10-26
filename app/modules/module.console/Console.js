@@ -31,19 +31,17 @@ class ConsoleModule extends Component {
       }
     });
   }
-  componentWillReceiveProps(nextProps) {
-  }
 
   consoleToggle() {
     this.setState({
       isShow: !this.state.isShow
     });
   }
-  
+
   render() {
     const { service } = this.props;
     const content = 'show/hide console';
-    
+
     return (
       <div className={styles.Console}>
         <Popover content={content} trigger="hover">
@@ -60,7 +58,7 @@ class ConsoleModule extends Component {
 const consolePageSelector = state => {
   return state['page.console'];
 };
-  
+
 
 const serviceSelector = createSelector(
   consolePageSelector,

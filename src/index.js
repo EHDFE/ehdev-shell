@@ -14,7 +14,7 @@ const isDev = require('electron-is-dev');
 const DataStore = require('nedb');
 const morgan = require('koa-morgan');
 
-const apiRouter = require('./apiConfiger');
+const apiRouter = require('./apiRegister');
 const { responser } = require('./utils/');
 
 module.exports = (PORT, webContent) => {

@@ -31,9 +31,6 @@ const UPLOAD_API = {
       });
     },
     async del(ids) {
-      const urlParams = serialize({
-        ids: ids.join(','),
-      });
       const res = await fetch(`${LIST_PATH}/${ids.join(',')}`, {
         method: 'delete',
       });

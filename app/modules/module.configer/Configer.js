@@ -45,7 +45,7 @@ class ConfigerModule extends Component {
   handleDelete(name) {
     this.props.removeConfig(name);
   }
-  handleAdd = values => {
+  handleAddConfig = values => {
     this.props.addConfig(values.configName);
     this.setState({
       importVisible: false,
@@ -112,7 +112,7 @@ class ConfigerModule extends Component {
         <ConfigImportor
           visible={this.state.importVisible}
           onCancel={this.handleCloseImportor}
-          onConfirm={this.handleAdd}
+          onConfirm={this.handleAddConfig}
         />
       </div>
     );
@@ -130,7 +130,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getConfigs: () => dispatch(actions.getConfigs()),
   getRemoteConfigs: () => dispatch(actions.getRemoteConfigs()),
-  addConfig: () => dispatch(actions.add()),
+  addConfig: configName => dispatch(actions.add(configName)),
   uploadConfig: () => dispatch(actions.upload()),
   removeConfig: name => dispatch(actions.remove(name)),
   upgradeConfig: name => dispatch(actions.upgrade(name)),

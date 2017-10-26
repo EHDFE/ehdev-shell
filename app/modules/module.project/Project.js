@@ -17,7 +17,6 @@ import styles from './index.less';
 
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
-import Console from '../../components/component.console/';
 
 import Profile from './Profile';
 import Setup from './Setup';
@@ -52,6 +51,8 @@ class ProjectModule extends Component {
   handleStartServer = () => {
     this.props.startServer({
       root: this.props.rootPath,
+      port: 3000,
+      configerName: 'ehdev-configer-spa',
     });
   }
   handleStopServer = () => {
@@ -93,11 +94,11 @@ class ProjectModule extends Component {
     const { service } = this.props;
     return (
       <div className={styles.Project__ActionBar}>
-        <Button disabled={!!service.currentServer} onClick={this.handleStartServer}>
+        <Button disabled={!!service.pid} onClick={this.handleStartServer}>
           <MdPlayCircle size={22} />
           启动
         </Button>
-        <Button disabled={!service.currentServer} onClick={this.handleStopServer}>
+        <Button disabled={!service.pid} onClick={this.handleStopServer}>
           <MdPauseCircle size={22} />
           停止
         </Button>
@@ -125,9 +126,6 @@ class ProjectModule extends Component {
             </TabPane>
             <TabPane tab="运行配置" key="config">
               { this.renderSetup() }
-            </TabPane>
-            <TabPane tab="运行日志" key="logger">
-              <Console value={service.log} />
             </TabPane>
           </Tabs>
         </Content>

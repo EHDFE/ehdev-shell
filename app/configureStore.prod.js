@@ -6,7 +6,7 @@ import reducer from './reducer';
 
 const enhancer = compose(
   applyMiddleware(promiseMiddleware),
-  persistState(['page.project'])
+  persistState(['page.project', 'page.console'])
 );
 
 export default createStore(reducer, enhancer);

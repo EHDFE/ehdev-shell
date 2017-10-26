@@ -3,9 +3,8 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { app } = require('electron');
-const Webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
+const Webpack = require(process.env.WEBPACK_PATH);
+const WebpackDevServer = require(process.env.WEBPACK_DEV_SERVER_PATH);
 
 const PROJECT_ROOT = process.cwd();
 const ConfigerFolder = process.argv[2].split('=')[1];
@@ -13,6 +12,7 @@ const ConfigerName = process.argv[3].split('=')[1];
 const _port = + process.argv[4].split('=')[1];
 
 const PORT = _port ? Number(_port) : 3000;
+
 
 const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
 const projectConfig = require(`${PROJECT_ROOT}/abc.json`);

@@ -15,12 +15,15 @@ const CONFIGER_API = {
     const res = await fetch(`${API_PATH}/remoteConfigs`);
     return handleResponse(res);
   },
-  async add(name) {
-    const fd = new FormData();
-    fd.append('configName', name);
+  async add(configerName) {
     const res = await fetch(`${API_PATH}/config`, {
       method: 'post',
-      body: fd,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        configerName,
+      }),
     });
     return handleResponse(res);
   },

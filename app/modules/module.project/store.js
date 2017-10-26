@@ -18,7 +18,6 @@ const defaultState = {
   },
   service: {
     pid: null,
-    log: '',
   },
 };
 
@@ -45,20 +44,15 @@ export const actions = createActions({
     },
   },
   SERVICE: {
-    UPDATE_LOG: log => {
-      return {
-        log,
-      };
-    },
     START_SERVER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.server.start(params);
-      ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
-        if (arg.action === 'log' || arg.action === 'error') {
-          dispatch(actions.service.updateLog(arg.data));
-        } else if (arg.action === 'exit') {
+      const startListener = (event, arg) => {
+        if (arg.action === 'exit' || arg.action === 'error') {
           dispatch(actions.service.stopServer(pid, true));
+          ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
-      });
+      };
+      ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
         pid,
       };
@@ -69,9 +63,6 @@ export const actions = createActions({
       } else {
         return {};
       }
-      ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
-        ipcRenderer.removeAllListeners([listener]);
-      });
     },
     // START_BUILD: async params => await SERVICE_API.builder.start(),
     // STOP_BUILD: async params => await SERVICE_API.builder.stop(),
@@ -113,13 +104,6 @@ const envReducer = handleActions({
  * project's runner reducer
  */
 const serviceReducer = handleActions({
-  'SERVICE/UPDATE_LOG': (state, { payload }) => {
-    const { log } = payload;
-    return {
-      ...state,
-      log,
-    };
-  },
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
     const { pid } = payload;

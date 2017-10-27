@@ -70,8 +70,9 @@ const service = new ServiceAPI();
 
 serviceRouter
   .post('/server', koaBody(), service.startServer)
-  .delete('/server/:pid', service.stopServer)
-  .post('/build', koaBody(), service.startBuilder);
+  .delete('/server/:pid', service.stop)
+  .post('/builder', koaBody(), service.startBuilder)
+  .delete('/builder/:pid', service.stop);
 
 // configer router
 const configerRouter = Router();

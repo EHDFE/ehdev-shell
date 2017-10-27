@@ -28,7 +28,7 @@ class ConsoleModule extends Component {
     const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
     ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
       if (arg.action === 'log' || arg.action === 'error') {
-        let log = arg.data.replace(/\n/g, '\r\n');
+        const log = arg.data.replace(/\n/g, '\r\n');
         this.props.updateLog(log + '\r\n');
       }
     });

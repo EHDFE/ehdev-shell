@@ -3,24 +3,13 @@
  * @author ryan.bian
  */
 const path = require('path');
-const Webpack = require(process.env.WEBPACK_PATH);
-const WebpackDevServer = require(process.env.WEBPACK_DEV_SERVER_PATH);
-
-const PROJECT_ROOT = process.cwd();
-const ConfigerFolder = process.argv[2].split('=')[1];
-const ConfigerName = process.argv[3].split('=')[1];
-const _port = + process.argv[4].split('=')[1];
-
-const PORT = _port ? Number(_port) : 3000;
-
-
-const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
-const projectConfig = require(`${PROJECT_ROOT}/abc.json`);
-
-const { getDevConfig } = require(`${ConfigPath}/index`);
-const DefaultProjectConfig = require(`${ConfigPath}/src/projectConfig`);
-
-const mergedProjectConfig = Object.assign({}, DefaultProjectConfig, projectConfig);
+const {
+  Webpack,
+  WebpackDevServer,
+  PORT,
+  projectConfig,
+  getDevConfig,
+} = require('./config');
 
 const getDevServerConfig = PROJECT_CONFIG => ({
   contentBase: path.join(process.cwd(), PROJECT_CONFIG.buildPath),
@@ -49,11 +38,11 @@ const getDevServerConfig = PROJECT_CONFIG => ({
   useLocalIp: true,
 });
 
-getDevConfig(mergedProjectConfig, {
+getDevConfig(projectConfig, {
   port: PORT,
 }).then(webpackConfig => {
   const compiler = Webpack(webpackConfig);
-  const server = new WebpackDevServer(compiler, getDevServerConfig(mergedProjectConfig));
+  const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
   server.listen(PORT, '0.0.0.0', () => {
     // eslint-disable-next-line no-console
     console.log(`server started at ${PORT}`);

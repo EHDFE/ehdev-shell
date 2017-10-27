@@ -12,5 +12,4 @@ const ConfigerFolderPath = exports.ConfigerFolderPath = path.join(UserDataPath, 
 // configs's package.json path
 const ConfigerFolderPackagePath = exports.ConfigerFolderPackagePath = path.join(ConfigerFolderPath, 'package.json');
 
-const WebpackPath = exports.WebpackPath = require.resolve('webpack');
-const WebpackDevServerPath = exports.WebpackDevServerPath = require.resolve('webpack-dev-server');
+exports.SHELL_NODE_MODULES_PATH = path.join(process.cwd(), 'node_modules');

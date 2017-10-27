@@ -5,10 +5,13 @@
 const path = require('path');
 const { serviceStore } = require('../../service/index');
 const Commander = require('../../service/commander');
-const { ConfigerFolderPath, WebpackPath, WebpackDevServerPath } = require('../../utils/env');
+const {
+  ConfigerFolderPath,
+  SHELL_NODE_MODULES_PATH,
+} = require('../../utils/env');
 
-const builderScriptPath = require.resolve('../../service/builder');
-const serverScriptPath = require.resolve('../../service/server');
+const serverScriptPath = require.resolve('../../child_service/server');
+const builderScriptPath = require.resolve('../../child_service/builder');
 
 class ServiceAPI {
   startServer(ctx) {
@@ -19,15 +22,14 @@ class ServiceAPI {
       webContent: ctx.app.webContent,
       parseResult: false,
       env: {
-        WEBPACK_PATH: WebpackPath,
-        WEBPACK_DEV_SERVER_PATH: WebpackDevServerPath,
+        SHELL_NODE_MODULES_PATH,
       },
     });
     ctx.body = ctx.app.responser({
       pid,
     }, true);
   }
-  stopServer(ctx) {
+  stop(ctx) {
     const { pid } = ctx.params;
     const _pid = Number(pid);
     let res;
@@ -40,8 +42,18 @@ class ServiceAPI {
     ctx.body = res;
   }
   startBuilder(ctx) {
-  }
-  stopBuilder(ctx) {
+    const { root, configerName } = ctx.request.body;
+    const { pid } = Commander.run(`node ${builderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`, {
+      cwd: root,
+      webContent: ctx.app.webContent,
+      parseResult: false,
+      env: {
+        SHELL_NODE_MODULES_PATH,
+      },
+    });
+    ctx.body = ctx.app.responser({
+      pid,
+    }, true);
   }
 }
 

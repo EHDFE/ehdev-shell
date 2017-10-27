@@ -17,6 +17,7 @@ const defaultState = {
     test:{}
   },
   service: {
+    runningService: null,
     pid: null,
   },
 };
@@ -54,6 +55,7 @@ export const actions = createActions({
       };
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
+        runningService: 'server',
         pid,
       };
     },
@@ -64,8 +66,27 @@ export const actions = createActions({
         return {};
       }
     },
-    // START_BUILD: async params => await SERVICE_API.builder.start(),
-    // STOP_BUILD: async params => await SERVICE_API.builder.stop(),
+    START_BUILDER: async (params, dispatch) => {
+      const { pid } = await SERVICE_API.builder.start(params);
+      const startListener = (event, arg) => {
+        if (arg.action === 'exit' || arg.action === 'error') {
+          dispatch(actions.service.stopBuilder(pid, true));
+          ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
+        }
+      };
+      ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      return {
+        runningService: 'builder',
+        pid,
+      };
+    },
+    STOP_BUILDER: async (pid, stopped) => {
+      if (!stopped) {
+        await SERVICE_API.builder.stop(pid);
+      } else {
+        return {};
+      }
+    }
   },
 });
 
@@ -106,16 +127,31 @@ const envReducer = handleActions({
 const serviceReducer = handleActions({
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid } = payload;
+    const { pid, runningService } = payload;
     return {
-      ...state,
+      runningService,
       pid,
     };
   },
   'SERVICE/STOP_SERVER': (state, { error }) => {
     if (error) return state;
     return {
-      ...state,
+      runningService: null,
+      pid: null,
+    };
+  },
+  'SERVICE/START_BUILDER': (state, { payload, error }) => {
+    if (error) return state;
+    const { pid, runningService } = payload;
+    return {
+      runningService,
+      pid,
+    };
+  },
+  'SERVICE/STOP_BUILDER': (state, { error }) => {
+    if (error) return state;
+    return {
+      runningService: null,
       pid: null,
     };
   },

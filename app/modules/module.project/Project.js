@@ -35,6 +35,8 @@ class ProjectModule extends Component {
     setRootPath: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
+    startBuilder: PropTypes.func,
+    stopBuilder: PropTypes.func,
     getOutdated: PropTypes.func,
   }
   componentDidMount() {
@@ -55,15 +57,25 @@ class ProjectModule extends Component {
       configerName: 'ehdev-configer-spa',
     });
   }
-  handleStopServer = () => {
-    this.props.stopServer(this.props.service.pid);
+  handleStartBuilder = () => {
+    this.props.startBuilder({
+      root: this.props.rootPath,
+      configerName: 'ehdev-configer-spa',
+    });
+  }
+  handleStopService = () => {
+    const { runningService, pid } = this.props.service;
+    if (runningService === 'server') {
+      this.props.stopServer(pid);
+    } else if (runningService === 'builder') {
+      this.props.stopBuilder(pid);
+    }
   }
   handleUpdateConfig = (config)=>{
     const {rootPath} = this.props;
     const configs = {rootPath,...config};
     this.props.setEnvData(configs);
   }
-
   renderProfile() {
     const { pkg } = this.props;
     const profileProps = {};
@@ -96,9 +108,13 @@ class ProjectModule extends Component {
       <div className={styles.Project__ActionBar}>
         <Button disabled={!!service.pid} onClick={this.handleStartServer}>
           <MdPlayCircle size={22} />
-          启动
+          启动开发环境
         </Button>
-        <Button disabled={!service.pid} onClick={this.handleStopServer}>
+        <Button disabled={!!service.pid} onClick={this.handleStartBuilder}>
+          <MdPlayCircle size={22} />
+          开始构建
+        </Button>
+        <Button disabled={!service.pid} onClick={this.handleStopService}>
           <MdPauseCircle size={22} />
           停止
         </Button>

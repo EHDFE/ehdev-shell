@@ -10,11 +10,9 @@ import SERVICE_API from '../../apis/service';
 
 const defaultState = {
   server: {
-    log: ''
-  }
+    log: '',
+  },
 };
-
-
 
 /**
  * Console's action
@@ -25,25 +23,25 @@ export const actions = createActions({
       return {
         log,
       };
-    }
-  }
+    },
+  },
 });
-
-
 
 /**
  * Console's  reducer
  */
-const serviceReducer = handleActions({
-  'SERVICE/UPDATE_LOG': (state, { payload }) => {
-    const { log } = payload;
-    return {
-      ...state,
-      log,
-    };
-  }
-}, defaultState.server);
-
+const serviceReducer = handleActions(
+  {
+    'SERVICE/UPDATE_LOG': (state, { payload }) => {
+      const { log } = payload;
+      return {
+        ...state,
+        log: [state.log, log].join(''),
+      };
+    },
+  },
+  defaultState.server
+);
 
 export default combineReducers({
   service: serviceReducer,

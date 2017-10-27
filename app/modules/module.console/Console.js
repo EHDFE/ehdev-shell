@@ -43,7 +43,7 @@ class ConsoleModule extends Component {
   }
 
   clearTerminal() {
-    term.clearSelection();
+    this.con.clearTerminal();
   }
   
   render() {
@@ -52,11 +52,11 @@ class ConsoleModule extends Component {
     
     return (
       <div className={styles.Console}>
-        <Popover content={content} trigger="hover">
+        <Popover content={<Button className={styles['clear-terminal']} onClick={this.clearTerminal.bind(this)}>clear</Button>} title={content} trigger="hover">
           <Button type="primary" icon="code" className={styles['hover-btn']} onClick={this.consoleToggle.bind(this)}></Button>
         </Popover>
         <div className={`${styles['console-wrap']} ${this.state.isShow ? styles['console-wrap__show']: ''}  ${this.state.isShow === false ? styles['console-wrap__hide']: ''}`}>
-          <Console value={service.log}/>
+          <Console value={service.log} ref={con => this.con = con}/>
         </div>
       </div>
     );

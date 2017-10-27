@@ -44,6 +44,9 @@ export default class Console extends Component {
     window.removeEventListener('resize', this.resize);
     this.terminal.destroy();
   }
+  clearTerminal() {
+    this.terminal.clear();
+  }
   render() {
     return (
       <div

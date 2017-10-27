@@ -11,6 +11,7 @@ import SERVICE_API from '../../apis/service';
 const defaultState = {
   server: {
     log: '',
+    lastLogContent: '',
   },
 };
 
@@ -24,6 +25,7 @@ export const actions = createActions({
         log,
       };
     },
+    CLEAN: () => {},
   },
 });
 
@@ -35,8 +37,14 @@ const serviceReducer = handleActions(
     'SERVICE/UPDATE_LOG': (state, { payload }) => {
       const { log } = payload;
       return {
-        ...state,
         log: [state.log, log].join(''),
+        lastLogContent: log,
+      };
+    },
+    'SERVICE/CLEAN': (state, { payload }) => {
+      return {
+        log: '',
+        lastLogContent: '',
       };
     },
   },

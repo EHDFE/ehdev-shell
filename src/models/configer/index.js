@@ -26,11 +26,17 @@ hasDir(ConfigerFolderPath).then(() => {
 class ConfigerAPI {
   async getConfigs(ctx) {
     const pkg = await readJSON(ConfigerFolderPackagePath);
-    const deps = Object.keys(pkg.dependencies).map(pkgName => ({
-      id: pkgName,
-      name: pkgName,
-      version: pkg.dependencies[pkgName],
-    }));
+    const deps = [];
+    const configs = Object.keys(pkg.dependencies);
+    for (const pkgName of configs) {
+      const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
+      deps.push({
+        id: pkgName,
+        name: pkgName,
+        version: configPkg.version,
+        description: configPkg.description,
+      });
+    }
     ctx.body = ctx.app.responser(deps, true);
   }
   async getRemoteConfigs(ctx) {
@@ -48,12 +54,14 @@ class ConfigerAPI {
   async add(ctx) {
     const { configerName } = ctx.request.body;
     try {
-      const res = await Commander.run(`npm i ${configerName} --save-exact --production`, {
+      const { pid } = await Commander.run(`npm i ${configerName} --save-exact --production`, {
         cwd: ConfigerFolderPath,
         webContent: ctx.app.webContent,
-        parseResult: true,
+        parseResult: false,
       });
-      ctx.body = ctx.app.responser(res, true);
+      ctx.body = ctx.app.responser({
+        installPid: pid,
+      }, true);
     } catch(e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
@@ -61,11 +69,35 @@ class ConfigerAPI {
   upload(ctx) {
 
   }
-  remove(ctx) {
-
+  async remove(ctx) {
+    const { configName } = ctx.params;
+    try {
+      const { pid } = await Commander.run(`npm uninstall ${configName} -S --production`, {
+        cwd: ConfigerFolderPath,
+        webContent: ctx.app.webContent,
+        parseResult: false,
+      });
+      ctx.body = ctx.app.responser({
+        removePid: pid,
+      }, true);
+    } catch(e) {
+      ctx.body = ctx.app.responser(e.toString(), false);
+    }
   }
-  upgrade(ctx) {
-
+  async upgrade(ctx) {
+    const { configerName, version } = ctx.request.body;
+    try {
+      const { pid } = await Commander.run(`npm i ${configerName}@${version} --save-exact --production`, {
+        cwd: ConfigerFolderPath,
+        webContent: ctx.app.webContent,
+        parseResult: false,
+      });
+      ctx.body = ctx.app.responser({
+        upgradePid: pid,
+      }, true);
+    } catch(e) {
+      ctx.body = ctx.app.responser(e.toString(), false);
+    }
   }
 }
 

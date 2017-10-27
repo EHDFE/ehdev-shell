@@ -30,15 +30,25 @@ const CONFIGER_API = {
   async upload(files) {
 
   },
-  async remove(id) {
-    if (!id) return Promise.reject('no config id provided!');
-    const res = await fetch(`${API_PATH}/config/${id}`, {
+  async remove(name) {
+    if (!name) return Promise.reject('no config name provided!');
+    const res = await fetch(`${API_PATH}/config/${name}`, {
       method: 'delete',
     });
     return handleResponse(res);
   },
-  async upgrade(id) {
-
+  async upgrade(configerName, version) {
+    const res = await fetch(`${API_PATH}/config`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        configerName,
+        version,
+      }),
+    });
+    return handleResponse(res);
   }
 };
 

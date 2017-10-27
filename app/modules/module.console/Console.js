@@ -21,8 +21,10 @@ class ConsoleModule extends Component {
     isShow: null,
   };
   propTypes = {
-    service: PropTypes.object,
+    initialLogContent: PropTypes.string,
+    lastLogContent: PropTypes.string,
     updateLog: PropTypes.func,
+    clear: PropTypes.func,
   };
   componentDidMount() {
     const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
@@ -41,11 +43,12 @@ class ConsoleModule extends Component {
   }
 
   clearTerminal() {
+    this.props.clear();
     this.con.clearTerminal();
   }
 
   render() {
-    const { service } = this.props;
+    const { lastLogContent } = this.props;
     const content = 'SHOW/HIDE CONSOLE';
 
     return (
@@ -76,7 +79,7 @@ class ConsoleModule extends Component {
             ? styles['console-wrap__hide']
             : ''}`}
         >
-          <Console value={service.log} ref={con => (this.con = con)} />
+          <Console value={lastLogContent} ref={con => (this.con = con)} />
         </div>
       </div>
     );
@@ -94,9 +97,12 @@ const serviceSelector = createSelector(
 
 const mapStateToProps = state =>
   createSelector(serviceSelector, service => ({
-    service,
+    initialLogContent: service.log,
+    lastLogContent: service.lastLogContent,
   }));
+
 const mapDispatchToProps = dispatch => ({
+  clear: () => dispatch(actions.service.clean()),
   updateLog: data => dispatch(actions.service.updateLog(data)),
 });
 

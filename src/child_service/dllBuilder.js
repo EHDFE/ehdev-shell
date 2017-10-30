@@ -1,40 +1,34 @@
 /**
- * Builder Service
+ * Dll Builder Service
  * @author ryan.bian
  */
-const path = require('path');
 const {
   Webpack,
   projectConfig,
   getProdConfig,
   getProvidePlugin,
   dllConfigParser,
-  PROJECT_ROOT,
 } = require('./config');
-
-const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
-const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
 
 getProdConfig(projectConfig)
   .then(webpackConfig => {
     try {
+      const dllConfigs = dllConfigParser(projectConfig);
+      if (!dllConfigs) return;
+
+      Object.assign(dllConfigs.config, {
+        module: webpackConfig.module,
+      });
+
       if (projectConfig.providePluginConfig) {
-        Object.assign(webpackConfig, {
-          plugins: webpackConfig.plugins.concat(
+        Object.assign(dllConfigs.config, {
+          plugins: dllConfigs.config.plugins.concat(
             getProvidePlugin(projectConfig)
           ),
         });
       }
-      const dllConfigs = dllConfigParser(projectConfig);
-      if (dllConfigs) {
-        webpackConfig.plugins.unshift(dllConfigs.getPlugin());
-        webpackConfig.plugins.push(
-          new AddAssetHtmlPlugin({
-            filepath: path.resolve(PROJECT_ROOT, 'src/dll/*.js'),
-          })
-        );
-      }
-      const compiler = Webpack(webpackConfig);
+
+      const compiler = Webpack(dllConfigs.config);
 
       compiler.run((err, stats) => {
         if (err) {

@@ -2,6 +2,9 @@
 
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
+[![GitHub tag](https://img.shields.io/github/tag/ehdfe/ehdev-shell.svg)]()
+[![David](https://img.shields.io/david/EHDFE/ehdev-shell.svg)]()
+[![David](https://img.shields.io/david/dev/EHDFE/ehdev-shell.svg)]()
 
 ## Introduction
 EHD SHELL aims to provide an easy to use gui tool for developers.

@@ -64,6 +64,13 @@ class ProjectModule extends Component {
       configerName: 'ehdev-configer-spa',
     });
   }
+  handleStartDllBuilder = () => {
+    this.props.startBuilder({
+      root: this.props.rootPath,
+      configerName: 'ehdev-configer-spa',
+      isDll: true,
+    });
+  }
   handleStopService = () => {
     const { runningService, pid } = this.props.service;
     if (runningService === 'server') {
@@ -104,23 +111,48 @@ class ProjectModule extends Component {
     return <Setup {...setupProps}></Setup>;
   }
   renderActionBar() {
-    const { service } = this.props;
-    return (
-      <div className={styles.Project__ActionBar}>
-        <Button disabled={!!service.pid} onClick={this.handleStartServer}>
+    const { service, config } = this.props;
+    const actions = [
+      <Button
+        key={'start-server'}
+        disabled={!!service.pid}
+        onClick={this.handleStartServer}
+      >
+        <MdPlayCircle size={22} />
+        启动开发环境
+      </Button>,
+      <Button
+        key={'start-build'}
+        disabled={!!service.pid}
+        onClick={this.handleStartBuilder}
+      >
+        <MdPlayCircle size={22} />
+        开始构建
+      </Button>,
+      <Button
+        key={'stop'}
+        disabled={!service.pid}
+        onClick={this.handleStopService}
+      >
+        <MdPauseCircle size={22} />
+        停止
+      </Button>,
+    ];
+    if (config.dll && config.dll.enable) {
+      actions.splice(
+        1,
+        0,
+        <Button
+          key={'start-dll-build'}
+          disabled={!!service.pid}
+          onClick={this.handleStartDllBuilder}
+        >
           <MdPlayCircle size={22} />
-          启动开发环境
+          构建DLL
         </Button>
-        <Button disabled={!!service.pid} onClick={this.handleStartBuilder}>
-          <MdPlayCircle size={22} />
-          开始构建
-        </Button>
-        <Button disabled={!service.pid} onClick={this.handleStopService}>
-          <MdPauseCircle size={22} />
-          停止
-        </Button>
-      </div>
-    );
+      );
+    }
+    return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
     const { rootPath, setRootPath, service } = this.props;
@@ -175,7 +207,7 @@ const mapDispatchToProps = dispatch => ({
   setEnvData: config => dispatch(actions.env.setEnv(config)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
-  startBuilder: params => dispatch(actions.service.startBuilder(params)),
+  startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
   stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
   getOutdated: packageName => dispatch(actions.env.getOutdated(packageName))
 });

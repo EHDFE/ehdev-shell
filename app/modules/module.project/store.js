@@ -47,12 +47,12 @@ export const actions = createActions({
   SERVICE: {
     START_SERVER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.server.start(params);
-      const startListener = (event, arg) => {
+      const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
           dispatch(actions.service.stopServer(pid, true));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
-      };
+      }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
         runningService: 'server',
@@ -68,12 +68,12 @@ export const actions = createActions({
     },
     START_BUILDER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.builder.start(params);
-      const startListener = (event, arg) => {
+      const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
           dispatch(actions.service.stopBuilder(pid, true));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
-      };
+      }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
         runningService: 'builder',

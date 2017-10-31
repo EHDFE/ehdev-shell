@@ -9,7 +9,13 @@ const {
   PORT,
   projectConfig,
   getDevConfig,
+  getProvidePlugin,
+  dllConfigParser,
+  PROJECT_ROOT,
 } = require('./config');
+
+const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
+const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
 
 const getDevServerConfig = PROJECT_CONFIG => ({
   contentBase: path.join(process.cwd(), PROJECT_CONFIG.buildPath),
@@ -40,7 +46,24 @@ const getDevServerConfig = PROJECT_CONFIG => ({
 
 getDevConfig(projectConfig, {
   port: PORT,
-}).then(webpackConfig => {
+}).then(async webpackConfig => {
+  // add provide plugin if has the config
+  if (projectConfig.providePluginConfig) {
+    Object.assign(webpackConfig, {
+      plugins: webpackConfig.plugins.concat(
+        getProvidePlugin(projectConfig)
+      ),
+    });
+  }
+  const dllConfigs = dllConfigParser(projectConfig);
+  if (dllConfigs) {
+    webpackConfig.plugins.unshift(dllConfigs.getPlugin());
+    webpackConfig.plugins.push(
+      new AddAssetHtmlPlugin({
+        filepath: path.resolve(PROJECT_ROOT, 'src/dll/*.js'),
+      })
+    );
+  }
   const compiler = Webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
   server.listen(PORT, '0.0.0.0', () => {

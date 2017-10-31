@@ -12,6 +12,7 @@ const {
 
 const serverScriptPath = require.resolve('../../child_service/server');
 const builderScriptPath = require.resolve('../../child_service/builder');
+const dllBuilderScriptPath = require.resolve('../../child_service/dllBuilder');
 
 class ServiceAPI {
   startServer(ctx) {
@@ -42,8 +43,14 @@ class ServiceAPI {
     ctx.body = res;
   }
   startBuilder(ctx) {
-    const { root, configerName } = ctx.request.body;
-    const { pid } = Commander.run(`node ${builderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`, {
+    const { root, configerName, isDll } = ctx.request.body;
+    let command;
+    if (isDll) {
+      command = `node ${dllBuilderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`;
+    } else {
+      command = `node ${builderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`;
+    }
+    const { pid } = Commander.run(command, {
       cwd: root,
       webContent: ctx.app.webContent,
       parseResult: false,

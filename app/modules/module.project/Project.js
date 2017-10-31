@@ -44,6 +44,7 @@ class ProjectModule extends Component {
     if (rootPath) {
       this.props.getEnvData(rootPath);
     }
+    this.props.getOutdated();
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
@@ -132,7 +133,7 @@ class ProjectModule extends Component {
             }}
             value={rootPath}
           />
-          <DependencyManager />
+          <DependencyManager  rootPath={ this.props.rootPath }/>
         </Sider>
         <Content>
           { this.renderActionBar() }

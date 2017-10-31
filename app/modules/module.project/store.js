@@ -14,7 +14,7 @@ const defaultState = {
     rootPath: undefined,
     pkg: undefined,
     config: {},
-    test:{}
+    shit:{}
   },
   service: {
     runningService: null,
@@ -40,7 +40,7 @@ export const actions = createActions({
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);
       return {
-        test:data
+        packages:data
       };
     },
   },

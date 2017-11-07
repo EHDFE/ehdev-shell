@@ -62,7 +62,8 @@ npmRouter
   .post('/ls/', koaBody(), projectNpm.ls)
   .post('/ls/:packageName', koaBody(), projectNpm.ls)
   .post('/outdated/', koaBody(), projectNpm.outdated)
-  .post('/outdated/:packageName', koaBody(), projectNpm.outdated);
+  .post('/outdated/:packageName', koaBody(), projectNpm.outdated)
+  .post('/allVersions/', koaBody(), projectNpm.allVersions);
 
 // service router
 const serviceRouter = Router();

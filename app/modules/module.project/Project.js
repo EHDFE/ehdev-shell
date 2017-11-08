@@ -115,6 +115,9 @@ class ProjectModule extends Component {
     }
     return <Setup {...setupProps}></Setup>;
   }
+  renderPackageVersions(){
+    return <DependencyManager {...this.props}/>;
+  }
   renderActionBar() {
     const { service, config } = this.props;
     let buildButton = (
@@ -175,9 +178,6 @@ class ProjectModule extends Component {
     const { rootPath, setRootPath, service, getPkginfo, pkg } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
-        <Sider className={styles.Project__Sider}>
-          <DependencyManager/>
-        </Sider>
         <Content>
           <div className={styles.Project__TopBar}>
             <FolderPicker
@@ -188,7 +188,7 @@ class ProjectModule extends Component {
               value={rootPath}
             />
             <h3>
-              { pkg.name || '请选择' }
+              { pkg&&pkg.name || '请选择' }
               <Tooltip title={rootPath}>
                 <Icon
                   type="info-circle-o"
@@ -206,6 +206,9 @@ class ProjectModule extends Component {
             </TabPane>
             <TabPane tab="运行配置" key="config">
               { this.renderSetup() }
+            </TabPane>
+            <TabPane tab="依赖管理" key="versions">
+              { this.renderPackageVersions() }
             </TabPane>
           </Tabs>
         </Content>

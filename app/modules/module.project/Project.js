@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Button, Tabs, Layout, Menu, Dropdown } from 'antd';
+import { Tooltip, Icon, Tabs, Layout, Menu, Dropdown } from 'antd';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
@@ -171,20 +171,33 @@ class ProjectModule extends Component {
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
-    const { rootPath, setRootPath, service } = this.props;
+    const { rootPath, setRootPath, service, pkg } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Sider className={styles.Project__Sider}>
-          <FolderPicker
-            onChange={value => {
-              setRootPath(value);
-            }}
-            value={rootPath}
-          />
           <DependencyManager  rootPath={ this.props.rootPath }/>
         </Sider>
         <Content>
-          { this.renderActionBar() }
+          <div className={styles.Project__TopBar}>
+            <FolderPicker
+              onChange={value => {
+                setRootPath(value);
+              }}
+              value={rootPath}
+            />
+            <h3>
+              { pkg.name || '请选择' }
+              <Tooltip title={rootPath}>
+                <Icon
+                  type="info-circle-o"
+                  style={{
+                    marginLeft: 4,
+                  }}
+                />
+              </Tooltip>
+            </h3>
+            { this.renderActionBar() }
+          </div>
           <Tabs defaultActiveKey="profile" animated={false}>
             <TabPane tab="基础信息" key="profile">
               { this.renderProfile() }

@@ -76,16 +76,21 @@ module.exports = (PORT, webContent) => {
   if (isDev) {
     const { devMiddleware, hotMiddleware } = require('koa-webpack-middleware');
     const webpack = require('webpack');
-    const webpackConfig = require('../config/webpack.config');
-    const compile = webpack(webpackConfig({
-      dev: true
-    }));
+    const webpackConfig = require('../config/webpack.config')({
+      dev: true,
+    });
+    const compile = webpack(webpackConfig);
 
     APP.use(devMiddleware(compile, {
-      publicPath: '/assets/',
+      publicPath: webpackConfig.output.publicPath,
+      stats: {
+        colors: true,
+      },
     }));
     APP.use(hotMiddleware(compile, {
       reload: true,
+      path: '/__webpack_hmr',
+      heartbeat: 1000,
     }));
   }
 

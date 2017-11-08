@@ -1,10 +1,49 @@
+@import '~antd/es/style/themes/default.less';
+
 .Project {
   &__Layout {
     height: ~"calc(100vh - 32px)";
     background-color: #fff;
   }
+  &__Sider {
+    margin-right: 10px;
+    background-color: #fff;
+  }
   &__ActionBar {
+    padding-bottom: 10px;
+    border-bottom: 1px solid @border-color-base;
+    > div {
+      display: inline-flex;
+    }
+    &Button {
+      display: inline-flex;
+      margin: 0 5px;
+      width: 60px;
+      background: none;
+      border: 0 none;
+      cursor: pointer;
+      font-size: 16px;
+      align-items: center;
+      justify-content: space-around;
+      transition: color @ease-out-circ 1s;
+      &:hover {
+        color: @primary-color;
+      }
+      &:disabled {
+        color: @disabled-color;
+        cursor: not-allowed;
+      }
+      &--trigger {
+        background: none;
+        border: 0 none;
+        cursor: pointer;
 
+        &:disabled {
+          color: @disabled-color;
+          cursor: not-allowed;
+        }
+      }
+    }
   }
 }
 .Profile {
@@ -22,7 +61,7 @@
   }
   &__Item{
     padding: 10px;
-    border:1px dashed #ddd;
+    border: 1px dashed @border-color-base;
     margin-bottom: 20px;
   }
   &__FormItem{

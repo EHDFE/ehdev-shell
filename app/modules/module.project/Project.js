@@ -7,9 +7,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Button, Tabs, Layout } from 'antd';
-import MdPlayCircle from 'react-icons/lib/md/play-circle-filled';
-import MdPauseCircle from 'react-icons/lib/md/pause-circle-filled';
+import { Button, Tabs, Layout, Menu, Dropdown } from 'antd';
+import IconPlay from 'react-icons/lib/fa/play-circle-o';
+import IconStop from 'react-icons/lib/fa/stop-circle-o';
+import IconBuild from 'react-icons/lib/fa/codepen';
 
 import { actions } from './store';
 
@@ -53,22 +54,25 @@ class ProjectModule extends Component {
     }
   }
   handleStartServer = () => {
+    const { config } = this.props;
     this.props.startServer({
       root: this.props.rootPath,
       port: 3000,
-      configerName: 'ehdev-configer-spa',
+      configerName: `ehdev-configer-${config.type}`,
     });
   }
   handleStartBuilder = () => {
+    const { config } = this.props;
     this.props.startBuilder({
       root: this.props.rootPath,
-      configerName: 'ehdev-configer-spa',
+      configerName: `ehdev-configer-${config.type}`,
     });
   }
   handleStartDllBuilder = () => {
+    const { config } = this.props;
     this.props.startBuilder({
       root: this.props.rootPath,
-      configerName: 'ehdev-configer-spa',
+      configerName: `ehdev-configer-${config.type}`,
       isDll: true,
     });
   }
@@ -113,53 +117,65 @@ class ProjectModule extends Component {
   }
   renderActionBar() {
     const { service, config } = this.props;
-    const actions = [
-      <Button
-        key={'start-server'}
-        disabled={!!service.pid}
-        onClick={this.handleStartServer}
-      >
-        <MdPlayCircle size={22} />
-        启动开发环境
-      </Button>,
-      <Button
+    let buildButton = (
+      <button
+        className={styles.Project__ActionBarButton}
         key={'start-build'}
         disabled={!!service.pid}
         onClick={this.handleStartBuilder}
       >
-        <MdPlayCircle size={22} />
-        开始构建
-      </Button>,
-      <Button
+        <IconBuild size={22} />
+        构建
+      </button>
+    );
+    if (config.dll && config.dll.enable) {
+      buildButton = (
+        <Dropdown overlay={
+          <Menu>
+            <Menu.Item>
+              <button
+                className={styles['Project__ActionBarButton--trigger']}
+                key={'start-dll-build'}
+                disabled={!!service.pid}
+                onClick={this.handleStartDllBuilder}
+              >
+                DLL构建
+              </button>
+            </Menu.Item>
+          </Menu>
+        }>
+          {buildButton}
+        </Dropdown>
+      );
+    }
+    const actions = [
+      <button
+        className={styles.Project__ActionBarButton}
+        key={'start-server'}
+        disabled={!!service.pid}
+        onClick={this.handleStartServer}
+      >
+        <IconPlay size={22} />
+        启动
+      </button>,
+      buildButton,
+      <button
+        className={styles.Project__ActionBarButton}
         key={'stop'}
         disabled={!service.pid}
         onClick={this.handleStopService}
       >
-        <MdPauseCircle size={22} />
+        <IconStop size={22} />
         停止
-      </Button>,
+      </button>,
     ];
-    if (config.dll && config.dll.enable) {
-      actions.splice(
-        1,
-        0,
-        <Button
-          key={'start-dll-build'}
-          disabled={!!service.pid}
-          onClick={this.handleStartDllBuilder}
-        >
-          <MdPlayCircle size={22} />
-          构建DLL
-        </Button>
-      );
-    }
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
     const { rootPath, setRootPath, getPkginfo, service } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
-        <Sider style={{ backgroundColor: '#fff' }}>
+        <Sider className={styles.Project__Sider}>
           <FolderPicker
             onChange={value => {
               setRootPath(value);

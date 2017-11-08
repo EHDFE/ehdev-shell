@@ -63,23 +63,41 @@ class ProjectNpmAPI {
    */
   async allVersions(ctx) {
     const packageName = ctx.params.packageName || '';
-    const { rootPath, args } = ctx.request.body;
+    const {   rootPath, args } = ctx.request.body;
     try {
 
-      let [list,outdatedList] = await Promise.all([
+      let [outdatedList,list] = await Promise.all([
         Commander.run(`npm outdated ${packageName} --json ${args || ''}`, {cwd: rootPath,webContent: ctx.app.webContent}),
         Commander.run(`npm ls ${packageName} --json --depth=0 ${args || ''}`, {cwd: rootPath,webContent: ctx.app.webContent})
       ]);
+      let result = {versions:{}};
+      for(let prop in list.dependencies){
+        if(prop in outdatedList){
+          result.versions[prop] = {
+            current: outdatedList[prop].current,
+            wanted: outdatedList[prop].wanted,
+            latest: outdatedList[prop].latest,
+            outdated:true
+          };
+        }else if(list.dependencies[prop]['version']){
+          result.versions[prop] = {
+            current: list.dependencies[prop]['version'],
+            wanted: list.dependencies[prop]['version'],
+            latest: list.dependencies[prop]['version'],
+            outdated:false
+          };
+        }else if(list.dependencies[prop]['peerMissing']){
+          result.versions[prop] = {
+            current: list.dependencies[prop]['required']['version'],
+            wanted: list.dependencies[prop]['required']['version'],
+            latest: list.dependencies[prop]['required']['version'],
+            outdated: false,
+            peerMissing: list.dependencies[prop]['required']['peerMissing']
+          };
+        }
+      }
 
-      // const result = await Commander.run(`npm outdated ${packageName} --json ${args || ''}`, {
-      //   cwd: rootPath,
-      //   webContent: ctx.app.webContent,
-      // });
-      // const result2 = await Commander.run(`npm ls ${packageName} --json --depth=0 ${args || ''}`, {
-      //   cwd: rootPath,
-      //   webContent: ctx.app.webContent,
-      // });
-      ctx.body = ctx.app.responser(Object.assign(list,outdatedList), true);
+      ctx.body = ctx.app.responser(Object.assign(result,list), true);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }

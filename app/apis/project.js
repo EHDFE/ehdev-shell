@@ -35,6 +35,16 @@ const PROJECT_API = {
         method: 'post',
       });
       return handleResponse(res);
+    },
+    async getAllVersions(rootPath){
+      const res = await fetch('/api/npm/allVersions/', {
+        method: 'post',
+        headers: {
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify({rootPath})
+      });
+      return handleResponse(res);
     }
   },
 };

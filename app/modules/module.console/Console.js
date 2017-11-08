@@ -20,7 +20,7 @@ class ConsoleModule extends Component {
   state = {
     isShow: null,
   };
-  propTypes = {
+  static propTypes = {
     initialLogContent: PropTypes.string,
     lastLogContent: PropTypes.string,
     updateLog: PropTypes.func,

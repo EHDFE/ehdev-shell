@@ -25,7 +25,7 @@ const { TabPane } = Tabs;
 const { Sider, Content } = Layout;
 
 class ProjectModule extends Component {
-  propTypes = {
+  static propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
     config:PropTypes.object,
@@ -38,13 +38,14 @@ class ProjectModule extends Component {
     startBuilder: PropTypes.func,
     stopBuilder: PropTypes.func,
     getOutdated: PropTypes.func,
+    getPkginfo: PropTypes.func,
   }
   componentDidMount() {
     const { rootPath } = this.props;
     if (rootPath) {
+      this.props.getPkginfo(rootPath);
       this.props.getEnvData(rootPath);
     }
-    this.props.getOutdated();
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
@@ -155,17 +156,18 @@ class ProjectModule extends Component {
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
-    const { rootPath, setRootPath, service } = this.props;
+    const { rootPath, setRootPath, getPkginfo, service } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Sider style={{ backgroundColor: '#fff' }}>
           <FolderPicker
             onChange={value => {
               setRootPath(value);
+              getPkginfo(value);
             }}
             value={rootPath}
           />
-          <DependencyManager  rootPath={ this.props.rootPath }/>
+          <DependencyManager/>
         </Sider>
         <Content>
           { this.renderActionBar() }
@@ -182,6 +184,7 @@ class ProjectModule extends Component {
     );
   }
 }
+
 
 const projectPageSelector = state => state['page.project'];
 const envSelector = createSelector(
@@ -209,7 +212,8 @@ const mapDispatchToProps = dispatch => ({
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
   stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
-  getOutdated: packageName => dispatch(actions.env.getOutdated(packageName))
+  getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
+  getPkginfo: rootPath => dispatch(actions.env.getPkginfo(rootPath))
 });
 
 export default connect(

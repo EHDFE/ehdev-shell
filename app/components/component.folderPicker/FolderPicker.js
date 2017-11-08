@@ -55,6 +55,7 @@ export default class FolderPicker extends Component {
           prefix={<Icon type="folder" />}
           value={value}
           onClick={this.handleClick}
+          onChange={()=>{}}
         />
         <input
           ref={node => (this.fileInput = node)}

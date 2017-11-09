@@ -137,8 +137,17 @@ class Setup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fields: props.config
+      fields: props.config||{}
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { config } = this.props;
+    if (nextProps.config && (nextProps.config !== config)) {
+      this.setState({
+        fields: config
+      });
+    }
   }
 
   handleFormChange = () => {
@@ -205,7 +214,7 @@ class Setup extends React.Component {
   render() {
     const fields = this.state.fields;
     return (
-      <Row gutter={40}>
+      <Row gutter={40} className={styles.Setup__Row}>
         <Col {...colProps}>
           <SetupForm config = {fields} onChange={this.handleFormChange}
             remove = {this.remove}

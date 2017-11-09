@@ -199,7 +199,7 @@ class ProjectModule extends Component {
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
-    const { rootPath, setRootPath, service, getPkginfo, pkg } = this.props;
+    const { rootPath, setRootPath, getEnvData, service, getPkginfo, pkg } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Content>
@@ -208,6 +208,7 @@ class ProjectModule extends Component {
               onChange={value => {
                 setRootPath(value);
                 getPkginfo(value);
+                getEnvData(value);
               }}
               value={rootPath}
             />

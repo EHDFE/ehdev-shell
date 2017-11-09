@@ -103,7 +103,6 @@ class ProjectModule extends Component {
     return <Profile {...profileProps} />;
   }
   renderSetup() {
-    console.log('setup render')
     const { config } = this.props;
     const setupProps = {};
     if (config) {
@@ -114,7 +113,6 @@ class ProjectModule extends Component {
         },
       );
     }
-    console.log(setupProps)
     return <Setup {...setupProps}></Setup>;
   }
   renderPackageVersions() {

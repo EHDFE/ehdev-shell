@@ -1,3 +1,5 @@
 export DashboardModule from './Dashboard';
-export DashboardActions from './actions';
-export DashboardReducer from './reducer';
+export {
+  default as DashboardReducer,
+  actions
+} from './store';

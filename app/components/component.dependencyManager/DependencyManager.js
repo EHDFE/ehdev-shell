@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Table, Tabs, Button } from 'antd';
+import { Table, Tabs, Button, message } from 'antd';
 
 const TabPane = Tabs.TabPane;
 
 class DependencyManager extends Component {
   static propTypes = {
     pkgInfo: PropTypes.object,
-    pkg: PropTypes.object
+    pkg: PropTypes.object,
+    rootPath: PropTypes.string,
+    getPkginfo: PropTypes.func,
+    getEnvData: PropTypes.func,
   };
 
   state = {
@@ -21,19 +24,55 @@ class DependencyManager extends Component {
     const { pkg, pkgInfo } = this.props;
     const data = [];
     for (let i in pkg[key]) {
-      data.push(Object.assign({ key: i, packageName: i }, pkgInfo.versions[i]));
+      data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i]));
     }
     this.setState({
       dataSource: data,
       tab: key
     });
   };
+  
+  updatepkg = (record, index) => {   
+    this.setState((prevState, props) => {
+      let data =  [...prevState.dataSource];
+      data[index]['isUpdating'] = true;
+      return {
+        dataSource: data
+      };
+    }); 
+    this.installpkg(this.props.rootPath, [record.packageName], '--save').then((data) => {
+      if (data.success) {
+        message.success(`${record.packageName} has been updated!`);
+        this.props.getPkginfo(this.props.rootPath);
+        this.props.getEnvData(this.props.rootPath);
+      }
+    });
+  }
+
+  installpkg =  (rootPath, packages, type) => {
+    let packageName;
+    if (packages&&packages.length === 1) {
+      packageName = packages;
+    }
+    return fetch(`/api/npm/install/${packageName?packageName+'/':''}`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        rootPath,
+        args: `${packages.join(' ')} ${type}`   
+      })
+    }).then((res) => res.json());
+  }
+
   componentDidMount() {
     this.filterData(this.state.tab);
   }
   componentWillReceiveProps() {
     this.filterData(this.state.tab);
   }
+
   render() {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
@@ -69,13 +108,15 @@ class DependencyManager extends Component {
       },
       {
         title: '操作',
-        render: () => {
+        render: (text, record, index) => {
           return (
             <div>
-              <Button type="primary" style={{ marginRight: '20px' }}>
+              <Button type="primary" onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
                 Update
               </Button>
-              <Button type="danger">Delete</Button>
+              <Button type="danger" loading={record.isDeleting}>
+                Delete
+              </Button>
             </div>
           );
         }

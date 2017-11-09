@@ -7,10 +7,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tooltip, Icon, Tabs, Layout, Menu, Dropdown } from 'antd';
+import { Tooltip, Icon, Tabs, Layout, Menu, Dropdown, Spin } from 'antd';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
+import MdAutorenew from 'react-icons/lib/md/autorenew';
 
 import { actions } from './store';
 
@@ -41,16 +42,31 @@ class ProjectModule extends Component {
     getOutdated: PropTypes.func,
     getPkginfo: PropTypes.func,
   }
+
+  state = {
+    Loading: true
+  }
+
   componentDidMount() {
-    const { rootPath } = this.props;
-    if (rootPath) {
-      this.props.getPkginfo(rootPath);
-      this.props.getEnvData(rootPath);
-    }
+    this.getInitData();
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
       this.props.getEnvData(nextProps.rootPath);
+    }
+
+  }
+  getInitData = () => {
+    const { rootPath } = this.props;
+    if (rootPath) {
+      this.setState({
+        loading: true
+      });
+      Promise.all([this.props.getPkginfo(rootPath), this.props.getEnvData(rootPath)]).then(()=> {
+        this.setState({
+          loading: false
+        });
+      });
     }
   }
   handleStartServer = () => {
@@ -171,6 +187,14 @@ class ProjectModule extends Component {
         <IconStop size={22} />
         停止
       </button>,
+      <button
+        className={styles.Project__ActionBarButton}
+        key={'update'}
+        onClick={this.getInitData}
+      >
+        <MdAutorenew size={22} />
+          刷新
+      </button>,
     ];
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
@@ -200,17 +224,19 @@ class ProjectModule extends Component {
             </h3>
             { this.renderActionBar() }
           </div>
-          <Tabs defaultActiveKey="profile" animated={false}>
-            <TabPane tab="基础信息" key="profile">
-              { this.renderProfile() }
-            </TabPane>
-            <TabPane tab="运行配置" key="config">
-              { this.renderSetup() }
-            </TabPane>
-            <TabPane tab="依赖管理" key="versions">
-              { this.renderPackageVersions() }
-            </TabPane>
-          </Tabs>
+          <Spin tip="Loading..." spinning={this.state.loading}>
+            <Tabs defaultActiveKey="profile" animated={false}>
+              <TabPane tab="基础信息" key="profile">
+                { this.renderProfile() }
+              </TabPane>
+              <TabPane tab="运行配置" key="config">
+                { this.renderSetup() }
+              </TabPane>
+              <TabPane tab="依赖管理" key="versions">
+                { this.renderPackageVersions() }
+              </TabPane>
+            </Tabs>
+          </Spin>
         </Content>
       </Layout>
     );

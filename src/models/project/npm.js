@@ -12,15 +12,13 @@ class ProjectNpmAPI {
    */
   async install(ctx) {
     const packageName = ctx.params.packageName || '';
-    const { rootPath, args } = ctx.request.body;
-    const { pid } = Commander.run(`npm i ${packageName} ${args || ''}`, {
+    const { rootPath, args, version } = ctx.request.body;
+    const data =await Commander.run(`npm i ${packageName}${packageName?'@':''}${version?version:'latest'} ${args || ''}`, {
       cwd: rootPath,
-      parseResult: false,
+      parseResult: 'string',
       webContent: ctx.app.webContent,
     });
-    ctx.body = ctx.app.responser({
-      pid,
-    }, true);
+    ctx.body = ctx.app.responser(data, true);
   }
   async ls(ctx) {
     const packageName = ctx.params.packageName || '';

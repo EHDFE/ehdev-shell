@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form,Select,Input,Switch,Button,Row,Col } from 'antd';
+import { Form, Select, Input, Switch, Button, Row, Col } from 'antd';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
@@ -47,16 +47,16 @@ const colProps = {
   xl: 12,
 };
 
-const Config = ({config,getFieldDecorator,prefix=''})=>{
+const Config = ({config, getFieldDecorator, prefix=''})=>{
   return (
-    Object.keys(config).map((item,index)=>{
+    Object.keys(config).map((item, index)=>{
 
       let field = item;
-      if(prefix){
+      if (prefix) {
         field = prefix +'.'+ item;
       }
 
-      if(_.isPlainObject(config[item])){
+      if (_.isPlainObject(config[item])) {
         return (
           <div key={field}>
             <h3 className={styles.Setup__Title}>{item}</h3>
@@ -70,7 +70,7 @@ const Config = ({config,getFieldDecorator,prefix=''})=>{
 
         );
       }
-      if(_.isArray(config[item])){
+      if (_.isArray(config[item])) {
 
         return (
           <FormItem
@@ -79,13 +79,13 @@ const Config = ({config,getFieldDecorator,prefix=''})=>{
             label={<h3 className={styles.Setup__Label}>{item}</h3>}
             {...itemProps}
           >{getFieldDecorator(field, {
-              initialValue:config[item]
+              initialValue: config[item]
             })(<Select mode="tags">
             </Select>)
             }
           </FormItem>
         );
-      }else if(_.isString(config[item])){
+      } else if (_.isString(config[item])) {
 
         return (
           <FormItem
@@ -94,11 +94,11 @@ const Config = ({config,getFieldDecorator,prefix=''})=>{
             label={<h3 className={styles.Setup__Label}>{item}</h3>}
             {...itemProps}
           >{getFieldDecorator(field, {
-              initialValue:config[item]
+              initialValue: config[item]
             })(<Input/>)}
           </FormItem>
         );
-      }else if(_.isBoolean(config[item])){
+      } else if (_.isBoolean(config[item])) {
         return (
           <FormItem
             key={field}
@@ -106,7 +106,7 @@ const Config = ({config,getFieldDecorator,prefix=''})=>{
             label={<h3 className={styles.Setup__Label}>{item}</h3>}
             {...itemProps}
           >
-            {getFieldDecorator(field, { valuePropName: 'checked' ,initialValue:config[item]})(
+            {getFieldDecorator(field, { valuePropName: 'checked', initialValue: config[item]})(
               <Switch />
             )}
           </FormItem>
@@ -134,10 +134,10 @@ const SetupForm = Form.create({
 });
 
 class Setup extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      fields:props.config
+      fields: props.config
     };
   }
 
@@ -229,13 +229,13 @@ class Setup extends React.Component {
 }
 
 PropTypes.defaultProps = {
-  config:{},
-  onSubmit:undefined,
+  config: {},
+  onSubmit: undefined,
 };
 
 Setup.propTypes = {
-  config:PropTypes.object,
-  onSubmit:PropTypes.func
+  config: PropTypes.object,
+  onSubmit: PropTypes.func
 };
 
 export default Setup;

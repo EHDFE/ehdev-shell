@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 import { Table, Tabs, Button } from 'antd';
 
 const TabPane = Tabs.TabPane;
@@ -93,7 +91,7 @@ class DependencyManager extends Component {
           <Button type="primary">
             Batch Update
           </Button>
-          <Button type="primary" style={{ float:'right' }}>
+          <Button type="primary" style={{ float: 'right' }}>
             Add New Dependency
           </Button>
         </div>

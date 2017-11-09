@@ -183,7 +183,7 @@ const mapDispatchToProps = dispatch => ({
   addConfig: configName => dispatch(actions.add(configName, dispatch)),
   uploadConfig: () => dispatch(actions.upload()),
   removeConfig: name => dispatch(actions.remove(name, dispatch)),
-  upgradeConfig: (name, version) => dispatch(actions.upgrade(name, verions, dispatch)),
+  upgradeConfig: (name, version) => dispatch(actions.upgrade(name, version, dispatch)),
 });
 
 export default connect(

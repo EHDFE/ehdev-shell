@@ -15,7 +15,7 @@ const PROJECT_API = {
       return handleResponse(res);
     },
     async set(configs) {
-      const {rootPath,...config} = configs;
+      const {rootPath, ...config} = configs;
       const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
         method: 'put',
         headers: {
@@ -36,11 +36,11 @@ const PROJECT_API = {
       });
       return handleResponse(res);
     },
-    async getAllVersions(rootPath){
+    async getAllVersions(rootPath) {
       const res = await fetch('/api/npm/allVersions/', {
         method: 'post',
         headers: {
-          'Content-Type':'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({rootPath})
       });

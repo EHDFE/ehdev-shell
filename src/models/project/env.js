@@ -3,7 +3,7 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { readJSON,writeJSON } = require('../../utils/');
+const { readJSON, writeJSON } = require('../../utils/');
 
 class ProjectEnvAPI {
   async setRoot(ctx) {
@@ -27,12 +27,12 @@ class ProjectEnvAPI {
   async setConfig(ctx) {
     const { rootPath } = ctx.params;
     const { config } = ctx.request.body;
-    try{
+    try {
       let configObj = JSON.parse(config);
       let configStr = JSON.stringify(configObj, null, '\t');
-      await writeJSON(path.join(rootPath, 'abc.json'),configStr);
+      await writeJSON(path.join(rootPath, 'abc.json'), configStr);
       ctx.body = ctx.app.responser('修改成功', true);
-    }catch(e){
+    } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }

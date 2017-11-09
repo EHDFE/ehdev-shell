@@ -51,7 +51,7 @@ const projectRouter = Router();
  */
 projectRouter
   .put('/root/:rootPath', projectEnv.setRoot)
-  .post('/config/:rootPath',koaBody(),projectEnv.setConfig);
+  .post('/config/:rootPath', koaBody(), projectEnv.setConfig);
 
 // project npm router
 const npmRouter = Router();

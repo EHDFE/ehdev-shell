@@ -35,7 +35,7 @@ exports.readJSON = file => new Promise((resolve, reject) => {
     try {
       const dataObj = JSON.parse(data);
       resolve(dataObj);
-    } catch(e) {
+    } catch (e) {
       reject(e);
     }
   });
@@ -46,9 +46,9 @@ exports.readJSON = file => new Promise((resolve, reject) => {
  * @param {string} file - file path
  * @param {string} json - input json
  */
-exports.writeJSON = (file,json)=>new Promise((resolve,reject)=>{
+exports.writeJSON = (file, json)=>new Promise((resolve, reject)=>{
   fs.writeFile(file, json, 'utf-8', err=>{
-    if(err){
+    if (err) {
       return reject(err);
     }
     resolve(err);

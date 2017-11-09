@@ -23,16 +23,16 @@ import Profile from './Profile';
 import Setup from './Setup';
 
 const { TabPane } = Tabs;
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 class ProjectModule extends Component {
   static propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
-    config:PropTypes.object,
+    config: PropTypes.object,
     service: PropTypes.object,
     getEnvData: PropTypes.func,
-    setEnvData:PropTypes.func,
+    setEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
@@ -86,7 +86,7 @@ class ProjectModule extends Component {
   }
   handleUpdateConfig = (config)=>{
     const {rootPath} = this.props;
-    const configs = {rootPath,...config};
+    const configs = {rootPath, ...config};
     this.props.setEnvData(configs);
   }
   renderProfile() {
@@ -102,20 +102,20 @@ class ProjectModule extends Component {
     }
     return <Profile {...profileProps} />;
   }
-  renderSetup(){
-    const {config} = this.props;
+  renderSetup() {
+    const { config } = this.props;
     const setupProps = {};
-    if(config){
+    if (config) {
       Object.assign(setupProps,
         {
           config,
-          onSubmit:this.handleUpdateConfig
+          onSubmit: this.handleUpdateConfig,
         },
       );
     }
     return <Setup {...setupProps}></Setup>;
   }
-  renderPackageVersions(){
+  renderPackageVersions() {
     return <DependencyManager {...this.props}/>;
   }
   renderActionBar() {

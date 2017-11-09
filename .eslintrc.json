@@ -18,14 +18,18 @@
     "no-const-assign": "error",
     "no-this-before-super": "error",
     "no-var": "error",
-    "no-undef": "warn",
+    "no-undef": "error",
     "no-unreachable": "warn",
     "no-unused-vars": "warn",
     "constructor-super": "warn",
     "valid-typeof": "warn",
     "indent": ["error", 2],
     "quotes": ["error", "single"],
-    "semi": "error"
+    "semi": "error",
+    "comma-spacing": ["error"],
+    "key-spacing": ["error"],
+    "keyword-spacing": ["error"],
+    "space-before-blocks": ["error"]
   },
   "plugins": [
     "import",

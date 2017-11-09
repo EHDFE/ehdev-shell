@@ -21,7 +21,7 @@ export default class Console extends Component {
   }
   constructor(props) {
     super(props);
-    this.resize = throttle(function(){
+    this.resize = throttle(function() {
       this.terminal.fit();
     }.bind(this), 500);
   }

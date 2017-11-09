@@ -47,7 +47,7 @@ class ConfigerAPI {
         useCnpm: false,
       });
       ctx.body = ctx.app.responser(result, true);
-    } catch(e) {
+    } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
@@ -62,7 +62,7 @@ class ConfigerAPI {
       ctx.body = ctx.app.responser({
         installPid: pid,
       }, true);
-    } catch(e) {
+    } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
@@ -80,7 +80,7 @@ class ConfigerAPI {
       ctx.body = ctx.app.responser({
         removePid: pid,
       }, true);
-    } catch(e) {
+    } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
@@ -95,7 +95,7 @@ class ConfigerAPI {
       ctx.body = ctx.app.responser({
         upgradePid: pid,
       }, true);
-    } catch(e) {
+    } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }

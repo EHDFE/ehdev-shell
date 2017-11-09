@@ -55,7 +55,7 @@ exports.dllConfigParser = projectConfig => {
       filename: '[name].[hash:8].js',
       library: '[name]',
     },
-    devtool: 'source-map' ,
+    devtool: 'source-map',
     plugins: [
       new Webpack.DllPlugin({
         context: PROJECT_ROOT,

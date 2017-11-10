@@ -36,3 +36,5 @@ export const GREETING_WORDS = new Map([
   [5, '周五了，记得加餐'],
   [6, '加班辛苦了'],
 ]);
+
+export const WEATHER_APPID = 'b8fbb9f6ccb49e615a21bae76f87738d';

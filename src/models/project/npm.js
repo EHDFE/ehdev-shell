@@ -12,8 +12,32 @@ class ProjectNpmAPI {
    */
   async install(ctx) {
     const packageName = ctx.params.packageName || '';
-    const { rootPath, args, version } = ctx.request.body;
-    const data =await Commander.run(`npm i ${packageName}${packageName?'@':''}${version?version:'latest'} ${args || ''}`, {
+    const { rootPath, args, version, packages } = ctx.request.body;
+    let packageList = '';
+    if (packageName) {
+      packageList = `${packageName}@${version?version:'latest'}`;
+    } else if (packages) {
+      if (packages instanceof Array) {
+        packages.forEach((d) => {
+          packageList += ` ${d.packageName}@${d.version?d.version:'latest'}`;
+        });
+      } else {
+        packageList = '';
+      }
+    } else {
+      packageList = '';
+    }
+    const data =await Commander.run(`npm i ${packageList} ${args || ''}`, {
+      cwd: rootPath,
+      parseResult: 'string',
+      webContent: ctx.app.webContent,
+    });
+    ctx.body = ctx.app.responser(data, true);
+  }
+  async uninstall(ctx) {
+    const packageName = ctx.params.packageName || '';
+    const { rootPath, args } = ctx.request.body;
+    const data = await Commander.run(`npm uninstall ${packageName} ${args || ''}`, {
       cwd: rootPath,
       parseResult: 'string',
       webContent: ctx.app.webContent,

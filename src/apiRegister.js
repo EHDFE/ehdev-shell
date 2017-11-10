@@ -59,6 +59,7 @@ const npmRouter = Router();
 npmRouter
   .post('/install/', koaBody(), projectNpm.install)
   .post('/install/:packageName', koaBody(), projectNpm.install)
+  .post('/uninstall/:packageName', koaBody(), projectNpm.uninstall)
   .post('/ls/', koaBody(), projectNpm.ls)
   .post('/ls/:packageName', koaBody(), projectNpm.ls)
   .post('/outdated/', koaBody(), projectNpm.outdated)

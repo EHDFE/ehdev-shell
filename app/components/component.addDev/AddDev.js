@@ -27,7 +27,7 @@ class AddDev extends React.Component {
     this.setState({
       confirmLoading: true,
     });  
-    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab).then(()=>{
+    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab==='dependencies'?' --save':' --save-dev').then(()=>{
       this.setState({
         confirmLoading: false,
       });

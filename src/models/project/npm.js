@@ -85,14 +85,13 @@ class ProjectNpmAPI {
    */
   async allVersions(ctx) {
     const packageName = ctx.params.packageName || '';
-    const {   rootPath, args } = ctx.request.body;
+    const { rootPath, args } = ctx.request.body;
     try {
-
-      let [outdatedList, list] = await Promise.all([
+      const [outdatedList, list] = await Promise.all([
         Commander.run(`npm outdated ${packageName} --json ${args || ''}`, {cwd: rootPath, webContent: ctx.app.webContent}),
         Commander.run(`npm ls ${packageName} --json --depth=0 ${args || ''}`, {cwd: rootPath, webContent: ctx.app.webContent})
       ]);
-      let result = {versions: {}};
+      let result = { versions: {} };
       for (let prop in list.dependencies) {
         if (prop in outdatedList) {
           result.versions[prop] = {

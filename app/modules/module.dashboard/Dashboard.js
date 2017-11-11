@@ -21,10 +21,12 @@ class DashboardModule extends Component {
     weekday: PropTypes.number,
     getWeather: PropTypes.func,
     getDate: PropTypes.func,
+    getProjectList: PropTypes.func,
   }
   componentDidMount() {
     this.props.getWeather();
     this.props.getDate();
+    this.props.getProjectList();
   }
   renderSummaryBar() {
     const { weekday, date, weather } = this.props;
@@ -115,6 +117,7 @@ const mapStateToProps = state => createSelector(
 const mapDispatchToProps = dispatch => ({
   getWeather: () => dispatch(actions.base.getWeather()),
   getDate: () => dispatch(actions.base.getDate()),
+  getProjectList: () => dispatch(actions.projects.getList()),
 });
 
 export default connect(

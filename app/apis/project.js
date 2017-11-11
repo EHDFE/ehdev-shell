@@ -2,7 +2,7 @@
  * project apis
  * @author ryan.bian
  */
-import { handleResponse, serialize } from './utils';
+import { handleResponse } from './utils';
 
 const PROJECT_PATH = '/api/project';
 
@@ -11,6 +11,12 @@ const PROJECT_API = {
     async post(rootPath) {
       const res = await fetch(`${PROJECT_PATH}/root/${encodeURIComponent(rootPath)}`, {
         method: 'post',
+      });
+      return handleResponse(res);
+    },
+    async makeRecord(rootPath) {
+      const res = await fetch(`${PROJECT_PATH}/root/record/${encodeURIComponent(rootPath)}`, {
+        method: 'put',
       });
       return handleResponse(res);
     },

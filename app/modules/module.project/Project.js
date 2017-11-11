@@ -62,7 +62,7 @@ class ProjectModule extends Component {
       this.setState({
         loading: true
       });
-      Promise.all([this.props.getPkginfo(rootPath), this.props.getEnvData(rootPath)]).then(()=> {
+      this.props.getPkginfo(rootPath).then(()=> {
         this.setState({
           loading: false
         });
@@ -199,7 +199,7 @@ class ProjectModule extends Component {
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
   render() {
-    const { rootPath, setRootPath, getEnvData, service, getPkginfo, pkg } = this.props;
+    const { rootPath, setRootPath, getEnvData, getPkginfo, pkg } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Content>

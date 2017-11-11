@@ -6,11 +6,14 @@ import { combineReducers } from 'redux';
 import { createActions, handleActions, handleAction } from 'redux-actions';
 import moment from 'moment';
 
+import DASHBOARD_API from '../../apis/dashboard';
 import { WEATHER_APPID } from '../../CONFIG';
 
 const defaultState = {
   base: {},
-  projects: {},
+  projects: {
+    list: [],
+  },
 };
 
 export const actions = createActions({
@@ -33,6 +36,12 @@ export const actions = createActions({
       };
     },
   },
+  PROJECTS: {
+    GET_LIST: async () => {
+      const { docs } = await DASHBOARD_API.projects.getList();
+      return docs;
+    },
+  },
 });
 
 const baseReducer = handleActions({
@@ -52,7 +61,12 @@ const baseReducer = handleActions({
 }, defaultState.base);
 
 const projectsReducer = handleActions({
-
+  'PROJECTS/GET_LIST': (state, { payload }) => {
+    return {
+      ...state,
+      list: payload,
+    };
+  }
 }, defaultState.projects);
 
 export default combineReducers({

@@ -26,7 +26,10 @@ const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
 export const actions = createActions({
   ENV: {
-    SET_ROOT_PATH: rootPath => rootPath,
+    SET_ROOT_PATH: rootPath => {
+      PROJECT_API.root.makeRecord(rootPath);
+      return rootPath;
+    },
     GET_ENV: async rootPath => {
       const { pkg, config } = await PROJECT_API.root.post(rootPath);
       return {

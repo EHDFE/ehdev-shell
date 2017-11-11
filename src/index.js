@@ -24,6 +24,7 @@ module.exports = (PORT, webContent) => {
   const USERDATA_PATH = app.getPath('userData');
   const DB_LIST = [
     'upload',
+    'project',
   ];
   APP.db = {};
   DB_LIST.forEach(name => {

@@ -8,20 +8,20 @@ const PROJECT_PATH = '/api/project';
 
 const PROJECT_API = {
   root: {
-    async put(rootPath) {
+    async post(rootPath) {
       const res = await fetch(`${PROJECT_PATH}/root/${encodeURIComponent(rootPath)}`, {
-        method: 'put',
+        method: 'post',
       });
       return handleResponse(res);
     },
-    async set(configs) {
+    async editConfig(configs) {
       const {rootPath, ...config} = configs;
       const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
         method: 'put',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: `config=${JSON.stringify(config)}`,
+        body: JSON.stringify(config),
       });
       return handleResponse(res, {
         successNotification: true,

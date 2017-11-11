@@ -15,11 +15,11 @@ class ProjectNpmAPI {
     const { rootPath, args, version, packages } = ctx.request.body;
     let packageList = '';
     if (packageName) {
-      packageList = `${packageName}@${version?version:'latest'}`;
+      packageList = `${packageName}@${version ? version : 'latest'}`;
     } else if (packages) {
       if (packages instanceof Array) {
         packages.forEach((d) => {
-          packageList += ` ${d.packageName}@${d.version?d.version:'latest'}`;
+          packageList += ` ${d.packageName}@${d.version ? d.version : 'latest'}`;
         });
       } else {
         packageList = '';
@@ -27,7 +27,7 @@ class ProjectNpmAPI {
     } else {
       packageList = '';
     }
-    const data =await Commander.run(`npm i ${packageList} ${args || ''}`, {
+    const data = await Commander.run(`npm i ${packageList} ${args || ''}`, {
       cwd: rootPath,
       parseResult: 'string',
       webContent: ctx.app.webContent,

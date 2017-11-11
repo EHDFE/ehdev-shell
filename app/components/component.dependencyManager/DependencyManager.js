@@ -29,7 +29,7 @@ class DependencyManager extends Component {
       const data = [];
       for (let i in pkg[key]) {
         data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i], {
-          dangerUpdate: pkgInfo.versions[i].outdated&&(pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
+          dangerUpdate: pkgInfo.versions[i].outdated && (pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
         }));
       }
       return {
@@ -38,16 +38,16 @@ class DependencyManager extends Component {
       };
     });
   };
-  
-  updatepkg = (record, index) => {   
+
+  updatepkg = (record, index) => {
     this.setState((prevState, props) => {
       let data =  [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
         dataSource: data
       };
-    }); 
-    this.installpkg(this.props.rootPath, [{packageName: record.packageName}], this.state.tab==='dependencies'?'--save':'--save-dev').then((data) => {
+    });
+    this.installpkg(this.props.rootPath, [{packageName: record.packageName}], this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
         Promise.all([this.props.getPkginfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
           message.success(`${record.packageName} has been updated!`);
@@ -62,7 +62,7 @@ class DependencyManager extends Component {
     this.setState({
       loading: true
     });
-    this.installpkg(this.props.rootPath, this.state.selectedRows, this.state.tab==='dependencies'?'--save':'--save-dev').then((data) => {
+    this.installpkg(this.props.rootPath, this.state.selectedRows, this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
         Promise.all([this.props.getPkginfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
           this.setState({
@@ -75,7 +75,7 @@ class DependencyManager extends Component {
     });
   }
   refresh = () => {
- 
+
   }
 
   installpkg =  (rootPath, packages, type) => {
@@ -87,7 +87,7 @@ class DependencyManager extends Component {
       body: JSON.stringify({
         rootPath,
         args: `${type}`,
-        packages   
+        packages
       })
     }).then((res) => res.json());
   }
@@ -98,7 +98,7 @@ class DependencyManager extends Component {
       return {
         dataSource: data
       };
-    }); 
+    });
     fetch(`/api/npm/uninstall/${record.packageName}`, {
       method: 'post',
       headers: {
@@ -106,7 +106,7 @@ class DependencyManager extends Component {
       },
       body: JSON.stringify({
         rootPath: this.props.rootPath,
-        args: this.state.tab==='dependencies'?'--save':'--save-dev'  
+        args: this.state.tab === 'dependencies' ? '--save' : '--save-dev'
       })
     }).then((res) => res.json()).then((data) => {
       if (data.success) {
@@ -123,7 +123,7 @@ class DependencyManager extends Component {
   componentWillReceiveProps() {
     this.filterData(this.state.tab);
   }
-  
+
   showModal = () =>{
     this.setState({
       modalVisible: true
@@ -140,7 +140,7 @@ class DependencyManager extends Component {
         this.setState({selectedRows});
       },
       getCheckboxProps: record => ({
-        disabled: !record.outdated 
+        disabled: !record.outdated
       })
     };
     const columns = [
@@ -172,7 +172,7 @@ class DependencyManager extends Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button type={record.dangerUpdate?'danger':'primary'}   disabled={!record.outdated}  onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
+              <Button type={record.dangerUpdate ? 'danger' : 'primary'}   disabled={!record.outdated}  onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
                 Update
               </Button>
               <Button type="danger" onClick={()=> this.uninstallpkg(record, index)  } loading={record.isDeleting}>

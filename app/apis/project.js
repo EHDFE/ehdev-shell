@@ -37,7 +37,7 @@ const PROJECT_API = {
   },
   pkg: {
     async outdated(packageName) {
-      const res = await fetch(`/api/npm/outdated/${packageName?packageName+'/':''}`, {
+      const res = await fetch(`/api/npm/outdated/${packageName ? packageName + '/' : ''}`, {
         method: 'post',
       });
       return handleResponse(res);

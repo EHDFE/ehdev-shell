@@ -213,7 +213,7 @@ class ProjectModule extends Component {
               value={rootPath}
             />
             <h3>
-              { pkg&&pkg.name || '请选择' }
+              { pkg && pkg.name || '请选择' }
               <Tooltip title={rootPath}>
                 <Icon
                   type="info-circle-o"

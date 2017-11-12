@@ -17,6 +17,7 @@ import styles from './index.less';
 class DashboardModule extends Component {
   static propTypes = {
     weather: PropTypes.object,
+    projectsRank: PropTypes.array,
     date: PropTypes.string,
     weekday: PropTypes.number,
     getWeather: PropTypes.func,
@@ -57,9 +58,15 @@ class DashboardModule extends Component {
     );
   }
   renderRecentsProjects() {
+    const { projectsRank } = this.props;
     return (
       <Card>
         <h3>最近项目</h3>
+        {
+          projectsRank.map(o => (
+            <div key={o._id}>{o.projectPath}</div>
+          ))
+        }
       </Card>
     );
   }
@@ -106,12 +113,17 @@ const projectsSelector = createSelector(
   dashboardPageSelector,
   state => state.projects,
 );
+const projectsRankSelector = createSelector(
+  projectsSelector,
+  state => state.list.slice(0).sort((a, b) => b.count - a.count),
+);
 
 const mapStateToProps = state => createSelector(
   baseSelector,
-  projectsSelector,
-  (base, projects) => ({
+  projectsRankSelector,
+  (base, projectsRank) => ({
     ...base,
+    projectsRank,
   }),
 );
 const mapDispatchToProps = dispatch => ({

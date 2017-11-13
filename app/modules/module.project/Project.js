@@ -43,6 +43,10 @@ class ProjectModule extends Component {
     getPkgInfo: PropTypes.func,
   }
 
+  state = {
+    defaultActiveKey: 'profile'
+  }
+
   componentDidMount() {
     this.getInitData();
   }
@@ -55,6 +59,7 @@ class ProjectModule extends Component {
   getInitData = () => {
     const { rootPath } = this.props;
     if (rootPath) {
+      this.props.getEnvData(rootPath);
       this.props.getPkgInfo(rootPath);
     }
   }
@@ -121,7 +126,7 @@ class ProjectModule extends Component {
     return <Setup {...setupProps}></Setup>;
   }
   renderPackageVersions() {
-    return <DependencyManager {...this.props}/>;
+    return <DependencyManager refresh={this.getInitData} {...this.props}/>;
   }
   renderActionBar() {
     const { service, config } = this.props;
@@ -187,6 +192,11 @@ class ProjectModule extends Component {
     ];
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
+  tabKey = (key) => {
+    this.setState({
+      defaultActiveKey: key
+    });
+  }
   render() {
     const { rootPath, setRootPath, pkg } = this.props;
     return (
@@ -212,7 +222,7 @@ class ProjectModule extends Component {
             </h3>
             { this.renderActionBar() }
           </div>
-          <Tabs defaultActiveKey="profile" animated={false}>
+          <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
             <TabPane tab="基础信息" key="profile">
               { this.renderProfile() }
             </TabPane>

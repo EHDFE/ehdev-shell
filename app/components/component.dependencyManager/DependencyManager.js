@@ -11,8 +11,9 @@ class DependencyManager extends Component {
     pkgInfo: PropTypes.object,
     pkg: PropTypes.object,
     rootPath: PropTypes.string,
-    getPkginfo: PropTypes.func,
+    getPkgInfo: PropTypes.func,
     getEnvData: PropTypes.func,
+    refresh: PropTypes.func,
   };
 
   state = {
@@ -29,7 +30,7 @@ class DependencyManager extends Component {
       const data = [];
       for (let i in pkg[key]) {
         data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i], {
-          dangerUpdate: pkgInfo.versions[i].outdated && (pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
+          dangerUpdate: pkgInfo.versions[i] && pkgInfo.versions[i].outdated && (pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
         }));
       }
       return {
@@ -49,7 +50,7 @@ class DependencyManager extends Component {
     });
     this.installpkg(this.props.rootPath, [{packageName: record.packageName}], this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
-        Promise.all([this.props.getPkginfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
           message.success(`${record.packageName} has been updated!`);
         });
       }
@@ -64,7 +65,7 @@ class DependencyManager extends Component {
     });
     this.installpkg(this.props.rootPath, this.state.selectedRows, this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
-        Promise.all([this.props.getPkginfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
           this.setState({
             loading: false,
             selectedRowKeys: []
@@ -73,9 +74,6 @@ class DependencyManager extends Component {
         });
       }
     });
-  }
-  refresh = () => {
-
   }
 
   installpkg =  (rootPath, packages, type) => {
@@ -110,7 +108,7 @@ class DependencyManager extends Component {
       })
     }).then((res) => res.json()).then((data) => {
       if (data.success) {
-        Promise.all([this.props.getPkginfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
           message.success(`${record.packageName} has been deleted!`);
         });
       }
@@ -197,7 +195,7 @@ class DependencyManager extends Component {
             Add New Dependency
           </Button>
         </div>
-        <AddDev visible={this.state.modalVisible}  hideModal={this.hideModal} installpck={this.installpkg} refresh={this.refresh} rootPath={this.props.rootPath} tab={this.state.tab}/>
+        <AddDev visible={this.state.modalVisible}  hideModal={this.hideModal} installpck={this.installpkg} refresh={this.props.refresh} rootPath={this.props.rootPath} tab={this.state.tab}/>
         <Table
           rowSelection={rowSelection}
           columns={columns}

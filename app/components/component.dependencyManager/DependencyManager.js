@@ -29,7 +29,7 @@ class DependencyManager extends Component {
       const { pkg, pkgInfo } = props;
       const data = [];
       for (let i in pkg[key]) {
-        data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i], {
+        data.push(Object.assign({ key: i, packageName: i }, pkgInfo.versions[i], {
           dangerUpdate: pkgInfo.versions[i] && pkgInfo.versions[i].outdated && (pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
         }));
       }
@@ -187,10 +187,10 @@ class DependencyManager extends Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button type={record.dangerUpdate ? 'danger' : 'primary'}   disabled={!record.outdated}  onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
+              <Button type={record.dangerUpdate ? 'danger' : 'primary'}   disabled={!record.outdated}  onClick={()=> this.updatepkg(record, index)  }   style={{ marginRight: '20px' }}>
                 Update
               </Button>
-              <Button type="danger" onClick={()=> this.uninstallpkg(record, index)  } loading={record.isDeleting}>
+              <Button type="danger" onClick={()=> this.uninstallpkg(record, index)  } >
                 Delete
               </Button>
             </div>

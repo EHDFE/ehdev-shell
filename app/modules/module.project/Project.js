@@ -44,7 +44,8 @@ class ProjectModule extends Component {
   }
 
   state = {
-    defaultActiveKey: 'profile'
+    defaultActiveKey: 'profile',
+    loading: false
   }
 
   componentDidMount() {
@@ -56,10 +57,21 @@ class ProjectModule extends Component {
       this.props.getPkgInfo(nextProps.rootPath);
     }
   }
-  getInitData = () => {
+  getInitData = (tag) => {
+    if (tag) {
+      this.setState({
+        loading: true
+      });
+    }
     const { rootPath } = this.props;
     if (rootPath) {
-      return Promise.all([this.props.getEnvData(rootPath), this.props.getPkgInfo(rootPath)]);
+      return Promise.all([this.props.getEnvData(rootPath), this.props.getPkgInfo(rootPath)]).then(()=> {
+        if (tag) {
+          this.setState({
+            loading: false
+          });
+        }
+      });
     }
   }
   handleStartServer = () => {
@@ -183,7 +195,7 @@ class ProjectModule extends Component {
       <button
         className={styles.Project__ActionBarButton}
         key={'update'}
-        onClick={this.getInitData}
+        onClick={()=>{this.getInitData('refresh');}}
       >
         <MdAutorenew size={22} />
           刷新
@@ -221,17 +233,19 @@ class ProjectModule extends Component {
             </h3>
             { this.renderActionBar() }
           </div>
-          <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
-            <TabPane tab="基础信息" key="profile">
-              { this.renderProfile() }
-            </TabPane>
-            <TabPane tab="运行配置" key="config">
-              { this.renderSetup() }
-            </TabPane>
-            <TabPane tab="依赖管理" key="versions">
-              { this.renderPackageVersions() }
-            </TabPane>
-          </Tabs>
+          <Spin spinning={this.state.loading}>
+            <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+              <TabPane tab="基础信息" key="profile">
+                { this.renderProfile() }
+              </TabPane>
+              <TabPane tab="运行配置" key="config">
+                { this.renderSetup() }
+              </TabPane>
+              <TabPane tab="依赖管理" key="versions">
+                { this.renderPackageVersions() }
+              </TabPane>
+            </Tabs>
+          </Spin>
         </Content>
       </Layout>
     );

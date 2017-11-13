@@ -15,7 +15,7 @@ const defaultState = {
 export const actions = createActions({
   USER: {
     GET: ()=>{
-      const user = window.localStorage.getItem('user')||{};
+      const user = window.localStorage.getItem('user') || {};
       return user;
     },
     SET: user=>user
@@ -29,7 +29,7 @@ const userReducer = handleActions({
       avatar, name
     };
   },
-  'USER/SET': (state, {payload={}})=>{
+  'USER/SET': (state, {payload = {}})=>{
     const {avatar, name} = payload;
     window.localStorage.setItem('user', JSON.stringify(payload));
     return {

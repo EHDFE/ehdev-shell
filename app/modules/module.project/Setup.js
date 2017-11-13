@@ -46,13 +46,13 @@ const colProps = {
   xl: 12,
 };
 
-const Config = ({config, getFieldDecorator, prefix=''})=>{
+const Config = ({config, getFieldDecorator, prefix = ''})=>{
   return (
     Object.keys(config).map(item=>{
 
       let field = item;
       if (prefix) {
-        field = prefix +'.'+ item;
+        field = prefix + '.' + item;
       }
 
       if (_.isPlainObject(config[item])) {
@@ -136,7 +136,7 @@ class Setup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fields: props.config||{}
+      fields: props.config || {}
     };
   }
 

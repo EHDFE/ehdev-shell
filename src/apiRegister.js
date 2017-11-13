@@ -19,6 +19,9 @@ const ServiceAPI = require('./models/service/');
 // Configer Model
 const ConfigerAPI = require('./models/configer/');
 
+// Dashboard Model
+const DashboardAPI = require('./models/dashboard/');
+
 const apiRouter = Router();
 
 const uploadList = new UploadListAPI();
@@ -50,7 +53,8 @@ const projectRouter = Router();
  * put => /project/root/
  */
 projectRouter
-  .put('/root/:rootPath', projectEnv.setRoot)
+  .post('/root/:rootPath', projectEnv.setRoot)
+  .put('/root/record/:rootPath', projectEnv.makeRecord)
   .put('/config/:rootPath', koaBody(), projectEnv.setConfig);
 
 // project npm router
@@ -59,6 +63,7 @@ const npmRouter = Router();
 npmRouter
   .post('/install/', koaBody(), projectNpm.install)
   .post('/install/:packageName', koaBody(), projectNpm.install)
+  .post('/uninstall/:packageName', koaBody(), projectNpm.uninstall)
   .post('/ls/', koaBody(), projectNpm.ls)
   .post('/ls/:packageName', koaBody(), projectNpm.ls)
   .post('/outdated/', koaBody(), projectNpm.outdated)
@@ -87,11 +92,19 @@ configerRouter
   .put('/config', koaBody(),  configer.upgrade)
   .delete('/config/:configName', configer.remove);
 
+// dashboard router
+const dashboardRouter = Router();
+const dashboard = new DashboardAPI();
+
+dashboardRouter
+  .get('/projects', dashboard.getProjectList);
+
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
 apiRouter.use('/project', projectRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
 apiRouter.use('/configer', configerRouter.routes(), configerRouter.allowedMethods());
+apiRouter.use('/dashboard', dashboardRouter.routes(), dashboardRouter.allowedMethods());
 
 module.exports = apiRouter;

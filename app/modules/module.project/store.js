@@ -26,16 +26,19 @@ const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
 export const actions = createActions({
   ENV: {
-    SET_ROOT_PATH: rootPath => rootPath,
+    SET_ROOT_PATH: rootPath => {
+      PROJECT_API.root.makeRecord(rootPath);
+      return rootPath;
+    },
     GET_ENV: async rootPath => {
-      const { pkg, config } = await PROJECT_API.root.put(rootPath);
+      const { pkg, config } = await PROJECT_API.root.post(rootPath);
       return {
         pkg,
         config,
       };
     },
     SET_ENV: async (configs) =>{
-      await PROJECT_API.root.set(configs);
+      await PROJECT_API.root.editConfig(configs);
     },
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);

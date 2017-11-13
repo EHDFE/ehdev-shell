@@ -2,19 +2,25 @@
  * project apis
  * @author ryan.bian
  */
-import { handleResponse, serialize } from './utils';
+import { handleResponse } from './utils';
 
 const PROJECT_PATH = '/api/project';
 
 const PROJECT_API = {
   root: {
-    async put(rootPath) {
+    async post(rootPath) {
       const res = await fetch(`${PROJECT_PATH}/root/${encodeURIComponent(rootPath)}`, {
+        method: 'post',
+      });
+      return handleResponse(res);
+    },
+    async makeRecord(rootPath) {
+      const res = await fetch(`${PROJECT_PATH}/root/record/${encodeURIComponent(rootPath)}`, {
         method: 'put',
       });
       return handleResponse(res);
     },
-    async set(configs) {
+    async editConfig(configs) {
       const {rootPath, ...config} = configs;
       const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
         method: 'put',
@@ -32,7 +38,7 @@ const PROJECT_API = {
   },
   pkg: {
     async outdated(packageName) {
-      const res = await fetch(`/api/npm/outdated/${packageName?packageName+'/':''}`, {
+      const res = await fetch(`/api/npm/outdated/${packageName ? packageName + '/' : ''}`, {
         method: 'post',
       });
       return handleResponse(res);

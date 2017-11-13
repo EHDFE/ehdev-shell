@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Table, Tabs, Button, message } from 'antd';
+import { Table, Tabs, Button, Spin, Form, message } from 'antd';
+import AddDev from '../component.addDev/';
 
 const TabPane = Tabs.TabPane;
 
@@ -10,60 +11,108 @@ class DependencyManager extends Component {
     pkgInfo: PropTypes.object,
     pkg: PropTypes.object,
     rootPath: PropTypes.string,
-    getPkginfo: PropTypes.func,
+    getPkgInfo: PropTypes.func,
     getEnvData: PropTypes.func,
+    refresh: PropTypes.func,
   };
 
   state = {
     dataSource: [],
     tab: 'dependencies',
-    selectedRows: []
+    selectedRows: [],
+    loading: false,
+    modalVisible: false
   };
 
   filterData = key => {
-    const { pkg, pkgInfo } = this.props;
-    const data = [];
-    for (let i in pkg[key]) {
-      data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i]));
-    }
-    this.setState({
-      dataSource: data,
-      tab: key
+    this.setState((prevState, props) => {
+      const { pkg, pkgInfo } = props;
+      const data = [];
+      for (let i in pkg[key]) {
+        data.push(Object.assign({ key: i, packageName: i, isUpdating: false, isDeleting: false }, pkgInfo.versions[i], {
+          dangerUpdate: pkgInfo.versions[i] && pkgInfo.versions[i].outdated && (pkgInfo.versions[i].current.split('.')[0] !== pkgInfo.versions[i].latest.split('.')[0])
+        }));
+      }
+      return {
+        dataSource: data,
+        tab: key
+      };
     });
   };
-  
-  updatepkg = (record, index) => {   
+
+  updatepkg = (record, index) => {
     this.setState((prevState, props) => {
       let data =  [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
         dataSource: data
       };
-    }); 
-    this.installpkg(this.props.rootPath, [record.packageName], '--save').then((data) => {
+    });
+    this.installpkg(this.props.rootPath, [{packageName: record.packageName}], this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
-        message.success(`${record.packageName} has been updated!`);
-        this.props.getPkginfo(this.props.rootPath);
-        this.props.getEnvData(this.props.rootPath);
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+          message.success(`${record.packageName} has been updated!`);
+        });
+      }
+    });
+  }
+  batchUpdate = () => {
+    if (!this.state.selectedRows) {
+      return;
+    }
+    this.setState({
+      loading: true
+    });
+    this.installpkg(this.props.rootPath, this.state.selectedRows, this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
+      if (data.success) {
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+          this.setState({
+            loading: false,
+            selectedRowKeys: []
+          });
+          message.success('All selected packages have been updated!');
+        });
       }
     });
   }
 
   installpkg =  (rootPath, packages, type) => {
-    let packageName;
-    if (packages&&packages.length === 1) {
-      packageName = packages;
-    }
-    return fetch(`/api/npm/install/${packageName?packageName+'/':''}`, {
+    return fetch('/api/npm/install', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         rootPath,
-        args: `${packages.join(' ')} ${type}`   
+        args: `${type}`,
+        packages
       })
     }).then((res) => res.json());
+  }
+  uninstallpkg =  (record, index) => {
+    this.setState((prevState, props) => {
+      let data =  [...prevState.dataSource];
+      data[index]['isDeleting'] = true;
+      return {
+        dataSource: data
+      };
+    });
+    fetch(`/api/npm/uninstall/${record.packageName}`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        rootPath: this.props.rootPath,
+        args: this.state.tab === 'dependencies' ? '--save' : '--save-dev'
+      })
+    }).then((res) => res.json()).then((data) => {
+      if (data.success) {
+        Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+          message.success(`${record.packageName} has been deleted!`);
+        });
+      }
+    });
   }
 
   componentDidMount() {
@@ -73,13 +122,23 @@ class DependencyManager extends Component {
     this.filterData(this.state.tab);
   }
 
+  showModal = () =>{
+    this.setState({
+      modalVisible: true
+    });
+  }
+  hideModal = () =>{
+    this.setState({
+      modalVisible: false
+    });
+  }
   render() {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         this.setState({selectedRows});
       },
       getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User' // Column configuration not to be checked
+        disabled: !record.outdated
       })
     };
     const columns = [
@@ -111,10 +170,10 @@ class DependencyManager extends Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button type="primary" onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
+              <Button type={record.dangerUpdate ? 'danger' : 'primary'}   disabled={!record.outdated}  onClick={()=> this.updatepkg(record, index)  } loading={record.isUpdating}  style={{ marginRight: '20px' }}>
                 Update
               </Button>
-              <Button type="danger" loading={record.isDeleting}>
+              <Button type="danger" onClick={()=> this.uninstallpkg(record, index)  } loading={record.isDeleting}>
                 Delete
               </Button>
             </div>
@@ -123,25 +182,26 @@ class DependencyManager extends Component {
       }
     ];
     return (
-      <div>
+      <Spin spinning={this.state.loading}>
         <Tabs onChange={this.filterData} type="card">
           <TabPane tab="Dependencies" key="dependencies" />
           <TabPane tab="Dev Dependencies" key="devDependencies" />
         </Tabs>
         <div style={{ marginBottom: '10px' }}>
-          <Button type="primary">
+          <Button type="primary" onClick={this.batchUpdate}>
             Batch Update
           </Button>
-          <Button type="primary" style={{ float: 'right' }}>
+          <Button type="primary" onClick={this.showModal} style={{ float: 'right' }}>
             Add New Dependency
           </Button>
         </div>
+        <AddDev visible={this.state.modalVisible}  hideModal={this.hideModal} installpck={this.installpkg} refresh={this.props.refresh} rootPath={this.props.rootPath} tab={this.state.tab}/>
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={this.state.dataSource}
         />
-      </div>
+      </Spin>
     );
   }
 }

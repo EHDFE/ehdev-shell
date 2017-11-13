@@ -92,6 +92,9 @@ module.exports = {
         if (config.parseResult) {
           if (config.parseResult === 'json') {
             try {
+              if ( res === '') {
+                res = '{}';
+              }
               resolve(JSON.parse(res));
             } catch (e) {
               reject(e);

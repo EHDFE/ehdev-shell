@@ -40,11 +40,11 @@ class ProjectModule extends Component {
     startBuilder: PropTypes.func,
     stopBuilder: PropTypes.func,
     getOutdated: PropTypes.func,
-    getPkginfo: PropTypes.func,
+    getPkgInfo: PropTypes.func,
   }
 
   state = {
-    Loading: true
+    defaultActiveKey: 'profile'
   }
 
   componentDidMount() {
@@ -53,20 +53,14 @@ class ProjectModule extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.rootPath && (nextProps.rootPath !== this.props.rootPath)) {
       this.props.getEnvData(nextProps.rootPath);
+      this.props.getPkgInfo(nextProps.rootPath);
     }
-
   }
   getInitData = () => {
     const { rootPath } = this.props;
     if (rootPath) {
-      this.setState({
-        loading: true
-      });
-      Promise.all([this.props.getPkginfo(rootPath), this.props.getEnvData(rootPath)]).then(()=> {
-        this.setState({
-          loading: false
-        });
-      });
+      this.props.getEnvData(rootPath);
+      this.props.getPkgInfo(rootPath);
     }
   }
   handleStartServer = () => {
@@ -132,7 +126,7 @@ class ProjectModule extends Component {
     return <Setup {...setupProps}></Setup>;
   }
   renderPackageVersions() {
-    return <DependencyManager {...this.props}/>;
+    return <DependencyManager refresh={this.getInitData} {...this.props}/>;
   }
   renderActionBar() {
     const { service, config } = this.props;
@@ -198,8 +192,13 @@ class ProjectModule extends Component {
     ];
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
+  tabKey = (key) => {
+    this.setState({
+      defaultActiveKey: key
+    });
+  }
   render() {
-    const { rootPath, setRootPath, getEnvData, service, getPkginfo, pkg } = this.props;
+    const { rootPath, setRootPath, pkg } = this.props;
     return (
       <Layout className={styles.Project__Layout}>
         <Content>
@@ -207,13 +206,11 @@ class ProjectModule extends Component {
             <FolderPicker
               onChange={value => {
                 setRootPath(value);
-                getPkginfo(value);
-                getEnvData(value);
               }}
               value={rootPath}
             />
             <h3>
-              { pkg&&pkg.name || '请选择' }
+              { pkg && pkg.name || '请选择' }
               <Tooltip title={rootPath}>
                 <Icon
                   type="info-circle-o"
@@ -225,19 +222,17 @@ class ProjectModule extends Component {
             </h3>
             { this.renderActionBar() }
           </div>
-          <Spin tip="Loading..." spinning={this.state.loading}>
-            <Tabs defaultActiveKey="profile" animated={false}>
-              <TabPane tab="基础信息" key="profile">
-                { this.renderProfile() }
-              </TabPane>
-              <TabPane tab="运行配置" key="config">
-                { this.renderSetup() }
-              </TabPane>
-              <TabPane tab="依赖管理" key="versions">
-                { this.renderPackageVersions() }
-              </TabPane>
-            </Tabs>
-          </Spin>
+          <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+            <TabPane tab="基础信息" key="profile">
+              { this.renderProfile() }
+            </TabPane>
+            <TabPane tab="运行配置" key="config">
+              { this.renderSetup() }
+            </TabPane>
+            <TabPane tab="依赖管理" key="versions">
+              { this.renderPackageVersions() }
+            </TabPane>
+          </Tabs>
         </Content>
       </Layout>
     );
@@ -272,7 +267,7 @@ const mapDispatchToProps = dispatch => ({
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
   stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
   getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
-  getPkginfo: rootPath => dispatch(actions.env.getPkginfo(rootPath))
+  getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath))
 });
 
 export default connect(

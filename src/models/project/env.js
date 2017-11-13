@@ -23,10 +23,39 @@ class ProjectEnvAPI {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
+  /**
+   * record the project for statistics usage
+   */
+  async makeRecord(ctx) {
+    const { rootPath } = ctx.params;
+    // insert project to db
+    await new Promise(resolve => {
+      ctx.app.db.project.update(
+        {
+          projectPath: rootPath,
+        },
+        {
+          $inc: {
+            count: 1,
+          },
+        },
+        { upsert: true },
+        (err, newDoc) => {
+          if (err) {
+            ctx.body = ctx.app.responser(err.toString(), false);
+          } else {
+            ctx.body = ctx.app.responser({
+              newDoc,
+            }, true);
+          }
+          resolve();
+        });
+    });
+  }
 
   async setConfig(ctx) {
     const { rootPath } = ctx.params;
-    const config  = ctx.request.body;
+    const config = ctx.request.body;
     try {
       let configStr = JSON.stringify(config, null, '\t');
       await writeJSON(path.join(rootPath, 'abc.json'), configStr);

@@ -62,7 +62,7 @@ class User extends Component {
 
   normFile = (e) => {
     this.uploadAvatar(e);
-    if (e&&e.file&&e.file.response) {
+    if (e && e.file && e.file.response) {
       return e.file.response.data;
     }
   }
@@ -84,7 +84,7 @@ class User extends Component {
 
   render() {
     const {avatar, name} = this.props.user;
-    const imgUrl = this.state.imgUrl||avatar;
+    const imgUrl = this.state.imgUrl || avatar;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 6 },

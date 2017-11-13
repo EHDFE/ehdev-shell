@@ -15,7 +15,7 @@ const defaultState = {
 export const actions = createActions({
   USER: {
     GET: ()=>{
-      const user = window.localStorage.getItem('user') || {};
+      const user = window.localStorage.getItem('user') || '{}';
       return user;
     },
     SET: user=>user

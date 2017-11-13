@@ -7,6 +7,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
+import { actions } from '../../modules/module.user/store';
 import { Layout, Menu, Icon, Avatar } from 'antd/es/';
 
 import styles from './index.less';
@@ -22,6 +24,11 @@ class SiderBar extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
   }
+  componentDidMount() {
+    const { getUserInfo } = this.props;
+    getUserInfo();
+  }
+
   state = {
     collapsed: true,
     selectedKey: null,
@@ -106,11 +113,16 @@ const mapStateToProps = state => ({
   user: state['page.user'].user
 });
 
+const mapDispatchToProps = dispatch => ({
+  getUserInfo: () => dispatch(actions.user.get()),
+});
+
 SiderBar.propTypes = {
   user: PropTypes.object,
+  getUserInfo: PropTypes.func,
 };
 
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(SiderBar);

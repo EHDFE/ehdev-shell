@@ -44,10 +44,6 @@ class User extends Component {
   }
 
   componentDidMount() {
-    // const {avatar, name} = window.localStorage;
-    // this.setState({
-    //   avatar, name
-    // });
     const {getUserInfo} = this.props;
     getUserInfo();
   }

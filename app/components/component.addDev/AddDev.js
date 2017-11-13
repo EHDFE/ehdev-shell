@@ -23,14 +23,6 @@ class AddDev extends React.Component {
     packageName: '',
     version: ''
   }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.visible) {
-      this.setState({
-        packageName: '',
-        version: ''
-      });
-    }
-  }
   handleOk = () => {
     this.setState({
       confirmLoading: true,
@@ -39,6 +31,8 @@ class AddDev extends React.Component {
       this.props.refresh().then(() => {
         this.setState({
           confirmLoading: false,
+          packageName: '',
+          version: ''
         });
         this.props.hideModal();
       });

@@ -39,18 +39,31 @@ class DependencyManager extends Component {
       };
     });
   };
-
+  refresh = () => {
+    this.setState({
+      loading: true
+    });
+    return this.props.refresh().then(() => {
+      this.setState({
+        loading: false 
+      });
+    });
+  }
   updatepkg = (record, index) => {
     this.setState((prevState, props) => {
       let data =  [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
-        dataSource: data
+        dataSource: data,
+        loading: true
       };
     });
     this.installpkg(this.props.rootPath, [{packageName: record.packageName}], this.state.tab === 'dependencies' ? '--save' : '--save-dev').then((data) => {
       if (data.success) {
         Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+          this.setState({
+            loading: false
+          });
           message.success(`${record.packageName} has been updated!`);
         });
       }
@@ -94,7 +107,8 @@ class DependencyManager extends Component {
       let data =  [...prevState.dataSource];
       data[index]['isDeleting'] = true;
       return {
-        dataSource: data
+        dataSource: data,
+        loading: true
       };
     });
     fetch(`/api/npm/uninstall/${record.packageName}`, {
@@ -109,6 +123,9 @@ class DependencyManager extends Component {
     }).then((res) => res.json()).then((data) => {
       if (data.success) {
         Promise.all([this.props.getPkgInfo(this.props.rootPath), this.props.getEnvData(this.props.rootPath)]).then(() => {
+          this.setState({
+            loading: false
+          });
           message.success(`${record.packageName} has been deleted!`);
         });
       }
@@ -195,7 +212,7 @@ class DependencyManager extends Component {
             Add New Dependency
           </Button>
         </div>
-        <AddDev visible={this.state.modalVisible}  hideModal={this.hideModal} installpck={this.installpkg} refresh={this.props.refresh} rootPath={this.props.rootPath} tab={this.state.tab}/>
+        <AddDev visible={this.state.modalVisible}  hideModal={this.hideModal} installpck={this.installpkg} refresh={this.refresh} rootPath={this.props.rootPath} tab={this.state.tab}/>
         <Table
           rowSelection={rowSelection}
           columns={columns}

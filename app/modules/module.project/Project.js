@@ -59,8 +59,7 @@ class ProjectModule extends Component {
   getInitData = () => {
     const { rootPath } = this.props;
     if (rootPath) {
-      this.props.getEnvData(rootPath);
-      this.props.getPkgInfo(rootPath);
+      return Promise.all([this.props.getEnvData(rootPath), this.props.getPkgInfo(rootPath)]);
     }
   }
   handleStartServer = () => {

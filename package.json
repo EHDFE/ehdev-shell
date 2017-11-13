@@ -20,6 +20,7 @@
     "koa-views": "^6.1.1",
     "nedb": "^1.8.0",
     "nunjucks": "^3.0.1",
+    "stats-webpack-plugin": "^0.6.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
   },

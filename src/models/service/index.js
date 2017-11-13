@@ -26,6 +26,17 @@ class ServiceAPI {
         SHELL_NODE_MODULES_PATH,
       },
     });
+    ctx.app.db.project.update(
+      {
+        projectPath: root,
+      },
+      {
+        $inc: {
+          serverStartCount: 1,
+        },
+      },
+      { upsert: true }
+    );
     ctx.body = ctx.app.responser({
       pid,
     }, true);
@@ -58,6 +69,17 @@ class ServiceAPI {
         SHELL_NODE_MODULES_PATH,
       },
     });
+    ctx.app.db.project.update(
+      {
+        projectPath: root,
+      },
+      {
+        $inc: {
+          serverBuildCount: 1,
+        },
+      },
+      { upsert: true }
+    );
     ctx.body = ctx.app.responser({
       pid,
     }, true);

@@ -1,10 +1,16 @@
 .Dashboard {
   &__Container {
     display: grid;
+    grid-template-rows: 120px 200px 200px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
   }
   &__Summary {
     display: flex;
     justify-content: space-between;
+
+    grid-row: ~"1 / 2";
+    grid-column: ~"1 / 4";
 
     &Date {
 
@@ -20,6 +26,10 @@
     &Tempture {
       font-size: 24px;
     }
+  }
+  &__BuildResult {
+    grid-row: ~"3 / 4";
+    grid-column: ~"1 / 4";
   }
 }
 

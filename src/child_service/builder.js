@@ -14,6 +14,7 @@ const {
 
 const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
+const StatsPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'stats-webpack-plugin'));
 
 getProdConfig(projectConfig)
   .then(webpackConfig => {
@@ -34,6 +35,15 @@ getProdConfig(projectConfig)
           })
         );
       }
+      webpackConfig.plugins.push(
+        new StatsPlugin(
+          path.join(PROJECT_ROOT, 'stats.json'),
+          'verbose'
+        ),
+      );
+      Object.assign(webpackConfig, {
+        profile: true,
+      });
       const compiler = Webpack(webpackConfig);
 
       compiler.run((err, stats) => {

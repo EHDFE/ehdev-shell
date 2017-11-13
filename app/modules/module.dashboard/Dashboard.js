@@ -62,11 +62,13 @@ class DashboardModule extends Component {
     return (
       <Card>
         <h3>最近项目</h3>
-        {
-          projectsRank.map(o => (
-            <div key={o._id}>{o.projectPath}</div>
-          ))
-        }
+        <ul>
+          {
+            projectsRank.map(o => (
+              <li key={o._id}>{o.projectPath}</li>
+            ))
+          }
+        </ul>
       </Card>
     );
   }
@@ -86,7 +88,7 @@ class DashboardModule extends Component {
   }
   renderLastBuildStats() {
     return (
-      <Card>
+      <Card className={styles.Dashboard__BuildResult}>
         <h3>上次构建分析</h3>
       </Card>
     );

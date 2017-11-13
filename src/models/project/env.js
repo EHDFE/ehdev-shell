@@ -26,10 +26,9 @@ class ProjectEnvAPI {
 
   async setConfig(ctx) {
     const { rootPath } = ctx.params;
-    const { config } = ctx.request.body;
+    const config  = ctx.request.body;
     try {
-      let configObj = JSON.parse(config);
-      let configStr = JSON.stringify(configObj, null, '\t');
+      let configStr = JSON.stringify(config, null, '\t');
       await writeJSON(path.join(rootPath, 'abc.json'), configStr);
       ctx.body = ctx.app.responser('修改成功', true);
     } catch (e) {

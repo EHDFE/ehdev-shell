@@ -8,7 +8,6 @@ import { Form, Select, Input, Switch, Button, Row, Col } from 'antd';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import styles from './index.less';
 
@@ -49,7 +48,7 @@ const colProps = {
 
 const Config = ({config, getFieldDecorator, prefix=''})=>{
   return (
-    Object.keys(config).map((item, index)=>{
+    Object.keys(config).map(item=>{
 
       let field = item;
       if (prefix) {

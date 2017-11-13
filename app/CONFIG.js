@@ -25,6 +25,11 @@ export const GLOBAL_NAV_CONFIG = [
     icon: 'api',
     text: '引擎库',
   },
+  {
+    to: '/user',
+    icon: 'user',
+    text: '个人中心',
+  },
 ];
 
 export const GREETING_WORDS = new Map([

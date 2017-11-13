@@ -19,13 +19,14 @@ const PROJECT_API = {
       const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
         method: 'put',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: `config=${JSON.stringify(config)}`,
+        body: JSON.stringify(config),
       });
       return handleResponse(res, {
+        errorNotification: true,
         successNotification: true,
-        successMsg: '更新成功！',
+        successMsg: '更新成功!',
       });
     }
   },

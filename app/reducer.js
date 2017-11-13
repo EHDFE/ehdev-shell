@@ -9,6 +9,7 @@ import { DashboardReducer } from './modules/module.dashboard/';
 import { UploadReducer } from './modules/module.upload/';
 import { ConfigerReducer } from './modules/module.configer/';
 import { ConsoleReducer } from './modules/module.console/';
+import { UserReducer } from './modules/module.user/';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   'page.upload': UploadReducer,
   'page.configer': ConfigerReducer,
   'page.console': ConsoleReducer,
+  'page.user': UserReducer,
 });
 
 export default reducer;

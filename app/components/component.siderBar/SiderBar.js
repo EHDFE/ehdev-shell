@@ -4,6 +4,7 @@
  */
 import React, { Component, createElement } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Layout, Menu, Icon, Avatar } from 'antd/es/';
@@ -16,7 +17,7 @@ const { Sider } = Layout;
 const { Item } = Menu;
 
 @withRouter
-export default class SiderBar extends Component {
+class SiderBar extends Component {
   static __ANT_LAYOUT_SIDER = true
   static propTypes = {
     history: PropTypes.object.isRequired,
@@ -64,6 +65,8 @@ export default class SiderBar extends Component {
   render() {
     const { history } = this.props;
     const { collapsed, selectedKey } = this.state;
+    // const {user} = this.props
+    const {avatar} = this.props.user;
     return (
       <Sider
         collapsible
@@ -77,7 +80,7 @@ export default class SiderBar extends Component {
           className={styles.SiderBar__avatar}
           onClick={this.backToHome}
         >
-          <Avatar icon="user" size={collapsed ? 'default' : 'large'} />
+          <Avatar src={avatar} icon="user" size={collapsed ? 'default' : 'large'} />
         </button>
         <Menu
           mode="inline"
@@ -98,3 +101,16 @@ export default class SiderBar extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  user: state['page.user'].user
+});
+
+SiderBar.propTypes = {
+  user: PropTypes.object,
+};
+
+export default connect(
+  mapStateToProps,
+  null,
+)(SiderBar);

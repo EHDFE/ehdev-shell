@@ -14,7 +14,7 @@ const monitorReducer = (state = {}, action) => state;
 
 const enhancer = compose(
   applyMiddleware(promiseMiddleware, logger),
-  persistState(['page.project', 'page.console']),
+  persistState(['page.project', 'page.console', 'page.user']),
   DevTools.instrument(monitorReducer, {
     maxAge: 50,
     shouldCatchErrors: true,

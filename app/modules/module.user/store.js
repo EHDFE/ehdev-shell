@@ -14,24 +14,14 @@ const defaultState = {
 
 export const actions = createActions({
   USER: {
-    GET: ()=>{
-      const user = window.localStorage.getItem('user') || '{}';
-      return user;
-    },
     SET: user=>user
   }
 });
 
 const userReducer = handleActions({
-  'USER/GET': (state, {payload})=>{
-    const {avatar, name} = JSON.parse(payload);
-    return {
-      avatar, name
-    };
-  },
   'USER/SET': (state, {payload = {}})=>{
     const {avatar, name} = payload;
-    window.localStorage.setItem('user', JSON.stringify(payload));
+    // window.localStorage.setItem('user', JSON.stringify(payload));
     return {
       avatar, name
     };

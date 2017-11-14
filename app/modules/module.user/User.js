@@ -33,19 +33,12 @@ function beforeUpload(file) {
   return isIMG && isLt2M;
 }
 
-
-
 class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
       imgUrl: '',
     };
-  }
-
-  componentDidMount() {
-    const {getUserInfo} = this.props;
-    getUserInfo();
   }
 
   uploadAvatar = (info) => {
@@ -158,14 +151,12 @@ const mapStateToProps = state =>createSelector(
   }),
 );
 const mapDispatchToProps = dispatch => ({
-  getUserInfo: () => dispatch(actions.user.get()),
   setUserInfo: user => dispatch(actions.user.set(user)),
 });
 
 User.propTypes = {
   form: PropTypes.object,
   user: PropTypes.object,
-  getUserInfo: PropTypes.func,
   setUserInfo: PropTypes.func,
 };
 

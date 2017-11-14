@@ -24,10 +24,6 @@ class SiderBar extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
   }
-  componentDidMount() {
-    const { getUserInfo } = this.props;
-    getUserInfo();
-  }
 
   state = {
     collapsed: true,
@@ -113,16 +109,11 @@ const mapStateToProps = state => ({
   user: state['page.user'].user
 });
 
-const mapDispatchToProps = dispatch => ({
-  getUserInfo: () => dispatch(actions.user.get()),
-});
-
 SiderBar.propTypes = {
   user: PropTypes.object,
-  getUserInfo: PropTypes.func,
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(SiderBar);

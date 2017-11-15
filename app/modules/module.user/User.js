@@ -65,6 +65,10 @@ class User extends Component {
         // const { avatar, name} = values;
         // window.localStorage.setItem('avatar', avatar);
         // window.localStorage.setItem('name', name);
+        const avatar = this.state.imgUrl;
+        if (avatar) {
+          values.avatar = avatar;
+        }
         setUserInfo(values);
         message.success('Update success!');
       }

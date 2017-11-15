@@ -133,8 +133,9 @@ class ProjectModule extends Component {
           onSubmit: this.handleUpdateConfig,
         },
       );
+      return <Setup {...setupProps}></Setup>;
     }
-    return <Setup {...setupProps}></Setup>;
+    return null;
   }
   renderPackageVersions() {
     return <DependencyManager refresh={this.getInitData} {...this.props}/>;
@@ -152,7 +153,7 @@ class ProjectModule extends Component {
         构建
       </button>
     );
-    if (config.dll && config.dll.enable) {
+    if (config && config.dll && config.dll.enable) {
       buildButton = (
         <Dropdown overlay={
           <Menu>

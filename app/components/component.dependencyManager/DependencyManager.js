@@ -28,7 +28,7 @@ class DependencyManager extends Component {
     this.setState((prevState, props) => {
       const { pkg, pkgInfo } = props;
       const data = [];
-      for (let i in pkg[key]) {
+      for (let i in pkg && pkg[key]) {
         const d = pkgInfo.versions[i];
         data.push(
           Object.assign({ key: i, packageName: i }, d, {
@@ -265,13 +265,14 @@ class DependencyManager extends Component {
           <TabPane tab="Dev Dependencies" key="devDependencies" />
         </Tabs>
         <div style={{ marginBottom: '10px' }}>
-          <Button type="primary" onClick={this.batchUpdate}>
+          <Button type="primary" onClick={ this.batchUpdate } disabled = {!this.props.pkg }>
             Batch Update
           </Button>
           <Button
             type="primary"
             onClick={this.showModal}
             style={{ float: 'right' }}
+            disabled = {!this.props.pkg }
           >
             Add New Dependency
           </Button>

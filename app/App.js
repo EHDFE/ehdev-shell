@@ -24,6 +24,7 @@ import { UserModule } from './modules/module.user';
 const App = () => (
   <BrowserRouter basename="/">
     <Layout>
+      <Route exact path="/" component={DashboardModule}/>
       <Route exact path="/dashboard" component={DashboardModule}/>
       <Route path="/project" component={ProjectModule}/>
       <Route path="/upload" component={UploadModule}/>

@@ -83,7 +83,7 @@ class SiderBar extends Component {
           className={styles.SiderBar__avatar}
           onClick={this.backToHome}
         >
-          <Avatar src={avatar} icon="user" size={collapsed ? 'default' : 'large'} />
+          <Avatar src={avatar} icon="user" size={(collapsed && this.state.selectedKey) ? 'default' : 'large'} />
         </button>
         <Menu
           mode="inline"

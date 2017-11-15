@@ -62,7 +62,7 @@ class DashboardModule extends Component {
     return (
       <Card>
         <h3>最近项目</h3>
-        <ul>
+        <ul className={styles.Dashboard__ProjectRankList}>
           {
             projectsRank.map(o => (
               <li key={o._id}>{o.projectPath}</li>

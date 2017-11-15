@@ -14,10 +14,14 @@ Terminal.loadAddon('fit');
 
 export default class Console extends Component {
   static defaultProps = {
+    defaultValue: '',
     value: '',
+    updateTimeStamp: undefined,
   }
   static propTypes = {
+    defaultValue: PropTypes.string,
     value: PropTypes.string,
+    updateTimeStamp: PropTypes.number,
   }
   constructor(props) {
     super(props);
@@ -30,13 +34,12 @@ export default class Console extends Component {
       cols: 30,
     });
     this.terminal.open(this.root);
-    this.terminal.writeln(this.props.value);
+    this.terminal.writeln(this.props.defaultValue);
     window.addEventListener('resize', this.resize, false);
     this.resize();
-
   }
   componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
+    if (this.props.updateTimeStamp !== nextProps.updateTimeStamp) {
       this.terminal.write(nextProps.value);
     }
   }

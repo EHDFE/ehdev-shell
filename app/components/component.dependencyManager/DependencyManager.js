@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Table, Tabs, Button, Spin, Form, message } from 'antd';
+import { Table, Tabs, Button, Spin, notification, message, Icon } from 'antd';
 import AddDev from '../component.addDev/';
 
 const TabPane = Tabs.TabPane;
@@ -64,7 +64,16 @@ class DependencyManager extends Component {
           this.setState({
             loading: false
           });
-          message.success(`${record.packageName} has been updated!`);
+          notification['success']({
+            message: 'SUCCESS',
+            description: `${record.packageName} has been updated!`,
+          });
+        });
+      } else {
+        notification['error']({
+          message: 'ERROR MESSAGE',
+          description: data.errorMsg,
+          duration: null,
         });
       }
     });
@@ -83,7 +92,16 @@ class DependencyManager extends Component {
             loading: false,
             selectedRowKeys: []
           });
-          message.success('All selected packages have been updated!');
+          notification['success']({
+            message: 'SUCCESS',
+            description: 'All selected packages have been updated!',
+          });
+        });
+      } else {
+        notification['error']({
+          message: 'ERROR MESSAGE',
+          description: data.errorMsg,
+          duration: null,
         });
       }
     });
@@ -126,7 +144,16 @@ class DependencyManager extends Component {
           this.setState({
             loading: false
           });
-          message.success(`${record.packageName} has been deleted!`);
+          notification['success']({
+            message: 'SUCCESS',
+            description: `${record.packageName} has been deleted!`,
+          });
+        });
+      } else {
+        notification['error']({
+          message: 'ERROR MESSAGE',
+          description: data.errorMsg,
+          duration: null,
         });
       }
     });

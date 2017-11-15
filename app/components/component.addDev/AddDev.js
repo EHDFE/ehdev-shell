@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Modal, Button, Form, Icon, Input,  Checkbox, message } from 'antd';
+import { Modal, Button, Form, Icon, Input, notification, message } from 'antd';
 
 class AddDev extends React.Component {
   static propTypes = {
@@ -27,15 +27,34 @@ class AddDev extends React.Component {
     this.setState({
       confirmLoading: true,
     });  
-    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then(()=>{
-      this.props.refresh().then(() => {
+    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then((data)=>{
+      if ( data.success) {
+        this.props.refresh().then(() => {
+          notification['success']({
+            message: 'SUCCESS',
+            description: `${this.state.packageName} has been installed`,
+          });
+          this.setState({
+            confirmLoading: false,
+            packageName: '',
+            version: ''
+          });
+          this.props.hideModal();
+        });
+      } else {
         this.setState({
           confirmLoading: false,
           packageName: '',
           version: ''
         });
         this.props.hideModal();
-      });
+        notification['error']({
+          message: 'ERROR MESSAGE',
+          description: data.errorMsg,
+          duration: null,
+        });
+      }
+
     });
   }
   handleCancel = () => {

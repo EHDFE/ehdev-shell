@@ -94,7 +94,7 @@ module.exports = {
             try {
               resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
             } catch (e) {
-              reject(e);
+              reject(res.toString());
             }
           } else {
             resolve(res.toString());

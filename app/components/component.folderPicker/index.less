@@ -1,0 +1,36 @@
+@import '~antd/es/style/themes/default.less';
+
+.FolderPicker {
+  display: flex;
+  align-items: center;
+
+  &__AddButton {
+    border: 0 none;
+    background: none;
+    cursor: pointer;
+    outline: 0 none;
+    &:hover {
+      color: @primary-color;
+    }
+  }
+
+  &__Popover {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+  }
+  &__PopoverButton {
+    display: block;
+    padding: 0 16px;
+    border: 0 none;
+    background: none;
+    line-height: 2;
+    text-align: left;
+    cursor: pointer;
+    outline: 0 none;
+
+    &:hover {
+      color: @primary-color;
+    }
+  }
+}

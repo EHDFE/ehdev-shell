@@ -220,18 +220,11 @@ class ProjectModule extends Component {
                 setRootPath(value);
               }}
               value={rootPath}
-            />
-            <h3>
-              { pkg && pkg.name || '请选择' }
-              <Tooltip title={rootPath}>
-                <Icon
-                  type="info-circle-o"
-                  style={{
-                    marginLeft: 4,
-                  }}
-                />
-              </Tooltip>
-            </h3>
+            >
+              <h3 className={styles.Project__ProjectName}>
+                { pkg && pkg.name || '请选择项目' }
+              </h3>
+            </FolderPicker>
             { this.renderActionBar() }
           </div>
           <Spin spinning={this.state.loading}>

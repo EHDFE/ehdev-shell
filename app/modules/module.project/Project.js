@@ -17,6 +17,7 @@ import { actions } from './store';
 
 import styles from './index.less';
 
+import Page from '../../components/component.page/';
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
 
@@ -212,36 +213,38 @@ class ProjectModule extends Component {
   render() {
     const { rootPath, setRootPath, pkg } = this.props;
     return (
-      <Layout className={styles.Project__Layout}>
-        <Content>
-          <div className={styles.Project__TopBar}>
-            <FolderPicker
-              onChange={value => {
-                setRootPath(value);
-              }}
-              value={rootPath}
-            >
-              <h3 className={styles.Project__ProjectName}>
-                { pkg && pkg.name || '请选择项目' }
-              </h3>
-            </FolderPicker>
-            { this.renderActionBar() }
-          </div>
-          <Spin spinning={this.state.loading}>
-            <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
-              <TabPane tab="基础信息" key="profile">
-                { this.renderProfile() }
-              </TabPane>
-              <TabPane tab="运行配置" key="config">
-                { this.renderSetup() }
-              </TabPane>
-              <TabPane tab="依赖管理" key="versions">
-                { this.renderPackageVersions() }
-              </TabPane>
-            </Tabs>
-          </Spin>
-        </Content>
-      </Layout>
+      <Page>
+        <Layout className={styles.Project__Layout}>
+          <Content>
+            <div className={styles.Project__TopBar}>
+              <FolderPicker
+                onChange={value => {
+                  setRootPath(value);
+                }}
+                value={rootPath}
+              >
+                <h3 className={styles.Project__ProjectName}>
+                  { pkg && pkg.name || '请选择项目' }
+                </h3>
+              </FolderPicker>
+              { this.renderActionBar() }
+            </div>
+            <Spin spinning={this.state.loading}>
+              <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+                <TabPane tab="基础信息" key="profile">
+                  { this.renderProfile() }
+                </TabPane>
+                <TabPane tab="运行配置" key="config">
+                  { this.renderSetup() }
+                </TabPane>
+                <TabPane tab="依赖管理" key="versions">
+                  { this.renderPackageVersions() }
+                </TabPane>
+              </Tabs>
+            </Spin>
+          </Content>
+        </Layout>
+      </Page>
     );
   }
 }

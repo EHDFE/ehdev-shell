@@ -16,6 +16,7 @@ import {
 import semver from 'semver';
 
 import ConfigImportor from './ConfigImportor';
+import Page from '../../components/component.page/';
 
 import { actions } from './store';
 
@@ -137,7 +138,7 @@ class ConfigerModule extends Component {
   }
   render() {
     return (
-      <div>
+      <Page>
         <div className={styles.Configer__ActionBar}>
           <Button type="primary" onClick={this.showConfigImporter}>添加引擎</Button>
         </div>
@@ -147,7 +148,7 @@ class ConfigerModule extends Component {
           onCancel={this.handleCloseImportor}
           onConfirm={this.handleAddConfig}
         />
-      </div>
+      </Page>
     );
   }
 }

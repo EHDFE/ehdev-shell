@@ -13,6 +13,12 @@ const DASHBOARD_API = {
       return handleResponse(res);
     }
   },
+  overall: {
+    async get() {
+      const res = await fetch(`${API_PATH}/overall`);
+      return handleResponse(res);
+    }
+  },
 };
 
 export default DASHBOARD_API;

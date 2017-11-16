@@ -8,7 +8,7 @@ import 'moment/locale/zh-cn';
 
 moment.locale('zh-cn');
 
-import 'antd/dist/antd.less';
+import './index.less?no-css-module';
 
 // Components
 import Layout from './components/component.layout/';

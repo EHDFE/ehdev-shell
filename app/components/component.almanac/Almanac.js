@@ -202,14 +202,14 @@ const Almanac = ({ date }) => {
       <p className={styles.Almanac__Rule}>{getTodayString(date)}</p>
       <p className={styles.Almanac__Rule}>座位朝向：面向<b className={styles.Almanac__Direction}>{direction}</b>写程序，BUG 最少。</p>
       <p className={styles.Almanac__Rule}>{`今日宜饮：${getDrinkString(date)}`}</p>
-      <p className={styles.Almanac__Rule}>
+      <div className={styles.Almanac__Rule}>
         女神亲近指数：
         <Rate
           character={<Icon type="heart" />}
           value={startValue}
           disabled
         />
-      </p>
+      </div>
       <div className={styles.Almanac__Lucks}>
         <div className={styles['Almanac__Lucks--good']}>
           <h5>宜</h5>

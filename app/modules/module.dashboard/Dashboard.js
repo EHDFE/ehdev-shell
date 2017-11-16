@@ -42,11 +42,11 @@ class DashboardModule extends Component {
     if (weather) {
       if (Array.isArray(weather.weather)) {
         const Wcon = WeatherIcon[`Icon_${weather.weather[0].icon}`];
-        weatherBlock.push(<Wcon />);
+        weatherBlock.push(<Wcon key={'icon'} />);
       }
       if (weather.main) {
         weatherBlock.push(
-          <p className={styles.Dashboard__WeatherTempture}>
+          <p key={'tempture'} className={styles.Dashboard__WeatherTempture}>
             {weather.main.temp} °C
           </p>
         );

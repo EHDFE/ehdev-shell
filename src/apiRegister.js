@@ -98,7 +98,9 @@ const dashboard = new DashboardAPI();
 
 dashboardRouter
   .get('/projects', dashboard.getProjectList)
-  .get('/overall', dashboard.getOverall);
+  .get('/overall', dashboard.getOverall)
+  .get('/dailyWallpaper', dashboard.getDailyWallpaper);
+
 
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());

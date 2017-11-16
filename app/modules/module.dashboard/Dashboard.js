@@ -22,6 +22,7 @@ class DashboardModule extends Component {
     assetsCount: PropTypes.number,
     projectsCount: PropTypes.number,
     weather: PropTypes.object,
+    wallpaper: PropTypes.object,
     projectsRank: PropTypes.array,
     date: PropTypes.string,
     weekday: PropTypes.number,
@@ -29,12 +30,14 @@ class DashboardModule extends Component {
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
+    getWallpaper: PropTypes.func,
   }
   componentDidMount() {
     this.props.getWeather();
     this.props.getDate();
     this.props.getProjectList();
     this.props.getOverall();
+    this.props.getWallpaper();
   }
   renderInfoBar() {
     const { userName, weekday, weather } = this.props;
@@ -152,8 +155,12 @@ class DashboardModule extends Component {
     );
   }
   render() {
+    let style = this.props.wallpaper && this.props.wallpaper.images[0].url ? {
+      background: `url(http://www.bing.com${this.props.wallpaper.images[0].url})`,
+      backgroundSize: 'cover'
+    } : {};
     return (
-      <div className={styles.Dashboard__Container}>
+      <div className={styles.Dashboard__Container} style={style} >
         { this.renderInfoBar() }
         { this.renderSummaryCards() }
         { this.renderRecentsProjects() }
@@ -199,6 +206,7 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
+  getWallpaper: () => dispatch(actions.base.getWallpaper()),
 });
 
 export default connect(

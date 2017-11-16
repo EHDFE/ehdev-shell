@@ -48,6 +48,12 @@ export const actions = createActions({
         projectsCount,
       };
     },
+    GET_WALLPAPER: async () => {
+      const wallpaper = await DASHBOARD_API.wallPaper.get();
+      return {
+        wallpaper
+      };
+    },
   },
   PROJECTS: {
     GET_LIST: async () => {
@@ -73,6 +79,12 @@ const baseReducer = handleActions({
     };
   },
   'BASE/GET_DATE': (state, { payload }) => {
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  'BASE/GET_WALLPAPER': (state, { payload }) => {
     return {
       ...state,
       ...payload,

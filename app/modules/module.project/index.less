@@ -56,23 +56,45 @@
 }
 
 .Setup{
-  &__Title{
-    margin-bottom: 10px;
-  }
+
   &__Row{
     background: #fff;
     padding-left: 10px;
     padding-bottom: 20px;
   }
-  &__Label{
-    text-align: left;
-  }
-  &__Item{
-    padding: 10px 10px 2px;
-    border: 1px dashed @border-color-base;
-    margin-bottom: 20px;
+  &__Card{
+    // padding: 10px 10px 2px;
+    border: 1px solid @border-color-split;
+    margin: 10px;
+
+    :global(.ant-card-body){
+      padding: 0;
+    }
+    :global(.ant-card-head){
+      height: 36px;
+      line-height: 36px;
+    }
+    :global(.ant-form-item-label){
+      text-align: left;
+    }
+    :global(.ant-input),:global(.ant-select-selection){
+      border-radius: 0;
+      border:0;
+    }
   }
   &__FormItem{
-    margin-bottom: 8px;
+    margin-bottom: 0;
+    background-color: @background-color-base;
+    border:0;
+  }
+  &__Bash{
+    padding: 30px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    background-color: @border-color-split;
+  }
+  &__Button{
+    margin-top: 20px;
+    text-align: center;
   }
 }

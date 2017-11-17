@@ -56,6 +56,8 @@ exports.writeJSON = (file, json) => new Promise((resolve, reject) => {
   });
 });
 
+exports.readFile = promisify(fs.readFile);
+
 /**
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path

@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const Commander = require('../../service/commander');
-const { hasDir, hasFile, mkdir, readJSON } = require('../../utils/');
+const { hasDir, hasFile, mkdir, readJSON, readFile } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 
 const initFolder = () => {
@@ -30,11 +30,15 @@ class ConfigerAPI {
     const configs = pkg.dependencies && Object.keys(pkg.dependencies) || [];
     for (const pkgName of configs) {
       const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
+      const readme = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/README.md`), 'utf-8');
+      const history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/HISTORY.md`), 'utf-8');
       deps.push({
         id: pkgName,
         name: pkgName,
         version: configPkg.version,
         description: configPkg.description,
+        readme,
+        history,
       });
     }
     ctx.body = ctx.app.responser(deps, true);

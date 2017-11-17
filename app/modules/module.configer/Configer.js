@@ -12,11 +12,13 @@ import {
   Popconfirm,
   Badge,
   Tooltip,
+  Modal,
 } from 'antd';
 import semver from 'semver';
 
 import ConfigImportor from './ConfigImportor';
 import Page from '../../components/component.page/';
+import Markdown from '../../components/component.markdown/';
 
 import { actions } from './store';
 
@@ -42,6 +44,8 @@ class ConfigerModule extends Component {
   }
   state = {
     importVisible: false,
+    markSource: '',
+    markVisible: false,
   }
   componentWillMount() {
     this.props.getConfigs();
@@ -62,12 +66,35 @@ class ConfigerModule extends Component {
     });
   }
   handleUpgrade = e => {
-    const { name, version } = e.target;
+    const { name, version } = e.target.dataset;
     this.props.upgradeConfig(name, version);
   }
   showConfigImporter = () => {
     this.setState({
       importVisible: true,
+    });
+  }
+  showReadme = e => {
+    const { name } = e.target.dataset;
+    const { localConfigs } = this.props;
+    const currentConfiger = localConfigs.find(d => d.name === name);
+    this.showMarkModal(currentConfiger.readme);
+  }
+  showHistory = e => {
+    const { name } = e.target.dataset;
+    const { localConfigs } = this.props;
+    const currentConfiger = localConfigs.find(d => d.name === name);
+    this.showMarkModal(currentConfiger.history);
+  }
+  showMarkModal(content) {
+    this.setState({
+      markVisible: true,
+      markSource: content,
+    });
+  }
+  closeMarkModal = () => {
+    this.setState({
+      markVisible: false,
     });
   }
   renderConfigList() {
@@ -79,13 +106,25 @@ class ConfigerModule extends Component {
         {
           title: '引擎',
           dataIndex: 'name',
+          render: (text, record) => {
+            return [
+              <h5
+                key="name"
+                className={styles['Configer__Item--name']}
+              >
+                {text}
+              </h5>,
+              <p
+                key="description"
+                className={styles['Configer__Item--desc']}
+              >
+                {record.description}
+              </p>,
+            ];
+          }
         },
         {
-          title: '描述',
-          dataIndex: 'description',
-        },
-        {
-          title: '版本号',
+          title: '版本',
           dataIndex: 'version',
           render: (text, record) => {
             return record.upgradable ? (
@@ -101,26 +140,45 @@ class ConfigerModule extends Component {
           title: '操作',
           key: 'action',
           render: (text, record) => {
-            const btns = [];
+            const btns = [
+              <button
+                className={styles['Configer__Item--action']}
+                key="readme"
+                data-name={record.name}
+                onClick={this.showReadme}
+              >查看说明</button>,
+              <button
+                className={styles['Configer__Item--action']}
+                data-name={record.name}
+                onClick={this.showHistory}
+                key="history"
+              >版本历史</button>,
+            ];
             if (record.upgradable) {
               btns.push(
-                <Button
-                  size="small"
+                <button
+                  className={styles['Configer__Item--action']}
                   key="upgrade"
                   data-version={record.latestVersion}
                   data-name={record.name}
                   onClick={this.handleUpgrade}
-                >升级</Button>
+                >升级</button>
               );
             }
             return (
               <div className={styles.Configer__ItemAction}>
                 {btns}
                 <Popconfirm
+                  placement="topRight"
                   title="删除当前引擎，会导致使用该引擎的项目无法运行，确定要删除吗？"
                   onConfirm={this.handleDelete.bind(this, record.name)}
                 >
-                  <Button type="danger" size="small">删除</Button>
+                  <button
+                    className={classnames(
+                      styles['Configer__Item--action'],
+                      styles['Configer__Item--delete'],
+                    )}
+                  >删除</button>
                 </Popconfirm>
               </div>
             );
@@ -137,6 +195,7 @@ class ConfigerModule extends Component {
     return <Table {...props} />;
   }
   render() {
+    const { markSource, markVisible } = this.state;
     return (
       <Page>
         <div className={styles.Configer__ActionBar}>
@@ -148,6 +207,14 @@ class ConfigerModule extends Component {
           onCancel={this.handleCloseImportor}
           onConfirm={this.handleAddConfig}
         />
+        <Modal
+          width={'80vw'}
+          visible={markVisible}
+          onCancel={this.closeMarkModal}
+          footer={null}
+        >
+          <Markdown source={markSource} />
+        </Modal>
       </Page>
     );
   }

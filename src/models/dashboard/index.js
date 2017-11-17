@@ -74,7 +74,7 @@ class DashboardAPI {
 
       let d = ctx.params.day ? moment().add(-ctx.params.day, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD');
       const coverstory = await get(`http://cn.bing.com/cnhp/coverstory/?d=${d}`);
-      let result = Object.assign({}, coverstory, { url: `http://bing.ioliu.cn/v1?${ctx.params.day ? 'd=' + ctx.params.day + '&' : ''}w=1920&1200`});
+      const result = Object.assign({}, coverstory, { url: `http://bing.ioliu.cn/v1?${ctx.params.day ? 'd=' + ctx.params.day + '&' : ''}w=1920&1200`});
       ctx.body = ctx.app.responser(result, true);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);

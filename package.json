@@ -74,6 +74,7 @@
     "redux-localstorage": "^0.4.1",
     "redux-logger": "^3.0.6",
     "redux-promise": "^0.5.3",
+    "remarkable": "^1.7.1",
     "reselect": "^3.0.1",
     "semver": "^5.4.1",
     "shebang-loader": "0.0.1",

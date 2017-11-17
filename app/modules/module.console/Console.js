@@ -58,12 +58,12 @@ class ConsoleModule extends Component {
       <div className={styles.Console}>
         <Popover
           content={
-            <Button
-              className={styles['clear-terminal']}
+            <button
+              className={styles.Console__MenuBtn}
               onClick={this.clearTerminal}
             >
               清除日志
-            </Button>
+            </button>
           }
           placement="bottomRight"
           title={'控制台'}

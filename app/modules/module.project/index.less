@@ -66,20 +66,21 @@
     // padding: 10px 10px 2px;
     border: 1px solid @border-color-split;
     margin: 10px;
-
-    :global(.ant-card-body){
-      padding: 0;
-    }
-    :global(.ant-card-head){
-      height: 36px;
-      line-height: 36px;
-    }
-    :global(.ant-form-item-label){
-      text-align: left;
-    }
-    :global(.ant-input),:global(.ant-select-selection){
-      border-radius: 0;
-      border:0;
+    :global{
+      .ant-card-body{
+        padding: 0;
+      }
+      .ant-card-head{
+        height: 36px;
+        line-height: 36px;
+      }
+      .ant-form-item-label{
+        text-align: left;
+      }
+      .ant-input,.ant-select-selection{
+        border-radius: 0;
+        border:0;
+      }
     }
   }
   &__FormItem{

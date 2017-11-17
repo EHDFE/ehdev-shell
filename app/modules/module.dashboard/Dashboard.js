@@ -160,10 +160,9 @@ class DashboardModule extends Component {
   }
   render() {
     let style =
-      this.props.wallpaper && this.props.wallpaper.images[0].url
+      this.props.wallpaper
         ? {
-          background: `url(http://www.bing.com${this.props.wallpaper.images[0]
-            .url})`,
+          background: `url(${this.props.wallpaper.url})`,
           backgroundSize: 'cover',
           backgroundAttachment: 'fixed',
           height: '100vh',
@@ -213,7 +212,7 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
-  getWallpaper: () => dispatch(actions.base.getWallpaper()),
+  getWallpaper: (day) => dispatch(actions.base.getWallpaper(day)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

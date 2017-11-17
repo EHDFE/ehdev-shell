@@ -99,7 +99,8 @@ const dashboard = new DashboardAPI();
 dashboardRouter
   .get('/projects', dashboard.getProjectList)
   .get('/overall', dashboard.getOverall)
-  .get('/dailyWallpaper', dashboard.getDailyWallpaper);
+  .get('/dailyWallpaper', dashboard.getDailyWallpaper)
+  .get('/dailyWallpaper/:day', dashboard.getDailyWallpaper);
 
 
 // combine all subrouters

@@ -4,6 +4,7 @@
  */
 
 const { get  } = require('../../utils/');
+const moment = require('moment');
 
 class DashboardAPI {
   async getProjectList(ctx) {
@@ -66,11 +67,14 @@ class DashboardAPI {
   }
   async getDailyWallpaper(ctx) {
     try {
-      const [img, coverstory] = await Promise.all([
-        get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),
-        get('http://cn.bing.com/cnhp/coverstory/')
-      ]);
-      let result = Object.assign(img, coverstory);
+      // const [img, coverstory] = await Promise.all([
+      //   get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),
+      //   get('http://cn.bing.com/cnhp/coverstory/')
+      // ]);
+
+      let d = ctx.params.day ? moment().add(-ctx.params.day, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD');
+      const coverstory = await get(`http://cn.bing.com/cnhp/coverstory/?d=${d}`);
+      let result = Object.assign({}, coverstory, { url: `http://bing.ioliu.cn/v1?${ctx.params.day ? 'd=' + ctx.params.day + '&' : ''}w=1920&1200`});
       ctx.body = ctx.app.responser(result, true);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);

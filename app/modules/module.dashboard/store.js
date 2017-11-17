@@ -48,8 +48,8 @@ export const actions = createActions({
         projectsCount,
       };
     },
-    GET_WALLPAPER: async () => {
-      const wallpaper = await DASHBOARD_API.wallPaper.get();
+    GET_WALLPAPER: async (day) => {
+      const wallpaper = await DASHBOARD_API.wallPaper.get(day);
       return {
         wallpaper
       };

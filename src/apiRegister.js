@@ -4,10 +4,15 @@
  */
 const Router = require('koa-router');
 const koaBody = require('koa-body');
+const FileAPI = require('file-api'),
+  File = FileAPI.File;
+
 
 // Upload Models
 const UploadListAPI = require('./models/upload/list');
 const UploadFileAPI = require('./models/upload/file');
+
+const ImageMin = require('./models/upload/imagemain');
 
 // Project Models
 const ProjectEnvAPI = require('./models/project/env');
@@ -42,7 +47,24 @@ uploadRouter
 /**
  * post => /upload/file/
  */
-uploadRouter.post('/file/', uploadFile.post);
+uploadRouter.post('/file/', koaBody({multipart: true}), async function (ctx, next) {
+  const { files } = ctx.request.body;
+  const { file } = files;
+  const type = file.type;
+  const name = file.name;
+  const path = file.path;
+  const uint8Array = await ImageMin(path, 90, false, type, next);
+  const buffer = Buffer.from(uint8Array.buffer);
+
+  const nf = new File({
+    name: name,
+    type: type,
+    buffer: buffer
+  });
+  
+  await next();
+}, uploadFile.post);
+
 
 const projectEnv = new ProjectEnvAPI();
 const projectNpm = new ProjectNpmAPI();

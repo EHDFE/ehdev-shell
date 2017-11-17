@@ -43,7 +43,7 @@ class ConfigerAPI {
     try {
       const result = await Commander.run('npm search --json ehdev-configer-', {
         cwd: ConfigerFolderPath,
-        webContent: ctx.app.webContent,
+        // webContent: ctx.app.webContent,
         useCnpm: false,
       });
       ctx.body = ctx.app.responser(result, true);

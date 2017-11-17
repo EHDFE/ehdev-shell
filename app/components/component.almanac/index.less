@@ -12,30 +12,40 @@
   &__Direction {
     color: @success-color;
   }
+  &__RomanceRate {
+    :global {
+      .ant-rate-star-full {
+        .ant-rate-star-second {
+          color: @highlight-color;
+        }
+      }
+    }
+  }
   &__Lucks {
     display: flex;
     flex-direction: column;
-    background-color: #ccc;
     flex: 1;
+
+    > h5 {
+      margin: 8px 0;
+      font-size: 18px;
+      text-align: center;
+      line-height: 1.2;
+    }
 
     &--good, &--bad {
       padding: 8px 12px;
-      flex: 0 0 50%;
-      > h5 {
-        font-size: 18px;
-        text-align: center;
-        line-height: 1.2;
-      }
+      flex: ~"0 0 calc(50% - 37px)";
     }
     &--good {
       background-color: #e8ffeb;
-      h5 {
+      &Title {
         color: @success-color;
       }
     }
     &--bad {
       background-color: #fdefef;
-      h5 {
+      &Title {
         color: @error-color;
       }
     }
@@ -51,7 +61,6 @@
     &--desc {
       margin: 0;
       color: @text-color-secondary;
-      text-indent: 1em;
       font-size: 12px;
     }
   }

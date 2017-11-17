@@ -51,13 +51,13 @@ module.exports = {
       serviceStore.set(pid, ps);
     }
 
-    ps.stdout.pipe(process.stdout);
-    ps.stderr.pipe(process.stderr);
+    // ps.stdout.pipe(process.stdout);
+    // ps.stderr.pipe(process.stderr);
 
     const ret = new Promise((resolve, reject) => {
       let res = Buffer.from('');
       ps.stdout.on('data', data => {
-        webContent.send(COMMAND_OUTPUT, {
+        webContent && webContent.send(COMMAND_OUTPUT, {
           data: data.toString(),
           pid,
           action: 'log',
@@ -65,7 +65,7 @@ module.exports = {
         res = Buffer.concat([res, data]);
       });
       ps.stderr.on('data', data => {
-        webContent.send(COMMAND_OUTPUT, {
+        webContent && webContent.send(COMMAND_OUTPUT, {
           data: data.toString(),
           pid,
           action: 'log',
@@ -73,7 +73,7 @@ module.exports = {
         res = Buffer.concat([res, data]);
       });
       ps.on('error', err => {
-        webContent.send(COMMAND_OUTPUT, {
+        webContent && webContent.send(COMMAND_OUTPUT, {
           data: err.toString(),
           pid,
           action: 'error',
@@ -82,7 +82,7 @@ module.exports = {
         serviceStore.delete(pid);
       });
       ps.on('exit', (code, signal) => {
-        webContent.send(COMMAND_OUTPUT, {
+        webContent && webContent.send(COMMAND_OUTPUT, {
           data: {
             code,
             signal,

@@ -114,15 +114,18 @@ class DashboardModule extends Component {
     return (
       <Card className={styles.Dashboard__ProjectsCard} title="常用工程">
         <ul className={styles.Dashboard__ProjectRankList}>
-          {projectsRank.map((o, i) => (
-            <li
-              data-index={i + 1}
-              className={styles.Dashboard__ProjectRankItem}
-              key={o._id}
-            >
-              <p>{o.projectPath}</p>
-            </li>
-          ))}
+          {
+            projectsRank.map((o, i) => (
+              <li
+                data-index={i + 1}
+                className={styles.Dashboard__ProjectRankItem}
+                key={o._id}
+                title={o.projectPath}
+              >
+                <p>{o.projectPath}</p>
+              </li>
+            ))
+          }
         </ul>
       </Card>
     );

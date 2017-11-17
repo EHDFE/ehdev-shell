@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Table, Tabs, Button, Spin, notification, message, Icon } from 'antd';
+import { Table, Radio, Button, Spin, notification, message, Icon } from 'antd';
 import AddDev from '../component.addDev/';
 
-const TabPane = Tabs.TabPane;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 class DependencyManager extends Component {
   static propTypes = {
@@ -24,11 +25,15 @@ class DependencyManager extends Component {
     modalVisible: false,
   };
 
-  filterData = key => {
+  filterData = e => {
+    const value = e.target.value;
+    this.updateState(value);
+  };
+  updateState(tab) {
     this.setState((prevState, props) => {
       const { pkg, pkgInfo } = props;
       const data = [];
-      for (let i in pkg && pkg[key]) {
+      for (let i in pkg && pkg[tab]) {
         const d = pkgInfo.versions[i];
         data.push(
           Object.assign({ key: i, packageName: i }, d, {
@@ -41,10 +46,10 @@ class DependencyManager extends Component {
       }
       return {
         dataSource: data,
-        tab: key,
+        tab,
       };
     });
-  };
+  }
   refresh = () => {
     this.setState({
       loading: true,
@@ -185,10 +190,10 @@ class DependencyManager extends Component {
   };
 
   componentDidMount() {
-    this.filterData(this.state.tab);
+    this.updateState(this.state.tab);
   }
   componentWillReceiveProps() {
-    this.filterData(this.state.tab);
+    this.updateState(this.state.tab);
   }
 
   showModal = () => {
@@ -244,11 +249,13 @@ class DependencyManager extends Component {
                 disabled={!record.outdated}
                 onClick={() => this.updatepkg(record, index)}
                 style={{ marginRight: '20px' }}
+                size="small"
               >
                 更新
               </Button>
               <Button
                 type="danger"
+                size="small"
                 onClick={() => this.uninstallpkg(record, index)}
               >
                 删除
@@ -260,16 +267,21 @@ class DependencyManager extends Component {
     ];
     return (
       <Spin spinning={this.state.loading}>
-        <Tabs onChange={this.filterData} type="card">
-          <TabPane tab="Dependencies" key="dependencies" />
-          <TabPane tab="Dev Dependencies" key="devDependencies" />
-        </Tabs>
-        <div style={{ marginBottom: '10px' }}>
-          <Button type="primary" onClick={ this.batchUpdate } disabled = {!this.props.pkg }>
+        <RadioGroup onChange={this.filterData} value={this.state.tab}>
+          <RadioButton value="dependencies">Dependencies</RadioButton>
+          <RadioButton value="devDependencies">Dev Dependencies</RadioButton>
+        </RadioGroup>
+        <div style={{ margin: '10px 0' }}>
+          <Button
+            size="small"
+            onClick={ this.batchUpdate }
+            disabled = {!this.props.pkg }
+          >
             批量更新
           </Button>
           <Button
             type="primary"
+            size="small"
             onClick={this.showModal}
             style={{ float: 'right' }}
             disabled = {!this.props.pkg }
@@ -289,6 +301,7 @@ class DependencyManager extends Component {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={this.state.dataSource}
+          size="small"
         />
       </Spin>
     );

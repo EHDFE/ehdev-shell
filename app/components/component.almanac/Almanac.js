@@ -205,14 +205,15 @@ const Almanac = ({ date }) => {
       <div className={styles.Almanac__Rule}>
         女神亲近指数：
         <Rate
+          className={styles.Almanac__RomanceRate}
           character={<Icon type="heart" />}
           value={startValue}
           disabled
         />
       </div>
       <div className={styles.Almanac__Lucks}>
+        <h5 className={styles['Almanac__Lucks--goodTitle']}>宜</h5>
         <div className={styles['Almanac__Lucks--good']}>
-          <h5>宜</h5>
           {
             good.map(d => (
               <div className={styles.Almanac__LuckItem} key={d.name}>
@@ -222,8 +223,8 @@ const Almanac = ({ date }) => {
             ))
           }
         </div>
+        <h5 className={styles['Almanac__Lucks--badTitle']}>忌</h5>
         <div className={styles['Almanac__Lucks--bad']}>
-          <h5>忌</h5>
           {
             bad.map(d => (
               <div className={styles.Almanac__LuckItem} key={d.name}>

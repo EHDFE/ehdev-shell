@@ -140,7 +140,7 @@ export default class ListView extends Component {
       <Row>
         {
           data.map(d =>
-            <Col xs={8} sm={6} lg={4} xl={3} key={d._id}>
+            <Col xs={12} sm={8} lg={6} xl={4} xll={3} key={d._id}>
               <FileCard
                 url={d.url}
                 name={d.name}

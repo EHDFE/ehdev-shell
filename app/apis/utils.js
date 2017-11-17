@@ -1,7 +1,8 @@
 /**
  * @author ryan.bian
  */
-import { message } from 'antd';
+import { message, notification  } from 'antd';
+import { duration } from 'moment';
 
 /**
  * handle fetch's response
@@ -24,9 +25,12 @@ export const handleResponse = async (response, config = {
     throw Error(e);
   }
   if (!result.success) {
-    config.errorNotification && message.error(
-      typeof result.errorMsg === 'object' ?
-        JSON.stringify(result.errorMsg) : result.errorMsg
+    config.errorNotification && notification['error']({
+      message: 'ERROR MSG',
+      description: typeof result.errorMsg === 'object' ?
+        JSON.stringify(result.errorMsg) : result.errorMsg,
+      duration: null,
+    }
     );
     throw Error(result.errorMsg);
   }

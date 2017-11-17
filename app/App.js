@@ -8,7 +8,7 @@ import 'moment/locale/zh-cn';
 
 moment.locale('zh-cn');
 
-import 'antd/dist/antd.less';
+import './index.less?no-css-module';
 
 // Components
 import Layout from './components/component.layout/';
@@ -24,6 +24,7 @@ import { UserModule } from './modules/module.user';
 const App = () => (
   <BrowserRouter basename="/">
     <Layout>
+      <Route exact path="/" component={DashboardModule}/>
       <Route exact path="/dashboard" component={DashboardModule}/>
       <Route path="/project" component={ProjectModule}/>
       <Route path="/upload" component={UploadModule}/>

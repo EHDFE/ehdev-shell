@@ -37,8 +37,10 @@ module.exports = {
       shell: true,
     };
     let runtimeArgs;
-    if (config.useCnpm && command === 'npm') {
-      runtimeArgs = args.concat('--registry=https://registry.npm.taobao.org');
+    if (command === 'npm') {
+      runtimeArgs = config.useCnpm
+        ? args.concat('--registry=https://registry.npm.taobao.org')
+        : args.concat('--registry=https://registry.npmjs.org/');
     } else {
       runtimeArgs = args;
     }
@@ -53,14 +55,14 @@ module.exports = {
     ps.stderr.pipe(process.stderr);
 
     const ret = new Promise((resolve, reject) => {
-      let res = '';
+      let res = Buffer.from('');
       ps.stdout.on('data', data => {
         webContent.send(COMMAND_OUTPUT, {
           data: data.toString(),
           pid,
           action: 'log',
         });
-        res += data.toString();
+        res = Buffer.concat([res, data]);
       });
       ps.stderr.on('data', data => {
         webContent.send(COMMAND_OUTPUT, {
@@ -68,7 +70,7 @@ module.exports = {
           pid,
           action: 'log',
         });
-        // reject(data);
+        res = Buffer.concat([res, data]);
       });
       ps.on('error', err => {
         webContent.send(COMMAND_OUTPUT, {
@@ -92,15 +94,12 @@ module.exports = {
         if (config.parseResult) {
           if (config.parseResult === 'json') {
             try {
-              if ( res === '') {
-                res = '{}';
-              }
-              resolve(JSON.parse(res));
+              resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
             } catch (e) {
-              reject(e);
+              reject(res.toString());
             }
           } else {
-            resolve(res);
+            resolve(res.toString());
           }
         }
       });

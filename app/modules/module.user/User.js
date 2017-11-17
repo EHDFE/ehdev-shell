@@ -12,6 +12,8 @@ import { actions } from './store';
 
 import styles from './index.less';
 
+import Page from '../../components/component.page/';
+
 const FormItem = Form.Item;
 const FILE_PATH = '/api/upload/file';
 
@@ -41,38 +43,41 @@ class User extends Component {
     };
   }
 
-  uploadAvatar = (info) => {
+  uploadAvatar = info => {
     if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj, imgUrl =>{
+      getBase64(info.file.originFileObj, imgUrl => {
         this.setState({ imgUrl });
       });
     }
-  }
+  };
 
-  normFile = (e) => {
+  normFile = e => {
     this.uploadAvatar(e);
     if (e && e.file && e.file.response) {
       return e.file.response.data;
     }
-  }
+  };
 
-  handleSubmit = (e) => {
-    const {form, setUserInfo} = this.props;
+  handleSubmit = e => {
+    const { form, setUserInfo } = this.props;
     e.preventDefault();
     form.validateFields((err, values) => {
-
       if (!err) {
         // const { avatar, name} = values;
         // window.localStorage.setItem('avatar', avatar);
         // window.localStorage.setItem('name', name);
+        const avatar = this.state.imgUrl;
+        if (avatar) {
+          values.avatar = avatar;
+        }
         setUserInfo(values);
         message.success('Update success!');
       }
     });
-  }
+  };
 
   render() {
-    const {avatar, name} = this.props.user;
+    const { avatar, name } = this.props.user;
     const imgUrl = this.state.imgUrl || avatar;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -81,57 +86,52 @@ class User extends Component {
     };
 
     return (
-      <Card title="个人设置">
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem
-            {...formItemLayout}
-            label="你的昵称"
-          >
-            {
-              getFieldDecorator('name', {
+      <Page>
+        <Card title="个人设置">
+          <Form onSubmit={this.handleSubmit}>
+            <FormItem {...formItemLayout} label="你的昵称">
+              {getFieldDecorator('name', {
                 initialValue: name,
-                rules: [
-                  { required: true, message: '请输入你的昵称！' },
-                ],
-              })(<Input placeholder="请输入你的昵称" />)
-            }
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="你的头像"
-            extra="请上传2M以内正确的图片格式"
-          >
-            {getFieldDecorator('avatar', {
-              initialValue: avatar,
-              valuePropName: 'file',
-              getValueFromEvent: this.normFile,
-            })(
-              <Upload
-                className={styles.Setting__avatar_uploader}
-                name="avatar"
-                showUploadList={false}
-                action={FILE_PATH}
-                beforeUpload={beforeUpload}
-                // onChange={this.handleChange}
-              >
-                {
-                  imgUrl ?
-                    <img src={imgUrl} alt="" className={styles.Setting__avatar} /> :
-                    <Icon type="plus" className={styles.Setting__avatar_uploader_trigger} />
-                }
-              </Upload>
-            )
-            }
-          </FormItem>
-          <FormItem
-            wrapperCol={{ span: 12, offset: 6 }}
-          >
-            <Button type="primary" htmlType="submit">提交</Button>
-          </FormItem>
-        </Form>
-
-      </Card>
-
+                rules: [{ required: true, message: '请输入你的昵称！' }],
+              })(<Input placeholder="请输入你的昵称" />)}
+            </FormItem>
+            <FormItem {...formItemLayout} label="你的头像" extra="请上传2M以内正确的图片格式">
+              {getFieldDecorator('avatar', {
+                initialValue: avatar,
+                valuePropName: 'file',
+                getValueFromEvent: this.normFile,
+              })(
+                <Upload
+                  className={styles.Setting__avatar_uploader}
+                  name="avatar"
+                  showUploadList={false}
+                  action={FILE_PATH}
+                  beforeUpload={beforeUpload}
+                  // onChange={this.handleChange}
+                >
+                  {imgUrl ? (
+                    <img
+                      src={imgUrl}
+                      alt=""
+                      className={styles.Setting__avatar}
+                    />
+                  ) : (
+                    <Icon
+                      type="plus"
+                      className={styles.Setting__avatar_uploader_trigger}
+                    />
+                  )}
+                </Upload>
+              )}
+            </FormItem>
+            <FormItem wrapperCol={{ span: 12, offset: 6 }}>
+              <Button type="primary" htmlType="submit">
+                提交
+              </Button>
+            </FormItem>
+          </Form>
+        </Card>
+      </Page>
     );
   }
 }
@@ -141,15 +141,13 @@ const UserModule = Form.create()(User);
 const PageUserSelector = state => state['page.user'];
 const userSelector = createSelector(
   PageUserSelector,
-  pageState => pageState.user,
+  pageState => pageState.user
 );
 
-const mapStateToProps = state =>createSelector(
-  userSelector,
-  (user) => ({
+const mapStateToProps = state =>
+  createSelector(userSelector, user => ({
     user,
-  }),
-);
+  }));
 const mapDispatchToProps = dispatch => ({
   setUserInfo: user => dispatch(actions.user.set(user)),
 });
@@ -160,7 +158,4 @@ User.propTypes = {
   setUserInfo: PropTypes.func,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UserModule);
+export default connect(mapStateToProps, mapDispatchToProps)(UserModule);

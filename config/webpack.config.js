@@ -156,6 +156,12 @@ module.exports = env => {
                   }) : libirayStyleConfig,
                 },
                 {
+                  resourceQuery: /no-css-module/,
+                  use: env.prod ? extractLibiaryStyle.extract({
+                    use: libirayStyleConfig
+                  }) : libirayStyleConfig,
+                },
+                {
                   use: env.prod ? extractAppStyle.extract({
                     use: appStyleConfig
                   }) : appStyleConfig,

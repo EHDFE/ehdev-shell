@@ -37,7 +37,7 @@ getProdConfig(projectConfig)
       }
       webpackConfig.plugins.push(
         new StatsPlugin(
-          path.join(PROJECT_ROOT, 'stats.json'),
+          '../stats.json',
           'verbose'
         ),
       );

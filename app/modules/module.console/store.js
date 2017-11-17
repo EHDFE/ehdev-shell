@@ -2,16 +2,15 @@
  * Console Store
  * @author hefan
  */
-import { combineReducers } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
 
-import PROJECT_API from '../../apis/project';
-import SERVICE_API from '../../apis/service';
+const getTime = () => new Date().getTime();
 
 const defaultState = {
-  server: {
-    log: '',
-    lastLogContent: '',
+  content: '',
+  lastLog: {
+    content: '',
+    t: getTime(),
   },
 };
 
@@ -19,38 +18,47 @@ const defaultState = {
  * Console's action
  */
 export const actions = createActions({
-  SERVICE: {
-    UPDATE_LOG: log => {
-      return {
-        log,
-      };
-    },
-    CLEAN: () => {},
+  UPDATE_LOG: log => {
+    return {
+      log,
+      t: getTime(),
+    };
   },
+  CLEAN: () => ({
+    t: getTime(),
+  }),
 });
 
 /**
  * Console's  reducer
  */
-const serviceReducer = handleActions(
+const consoleReducer = handleActions(
   {
-    'SERVICE/UPDATE_LOG': (state, { payload }) => {
-      const { log } = payload;
+    UPDATE_LOG: (state, { payload }) => {
+      const { log, t } = payload;
       return {
-        log: [state.log, log].join(''),
-        lastLogContent: log,
+        content: [
+          state.content,
+          log,
+        ].join(''),
+        lastLog: {
+          content: log,
+          t,
+        },
       };
     },
-    'SERVICE/CLEAN': (state, { payload }) => {
+    CLEAN: (state, { payload }) => {
+      const { t } = payload;
       return {
-        log: '',
-        lastLogContent: '',
+        content: '',
+        lastLog: {
+          content: '',
+          t,
+        },
       };
     },
   },
-  defaultState.server
+  defaultState
 );
 
-export default combineReducers({
-  service: serviceReducer,
-});
+export default consoleReducer;

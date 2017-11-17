@@ -39,9 +39,12 @@ module.exports = env => {
         'react-redux',
         'moment',
         'antd',
+        'classnames',
         'react-router',
         'react-router-dom',
         'reselect',
+        'prop-types',
+        'redux-actions',
       ],
     },
     output: {

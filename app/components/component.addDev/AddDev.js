@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Modal, Button, Form, Icon, Input,  Checkbox, message } from 'antd';
+import { Modal, Button, Form, Icon, Input, notification, message } from 'antd';
 
 class AddDev extends React.Component {
   static propTypes = {
@@ -26,19 +26,46 @@ class AddDev extends React.Component {
   handleOk = () => {
     this.setState({
       confirmLoading: true,
-    });  
-    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then(()=>{
-      this.props.refresh().then(() => {
+    });
+    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then((data)=>{
+      if ( data.success ) {
+        this.props.refresh().then(() => {
+          notification['success']({
+            message: 'SUCCESS',
+            description: `${this.state.packageName} has been installed`,
+          });
+          this.setState({
+            confirmLoading: false,
+            packageName: '',
+            version: ''
+          });
+          this.props.hideModal();
+        });
+      } else {
         this.setState({
           confirmLoading: false,
           packageName: '',
           version: ''
         });
         this.props.hideModal();
-      });
+        notification['error']({
+          message: 'ERROR MESSAGE',
+          description: data.errorMsg,
+          duration: null,
+        });
+      }
+
     });
   }
   handleCancel = () => {
+    if ( this.state.confirmLoading ) {
+      return;
+    }
+    this.setState({
+      confirmLoading: false,
+      packageName: '',
+      version: ''
+    });
     this.props.hideModal();
   }
   handlePackageNameChange = (event)=>{
@@ -52,16 +79,17 @@ class AddDev extends React.Component {
 
     return (
       <div>
-        <Modal title="Add New Dependency"
-          okText="Install"
-          cancelText="Cancel"
+        <Modal title="添加依赖"
+          okText="安装"
+          cancelText="取消"
           visible={this.props.visible}
           onOk={this.handleOk}
           confirmLoading={confirmLoading}
           onCancel={this.handleCancel}
+          closable={false}
         >
-          <Input className={styles.input} value={this.state.packageName} onChange={this.handlePackageNameChange}  placeholder="Package Name" />
-          <Input className={styles.input} value={this.state.version} onChange={this.handleVerionChange}  placeholder="Version" />
+          <Input className={styles.input} value={this.state.packageName} onChange={this.handlePackageNameChange}  placeholder="依赖名称" />
+          <Input className={styles.input} value={this.state.version} onChange={this.handleVerionChange}  placeholder="版本号（默认最新版本）" />
         </Modal>
       </div>
     );

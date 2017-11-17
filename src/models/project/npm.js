@@ -32,7 +32,11 @@ class ProjectNpmAPI {
       parseResult: 'string',
       webContent: ctx.app.webContent,
     });
-    ctx.body = ctx.app.responser(data, true);
+    let result = true;
+    if (/ERR/.test(data)) {
+      result = false;
+    }
+    ctx.body = ctx.app.responser(data, result);
   }
   async uninstall(ctx) {
     const packageName = ctx.params.packageName || '';

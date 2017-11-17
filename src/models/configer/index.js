@@ -27,7 +27,7 @@ class ConfigerAPI {
   async getConfigs(ctx) {
     const pkg = await readJSON(ConfigerFolderPackagePath);
     const deps = [];
-    const configs = Object.keys(pkg.dependencies);
+    const configs = pkg.dependencies && Object.keys(pkg.dependencies) || [];
     for (const pkgName of configs) {
       const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
       deps.push({

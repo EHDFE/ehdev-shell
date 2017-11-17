@@ -51,7 +51,11 @@ const PROJECT_API = {
         },
         body: JSON.stringify({rootPath})
       });
-      return handleResponse(res);
+      return handleResponse(res, {
+        errorNotification: false,
+        successNotification: false,
+        successMsg: 'Successful!',
+      });
     }
   },
 };

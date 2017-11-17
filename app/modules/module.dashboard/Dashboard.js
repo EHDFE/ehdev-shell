@@ -31,7 +31,7 @@ class DashboardModule extends Component {
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
     getWallpaper: PropTypes.func,
-  }
+  };
   componentDidMount() {
     this.props.getWeather();
     this.props.getDate();
@@ -58,19 +58,14 @@ class DashboardModule extends Component {
     return (
       <Card className={styles.Dashboard__Info}>
         <div>
-          {
-            userName ?
-              <p className={styles.Dashboard__InfoName}>
-                Hi {userName}
-              </p> : null
-          }
+          {userName ? (
+            <p className={styles.Dashboard__InfoName}>Hi {userName}</p>
+          ) : null}
           <h2 className={styles['Dashboard__InfoGreeting']}>
             {GREETING_WORDS.get(weekday)}
           </h2>
         </div>
-        <div className={styles.Dashboard__Weather}>
-          { weatherBlock }
-        </div>
+        <div className={styles.Dashboard__Weather}>{weatherBlock}</div>
       </Card>
     );
   }
@@ -80,28 +75,36 @@ class DashboardModule extends Component {
       <Card
         className={classnames(
           styles.Dashboard__Summary,
-          styles.Dashboard__SummaryProject,
+          styles.Dashboard__SummaryProject
         )}
         key={'projects'}
       >
         <h4 className={styles.Dashboard__SummaryTitle}>工程总数</h4>
-        <em className={classnames(
-          styles.Dashboard__SummaryCount,
-          styles.Dashboard__SummaryProjectCount,
-        )}>{projectsCount}</em>
+        <em
+          className={classnames(
+            styles.Dashboard__SummaryCount,
+            styles.Dashboard__SummaryProjectCount
+          )}
+        >
+          {projectsCount}
+        </em>
       </Card>,
       <Card
         className={classnames(
           styles.Dashboard__Summary,
-          styles.Dashboard__SummaryAssets,
+          styles.Dashboard__SummaryAssets
         )}
         key={'assets'}
       >
         <h4 className={styles.Dashboard__SummaryTitle}>资源总数</h4>
-        <em className={classnames(
-          styles.Dashboard__SummaryCount,
-          styles.Dashboard__SummaryAssetsCount,
-        )}>{assetsCount}</em>
+        <em
+          className={classnames(
+            styles.Dashboard__SummaryCount,
+            styles.Dashboard__SummaryAssetsCount
+          )}
+        >
+          {assetsCount}
+        </em>
       </Card>,
     ];
     return cards;
@@ -111,17 +114,15 @@ class DashboardModule extends Component {
     return (
       <Card className={styles.Dashboard__ProjectsCard} title="常用工程">
         <ul className={styles.Dashboard__ProjectRankList}>
-          {
-            projectsRank.map((o, i) => (
-              <li
-                data-index={i + 1}
-                className={styles.Dashboard__ProjectRankItem}
-                key={o._id}
-              >
-                <p>{o.projectPath}</p>
-              </li>
-            ))
-          }
+          {projectsRank.map((o, i) => (
+            <li
+              data-index={i + 1}
+              className={styles.Dashboard__ProjectRankItem}
+              key={o._id}
+            >
+              <p>{o.projectPath}</p>
+            </li>
+          ))}
         </ul>
       </Card>
     );
@@ -155,17 +156,26 @@ class DashboardModule extends Component {
     );
   }
   render() {
-    let style = this.props.wallpaper && this.props.wallpaper.images[0].url ? {
-      background: `url(http://www.bing.com${this.props.wallpaper.images[0].url})`,
-      backgroundSize: 'cover'
-    } : {};
+    let style =
+      this.props.wallpaper && this.props.wallpaper.images[0].url
+        ? {
+          background: `url(http://www.bing.com${this.props.wallpaper.images[0]
+            .url})`,
+          backgroundSize: 'cover',
+          backgroundAttachment: 'fixed',
+          height: '100vh',
+          overflowY: 'auto',
+        }
+        : {};
     return (
-      <div className={styles.Dashboard__Container} style={style} >
-        { this.renderInfoBar() }
-        { this.renderSummaryCards() }
-        { this.renderRecentsProjects() }
-        { this.renderAlmanac() }
-        { this.renderLastBuildStats() }
+      <div style={style}>
+        <div className={styles.Dashboard__Container}>
+          {this.renderInfoBar()}
+          {this.renderSummaryCards()}
+          {this.renderRecentsProjects()}
+          {this.renderAlmanac()}
+          {this.renderLastBuildStats()}
+        </div>
       </div>
     );
     // { this.renderBuildTimesRank() }
@@ -174,33 +184,27 @@ class DashboardModule extends Component {
 
 const dashboardPageSelector = state => state['page.dashboard'];
 const userPageSelector = state => state['page.user'];
-const baseSelector = createSelector(
-  dashboardPageSelector,
-  state => state.base,
-);
+const baseSelector = createSelector(dashboardPageSelector, state => state.base);
 const projectsSelector = createSelector(
   dashboardPageSelector,
-  state => state.projects,
+  state => state.projects
 );
-const projectsRankSelector = createSelector(
-  projectsSelector,
-  state => state.list.slice(0).sort((a, b) => b.count - a.count),
+const projectsRankSelector = createSelector(projectsSelector, state =>
+  state.list.slice(0).sort((a, b) => b.count - a.count)
 );
-const userInfoSelector = createSelector(
-  userPageSelector,
-  state => state.user,
-);
+const userInfoSelector = createSelector(userPageSelector, state => state.user);
 
-const mapStateToProps = state => createSelector(
-  baseSelector,
-  projectsRankSelector,
-  userInfoSelector,
-  (base, projectsRank, userInfo) => ({
-    ...base,
-    projectsRank,
-    userName: userInfo.name,
-  }),
-);
+const mapStateToProps = state =>
+  createSelector(
+    baseSelector,
+    projectsRankSelector,
+    userInfoSelector,
+    (base, projectsRank, userInfo) => ({
+      ...base,
+      projectsRank,
+      userName: userInfo.name,
+    })
+  );
 const mapDispatchToProps = dispatch => ({
   getWeather: () => dispatch(actions.base.getWeather()),
   getDate: () => dispatch(actions.base.getDate()),
@@ -209,7 +213,4 @@ const mapDispatchToProps = dispatch => ({
   getWallpaper: () => dispatch(actions.base.getWallpaper()),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(DashboardModule);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

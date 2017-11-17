@@ -37,8 +37,10 @@ module.exports = {
       shell: true,
     };
     let runtimeArgs;
-    if (config.useCnpm && command === 'npm') {
-      runtimeArgs = args.concat('--registry=https://registry.npm.taobao.org');
+    if (command === 'npm') {
+      runtimeArgs = config.useCnpm
+        ? args.concat('--registry=https://registry.npm.taobao.org')
+        : args.concat('--registry=https://registry.npmjs.org/');
     } else {
       runtimeArgs = args;
     }

@@ -11,6 +11,7 @@ import MdViewHeadline from 'react-icons/lib/md/view-headline';
 import MdViewModule from 'react-icons/lib/md/view-module';
 
 import { actions } from './store';
+import Page from '../../components/component.page/';
 import UploadZone from '../../components/component.uploadZone/';
 import ListView from '../../components/component.listView/';
 
@@ -77,7 +78,7 @@ class UploadModule extends Component {
   render() {
     const { listType } = this.props;
     return (
-      <div>
+      <Page>
         <Row>
           <Col span={24}>
             <UploadZone onChange={this.handleFilesChange} />
@@ -106,7 +107,7 @@ class UploadModule extends Component {
           </Col>
         </Row>
         { this.renderListView() }
-      </div>
+      </Page>
     );
   }
 }

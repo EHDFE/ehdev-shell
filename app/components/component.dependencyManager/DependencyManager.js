@@ -212,7 +212,7 @@ class DependencyManager extends Component {
     };
     const columns = [
       {
-        title: 'Package name',
+        title: '依赖名称',
         dataIndex: 'packageName',
         render: (text, record, index) => {
           return record.outdated ? (
@@ -223,15 +223,15 @@ class DependencyManager extends Component {
         },
       },
       {
-        title: 'Current',
+        title: '当前版本',
         dataIndex: 'current',
       },
       {
-        title: 'Wanted',
+        title: '预期版本',
         dataIndex: 'wanted',
       },
       {
-        title: 'Latest',
+        title: '最新版本',
         dataIndex: 'latest',
       },
       {
@@ -245,13 +245,13 @@ class DependencyManager extends Component {
                 onClick={() => this.updatepkg(record, index)}
                 style={{ marginRight: '20px' }}
               >
-                Update
+                更新
               </Button>
               <Button
                 type="danger"
                 onClick={() => this.uninstallpkg(record, index)}
               >
-                Delete
+                删除
               </Button>
             </div>
           );
@@ -266,7 +266,7 @@ class DependencyManager extends Component {
         </Tabs>
         <div style={{ marginBottom: '10px' }}>
           <Button type="primary" onClick={ this.batchUpdate } disabled = {!this.props.pkg }>
-            Batch Update
+            批量更新
           </Button>
           <Button
             type="primary"
@@ -274,7 +274,7 @@ class DependencyManager extends Component {
             style={{ float: 'right' }}
             disabled = {!this.props.pkg }
           >
-            Add New Dependency
+            添加依赖
           </Button>
         </div>
         <AddDev

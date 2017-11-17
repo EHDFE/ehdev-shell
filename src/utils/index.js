@@ -4,6 +4,7 @@
  */
 const { promisify } = require('util');
 const fs = require('fs');
+const http = require('http');
 
 /**
  * transform response format
@@ -80,6 +81,26 @@ exports.hasFile = path => new Promise((resolve, reject) => {
     } else {
       reject();
     }
+  });
+});
+
+/**
+ * http.request
+ * @param {string} options - request option
+ */
+exports.get = url => new Promise((resolve, reject) => {
+  const req = http.get(url, (res) => {
+    res.setEncoding('utf8');
+    let result = '';
+    res.on('data', (chunk) => {
+      result += chunk;
+    });
+    res.on('end', () => {
+      resolve(JSON.parse(result));
+    });
+  });
+  req.on('error', (e) => {
+    reject(e);
   });
 });
 

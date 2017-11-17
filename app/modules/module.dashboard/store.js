@@ -10,7 +10,10 @@ import DASHBOARD_API from '../../apis/dashboard';
 import { WEATHER_APPID } from '../../CONFIG';
 
 const defaultState = {
-  base: {},
+  base: {
+    assetsCount: 0,
+    projectsCount: 0,
+  },
   projects: {
     list: [],
   },
@@ -35,6 +38,22 @@ export const actions = createActions({
         date: today.format('YYYY-DD-MM'),
       };
     },
+    GET_OVERALL: async () => {
+      const {
+        assetsCount,
+        projectsCount,
+      } = await DASHBOARD_API.overall.get();
+      return {
+        assetsCount,
+        projectsCount,
+      };
+    },
+    GET_WALLPAPER: async () => {
+      const wallpaper = await DASHBOARD_API.wallPaper.get();
+      return {
+        wallpaper
+      };
+    },
   },
   PROJECTS: {
     GET_LIST: async () => {
@@ -45,6 +64,13 @@ export const actions = createActions({
 });
 
 const baseReducer = handleActions({
+  'BASE/GET_OVERALL': (state, { payload, error }) => {
+    if (error) return state;
+    return {
+      ...state,
+      ...payload,
+    };
+  },
   'BASE/GET_WEATHER': (state, { payload, error }) => {
     if (error) return state;
     return {
@@ -53,6 +79,12 @@ const baseReducer = handleActions({
     };
   },
   'BASE/GET_DATE': (state, { payload }) => {
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  'BASE/GET_WALLPAPER': (state, { payload }) => {
     return {
       ...state,
       ...payload,

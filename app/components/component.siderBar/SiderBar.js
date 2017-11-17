@@ -75,7 +75,7 @@ class SiderBar extends Component {
         collapsible
         collapsed={collapsed}
         onCollapse={this.onCollapse}
-        width={100}
+        width={130}
         trigger={this.renderTrigger()}
       >
         <button

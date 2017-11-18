@@ -3,8 +3,10 @@
  */
 const path = require('path');
 const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
+const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 
 const ExtractTextPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'extract-text-webpack-plugin'));
+const CleanWebpackPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'clean-webpack-plugin'));
 
 // webpack path
 const Webpack = exports.Webpack = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack'));
@@ -57,12 +59,24 @@ exports.dllConfigParser = projectConfig => {
     },
     devtool: 'source-map',
     plugins: [
+      new CleanWebpackPlugin([
+        'src/dll'
+      ], {
+        root: PROJECT_ROOT,
+        verbose: true,
+        dry: false,
+      }),
       new Webpack.DllPlugin({
         context: PROJECT_ROOT,
         path: manifestPath,
         name: '[name]',
       }),
+      new Webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+        'process.env.DEBUG': JSON.stringify(process.env.DEBUG)
+      }),
       new Webpack.HashedModuleIdsPlugin(),
+      new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       new Webpack.optimize.UglifyJsPlugin({
         compress: {
           warnings: false,
@@ -92,4 +106,28 @@ exports.dllConfigParser = projectConfig => {
       manifest: require(manifestPath),
     }),
   };
+};
+
+const NOTICE_COLOR_MAP = new Map([
+  ['log', 'green'],
+  ['error', 'red'],
+  ['success', 'green'],
+  ['warn', 'yellow'],
+]);
+
+exports.noticeLog = (action, content, type = 'log') => {
+  const color = NOTICE_COLOR_MAP.get(type);
+  const message = chalk[color](content);
+  const time = `[${new Date().toLocaleString()}]`;
+  // eslint-disable-next-line no-console
+  console.log(
+    `\n${chalk.gray(time)} ${action}: ${message}`
+  );
+};
+
+exports.getLocalIP = () => {
+  const ifs = require('os').networkInterfaces();
+  return Object.keys(ifs)
+    .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
+    .filter(x => x)[0].address;
 };

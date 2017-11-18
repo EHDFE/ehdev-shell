@@ -32,12 +32,16 @@ class DashboardModule extends Component {
     getOverall: PropTypes.func,
     getWallpaper: PropTypes.func,
   };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.date !== this.props.date) {
+      this.props.getWeather();
+      this.props.getWallpaper();
+    }
+  }
   componentDidMount() {
-    this.props.getWeather();
     this.props.getDate();
     this.props.getProjectList();
     this.props.getOverall();
-    this.props.getWallpaper();
   }
   renderInfoBar() {
     const { userName, weekday, weather } = this.props;
@@ -131,9 +135,10 @@ class DashboardModule extends Component {
     );
   }
   renderAlmanac() {
+    const { date } = this.props;
     return (
       <Card className={styles.Dashboard__AlmanacCard}>
-        <Almanac />
+        <Almanac date={date} />
       </Card>
     );
   }

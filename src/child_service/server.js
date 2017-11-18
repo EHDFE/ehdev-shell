@@ -12,10 +12,13 @@ const {
   getProvidePlugin,
   dllConfigParser,
   PROJECT_ROOT,
+  noticeLog,
+  getLocalIP,
 } = require('./config');
 
 const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
+const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 
 const getDevServerConfig = PROJECT_CONFIG => ({
   contentBase: path.join(process.cwd(), PROJECT_CONFIG.buildPath),
@@ -67,8 +70,9 @@ getDevConfig(projectConfig, {
   const compiler = Webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
   server.listen(PORT, '0.0.0.0', () => {
-    // eslint-disable-next-line no-console
-    console.log(`server started at ${PORT}`);
+    const ip = getLocalIP();
+    const url = chalk.underline(`http://${ip}:${PORT}`);
+    noticeLog('SERVER', `start at ${url}`);
   });
 }).catch((e) => {
   throw Error(e);

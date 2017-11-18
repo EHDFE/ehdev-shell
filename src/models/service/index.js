@@ -24,6 +24,8 @@ class ServiceAPI {
       parseResult: false,
       env: {
         SHELL_NODE_MODULES_PATH,
+        CONFIGER_FOLDER_PATH: ConfigerFolderPath,
+        NODE_ENV: 'development',
       },
     });
     ctx.app.db.project.update(
@@ -67,6 +69,8 @@ class ServiceAPI {
       parseResult: false,
       env: {
         SHELL_NODE_MODULES_PATH,
+        CONFIGER_FOLDER_PATH: ConfigerFolderPath,
+        NODE_ENV: 'production',
       },
     });
     ctx.app.db.project.update(

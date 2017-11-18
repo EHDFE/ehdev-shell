@@ -35,7 +35,7 @@ export const actions = createActions({
       const today = moment();
       return {
         weekday: today.day(),
-        date: today.format('YYYY-DD-MM'),
+        date: today.format('YYYY-MM-DD'),
       };
     },
     GET_OVERALL: async () => {

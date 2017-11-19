@@ -127,23 +127,19 @@ function pickSpecials(m) {
   let goodList = [];
   let badList = [];
 
-  const iday = getDateValue(m);
-
-  for (let i = 0; i < defineData.specials.length; i++) {
-    let special = defineData.specials[i];
-
-    if (iday == special.date) {
-      if (special.type == 'good') {
-        goodList.push({
-          name: special.name,
-          good: special.description,
-        });
-      } else {
-        badList.push({
-          name: special.name,
-          bad: special.description,
-        });
-      }
+  const date = m.format('MM-DD');
+  const match = defineData.specials.find(d => d.date === date);
+  if (match) {
+    if (match.type === 'good') {
+      goodList.push({
+        name: match.name,
+        good: match.description,
+      });
+    } else if (match.type === 'bad') {
+      badList.push({
+        name: match.name,
+        bad: match.description,
+      });
     }
   }
 
@@ -200,7 +196,7 @@ export default class Almanac extends PureComponent {
   }
   render() {
     const { date } = this.props;
-    const m = moment();
+    const m = date ? moment(date) : moment();
     const startValue = getStarValue(m);
     const { good, bad } = pickTodaysLuck(m);
     const direction = getDirectionString(m);

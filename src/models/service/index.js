@@ -3,6 +3,7 @@
  * @author ryan.bian
  */
 const path = require('path');
+const { app } = require('electron');
 const { serviceStore } = require('../../service/index');
 const Commander = require('../../service/commander');
 const {
@@ -10,9 +11,11 @@ const {
   SHELL_NODE_MODULES_PATH,
 } = require('../../utils/env');
 
-const serverScriptPath = require.resolve('../../child_service/server');
-const builderScriptPath = require.resolve('../../child_service/builder');
-const dllBuilderScriptPath = require.resolve('../../child_service/dllBuilder');
+const APP_PATH = app.getAppPath().replace(/\s/g, '\\ ');
+
+const serverScriptPath = path.join(APP_PATH, 'src/child_service/server');
+const builderScriptPath = path.join(APP_PATH, 'src/child_service/builder');
+const dllBuilderScriptPath = path.join(APP_PATH, 'src/child_service/dllBuilder');
 
 class ServiceAPI {
   startServer(ctx) {

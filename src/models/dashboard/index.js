@@ -3,8 +3,7 @@
  * @author ryan.bian
  */
 
-const { get  } = require('../../utils/');
-const moment = require('moment');
+const { get } = require('../../utils/');
 
 class DashboardAPI {
   async getProjectList(ctx) {
@@ -71,10 +70,20 @@ class DashboardAPI {
       //   get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),
       //   get('http://cn.bing.com/cnhp/coverstory/')
       // ]);
-
-      let d = ctx.params.day ? moment().add(-ctx.params.day, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD');
-      const coverstory = await get(`http://cn.bing.com/cnhp/coverstory/?d=${d}`);
-      const result = Object.assign({}, coverstory, { url: `http://bing.ioliu.cn/v1?${ctx.params.day ? 'd=' + ctx.params.day + '&' : ''}w=1920&1200`});
+      const date = new Date();
+      const d = [
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate(),
+      ].join('');
+      const coverstory = await get(
+        `http://cn.bing.com/cnhp/coverstory/?d=${d}`
+      );
+      const result = Object.assign({}, coverstory, {
+        url: `http://bing.ioliu.cn/v1?${ctx.params.day
+          ? 'd=' + ctx.params.day + '&'
+          : ''}w=1920&1200`,
+      });
       ctx.body = ctx.app.responser(result, true);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);

@@ -44,7 +44,7 @@
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
-    "electron-builder": "^19.45.4",
+    "electron-builder": "^19.45.5",
     "electron-react-devtools": "^0.4.0",
     "eslint": "^4.10.0",
     "eslint-plugin-import": "^2.8.0",

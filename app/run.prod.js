@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 const render = (Component, store) => {
   ReactDOM.render(
     <Provider store={store}>
-      <Component store={store} />
+      <Component />
     </Provider>,
     document.getElementById('root')
   );

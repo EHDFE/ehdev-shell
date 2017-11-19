@@ -156,7 +156,7 @@ class ProjectModule extends Component {
     );
     if (config && config.dll && config.dll.enable) {
       buildButton = (
-        <Dropdown overlay={
+        <Dropdown key="start-build" overlay={
           <Menu>
             <Menu.Item>
               <button

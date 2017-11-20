@@ -178,6 +178,9 @@ class DashboardModule extends Component {
     if ( tag === 'before' ) {
       this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(-1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
     } else if ( tag === 'later' ) {
+      if (this.props.wallpaperDate === moment().format('YYYYMMDD')) {
+        return;
+      }
       this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
     } else {
       this.props.getWallpaper(moment().format('YYYYMMDD'));
@@ -188,7 +191,8 @@ class DashboardModule extends Component {
       ? {
         backgroundImage: `url(http://127.0.0.1:3100${this.props.wallpaper.url})`,
         backgroundSize: 'cover',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'center'
       }
       : {};
     return (
@@ -212,18 +216,24 @@ class DashboardModule extends Component {
                   marginLeft: '20px',
                   marginRight: '10px',
                   verticalAlign: 'middle',
+                  cursor: this.props.wallpaperDate === moment().format('YYYYMMDD') ? 'not-allowed' : 'pointer',
                 }}
+
                 onClick={() => {
                   this.changeWallpaper('later');
                 }}
               />
-              <Icon type="right-circle-o" style={{ verticalAlign: 'middle', marginRight: '10px' }} onClick={() => { this.changeWallpaper('before'); } } />
-              <Icon type="calendar" style={{ verticalAlign: 'middle', marginRight: '10px' }} onClick={() => { this.changeWallpaper('now'); } }/>
+              <Icon type="right-circle-o" style={{ verticalAlign: 'middle', marginRight: '10px', cursor: 'pointer', }} onClick={() => { this.changeWallpaper('before'); } } />
+              <Icon type="calendar" style={{ verticalAlign: 'middle', marginRight: '10px', cursor: 'pointer', }} onClick={() => { this.changeWallpaper('now'); } }/>
             </div>
           )}
         </div>
         {!this.state.showDashboard && (
           <div className={styles.Wallpaper__text}>
+            <div>
+              <Icon type="star" />
+              {this.props.wallpaper.attribute}
+            </div>
             {this.props.wallpaper.para1}
           </div>
         )}

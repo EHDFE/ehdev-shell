@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "ehdev's gui shell",
   "main": "main.js",
   "dependencies": {

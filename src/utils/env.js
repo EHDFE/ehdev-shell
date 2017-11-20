@@ -12,4 +12,4 @@ const ConfigerFolderPath = exports.ConfigerFolderPath = path.join(UserDataPath, 
 // configs's package.json path
 const ConfigerFolderPackagePath = exports.ConfigerFolderPackagePath = path.join(ConfigerFolderPath, 'package.json');
 
-exports.SHELL_NODE_MODULES_PATH = path.join(app.getAppPath(), 'node_modules');
+exports.SHELL_NODE_MODULES_PATH = path.join(app.getAppPath(), 'node_modules').replace('app.asar', 'app.asar.unpacked');

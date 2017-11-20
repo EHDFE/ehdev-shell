@@ -11,7 +11,8 @@ const {
   SHELL_NODE_MODULES_PATH,
 } = require('../../utils/env');
 
-const APP_PATH = app.getAppPath().replace(/\s/g, '\\ ');
+const APP_PATH = app.getAppPath()
+  .replace(/app\.asar/, 'app.asar.unpacked');
 
 const serverScriptPath = path.join(APP_PATH, 'src/child_service/server');
 const builderScriptPath = path.join(APP_PATH, 'src/child_service/builder');

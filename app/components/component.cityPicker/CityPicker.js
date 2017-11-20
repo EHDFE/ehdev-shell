@@ -12,7 +12,7 @@ class CityPicker extends React.Component {
   }
 
   render() {
-    const {citys, onChange, size, placehoder} = this.props;
+    const {citys, onChange, size, placeholder} = this.props;
     const {value} = this.state;
     const province = Object.keys(citys);
     let address = [];
@@ -36,7 +36,7 @@ class CityPicker extends React.Component {
     }
 
     return (
-      <Cascader options={address} size={size} placeholder={placehoder} onChange={onChange} defaultValue={value}></Cascader>
+      <Cascader options={address} size={size} placeholder={placeholder} onChange={onChange} defaultValue={value}></Cascader>
     );
   }
 }
@@ -51,9 +51,9 @@ CityPicker.defaultProps = {
 CityPicker.propTypes = {
   citys: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.array,
   size: PropTypes.string,
-  placehoder: PropTypes.string
+  value: PropTypes.any,
+  placeholder: PropTypes.string
 };
 
 export default CityPicker;

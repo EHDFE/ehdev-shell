@@ -13,7 +13,7 @@ const defaultState = {
   env: {
     rootPath: undefined,
     pkg: undefined,
-    config: {},
+    config: undefined,
     pkgInfo: {}
   },
   service: {

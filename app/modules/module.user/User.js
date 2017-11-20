@@ -1,5 +1,5 @@
 /**
- * Setting Page
+ * User Page
  * @author grootfish
  */
 import React, { Component } from 'react';
@@ -90,7 +90,7 @@ class User extends Component {
     return (
       <Page>
         <Form onSubmit={this.handleSubmit}>
-          <Card title="个人信息">
+          <Card title="个人信息" className={styles.User__Card}>
             <Row gutter={10}>
               <Col span={16}>
                 <FormItem {...formItemLayout} label="你的昵称">
@@ -133,7 +133,7 @@ class User extends Component {
                     getValueFromEvent: this.normFile,
                   })(
                     <Upload
-                      className={styles.Setting__avatar_uploader}
+                      className={styles.User__avatar_uploader}
                       name="avatar"
                       showUploadList={false}
                       action={FILE_PATH}
@@ -144,12 +144,12 @@ class User extends Component {
                         <img
                           src={imgUrl}
                           alt=""
-                          className={styles.Setting__avatar}
+                          className={styles.User__avatar}
                         />
                       ) : (
                         <Icon
                           type="plus"
-                          className={styles.Setting__avatar_uploader_trigger}
+                          className={styles.User__avatar_uploader_trigger}
                         />
                       )}
                     </Upload>

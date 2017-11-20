@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "ehdev's gui shell",
   "main": "main.js",
   "dependencies": {
@@ -24,6 +24,7 @@
     "nedb": "^1.8.0",
     "nunjucks": "^3.0.1",
     "raven": "^2.2.1",
+    "react-syntax-highlighter": "^6.0.3",
     "stats-webpack-plugin": "^0.6.1",
     "uglifyjs-webpack-plugin": "^1.0.1",
     "webpack": "^3.8.1",
@@ -104,8 +105,8 @@
     "dist-win": "electron-builder -w"
   },
   "build": {
-    "productName": "EHD Shell",
-    "appId": "com.ehdev.shell",
+    "productName": "Jarvis",
+    "appId": "com.ehdev.jarvis",
     "directories": {
       "output": "dist"
     },
@@ -118,12 +119,23 @@
       "!**/*.md",
       "!**/node_modules/*/{*.map,README.md~,LICENSE,.*.yml,LICENSE-MIT}"
     ],
-    "asar": false,
+    "asar": true,
+    "asarUnpack": [
+      "src/child_service/*",
+      "node_modules/webpack/**/*",
+      "node_modules/webpack-dev-server/**/*",
+      "node_modules/chalk/**/*",
+      "node_modules/extract-text-webpack-plugin/**/*",
+      "node_modules/clean-webpack-plugin/**/*",
+      "node_modules/add-asset-html-webpack-plugin/**/*",
+      "node_modules/stats-webpack-plugin/**/*",
+      "node_modules/html-webpack-plugin/**/*"
+    ],
     "mac": {
       "category": "public.app-category.developer-tools"
     },
     "win": {
-      "target": "zip"
+      "target": "portable"
     }
   },
   "repository": {

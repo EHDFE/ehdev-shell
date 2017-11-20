@@ -1,5 +1,5 @@
 /**
- * Setting Page
+ * User Page
  * @author grootfish
  */
 import React, { Component } from 'react';
@@ -90,74 +90,71 @@ class User extends Component {
     return (
       <Page>
         <Form onSubmit={this.handleSubmit}>
-          <Card title="个人信息" noHovering>
+          <Card title="个人信息" className={styles.User__Card}>
             <Row gutter={10}>
               <Col span={16}>
-                <Card bordered={false} noHovering>
-                  <FormItem {...formItemLayout} label="你的昵称">
-                    {getFieldDecorator('name', {
-                      initialValue: name,
-                      rules: [{ required: true, message: '请输入你的昵称！' }],
-                    })(<Input placeholder="请输入你的昵称" />)}
-                  </FormItem>
+                <FormItem {...formItemLayout} label="你的昵称">
+                  {getFieldDecorator('name', {
+                    initialValue: name,
+                    rules: [{ required: true, message: '请输入你的昵称！' }],
+                  })(<Input placeholder="请输入你的昵称" />)}
+                </FormItem>
 
-                  <FormItem {...formItemLayout} label="你的github">
-                    {getFieldDecorator('github', {
-                      initialValue: github,
-                    })(<Input placeholder="请输入你的github地址" />)}
-                  </FormItem>
+                <FormItem {...formItemLayout} label="你的github">
+                  {getFieldDecorator('github', {
+                    initialValue: github,
+                  })(<Input placeholder="请输入你的github地址" />)}
+                </FormItem>
 
-                  <FormItem {...formItemLayout} label="你在哪里">
-                    {getFieldDecorator('address', {
-                      initialValue: address,
-                    })(<CityPicker size='large' placeholder='请选择所在城市'/>)}
-                  </FormItem>
+                <FormItem {...formItemLayout} label="你在哪里">
+                  {getFieldDecorator('address', {
+                    initialValue: address,
+                  })(<CityPicker placeholder='请选择所在城市'/>)}
+                </FormItem>
 
-                  <FormItem {...formItemLayout} label="你想说的">
-                    {getFieldDecorator('bio', {
-                      initialValue: bio,
-                    })(<Input.TextArea rows={4} placeholder="你想说什么都可以" />)}
-                  </FormItem>
+                <FormItem {...formItemLayout} label="你想说的">
+                  {getFieldDecorator('bio', {
+                    initialValue: bio,
+                  })(<Input.TextArea rows={4} placeholder="你想说什么都可以" />)}
+                </FormItem>
 
-                  <FormItem wrapperCol={{ span: 12, offset: 7 }}>
-                    <Button type="primary" htmlType="submit">
+                <FormItem wrapperCol={{ span: 12, offset: 7 }}>
+                  <Button type="primary" htmlType="submit">
                     更新个人信息
-                    </Button>
-                  </FormItem>
-                </Card>
+                  </Button>
+                </FormItem>
+
               </Col>
-              <Col span={6}>
-                <Card bordered={false} noHovering>
-                  <FormItem help="点击上传新头像" style={{textAlign: 'center'}}>
-                    {getFieldDecorator('avatar', {
-                      initialValue: avatar,
-                      valuePropName: 'file',
-                      getValueFromEvent: this.normFile,
-                    })(
-                      <Upload
-                        className={styles.Setting__avatar_uploader}
-                        name="avatar"
-                        showUploadList={false}
-                        action={FILE_PATH}
-                        beforeUpload={beforeUpload}
-                        // onChange={this.handleChange}
-                      >
-                        {imgUrl ? (
-                          <img
-                            src={imgUrl}
-                            alt=""
-                            className={styles.Setting__avatar}
-                          />
-                        ) : (
-                          <Icon
-                            type="plus"
-                            className={styles.Setting__avatar_uploader_trigger}
-                          />
-                        )}
-                      </Upload>
-                    )}
-                  </FormItem>
-                </Card>
+              <Col span={8}>
+                <FormItem help="点击上传新头像" style={{textAlign: 'center'}}>
+                  {getFieldDecorator('avatar', {
+                    initialValue: avatar,
+                    valuePropName: 'file',
+                    getValueFromEvent: this.normFile,
+                  })(
+                    <Upload
+                      className={styles.User__avatar_uploader}
+                      name="avatar"
+                      showUploadList={false}
+                      action={FILE_PATH}
+                      beforeUpload={beforeUpload}
+                      // onChange={this.handleChange}
+                    >
+                      {imgUrl ? (
+                        <img
+                          src={imgUrl}
+                          alt=""
+                          className={styles.User__avatar}
+                        />
+                      ) : (
+                        <Icon
+                          type="plus"
+                          className={styles.User__avatar_uploader_trigger}
+                        />
+                      )}
+                    </Upload>
+                  )}
+                </FormItem>
               </Col>
             </Row>
           </Card>

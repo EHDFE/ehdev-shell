@@ -6,6 +6,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Select, Input, Switch, Button, Row, Col, Card  } from 'antd';
 import _ from 'lodash';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
+
 
 const FormItem = Form.Item;
 
@@ -14,30 +17,30 @@ import styles from './index.less';
 const itemProps = {
   labelCol: {
     xs: {
-      offset: 1,
       span: 9,
     },
     sm: {
-      offset: 1,
       span: 7,
     },
     lg: {
-      offset: 1,
       span: 5,
     },
   },
   wrapperCol: {
     xs: {
+      offset: 1,
       span: 14,
     },
     sm: {
+      offset: 1,
       span: 16,
     },
     lg: {
+      offset: 1,
       span: 18,
     },
   },
-
+  colon: false,
 };
 
 const colProps = {
@@ -57,7 +60,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
 
       if (_.isPlainObject(config[item])) {
         return (
-          <Card title={item} noHovering key={field} className={styles.Setup__Card} bordered={false}>
+          <Card title={item} key={field} className={styles.Setup__Card} bordered={false}>
             <Config config={config[item]}
               getFieldDecorator={getFieldDecorator}
               prefix={field}
@@ -68,7 +71,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
       if (_.isArray(config[item])) {
 
         return (
-          <Card noHovering className={styles.Setup__Card} bordered={false}>
+          <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}
@@ -85,9 +88,8 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
           </Card>
         );
       } else if (_.isString(config[item])) {
-
         return (
-          <Card noHovering className={styles.Setup__Card} bordered={false}>
+          <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}
@@ -101,7 +103,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
         );
       } else if (_.isBoolean(config[item])) {
         return (
-          <Card noHovering className={styles.Setup__Card}>
+          <Card className={styles.Setup__Card} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}
@@ -160,7 +162,7 @@ class Setup extends React.Component {
   }
 
   handleFormChange = () => {
-    const changedFields = this.formRef.props.form.getFieldsValue();
+    const changedFields = this.form.getFieldsValue();
 
     this.setState({
       fields: { ...this.state.fields, ...changedFields },
@@ -173,7 +175,7 @@ class Setup extends React.Component {
     this.setState({
       fields: config,
     });
-    this.formRef.props.form.setFieldsValue(config);
+    this.form.setFieldsValue(config);
   }
 
   handleSubmit = ()=>{
@@ -184,24 +186,24 @@ class Setup extends React.Component {
   render() {
     const fields = this.state.fields;
     return (
-      <Row gutter={10} className={styles.Setup__Row}>
+      <Row gutter={10} className={styles.Setup}>
         <Col {...colProps}>
           <SetupForm config = {fields} onChange={this.handleFormChange}
             remove = {this.remove}
             add={this.add}
-            wrappedComponentRef={(inst) => this.formRef = inst}/>
+            ref={(inst) => this.form = inst}/>
         </Col>
         <Col {...colProps}>
-          <pre className={styles.Setup__Bash}>
-            {JSON.stringify(fields, null, 2)}
-          </pre>
-        </Col>
-        <Col span={24} className={styles.Setup__Button}>
-          <Button type="primary" htmlType="submit" size="large" onClick={this.handleSubmit}>提交</Button>
-          <Button style={{ marginLeft: 20 }} size="large" onClick={this.handleReset}>
+
+          <SyntaxHighlighter language='javascript' style={docco}>{JSON.stringify(fields, null, 2)}</SyntaxHighlighter>
+          <Col span={24} className={styles.Setup__Button}>
+            <Button type="primary" htmlType="submit" size="large" onClick={this.handleSubmit}>提交</Button>
+            <Button style={{ marginLeft: 20 }} size="large" onClick={this.handleReset}>
             重置
-          </Button>
+            </Button>
+          </Col>
         </Col>
+
       </Row>
     );
   }

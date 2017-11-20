@@ -104,8 +104,8 @@ const consoleSelector = createSelector(
   consolePageSelector,
   pageState => ({
     content: pageState.content,
-    lastLogContent: pageState.lastLog.content,
-    lastLogTime: pageState.lastLog.t
+    lastLogContent: pageState.lastLog,
+    lastLogTime: pageState.lastLog
   })
 );
 

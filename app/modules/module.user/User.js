@@ -110,7 +110,7 @@ class User extends Component {
                   <FormItem {...formItemLayout} label="你在哪里">
                     {getFieldDecorator('address', {
                       initialValue: address,
-                    })(<CityPicker size='large' placeholder='请选择所在城市'/>)}
+                    })(<CityPicker placeholder='请选择所在城市'/>)}
                   </FormItem>
 
                   <FormItem {...formItemLayout} label="你想说的">

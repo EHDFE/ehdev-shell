@@ -104,8 +104,8 @@
     "dist-win": "electron-builder -w"
   },
   "build": {
-    "productName": "EHD Shell",
-    "appId": "com.ehdev.shell",
+    "productName": "Jarvis",
+    "appId": "com.ehdev.jarvis",
     "directories": {
       "output": "dist"
     },

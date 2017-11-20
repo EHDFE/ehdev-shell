@@ -3,7 +3,11 @@
  * @author ryan.bian
  */
 
-const { get } = require('../../utils/');
+const { get, saveWallpaper } = require('../../utils/');
+const moment = require('moment');
+const { app } = require('electron');
+const fs = require('fs');
+const path = require('path');
 
 class DashboardAPI {
   async getProjectList(ctx) {
@@ -66,25 +70,20 @@ class DashboardAPI {
   }
   async getDailyWallpaper(ctx) {
     try {
-      // const [img, coverstory] = await Promise.all([
-      //   get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),
-      //   get('http://cn.bing.com/cnhp/coverstory/')
-      // ]);
-      const date = new Date();
-      const d = [
-        date.getFullYear(),
-        date.getMonth() + 1,
-        date.getDate(),
-      ].join('');
-      const coverstory = await get(
-        `http://cn.bing.com/cnhp/coverstory/?d=${d}`
-      );
-      const result = Object.assign({}, coverstory, {
-        url: `http://bing.ioliu.cn/v1?${ctx.params.day
-          ? 'd=' + ctx.params.day + '&'
-          : ''}w=1920&1200`,
-      });
+      let imgUrl = `/api/dashboard/wallpaper?d=${ctx.params.day}`;
+      const coverstory = await get(`http://cn.bing.com/cnhp/coverstory/?d=${ctx.params.day ? ctx.params.day : moment().format('YYYYMMDD')}`);
+      let d = ctx.params.day ? (Math.floor(( moment().valueOf() - moment(ctx.params.day, 'YYYYMMDD').valueOf()) / 86400000)) : 0;
+      let result = Object.assign({}, coverstory, { url: imgUrl});
+      await saveWallpaper(d);
       ctx.body = ctx.app.responser(result, true);
+    } catch (e) {
+      ctx.body = ctx.app.responser(e.toString(), false);
+    }
+  }
+  async wallpaper(ctx) {
+    try {
+      ctx.res.setHeader('Content-Type', 'image/jpg');
+      fs.createReadStream(path.resolve(app.getPath('userData'), './wallpaper.jpg')).pipe(ctx.res);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }

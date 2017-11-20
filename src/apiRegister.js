@@ -100,7 +100,9 @@ dashboardRouter
   .get('/projects', dashboard.getProjectList)
   .get('/overall', dashboard.getOverall)
   .get('/dailyWallpaper', dashboard.getDailyWallpaper)
-  .get('/dailyWallpaper/:day', dashboard.getDailyWallpaper);
+  .get('/dailyWallpaper/:day', dashboard.getDailyWallpaper)
+  .get('/wallpaper', dashboard.wallpaper);
+
 
 
 // combine all subrouters

@@ -13,7 +13,7 @@ const enhancer = compose(
     createRavenMiddleware(window.Raven, {
     }),
   ),
-  persistState(['page.project', 'page.console', 'page.user'])
+  persistState(['page.dashboard', 'page.project', 'page.console', 'page.user'])
 );
 
 export default createStore(reducer, enhancer);

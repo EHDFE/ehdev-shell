@@ -1,6 +1,12 @@
 @import '../../theme/index.less';
 
 .Dashboard {
+  &__Wallpaper {
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    overflow-y: auto;
+  }
   &__Container {
     display: grid;
     padding: 16px;
@@ -129,3 +135,23 @@
     margin-bottom: 4px;
   }
 }
+
+.Wallpaper {
+  position: fixed;
+  z-index: 1;
+  bottom: 31px;
+  margin-left: 30px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 28px;
+  &__text {
+    font-size:20px;
+    color: #fff;
+    font-weight: 500;
+    width: 70%;
+    position: fixed;
+    bottom: 112px;
+    left: 15%;
+  }
+}
+

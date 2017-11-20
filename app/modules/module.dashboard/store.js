@@ -48,10 +48,11 @@ export const actions = createActions({
         projectsCount,
       };
     },
-    GET_WALLPAPER: async (day) => {
-      const wallpaper = await DASHBOARD_API.wallPaper.get(day);
+    GET_WALLPAPER: async (date) => {
+      const wallpaper = await DASHBOARD_API.wallPaper.get(date);
       return {
-        wallpaper
+        wallpaper,
+        wallpaperDate: date ? date : moment().format('YYYYMMDD')
       };
     },
   },

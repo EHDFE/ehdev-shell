@@ -20,8 +20,8 @@ const DASHBOARD_API = {
     }
   },
   wallPaper: {
-    async get(day) {
-      const res = await fetch(`${API_PATH}/dailyWallpaper/${day ? day : ''}`);
+    async get(date) {
+      const res = await fetch(`${API_PATH}/dailyWallpaper/${date ? date : ''}`);
       return handleResponse(res);
     }
   },

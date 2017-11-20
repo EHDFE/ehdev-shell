@@ -14,6 +14,10 @@ import Almanac from '../../components/component.almanac';
 import { actions } from './store';
 import { GREETING_WORDS } from '../../CONFIG';
 
+import { Icon, Switch } from 'antd';
+
+import moment from 'moment';
+
 import styles from './index.less';
 
 class DashboardModule extends Component {
@@ -25,12 +29,16 @@ class DashboardModule extends Component {
     wallpaper: PropTypes.object,
     projectsRank: PropTypes.array,
     date: PropTypes.string,
+    wallpaperDate: PropTypes.string,
     weekday: PropTypes.number,
     getWeather: PropTypes.func,
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
     getWallpaper: PropTypes.func,
+  };
+  state = {
+    showDashboard: true,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.date !== this.props.date) {
@@ -118,18 +126,16 @@ class DashboardModule extends Component {
     return (
       <Card className={styles.Dashboard__ProjectsCard} title="常用工程">
         <ul className={styles.Dashboard__ProjectRankList}>
-          {
-            projectsRank.map((o, i) => (
-              <li
-                data-index={i + 1}
-                className={styles.Dashboard__ProjectRankItem}
-                key={o._id}
-                title={o.projectPath}
-              >
-                <p>{o.projectPath}</p>
-              </li>
-            ))
-          }
+          {projectsRank.map((o, i) => (
+            <li
+              data-index={i + 1}
+              className={styles.Dashboard__ProjectRankItem}
+              key={o._id}
+              title={o.projectPath}
+            >
+              <p>{o.projectPath}</p>
+            </li>
+          ))}
         </ul>
       </Card>
     );
@@ -163,26 +169,64 @@ class DashboardModule extends Component {
       </Card>
     );
   }
+  showWallpaper = checked => {
+    this.setState({
+      showDashboard: !checked,
+    });
+  }
+  changeWallpaper = tag => {
+    if ( tag === 'before' ) {
+      this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(-1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
+    } else if ( tag === 'later' ) {
+      this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
+    } else {
+      this.props.getWallpaper(moment().format('YYYYMMDD'));
+    }
+  }
   render() {
-    let style =
-      this.props.wallpaper
-        ? {
-          background: `url(${this.props.wallpaper.url})`,
-          backgroundSize: 'cover',
-          backgroundAttachment: 'fixed',
-          height: '100vh',
-          overflowY: 'auto',
-        }
-        : {};
+    let style = this.props.wallpaper
+      ? {
+        backgroundImage: `url(http://127.0.0.1:3100${this.props.wallpaper.url})`,
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed'
+      }
+      : {};
     return (
-      <div style={style}>
-        <div className={styles.Dashboard__Container}>
-          {this.renderInfoBar()}
-          {this.renderSummaryCards()}
-          {this.renderRecentsProjects()}
-          {this.renderAlmanac()}
-          {this.renderLastBuildStats()}
+      <div style={style} className={styles.Dashboard__Wallpaper}>
+        {this.state.showDashboard && (
+          <div className={styles.Dashboard__Container}>
+            {this.renderInfoBar()}
+            {this.renderSummaryCards()}
+            {this.renderRecentsProjects()}
+            {this.renderAlmanac()}
+            {this.renderLastBuildStats()}
+          </div>
+        )}
+        <div className={styles.Wallpaper}>
+          <Switch defaultChecked={false} onChange={this.showWallpaper} />
+          {!this.state.showDashboard && (
+            <div style={{ display: 'inline-block' }}>
+              <Icon
+                type="left-circle-o"
+                style={{
+                  marginLeft: '20px',
+                  marginRight: '10px',
+                  verticalAlign: 'middle',
+                }}
+                onClick={() => {
+                  this.changeWallpaper('later');
+                }}
+              />
+              <Icon type="right-circle-o" style={{ verticalAlign: 'middle', marginRight: '10px' }} onClick={() => { this.changeWallpaper('before'); } } />
+              <Icon type="calendar" style={{ verticalAlign: 'middle', marginRight: '10px' }} onClick={() => { this.changeWallpaper('now'); } }/>
+            </div>
+          )}
         </div>
+        {!this.state.showDashboard && (
+          <div className={styles.Wallpaper__text}>
+            {this.props.wallpaper.para1}
+          </div>
+        )}
       </div>
     );
     // { this.renderBuildTimesRank() }
@@ -217,7 +261,7 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
-  getWallpaper: (day) => dispatch(actions.base.getWallpaper(day)),
+  getWallpaper: day => dispatch(actions.base.getWallpaper(day)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

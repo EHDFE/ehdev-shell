@@ -22,7 +22,7 @@ const enhancer = compose(
     createRavenMiddleware(window.Raven, {
     })
   ),
-  persistState(['page.project', 'page.console', 'page.user']),
+  persistState(['page.dashboard', 'page.project', 'page.console', 'page.user']),
   DevTools.instrument(monitorReducer, {
     maxAge: 50,
     shouldCatchErrors: true,

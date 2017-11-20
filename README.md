@@ -1,4 +1,4 @@
-# <img src="http://image.tf56.com/dfs/group1/M00/39/50/CiFBCVnkI_iAYRYdAAWllnuhu4k085.ico" alt="" style="vertical-align:middle" height="60" /> EHD SHELL
+# <img src="http://image.tf56.com/dfs/group1/M00/3E/76/CiFBCloSOVqAKLpeAAA2grm54IA264.png" alt="" style="vertical-align:middle" height="60" /> EHD SHELL
 
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
@@ -8,7 +8,7 @@
 [![David](https://img.shields.io/david/dev/EHDFE/ehdev-shell.svg)]()
 
 ## Introduction
-EHD SHELL aims to provide an easy to use gui tool for developers.
+Javis aims to provide an easy to use gui tool for developers.
 
 TL;DR
 

@@ -71,7 +71,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
       if (_.isArray(config[item])) {
 
         return (
-          <Card className={styles.Setup__Card} bordered={false}>
+          <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}
@@ -88,9 +88,8 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
           </Card>
         );
       } else if (_.isString(config[item])) {
-
         return (
-          <Card className={styles.Setup__Card} bordered={false}>
+          <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}
@@ -104,7 +103,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
         );
       } else if (_.isBoolean(config[item])) {
         return (
-          <Card className={styles.Setup__Card}>
+          <Card className={styles.Setup__Card} key={field}>
             <FormItem
               key={field}
               className={styles.Setup__FormItem}

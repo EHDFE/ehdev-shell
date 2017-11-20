@@ -118,23 +118,12 @@
       "!**/*.md",
       "!**/node_modules/*/{*.map,README.md~,LICENSE,.*.yml,LICENSE-MIT}"
     ],
-    "asar": true,
-    "asarUnpack": [
-      "src/child_service/*",
-      "node_modules/webpack/**/*",
-      "node_modules/webpack-dev-server/**/*",
-      "node_modules/chalk/**/*",
-      "node_modules/extract-text-webpack-plugin/**/*",
-      "node_modules/clean-webpack-plugin/**/*",
-      "node_modules/add-asset-html-webpack-plugin/**/*",
-      "node_modules/stats-webpack-plugin/**/*",
-      "node_modules/html-webpack-plugin/**/*"
-    ],
+    "asar": false,
     "mac": {
       "category": "public.app-category.developer-tools"
     },
     "win": {
-      "target": "portable"
+      "target": "nsis"
     }
   },
   "repository": {

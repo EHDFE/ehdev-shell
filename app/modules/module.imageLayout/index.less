@@ -1,0 +1,40 @@
+@import "../../theme/index.less";
+
+.ImageLayout {
+  &__Control {
+    position: fixed;
+    left: 112px;
+    bottom: 32px;
+    display: flex;
+    width: 100px;
+    justify-content: space-between;
+  }
+  &__Switch {
+  }
+  &__Btn {
+    font-size: 24px;
+    cursor: pointer;
+
+    &--disabled {
+      color: @btn-disable-color;
+      cursor: not-allowed;
+    }
+  }
+  &__Info {
+    position: fixed;
+    left: 112px;
+    bottom: 60px;
+    padding: 8px;
+    width: ~"calc(100vw - 144px)";
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+
+    &--hide {
+      display: none;
+    }
+
+    &Title {
+      color: #fff;
+    }
+  }
+}

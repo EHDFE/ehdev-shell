@@ -22,6 +22,8 @@ const ConfigerAPI = require('./models/configer/');
 // Dashboard Model
 const DashboardAPI = require('./models/dashboard/');
 
+const CommonAPI = require('./models/common/');
+
 const apiRouter = Router();
 
 const uploadList = new UploadListAPI();
@@ -98,12 +100,16 @@ const dashboard = new DashboardAPI();
 
 dashboardRouter
   .get('/projects', dashboard.getProjectList)
-  .get('/overall', dashboard.getOverall)
-  .get('/dailyWallpaper', dashboard.getDailyWallpaper)
-  .get('/dailyWallpaper/:day', dashboard.getDailyWallpaper)
-  .get('/wallpaper', dashboard.wallpaper);
+  .get('/overall', dashboard.getOverall);
 
+// common router
+const commonRouter = Router();
+const common = new CommonAPI();
 
+commonRouter
+  .get('/bingWallpaper', common.getBingWallpaper)
+  .get('/bingWallpaper/:date', common.getBingWallpaper)
+  .get('/wallpaper/:date', common.getLocalWallpaper);
 
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
@@ -112,5 +118,6 @@ apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
 apiRouter.use('/configer', configerRouter.routes(), configerRouter.allowedMethods());
 apiRouter.use('/dashboard', dashboardRouter.routes(), dashboardRouter.allowedMethods());
+apiRouter.use('/common', commonRouter.routes(), commonRouter.allowedMethods());
 
 module.exports = apiRouter;

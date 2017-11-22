@@ -19,11 +19,12 @@ import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
 import { ConsoleModule } from './modules/module.console/';
 import { ConfigerModule } from './modules/module.configer/';
-import { UserModule } from './modules/module.user';
+import { UserModule } from './modules/module.user/';
+import { ImageLayout } from './modules/module.imageLayout/';
 
 const App = () => (
   <BrowserRouter basename="/">
-    <Layout>
+    <ImageLayout>
       <Route exact path="/" component={DashboardModule}/>
       <Route exact path="/dashboard" component={DashboardModule}/>
       <Route path="/project" component={ProjectModule}/>
@@ -31,7 +32,7 @@ const App = () => (
       <Route path="/configer" component={ConfigerModule}/>
       <Route path="/user" component={UserModule}/>
       <ConsoleModule />
-    </Layout>
+    </ImageLayout>
   </BrowserRouter>
 );
 

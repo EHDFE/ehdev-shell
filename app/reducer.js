@@ -10,6 +10,7 @@ import { UploadReducer } from './modules/module.upload/';
 import { ConfigerReducer } from './modules/module.configer/';
 import { ConsoleReducer } from './modules/module.console/';
 import { UserReducer } from './modules/module.user/';
+import { ImageLayoutReducer } from './modules/module.imageLayout/';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -18,6 +19,7 @@ const reducer = combineReducers({
   'page.configer': ConfigerReducer,
   'page.console': ConsoleReducer,
   'page.user': UserReducer,
+  'page.wallpaper': ImageLayoutReducer,
 });
 
 export default reducer;

@@ -6,7 +6,6 @@ const { promisify } = require('util');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
-const { app }  = require('electron');
 const path = require('path');
 
 /**
@@ -109,22 +108,25 @@ exports.get = url => new Promise((resolve, reject) => {
   });
 });
 
-/**
- * save wallpaper
- * @param {string} options - request option
- */
-exports.saveWallpaper = day => new Promise((resolve, reject) => {
-  day = day || 0;
-  const options = {
-    hostname: 'bing.ioliu.cn',
-    path: `/v1?d=${day}&w=1920`,
-    method: 'GET',
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
+const makeDir = (filePath) => new Promise((resolve, reject) => {
+  fs.stat(filePath, (err, stats) => {
+    if (!err && stats.isDirectory()) {
+      resolve();
+    } else {
+      fs.mkdir(filePath, err2 => {
+        if (err2) {
+          reject(err2);
+        } else {
+          resolve();
+        }
+      });
     }
-  };
+  });
+});
+
+const makeRequest = (filePath, options) => new Promise((resolve, reject) => {
   const req = https.request(options, (res) => {
-    res.pipe(fs.createWriteStream(path.resolve(app.getPath('userData'), './wallpaper.jpg')));
+    res.pipe(fs.createWriteStream(filePath));
     res.on('end', ()=>{
       resolve();
     });
@@ -136,5 +138,17 @@ exports.saveWallpaper = day => new Promise((resolve, reject) => {
   req.end();
 });
 
+/**
+ * save wallpaper
+ */
+exports.saveImage = async (filePath, options) => {
+  try {
+    await makeDir(path.dirname(filePath));
+    return await makeRequest(filePath, options);
+  } catch (e) {
+    throw Error(e);
+  }
+};
 
 exports.mkdir = promisify(fs.mkdir);
+exports.stat = promisify(fs.stat);

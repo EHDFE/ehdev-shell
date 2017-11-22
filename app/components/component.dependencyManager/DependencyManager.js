@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './index.less';
 import { Table, Radio, Button, Spin, notification, message, Icon } from 'antd';
 import AddDev from '../component.addDev/';
+
+import styles from './index.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -271,38 +272,39 @@ class DependencyManager extends Component {
           <RadioButton value="dependencies">Dependencies</RadioButton>
           <RadioButton value="devDependencies">Dev Dependencies</RadioButton>
         </RadioGroup>
-        <div style={{ margin: '10px 0' }}>
-          <Button
+        <div className={styles.Manager__Table}>
+          <div className={styles.Manager__Action}>
+            <Button
+              size="small"
+              onClick={ this.batchUpdate }
+              disabled = {!this.props.pkg }
+            >
+              批量更新
+            </Button>
+            <Button
+              type="primary"
+              size="small"
+              onClick={this.showModal}
+              disabled = {!this.props.pkg }
+            >
+              添加依赖
+            </Button>
+          </div>
+          <AddDev
+            visible={this.state.modalVisible}
+            hideModal={this.hideModal}
+            installpck={this.installpkg}
+            refresh={this.refresh}
+            rootPath={this.props.rootPath}
+            tab={this.state.tab}
+          />
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={this.state.dataSource}
             size="small"
-            onClick={ this.batchUpdate }
-            disabled = {!this.props.pkg }
-          >
-            批量更新
-          </Button>
-          <Button
-            type="primary"
-            size="small"
-            onClick={this.showModal}
-            style={{ float: 'right' }}
-            disabled = {!this.props.pkg }
-          >
-            添加依赖
-          </Button>
+          />
         </div>
-        <AddDev
-          visible={this.state.modalVisible}
-          hideModal={this.hideModal}
-          installpck={this.installpkg}
-          refresh={this.refresh}
-          rootPath={this.props.rootPath}
-          tab={this.state.tab}
-        />
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={this.state.dataSource}
-          size="small"
-        />
       </Spin>
     );
   }

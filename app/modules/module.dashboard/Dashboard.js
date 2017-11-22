@@ -26,16 +26,13 @@ class DashboardModule extends Component {
     assetsCount: PropTypes.number,
     projectsCount: PropTypes.number,
     weather: PropTypes.object,
-    wallpaper: PropTypes.object,
     projectsRank: PropTypes.array,
     date: PropTypes.string,
-    wallpaperDate: PropTypes.string,
     weekday: PropTypes.number,
     getWeather: PropTypes.func,
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
-    getWallpaper: PropTypes.func,
   };
   state = {
     showDashboard: true,
@@ -43,7 +40,6 @@ class DashboardModule extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.date !== this.props.date) {
       this.props.getWeather();
-      this.props.getWallpaper();
     }
   }
   componentDidMount() {
@@ -169,34 +165,9 @@ class DashboardModule extends Component {
       </Card>
     );
   }
-  showWallpaper = checked => {
-    this.setState({
-      showDashboard: !checked,
-    });
-  }
-  changeWallpaper = tag => {
-    if ( tag === 'before' ) {
-      this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(-1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
-    } else if ( tag === 'later' ) {
-      if (this.props.wallpaperDate === moment().format('YYYYMMDD')) {
-        return;
-      }
-      this.props.getWallpaper(this.props.wallpaperDate ? moment(this.props.wallpaperDate, 'YYYYMMDD').add(1, 'day').format('YYYYMMDD') : moment().format('YYYYMMDD'));
-    } else {
-      this.props.getWallpaper(moment().format('YYYYMMDD'));
-    }
-  }
   render() {
-    let style = this.props.wallpaper
-      ? {
-        backgroundImage: `url(http://127.0.0.1:3100${this.props.wallpaper.url})`,
-        backgroundSize: 'cover',
-        backgroundAttachment: 'fixed',
-        backgroundPosition: 'center'
-      }
-      : {};
     return (
-      <div style={style} className={styles.Dashboard__Wallpaper}>
+      <div className={styles.Dashboard}>
         {this.state.showDashboard && (
           <div className={styles.Dashboard__Container}>
             {this.renderInfoBar()}
@@ -204,37 +175,6 @@ class DashboardModule extends Component {
             {this.renderRecentsProjects()}
             {this.renderAlmanac()}
             {this.renderLastBuildStats()}
-          </div>
-        )}
-        <div className={styles.Wallpaper}>
-          <Switch defaultChecked={false} onChange={this.showWallpaper} />
-          {!this.state.showDashboard && (
-            <div style={{ display: 'inline-block' }}>
-              <Icon
-                type="left-circle-o"
-                style={{
-                  marginLeft: '20px',
-                  marginRight: '10px',
-                  verticalAlign: 'middle',
-                  cursor: this.props.wallpaperDate === moment().format('YYYYMMDD') ? 'not-allowed' : 'pointer',
-                }}
-
-                onClick={() => {
-                  this.changeWallpaper('later');
-                }}
-              />
-              <Icon type="right-circle-o" style={{ verticalAlign: 'middle', marginRight: '10px', cursor: 'pointer', }} onClick={() => { this.changeWallpaper('before'); } } />
-              <Icon type="calendar" style={{ verticalAlign: 'middle', marginRight: '10px', cursor: 'pointer', }} onClick={() => { this.changeWallpaper('now'); } }/>
-            </div>
-          )}
-        </div>
-        {!this.state.showDashboard && (
-          <div className={styles.Wallpaper__text}>
-            <div>
-              <Icon type="star" />
-              {this.props.wallpaper.attribute}
-            </div>
-            {this.props.wallpaper.para1}
           </div>
         )}
       </div>
@@ -271,7 +211,6 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
-  getWallpaper: day => dispatch(actions.base.getWallpaper(day)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

@@ -3,12 +3,6 @@
  * @author ryan.bian
  */
 
-const { get, saveWallpaper } = require('../../utils/');
-const moment = require('moment');
-const { app } = require('electron');
-const fs = require('fs');
-const path = require('path');
-
 class DashboardAPI {
   async getProjectList(ctx) {
     await new Promise(resolve => {
@@ -66,26 +60,6 @@ class DashboardAPI {
         },
         true
       );
-    }
-  }
-  async getDailyWallpaper(ctx) {
-    try {
-      let imgUrl = `/api/dashboard/wallpaper?d=${ctx.params.day}`;
-      const coverstory = await get(`http://cn.bing.com/cnhp/coverstory/?d=${ctx.params.day ? ctx.params.day : moment().format('YYYYMMDD')}`);
-      let d = ctx.params.day ? (Math.floor(( moment().valueOf() - moment(ctx.params.day, 'YYYYMMDD').valueOf()) / 86400000)) : 0;
-      let result = Object.assign({}, coverstory, { url: imgUrl});
-      await saveWallpaper(d);
-      ctx.body = ctx.app.responser(result, true);
-    } catch (e) {
-      ctx.body = ctx.app.responser(e.toString(), false);
-    }
-  }
-  async wallpaper(ctx) {
-    try {
-      ctx.res.setHeader('Content-Type', 'image/jpg');
-      fs.createReadStream(path.resolve(app.getPath('userData'), './wallpaper.jpg')).pipe(ctx.res);
-    } catch (e) {
-      ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
 }

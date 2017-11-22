@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { actions } from '../../modules/module.user/store';
 import { Layout, Menu, Icon, Avatar } from 'antd/es/';
 
 import styles from './index.less';
@@ -72,6 +71,7 @@ class SiderBar extends Component {
     const {avatar} = this.props.user;
     return (
       <Sider
+        className={styles.SiderBar}
         collapsible
         collapsed={collapsed}
         onCollapse={this.onCollapse}

@@ -1,9 +1,11 @@
 /**
  * Common API
  * @author ryan.bian
+ * TODO: clean wallpaper diretory
  */
 const path = require('path');
 const fs = require('fs');
+const send = require('koa-send');
 const { app } = require('electron');
 const { get, saveImage, stat } = require('../../utils/');
 
@@ -61,20 +63,10 @@ class CommonAPI {
   }
   async getLocalWallpaper(ctx) {
     const { date } = ctx.params;
-    const filePath = path.join(LOCAL_WALLPAPER_DIR, `wallpapers/wallpaper@${date}.jpg`);
-    try {
-      const fileStats = await stat(filePath);
-      if (fileStats.isFile()) {
-        ctx.type = 'image/jpg';
-        fs.createReadStream(filePath).pipe(ctx.res);
-      } else {
-        ctx.status = 404;
-        ctx.body = `no file found: ${filePath}`;
-      }
-    } catch (e) {
-      ctx.status = 404;
-      ctx.body = `no file found: ${filePath}`;
-    }
+    await send(ctx, `wallpapers/wallpaper@${date}.jpg`, {
+      root: LOCAL_WALLPAPER_DIR,
+      immutable: true,
+    });
   }
 }
 

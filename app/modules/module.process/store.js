@@ -10,74 +10,87 @@ import UPLOAD_API from '../../apis/upload';
 
 const defaultState = {
   layout: {
-    listType: 'grid',
+    listType: 'list'
   },
   files: {
     fileMap: {},
-    fileIds: [],
+    fileIds: []
   },
+  generate: {
+    gConfig: {
+      quality: 90,
+      format: '',
+      webp: false,
+      output: ''
+    },
+    gOverList: []
+  }
 };
 
 export const actions = createActions({
   // display layout action
-  LAYOUT: {
+  GENLAYOUT: {
     SET_LIST_TYPE: layout => layout,
   },
-  LIST: {
+  GENLIST: {
     GET: async params => {
-      const { content, limit, start } = await UPLOAD_API.list.get(params);
+
       return {
-        files: content,
-        limit,
-        start,
+        files: null,
+        limit: null,
+        start: null,
       };
     },
   },
   // files action
-  FILES: {
+  GENFILES: {
     // add one file
     ADD: file => ({ file }),
     // delete one file
     DEL: async id => {
-      // TODO: no need to request when del temp file
-      const res = await UPLOAD_API.list.del([id]);
-      return {
-        id,
-        result: res,
-      };
+
+      return id;
     },
     // add multiple files
     BATCH_ADD: files => ({ files }),
     // delete multiple files
     BATCH_DEL: ids => ({ ids }),
-    UPLOAD: async (oldId, data) => {
-      const url = await UPLOAD_API.file.post(data.file);
-      const storageData = await UPLOAD_API.list.post([{
-        url,
-        name: data.file.name,
-        type: data.file.type,
-        lastModified: data.file.lastModified,
-      }]);
-      return {
-        oldId,
-        file: storageData[0],
-      };
+    DO_GEN: async (files, config) => {
+      const over = await UPLOAD_API.gfile.post(files, config);
+
+      return over;
     },
+    CLEAR: files => ({files}),
   },
+  GENERATE: {
+    UP_CONFIG: (config) => {
+      return config;
+    },
+    UP_OVER_LIST: (list) => {
+      return list;
+    },
+    DO_GEN: async (files, config) => {
+      const over = await UPLOAD_API.gfile.post(files, config);
+
+      return over;
+    },
+    DEL: () => {},
+  }
 });
 
 const layoutReducer = handleActions({
-  'LAYOUT/SET_LIST_TYPE': (state, action) => ({
+  'GENLAYOUT/SET_LIST_TYPE': (state, action) => ({
     listType: action.payload,
   })
 }, defaultState.layout);
 
 const fileReducer = handleActions({
-  'LIST/GET': (state, { payload, error }) => {
-    if (error) return state;
+  'GENLIST/GET': (state, { payload }) => {
+    
     const { files } = payload;
     const fileMap = {};
     const fileIds = [];
+    
     files.forEach(file => {
       Object.assign(fileMap, {
         [file._id]: file,
@@ -89,16 +102,18 @@ const fileReducer = handleActions({
       fileIds: fileIds.concat(state.fileIds),
     };
   },
-  'FILES/ADD': (state, { payload }) => {
+  'GENFILES/ADD': (state, { payload }) => {
     const { file } = payload;
     if (!file._id) {
       // generate hash id with file name, file size & last modified time
       const fileId = [file.name, file.type, file.lastModified].join('/');
       const id = crypto.createHash('md5').update(fileId).digest('hex').substr(0, 16);
+      
       Object.assign(file, {
+        size: file.file.size,
         _id: id,
         // has not been uploaded
-        temp: true,
+        temp: false,
       });
     }
     if (state.fileIds.includes(file._id)) {
@@ -113,9 +128,9 @@ const fileReducer = handleActions({
       fileIds: [file._id].concat(state.fileIds),
     };
   },
-  'FILES/DEL': (state, { payload, error }) => {
-    if (error) return state;
-    const { id, result } = payload;
+  'GENFILES/DEL': (state, { payload }) => {
+
+    const id = payload;
     const { fileMap, fileIds } = state;
     delete fileMap[id];
     return {
@@ -123,31 +138,87 @@ const fileReducer = handleActions({
       fileIds: fileIds.filter(d => d !== id),
     };
   },
-  'FILES/BATCH_ADD': (state, { payload }) => {
-    return state;
-  },
-  'FILES/BATCH_DEL': (state, { payload }) => {
-    return state;
-  },
-  'FILES/UPLOAD': (state, { payload, error }) => {
-    if (error) return state;
-    const idx = state.fileIds.indexOf(payload.oldId);
-    const newId = payload.file._id;
-    // delete old file object
-    delete state.fileMap[payload.oldId];
-    const newFileIds = state.fileIds.slice(0);
-    newFileIds.splice(idx, 1, newId);
+  'GENFILES/CLEAR': (state, { payload }) => {
+
     return {
-      fileMap: Object.assign({}, {
-        [newId]: payload.file,
-      }, state.fileMap),
+      fileMap: {},
+      fileIds: []
+    };
+  },
+  'GENFILES/DO_GEN': (state, { payload }) => {
+
+    const { fileMap } = state;
+    let newFileMap = {};
+    let newFileIds = [];
+    payload.map(nf => {
+      Object.keys(fileMap).map(key => {
+        if (fileMap[key].name === nf.originalName) {
+          newFileMap[key] = Object.assign({}, fileMap[key], {
+            csize: nf.size,
+            uri: nf.uri
+          });
+          newFileIds.push(key);
+        }
+      });
+    });
+    return {
+      fileMap: newFileMap,
       // replace old id with newId
       fileIds: newFileIds,
     };
   },
 }, defaultState.files);
 
+/**
+ * 生成 reducer
+ */
+const geReducer = handleActions(
+  {
+    'GENERATE/UP_CONFIG': (state, { payload }) => {
+      return {
+        gConfig: Object.assign({}, state.gConfig, payload),
+        gOverList: state.gOverList
+      };
+    },
+    'GENERATE/UP_OVER_LIST': (state, { payload }) => {
+      return {
+        gConfig: state.gConfig,
+        gOverList: [
+          payload,
+          ...state.gOverList,
+        ]
+      };
+    },
+    'GENERATE/DO_GEN': (state, { payload }) => {
+
+      return {
+        gConfig: state.gConfig,
+        gOverList: [
+          ...payload,
+          ...state.gOverList,
+        ]
+      };
+    },
+    'GENERATE/DEL': (state, { payload }) => {
+      const { gOverList, gConfig } = state;
+
+      return {
+        gConfig: {
+          quality: 90,
+          format: '',
+          webp: false,
+          output: '',
+        },
+        gOverList: []
+      };
+    },
+  },
+  defaultState.generate
+);
+
+
 export default combineReducers({
   layout: layoutReducer,
   files: fileReducer,
+  generate: geReducer
 });

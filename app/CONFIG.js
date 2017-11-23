@@ -25,6 +25,11 @@ export const GLOBAL_NAV_CONFIG = [
     icon: 'user',
     text: '个人中心',
   },
+  {
+    to: '/Process',
+    icon: 'sync',
+    text: '图片处理'
+  }
 ];
 
 export const GREETING_WORDS = new Map([

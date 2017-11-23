@@ -78,7 +78,7 @@ class User extends Component {
   };
 
   render() {
-    const {user, form} = this.props;
+    const { user, form } = this.props;
     const { avatar, name, github, bio, address } = user;
     const imgUrl = this.state.imgUrl || avatar;
     const { getFieldDecorator } = form;
@@ -126,7 +126,7 @@ class User extends Component {
 
               </Col>
               <Col span={8}>
-                <FormItem help="点击上传新头像" style={{textAlign: 'center'}}>
+                <FormItem help="点击上传新头像" style={{ textAlign: 'center' }}>
                   {getFieldDecorator('avatar', {
                     initialValue: avatar,
                     valuePropName: 'file',

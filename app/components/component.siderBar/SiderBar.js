@@ -2,11 +2,11 @@
  * SiderBar Component
  * @author ryan.bian
  */
-import React, { Component, createElement } from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 
 import { Layout, Menu, Icon, Avatar } from 'antd/es/';
 
@@ -65,10 +65,9 @@ class SiderBar extends Component {
     );
   }
   render() {
-    const { history } = this.props;
     const { collapsed, selectedKey } = this.state;
     // const {user} = this.props
-    const {avatar} = this.props.user;
+    const { avatar } = this.props.user;
     return (
       <Sider
         className={styles.SiderBar}

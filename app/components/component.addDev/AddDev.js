@@ -2,12 +2,12 @@
  * AddDev Component
  * @author JeffWong
  */
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.less';
-import { Modal, Button, Form, Icon, Input, notification, message } from 'antd';
+import { Modal, Input, notification } from 'antd';
 
-class AddDev extends React.Component {
+class AddDev extends Component {
   static propTypes = {
     visible: PropTypes.bool,
     hideModal: PropTypes.func,
@@ -27,7 +27,7 @@ class AddDev extends React.Component {
     this.setState({
       confirmLoading: true,
     });
-    this.props.installpck(this.props.rootPath, [{packageName: this.state.packageName, version: this.state.version}], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then((data)=>{
+    this.props.installpck(this.props.rootPath, [{ packageName: this.state.packageName, version: this.state.version }], this.props.tab === 'dependencies' ? ' --save' : ' --save-dev').then((data)=>{
       if ( data.success ) {
         this.props.refresh().then(() => {
           notification['success']({
@@ -69,10 +69,10 @@ class AddDev extends React.Component {
     this.props.hideModal();
   }
   handlePackageNameChange = (event)=>{
-    this.setState({packageName: event.target.value});
+    this.setState({ packageName: event.target.value });
   }
   handleVerionChange = (event)=>{
-    this.setState({version: event.target.value});
+    this.setState({ version: event.target.value });
   }
   render() {
     const {  confirmLoading } = this.state;

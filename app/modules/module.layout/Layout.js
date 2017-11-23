@@ -1,5 +1,5 @@
 /**
- * ImageLayout
+ * Layout Module
  * @author ryan.bian
  */
 import React, { Component } from 'react';
@@ -20,7 +20,7 @@ import styles from './index.less';
 
 const dateFormat = 'YYYY-MM-DD';
 
-class ImageLayout extends Component {
+class LayoutModule extends Component {
   static propTypes = {
     localImageUrl: PropTypes.string,
     title: PropTypes.string,
@@ -68,13 +68,13 @@ class ImageLayout extends Component {
       <div
         key="content"
         className={classnames(
-          styles.ImageLayout__Info,
+          styles.Layout__Info,
           {
-            [styles['ImageLayout__Info--hide']]: !viewMode,
+            [styles['Layout__Info--hide']]: !viewMode,
           },
         )}
       >
-        <h2 className={styles.ImageLayout__InfoTitle}>
+        <h2 className={styles.Layout__InfoTitle}>
           {title}{provider}
         </h2>
         <p>{paras.join('\n')}</p>
@@ -96,7 +96,7 @@ class ImageLayout extends Component {
       tintOpacity: 0.7,
     };
     return (
-      <Layout>
+      <Layout style={{ height: '100vh' }}>
         <SiderBar />
         {
           [
@@ -104,21 +104,21 @@ class ImageLayout extends Component {
               {children}
             </LayoutComponent>,
             this.renderWallpaperInfo(),
-            <div key="control" className={styles.ImageLayout__Control}>
+            <div key="control" className={styles.Layout__Control}>
               <Switch
-                className={styles.ImageLayout__Switch}
+                className={styles.Layout__Switch}
                 defaultChecked={false} onChange={this.toggleViewMode}
               />
               <Icon
-                className={styles.ImageLayout__Btn}
+                className={styles.Layout__Btn}
                 type="left-circle-o"
                 onClick={this.prev}
               />
               <Icon
                 className={classnames(
-                  styles.ImageLayout__Btn,
+                  styles.Layout__Btn,
                   {
-                    [styles['ImageLayout__Btn--disabled']]: today === date,
+                    [styles['Layout__Btn--disabled']]: today === date,
                   },
                 )}
                 type="right-circle-o"
@@ -152,4 +152,4 @@ const mapDispatchToProps = dispatch => ({
   getWallpaperInfo: date => dispatch(actions.getWallpaperInfo(date)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ImageLayout));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LayoutModule));

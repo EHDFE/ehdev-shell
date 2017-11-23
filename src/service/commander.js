@@ -1,7 +1,7 @@
 /**
  * Node commander executer
  */
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 const { serviceStore } = require('./index');
 
 const COMMAND_OUTPUT = 'COMMAND_OUTPUT';

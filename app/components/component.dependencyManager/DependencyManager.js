@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Radio, Button, Spin, notification, message, Icon } from 'antd';
+import { Table, Radio, Button, Spin, notification } from 'antd';
 import AddDev from '../component.addDev/';
 
 import styles from './index.less';
@@ -62,7 +62,7 @@ class DependencyManager extends Component {
     });
   };
   updatepkg = (record, index) => {
-    this.setState((prevState, props) => {
+    this.setState((prevState) => {
       let data = [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
@@ -147,7 +147,7 @@ class DependencyManager extends Component {
     }).then(res => res.json());
   };
   uninstallpkg = (record, index) => {
-    this.setState((prevState, props) => {
+    this.setState((prevState) => {
       let data = [...prevState.dataSource];
       data[index]['isDeleting'] = true;
       return {
@@ -220,7 +220,7 @@ class DependencyManager extends Component {
       {
         title: '依赖名称',
         dataIndex: 'packageName',
-        render: (text, record, index) => {
+        render: (text, record) => {
           return record.outdated ? (
             <span style={{ color: 'red' }}>{text}</span>
           ) : (

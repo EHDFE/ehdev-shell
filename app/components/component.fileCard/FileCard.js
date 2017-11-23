@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { Tooltip } from 'antd';
 import { getIcon } from 'pretty-file-icons';
 
@@ -66,7 +66,6 @@ export default class FileCard extends Component {
   }
   render() {
     const {
-      url,
       name,
       type,
       mask,

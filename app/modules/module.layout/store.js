@@ -2,7 +2,7 @@
  * ImageLayout Store
  * @author ryan.bian
  */
-import { createActions, handleActions, combineActions } from 'redux-actions';
+import { createActions, handleActions } from 'redux-actions';
 
 import COMMON_API from '../../apis/common';
 

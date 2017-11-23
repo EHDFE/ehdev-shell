@@ -90,6 +90,9 @@ module.exports = env => {
         request: '../../locale' // resolved relatively
       });
     }),
+    new webpack.ProvidePlugin({
+      React: 'react',
+    }),
   );
 
   return {

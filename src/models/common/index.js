@@ -4,7 +4,6 @@
  * TODO: clean wallpaper diretory
  */
 const path = require('path');
-const fs = require('fs');
 const send = require('koa-send');
 const { app } = require('electron');
 const { get, saveImage, stat } = require('../../utils/');

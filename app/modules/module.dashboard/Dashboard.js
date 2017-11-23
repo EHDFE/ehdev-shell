@@ -14,9 +14,7 @@ import Almanac from '../../components/component.almanac';
 import { actions } from './store';
 import { GREETING_WORDS } from '../../CONFIG';
 
-import { Icon, Switch } from 'antd';
-
-import moment from 'moment';
+// import { Icon, Switch } from 'antd';
 
 import styles from './index.less';
 
@@ -33,9 +31,6 @@ class DashboardModule extends Component {
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
-  };
-  state = {
-    showDashboard: true,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.date !== this.props.date) {
@@ -167,16 +162,12 @@ class DashboardModule extends Component {
   }
   render() {
     return (
-      <div className={styles.Dashboard}>
-        {this.state.showDashboard && (
-          <div className={styles.Dashboard__Container}>
-            {this.renderInfoBar()}
-            {this.renderSummaryCards()}
-            {this.renderRecentsProjects()}
-            {this.renderAlmanac()}
-            {this.renderLastBuildStats()}
-          </div>
-        )}
+      <div className={styles.Dashboard__Container}>
+        {this.renderInfoBar()}
+        {this.renderSummaryCards()}
+        {this.renderRecentsProjects()}
+        {this.renderAlmanac()}
+        {this.renderLastBuildStats()}
       </div>
     );
     // { this.renderBuildTimesRank() }

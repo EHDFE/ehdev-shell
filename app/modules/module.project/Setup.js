@@ -49,7 +49,7 @@ const colProps = {
   xl: 12,
 };
 
-const Config = ({config, getFieldDecorator, prefix = ''})=>{
+const Config = ({ config, getFieldDecorator, prefix = '' })=>{
   return (
     Object.keys(config).map(item=>{
 
@@ -110,7 +110,7 @@ const Config = ({config, getFieldDecorator, prefix = ''})=>{
               label={item}
               {...itemProps}
             >
-              {getFieldDecorator(field, { valuePropName: 'checked', initialValue: config[item]})(
+              {getFieldDecorator(field, { valuePropName: 'checked', initialValue: config[item] })(
                 <Switch />
               )}
             </FormItem>
@@ -128,7 +128,7 @@ const SetupForm = Form.create({
   },
 
 })((props) => {
-  const {config} = props;
+  const { config } = props;
   const { getFieldDecorator } = props.form;
 
   return (
@@ -147,7 +147,7 @@ class Setup extends React.Component {
   }
 
   componentDidMount() {
-    const {config} = this.props;
+    const { config } = this.props;
     this.setState({
       fields: config
     });
@@ -171,7 +171,7 @@ class Setup extends React.Component {
 
 
   handleReset = ()=>{
-    const {config} = this.props;
+    const { config } = this.props;
     this.setState({
       fields: config,
     });
@@ -179,7 +179,7 @@ class Setup extends React.Component {
   }
 
   handleSubmit = ()=>{
-    const {fields} = this.state;
+    const { fields } = this.state;
     this.props.onSubmit(fields);
   }
 

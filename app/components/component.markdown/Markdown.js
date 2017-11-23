@@ -13,7 +13,7 @@ const md = new Remarkable();
 const Markdown = ({ source }) => (
   <article
     className={styles.Markdown}
-    dangerouslySetInnerHTML={{__html: md.render(source)}}
+    dangerouslySetInnerHTML={{ __html: md.render(source) }}
   />
 );
 

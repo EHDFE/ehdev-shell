@@ -12,8 +12,8 @@ class CityPicker extends React.Component {
   }
 
   render() {
-    const {citys, onChange, size, placeholder} = this.props;
-    const {value} = this.state;
+    const { citys, onChange, size, placeholder } = this.props;
+    const { value } = this.state;
     const province = Object.keys(citys);
     let address = [];
     if (province.length) {

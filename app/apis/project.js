@@ -21,7 +21,7 @@ const PROJECT_API = {
       return handleResponse(res);
     },
     async editConfig(configs) {
-      const {rootPath, ...config} = configs;
+      const { rootPath, ...config } = configs;
       const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
         method: 'put',
         headers: {
@@ -49,7 +49,7 @@ const PROJECT_API = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({rootPath})
+        body: JSON.stringify({ rootPath })
       });
       return handleResponse(res, {
         errorNotification: false,

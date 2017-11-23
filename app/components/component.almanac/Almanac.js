@@ -86,20 +86,6 @@ function pickRandom(m, array, size) {
   return result;
 }
 
-function star(num) {
-  let result = [];
-  let i = 0;
-  while (i < num) {
-    result.push('★');
-    i++;
-  }
-  while (i < 5) {
-    result.push('☆');
-    i++;
-  }
-  return result.join(' ');
-}
-
 function isWeekend(m) {
   return m.day() == 0 || m.day() == 6;
 }

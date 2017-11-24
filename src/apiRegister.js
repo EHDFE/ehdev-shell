@@ -4,10 +4,15 @@
  */
 const Router = require('koa-router');
 const koaBody = require('koa-body');
+const FileAPI = require('file-api'),
+  File = FileAPI.File;
+
 
 // Upload Models
 const UploadListAPI = require('./models/upload/list');
 const UploadFileAPI = require('./models/upload/file');
+const GenerateAPI = require('./models/upload/generate');
+
 
 // Project Models
 const ProjectEnvAPI = require('./models/project/env');
@@ -28,6 +33,7 @@ const apiRouter = Router();
 
 const uploadList = new UploadListAPI();
 const uploadFile = new UploadFileAPI();
+const generateFiles = new GenerateAPI();
 
 const uploadRouter = Router();
 /**
@@ -45,6 +51,12 @@ uploadRouter
  * post => /upload/file/
  */
 uploadRouter.post('/file/', uploadFile.post);
+
+/**
+ * post => /upload/generate/
+ */
+uploadRouter.post('/gfile/', koaBody({ multipart: true }), generateFiles.post);
+
 
 const projectEnv = new ProjectEnvAPI();
 const projectNpm = new ProjectNpmAPI();

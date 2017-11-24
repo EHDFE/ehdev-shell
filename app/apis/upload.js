@@ -6,6 +6,7 @@ import { handleResponse, serialize } from './utils';
 
 const LIST_PATH = '/api/upload/list';
 const FILE_PATH = '/api/upload/file';
+const GEN_FILE = '/api/upload/gfile';
 
 const UPLOAD_API = {
   list: {
@@ -48,6 +49,25 @@ const UPLOAD_API = {
       return handleResponse(res);
     },
   },
+  gfile: {
+    async post(files, config) {
+      const fd = new FormData();
+      for (let file of files) {
+        fd.append('files', file.file);
+      }
+      
+      fd.append('config', JSON.stringify(config));
+      const res = await fetch(GEN_FILE, {
+        method: 'post',
+        body: fd,
+      });
+      
+      return handleResponse(res,  {
+        successNotification: true,
+        successMsg: '图片处理成功！',
+      });
+    }
+  }
 };
 
 export default UPLOAD_API;

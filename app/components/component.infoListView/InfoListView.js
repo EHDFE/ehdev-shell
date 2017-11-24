@@ -4,14 +4,14 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { Row, Col, Button, Modal, notification } from 'antd';
-import MdFileUpload from 'react-icons/lib/md/file-upload';
+// import classnames from 'classnames';
+import { Row, Col, Modal } from 'antd';
+// import MdFileUpload from 'react-icons/lib/md/file-upload';
 import MdRemoveRedEye from 'react-icons/lib/md/remove-red-eye';
 import MdDelete from 'react-icons/lib/md/delete';
-import MdContentCopy from 'react-icons/lib/md/content-copy';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import moment from 'moment';
+// import MdContentCopy from 'react-icons/lib/md/content-copy';
+// import CopyToClipboard from 'react-copy-to-clipboard';
+// import moment from 'moment';
 
 import FileCard from '../component.fileCard/';
 
@@ -71,7 +71,7 @@ export default class ListView extends Component {
       });
     }
     const actionButtons = [];
-    
+
     if (item.type.startsWith('image/')) {
       actionButtons.push(
         <button

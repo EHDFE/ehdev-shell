@@ -19,8 +19,8 @@ import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
 import { ConsoleModule } from './modules/module.console/';
 import { ConfigerModule } from './modules/module.configer/';
-import { UserModule } from './modules/module.user';
-import { ProcessModule } from './modules/module.process';
+import { UserModule } from './modules/module.user/';
+import { ImageModule } from './modules/module.image/';
 import { LayoutModule } from './modules/module.layout/';
 
 const App = () => (
@@ -32,7 +32,7 @@ const App = () => (
       <Route path="/upload" component={UploadModule}/>
       <Route path="/configer" component={ConfigerModule}/>
       <Route path="/user" component={UserModule}/>
-      <Route path="/process" component={ProcessModule}></Route>
+      <Route path="/images" component={ImageModule}></Route>
       <ConsoleModule />
     </LayoutModule>
   </BrowserRouter>

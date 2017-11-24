@@ -10,7 +10,7 @@ import { UploadReducer } from './modules/module.upload/';
 import { ConfigerReducer } from './modules/module.configer/';
 import { ConsoleReducer } from './modules/module.console/';
 import { UserReducer } from './modules/module.user/';
-import { ProcessReducer } from './modules/module.process';
+import { ImageReducer } from './modules/module.image/';
 import { LayoutReducer } from './modules/module.layout/';
 
 const reducer = combineReducers({
@@ -20,7 +20,7 @@ const reducer = combineReducers({
   'page.configer': ConfigerReducer,
   'page.console': ConsoleReducer,
   'page.user': UserReducer,
-  'page.process': ProcessReducer
+  'page.image': ImageReducer,
   'page.wallpaper': LayoutReducer,
 });
 

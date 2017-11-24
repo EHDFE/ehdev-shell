@@ -3,8 +3,6 @@
  * @author Hefan
  */
 const ImageMin = require('../upload/imagemain');
-const fs = require('fs');
-
 
 class GenerateAPI {
   /**
@@ -16,7 +14,7 @@ class GenerateAPI {
     const files = reqBody.files.files;
     let resArr = [];
     const config = JSON.parse(reqBody.fields.config);
-    
+
     try {
       if (Array.isArray(files)) {
         for (let file of files) {

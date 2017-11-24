@@ -1,4 +1,4 @@
-# <img src="http://image.tf56.com/dfs/group1/M00/3E/76/CiFBCloSOVqAKLpeAAA2grm54IA264.png" alt="" style="vertical-align:middle" height="60" /> EHD SHELL
+![Jarvis](http://image.tf56.com/dfs/group1/M00/3F/22/CiFBCVoXseOAJz1_AAAjpvFXiYk329.png)
 
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)

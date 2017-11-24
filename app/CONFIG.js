@@ -26,8 +26,8 @@ export const GLOBAL_NAV_CONFIG = [
     text: '个人中心',
   },
   {
-    to: '/Process',
-    icon: 'sync',
+    to: '/images',
+    icon: 'picture',
     text: '图片处理'
   }
 ];

@@ -1,5 +1,5 @@
 /**
- * Process Store
+ * Image Store
  * @author Hefan
  */
 import crypto from 'crypto';
@@ -60,7 +60,7 @@ export const actions = createActions({
 
       return over;
     },
-    CLEAR: files => ({files}),
+    CLEAR: files => ({ files }),
   },
   GENERATE: {
     UP_CONFIG: (config) => {
@@ -86,11 +86,11 @@ const layoutReducer = handleActions({
 
 const fileReducer = handleActions({
   'GENLIST/GET': (state, { payload }) => {
-    
+
     const { files } = payload;
     const fileMap = {};
     const fileIds = [];
-    
+
     files.forEach(file => {
       Object.assign(fileMap, {
         [file._id]: file,
@@ -108,7 +108,7 @@ const fileReducer = handleActions({
       // generate hash id with file name, file size & last modified time
       const fileId = [file.name, file.type, file.lastModified].join('/');
       const id = crypto.createHash('md5').update(fileId).digest('hex').substr(0, 16);
-      
+
       Object.assign(file, {
         size: file.file.size,
         _id: id,
@@ -200,7 +200,7 @@ const geReducer = handleActions(
       };
     },
     'GENERATE/DEL': (state, { payload }) => {
-      const { gOverList, gConfig } = state;
+      // const { gOverList, gConfig } = state;
 
       return {
         gConfig: {

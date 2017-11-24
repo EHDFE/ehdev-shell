@@ -2,17 +2,14 @@
  * PicOptions Component
  * @author Hefan
  */
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { Radio, Switch, Slider, Row, Col, Button, Input, Icon } from 'antd';
+// import classnames from 'classnames';
+import { Radio, Switch, Slider, Row, Button, Input, Icon } from 'antd';
 const { dialog } = require('electron').remote;
-
-
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-
 
 import styles from './index.less';
 
@@ -24,8 +21,6 @@ export default class PicOptions extends Component {
   static propTypes = {
     onChange: PropTypes.func,
     genParams: PropTypes.object,
-  }
-  state = {
   }
   /**
    * 选择品质
@@ -39,7 +34,7 @@ export default class PicOptions extends Component {
    * 选择输出格式
    */
   onFormatChange = (e) => {
-    
+
     this.props.onChange({
       format: e.target.value
     });
@@ -48,7 +43,7 @@ export default class PicOptions extends Component {
    * 选择生产webp
    */
   onToWebpChange = (checked) => {
-    
+
     this.props.onChange({
       webp: checked
     });
@@ -61,7 +56,7 @@ export default class PicOptions extends Component {
     const { doGenerate, fileList, gConfig } = genParams;
 
     doGenerate(fileList, Object.assign({}, gConfig));
-    
+
   };
   /**
    * 输出路径
@@ -101,11 +96,11 @@ export default class PicOptions extends Component {
       <Row className={styles.PicOptions__row}>
         <div className={styles.PicOptions__label}>图片品质:</div>
         <div className={styles.PicOptions__input}>
-          <Slider 
-            min={10} 
-            marks={marks} 
-            step={5} 
-            value={gConfig.quality} 
+          <Slider
+            min={10}
+            marks={marks}
+            step={5}
+            value={gConfig.quality}
             onChange={this.onQualityChange} />
         </div>
       </Row>
@@ -170,9 +165,9 @@ export default class PicOptions extends Component {
         {this.renderFormat()}
         {this.renderToWebp()}
         <div className={styles.PicOptions__row}>
-          <Input 
-            value={gConfig.output} 
-            onClick={this.handleOutput} 
+          <Input
+            value={gConfig.output}
+            onClick={this.handleOutput}
             placeholder='输出目录'
             prefix={<Icon type='folder-open' />}
           />

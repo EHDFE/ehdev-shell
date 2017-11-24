@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Row, Col, Radio, Button, Checkbox, Icon } from 'antd';
+import { Row, Col, Radio } from 'antd';
 import MdViewHeadline from 'react-icons/lib/md/view-headline';
 import MdViewModule from 'react-icons/lib/md/view-module';
 
@@ -21,7 +21,7 @@ import styles from './index.less';
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-class ProcessModule extends Component {
+class ImageModule extends Component {
   static propTypes = {
     listType: PropTypes.oneOf(['grid', 'list']),
     fileList: PropTypes.array.isRequired,
@@ -71,7 +71,7 @@ class ProcessModule extends Component {
     gUpConfig(obj);
   };
   renderListView() {
-    const { fileList, listType, upload, delFile } = this.props;
+    const { fileList, listType, delFile } = this.props;
 
     return (
       <ListView
@@ -94,15 +94,15 @@ class ProcessModule extends Component {
           <PicOptions genParams={this.props} onChange={this.handleGenConfig} />
         </Row>
         <Row>
-          <Col span={24} className={styles.ProcessModule__controllerBar}>
-            <div className={styles.ProcessModule__viewMode}>
-              <RadioGroup 
+          <Col span={24} className={styles.ImageModule__controllerBar}>
+            <div className={styles.ImageModule__viewMode}>
+              <RadioGroup
                 size='small'
-                value={listType} 
+                value={listType}
                 onChange={this.handleChangeListType}>
                 <RadioButton value='grid'>
-                  <MdViewModule 
-                    size={18} 
+                  <MdViewModule
+                    size={18}
                     style={{ transform: 'translateY(-1px)' }} />
                 </RadioButton>
                 <RadioButton value='list'>
@@ -118,7 +118,7 @@ class ProcessModule extends Component {
   }
 }
 
-const processPageSelector = state => state['page.process'];
+const processPageSelector = state => state['page.image'];
 const listTypeSelector = createSelector(
   processPageSelector,
   pageState => pageState.layout.listType,
@@ -164,4 +164,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(ProcessModule);
+)(ImageModule);

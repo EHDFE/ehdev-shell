@@ -4,8 +4,6 @@
  */
 const Router = require('koa-router');
 const koaBody = require('koa-body');
-const FileAPI = require('file-api'),
-  File = FileAPI.File;
 
 
 // Upload Models

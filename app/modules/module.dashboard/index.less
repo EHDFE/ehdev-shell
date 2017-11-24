@@ -3,7 +3,7 @@
 .Dashboard {
   &__Container {
     display: grid;
-    padding: 16px;
+    min-height: ~"calc(100vh - 64px)";
     grid-template-rows: 120px 100px 100px 350px;
     grid-template-columns: 100px 2fr 3fr;
     grid-gap: 10px;
@@ -35,7 +35,7 @@
   &__Summary {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
 
     &Project {
@@ -122,9 +122,9 @@
 
 .Card {
   padding: 16px 20px 8px;
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255, 255, 255, 0.95);
 
   &__Title {
-    margin-bottom: 10px;
+    margin-bottom: 4px;
   }
 }

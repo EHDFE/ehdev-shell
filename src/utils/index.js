@@ -5,6 +5,8 @@
 const { promisify } = require('util');
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
+const path = require('path');
 
 /**
  * transform response format
@@ -56,6 +58,8 @@ exports.writeJSON = (file, json) => new Promise((resolve, reject) => {
   });
 });
 
+exports.readFile = promisify(fs.readFile);
+
 /**
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path
@@ -104,5 +108,47 @@ exports.get = url => new Promise((resolve, reject) => {
   });
 });
 
+const makeDir = (filePath) => new Promise((resolve, reject) => {
+  fs.stat(filePath, (err, stats) => {
+    if (!err && stats.isDirectory()) {
+      resolve();
+    } else {
+      fs.mkdir(filePath, err2 => {
+        if (err2) {
+          reject(err2);
+        } else {
+          resolve();
+        }
+      });
+    }
+  });
+});
+
+const makeRequest = (filePath, options) => new Promise((resolve, reject) => {
+  const req = https.request(options, (res) => {
+    res.pipe(fs.createWriteStream(filePath));
+    res.on('end', ()=>{
+      resolve();
+    });
+  });
+
+  req.on('error', (e) => {
+    reject(e);
+  });
+  req.end();
+});
+
+/**
+ * save wallpaper
+ */
+exports.saveImage = async (filePath, options) => {
+  try {
+    await makeDir(path.dirname(filePath));
+    return await makeRequest(filePath, options);
+  } catch (e) {
+    throw Error(e);
+  }
+};
 
 exports.mkdir = promisify(fs.mkdir);
+exports.stat = promisify(fs.stat);

@@ -1,1 +1,27 @@
 @import '../../theme/index.less';
+
+.Layout {
+  display: block;
+  width: ~"calc(100vw - 80px)";
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+
+  &__Wrapper {
+    padding: 16px;
+    width: ~"calc(100vw - 80px - 32px)";
+    min-height: ~"calc(100vh - 32px)";
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    &--viewMode {
+      visibility: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
+}

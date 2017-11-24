@@ -2,7 +2,7 @@
 
 .Project {
   &__Layout {
-    background-color: #fff;
+    background: none;
   }
   &__TopBar {
     display: flex;
@@ -56,12 +56,6 @@
 }
 
 .Setup{
-
-  &__Row{
-    background: #fff;
-    padding-left: 10px;
-    padding-bottom: 20px;
-  }
   &__Card{
     // padding: 10px 10px 2px;
     border: 1px solid @border-color-split;
@@ -70,23 +64,31 @@
       .ant-card-body{
         padding: 0;
       }
-      .ant-card-head{
-        height: 36px;
-        line-height: 36px;
+      .ant-card-head-title{
+       padding: 10px 0;
       }
       .ant-form-item-label{
-        text-align: left;
+        padding-left: 5px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .ant-input,.ant-select-selection{
-        border-radius: 0;
         border:0;
+        border-radius: 2px;
+      }
+      .ant-form-item-control{
+        border-left:1px solid @border-color-split;
+      }
+      .ant-switch{
+        margin:4px 10px;
       }
     }
   }
   &__FormItem{
     margin-bottom: 0;
     background-color: @background-color-base;
-    border:0;
   }
   &__Bash{
     padding: 30px 20px;
@@ -96,6 +98,7 @@
   }
   &__Button{
     margin-top: 20px;
+    margin-bottom: 20px;
     text-align: center;
   }
 }

@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const Commander = require('../../service/commander');
-const { hasDir, hasFile, mkdir, readJSON } = require('../../utils/');
+const { hasDir, hasFile, mkdir, readJSON, readFile } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 
 const initFolder = () => {
@@ -29,13 +29,23 @@ class ConfigerAPI {
     const deps = [];
     const configs = pkg.dependencies && Object.keys(pkg.dependencies) || [];
     for (const pkgName of configs) {
-      const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
-      deps.push({
-        id: pkgName,
-        name: pkgName,
-        version: configPkg.version,
-        description: configPkg.description,
-      });
+      if (pkgName.startsWith('ehdev-configer-')) {
+        try {
+          const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
+          const readme = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/README.md`), 'utf-8');
+          const history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/HISTORY.md`), 'utf-8');
+          deps.push({
+            id: pkgName,
+            name: pkgName,
+            version: configPkg.version,
+            description: configPkg.description,
+            readme,
+            history,
+          });
+        } catch (e) {
+          // nothing
+        }
+      }
     }
     ctx.body = ctx.app.responser(deps, true);
   }
@@ -43,7 +53,7 @@ class ConfigerAPI {
     try {
       const result = await Commander.run('npm search --json ehdev-configer-', {
         cwd: ConfigerFolderPath,
-        webContent: ctx.app.webContent,
+        // webContent: ctx.app.webContent,
         useCnpm: false,
       });
       ctx.body = ctx.app.responser(result, true);

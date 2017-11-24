@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './index.less';
-import { Table, Tabs, Button, Spin, notification, message, Icon } from 'antd';
+import { Table, Radio, Button, Spin, notification } from 'antd';
 import AddDev from '../component.addDev/';
 
-const TabPane = Tabs.TabPane;
+import styles from './index.less';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 class DependencyManager extends Component {
   static propTypes = {
@@ -24,11 +26,15 @@ class DependencyManager extends Component {
     modalVisible: false,
   };
 
-  filterData = key => {
+  filterData = e => {
+    const value = e.target.value;
+    this.updateState(value);
+  };
+  updateState(tab) {
     this.setState((prevState, props) => {
       const { pkg, pkgInfo } = props;
       const data = [];
-      for (let i in pkg && pkg[key]) {
+      for (let i in pkg && pkg[tab]) {
         const d = pkgInfo.versions[i];
         data.push(
           Object.assign({ key: i, packageName: i }, d, {
@@ -41,10 +47,10 @@ class DependencyManager extends Component {
       }
       return {
         dataSource: data,
-        tab: key,
+        tab,
       };
     });
-  };
+  }
   refresh = () => {
     this.setState({
       loading: true,
@@ -56,7 +62,7 @@ class DependencyManager extends Component {
     });
   };
   updatepkg = (record, index) => {
-    this.setState((prevState, props) => {
+    this.setState((prevState) => {
       let data = [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
@@ -141,7 +147,7 @@ class DependencyManager extends Component {
     }).then(res => res.json());
   };
   uninstallpkg = (record, index) => {
-    this.setState((prevState, props) => {
+    this.setState((prevState) => {
       let data = [...prevState.dataSource];
       data[index]['isDeleting'] = true;
       return {
@@ -185,10 +191,10 @@ class DependencyManager extends Component {
   };
 
   componentDidMount() {
-    this.filterData(this.state.tab);
+    this.updateState(this.state.tab);
   }
   componentWillReceiveProps() {
-    this.filterData(this.state.tab);
+    this.updateState(this.state.tab);
   }
 
   showModal = () => {
@@ -214,7 +220,7 @@ class DependencyManager extends Component {
       {
         title: '依赖名称',
         dataIndex: 'packageName',
-        render: (text, record, index) => {
+        render: (text, record) => {
           return record.outdated ? (
             <span style={{ color: 'red' }}>{text}</span>
           ) : (
@@ -244,11 +250,13 @@ class DependencyManager extends Component {
                 disabled={!record.outdated}
                 onClick={() => this.updatepkg(record, index)}
                 style={{ marginRight: '20px' }}
+                size="small"
               >
                 更新
               </Button>
               <Button
                 type="danger"
+                size="small"
                 onClick={() => this.uninstallpkg(record, index)}
               >
                 删除
@@ -260,36 +268,43 @@ class DependencyManager extends Component {
     ];
     return (
       <Spin spinning={this.state.loading}>
-        <Tabs onChange={this.filterData} type="card">
-          <TabPane tab="Dependencies" key="dependencies" />
-          <TabPane tab="Dev Dependencies" key="devDependencies" />
-        </Tabs>
-        <div style={{ marginBottom: '10px' }}>
-          <Button type="primary" onClick={ this.batchUpdate } disabled = {!this.props.pkg }>
-            批量更新
-          </Button>
-          <Button
-            type="primary"
-            onClick={this.showModal}
-            style={{ float: 'right' }}
-            disabled = {!this.props.pkg }
-          >
-            添加依赖
-          </Button>
+        <RadioGroup onChange={this.filterData} value={this.state.tab}>
+          <RadioButton value="dependencies">Dependencies</RadioButton>
+          <RadioButton value="devDependencies">Dev Dependencies</RadioButton>
+        </RadioGroup>
+        <div className={styles.Manager__Table}>
+          <div className={styles.Manager__Action}>
+            <Button
+              size="small"
+              onClick={ this.batchUpdate }
+              disabled = {!this.props.pkg }
+            >
+              批量更新
+            </Button>
+            <Button
+              type="primary"
+              size="small"
+              onClick={this.showModal}
+              disabled = {!this.props.pkg }
+            >
+              添加依赖
+            </Button>
+          </div>
+          <AddDev
+            visible={this.state.modalVisible}
+            hideModal={this.hideModal}
+            installpck={this.installpkg}
+            refresh={this.refresh}
+            rootPath={this.props.rootPath}
+            tab={this.state.tab}
+          />
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={this.state.dataSource}
+            size="small"
+          />
         </div>
-        <AddDev
-          visible={this.state.modalVisible}
-          hideModal={this.hideModal}
-          installpck={this.installpkg}
-          refresh={this.refresh}
-          rootPath={this.props.rootPath}
-          tab={this.state.tab}
-        />
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={this.state.dataSource}
-        />
       </Spin>
     );
   }

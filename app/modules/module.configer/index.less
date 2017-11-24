@@ -1,8 +1,34 @@
+@import '../../theme/index.less';
+
 .Configer {
+  padding: 8px;
+  background-color: #fff;
 
   &__ActionBar {
     margin-bottom: 10px;
     text-align: right;
+  }
+
+  &__Item {
+    &--name {
+      margin: 0;
+      color: @text-color;
+      font-size: 15px;
+    }
+    &--desc {
+      margin: 0;
+      color: @text-color-secondary;
+    }
+    &--action {
+      background: none;
+      border: 0 none;
+      color: @primary-color;
+      cursor: pointer;
+      outline: 0 none;
+    }
+    &--delete {
+      color: @error-color;
+    }
   }
 
   &__ItemAction {

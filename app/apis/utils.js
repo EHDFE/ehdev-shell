@@ -2,7 +2,6 @@
  * @author ryan.bian
  */
 import { message, notification  } from 'antd';
-import { duration } from 'moment';
 
 /**
  * handle fetch's response
@@ -29,7 +28,6 @@ export const handleResponse = async (response, config = {
       message: 'ERROR MSG',
       description: typeof result.errorMsg === 'object' ?
         JSON.stringify(result.errorMsg) : result.errorMsg,
-      duration: null,
     }
     );
     throw Error(result.errorMsg);

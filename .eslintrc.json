@@ -20,7 +20,7 @@
     "no-var": "error",
     "no-undef": "error",
     "no-unreachable": "warn",
-    "no-unused-vars": "warn",
+    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
     "constructor-super": "warn",
     "valid-typeof": "warn",
     "indent": ["error", 2],
@@ -30,7 +30,9 @@
     "key-spacing": ["error"],
     "keyword-spacing": ["error"],
     "space-infix-ops": ["error", {"int32Hint": false}],
-    "space-before-blocks": ["error"]
+    "space-before-blocks": ["error"],
+    "object-curly-spacing": ["error", "always"],
+    "react/react-in-jsx-scope": "off"
   },
   "plugins": [
     "import",

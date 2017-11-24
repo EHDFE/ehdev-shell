@@ -11,6 +11,7 @@ import { ConfigerReducer } from './modules/module.configer/';
 import { ConsoleReducer } from './modules/module.console/';
 import { UserReducer } from './modules/module.user/';
 import { ProcessReducer } from './modules/module.process';
+import { LayoutReducer } from './modules/module.layout/';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   'page.console': ConsoleReducer,
   'page.user': UserReducer,
   'page.process': ProcessReducer
+  'page.wallpaper': LayoutReducer,
 });
 
 export default reducer;

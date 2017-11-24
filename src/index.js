@@ -13,6 +13,7 @@ const Boom = require('boom');
 const isDev = require('electron-is-dev');
 const DataStore = require('nedb');
 const morgan = require('koa-morgan');
+const Raven = require('raven');
 
 const apiRouter = require('./apiRegister');
 const { responser } = require('./utils/');
@@ -20,6 +21,10 @@ const { responser } = require('./utils/');
 module.exports = (PORT, webContent) => {
 
   const APP = new Koa();
+  Raven.config(
+    process.env.NODE_ENV === 'production' &&
+    'https://d2e7d99b1c414fe0ab0b02b67f17c1c8:d24b5c31a1a24020a73333fef1c306ab@sentry.io/247420'
+  ).install();
   const APPDATA_PATH = app.getPath('appData');
   const USERDATA_PATH = app.getPath('userData');
   const DB_LIST = [
@@ -102,7 +107,11 @@ module.exports = (PORT, webContent) => {
     methodNotAllowed: () => new Boom.methodNotAllowed(),
   }));
 
-  APP.listen(PORT);
+  APP.on('error', function (err) {
+    Raven.captureException(err, function (err, eventId) {
+    });
+  });
 
+  APP.listen(PORT);
 };
 

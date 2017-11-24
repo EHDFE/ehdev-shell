@@ -3,8 +3,6 @@
  * @author ryan.bian
  */
 
-const { get  } = require('../../utils/');
-
 class DashboardAPI {
   async getProjectList(ctx) {
     await new Promise(resolve => {
@@ -62,18 +60,6 @@ class DashboardAPI {
         },
         true
       );
-    }
-  }
-  async getDailyWallpaper(ctx) {
-    try {
-      const [img, coverstory] = await Promise.all([
-        get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1'),
-        get('http://cn.bing.com/cnhp/coverstory/')
-      ]);
-      let result = Object.assign(img, coverstory);
-      ctx.body = ctx.app.responser(result, true);
-    } catch (e) {
-      ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
 }

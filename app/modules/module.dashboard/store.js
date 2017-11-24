@@ -3,7 +3,7 @@
  * @author ryan.bian
  */
 import { combineReducers } from 'redux';
-import { createActions, handleActions, handleAction } from 'redux-actions';
+import { createActions, handleActions } from 'redux-actions';
 import moment from 'moment';
 
 import DASHBOARD_API from '../../apis/dashboard';
@@ -35,7 +35,7 @@ export const actions = createActions({
       const today = moment();
       return {
         weekday: today.day(),
-        date: today.format('YYYY-DD-MM'),
+        date: today.format('YYYY-MM-DD'),
       };
     },
     GET_OVERALL: async () => {
@@ -46,12 +46,6 @@ export const actions = createActions({
       return {
         assetsCount,
         projectsCount,
-      };
-    },
-    GET_WALLPAPER: async () => {
-      const wallpaper = await DASHBOARD_API.wallPaper.get();
-      return {
-        wallpaper
       };
     },
   },
@@ -79,12 +73,6 @@ const baseReducer = handleActions({
     };
   },
   'BASE/GET_DATE': (state, { payload }) => {
-    return {
-      ...state,
-      ...payload,
-    };
-  },
-  'BASE/GET_WALLPAPER': (state, { payload }) => {
     return {
       ...state,
       ...payload,

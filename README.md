@@ -1,13 +1,14 @@
-# <img src="http://image.tf56.com/dfs/group1/M00/39/50/CiFBCVnkI_iAYRYdAAWllnuhu4k085.ico" alt="" style="vertical-align:middle" height="60" /> EHD SHELL
+# <img src="http://image.tf56.com/dfs/group1/M00/3E/76/CiFBCloSOVqAKLpeAAA2grm54IA264.png" alt="" style="vertical-align:middle" height="60" /> EHD SHELL
 
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dcd2d67edf7946dba8afa86693d2b511)](https://www.codacy.com/app/macisi/ehdev-shell?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EHDFE/ehdev-shell&amp;utm_campaign=Badge_Grade)
 [![GitHub tag](https://img.shields.io/github/tag/ehdfe/ehdev-shell.svg)]()
 [![David](https://img.shields.io/david/EHDFE/ehdev-shell.svg)]()
 [![David](https://img.shields.io/david/dev/EHDFE/ehdev-shell.svg)]()
 
 ## Introduction
-EHD SHELL aims to provide an easy to use gui tool for developers.
+Javis aims to provide an easy to use gui tool for developers.
 
 TL;DR
 

@@ -4,10 +4,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tooltip, Icon, Tabs, Layout, Menu, Dropdown, Spin } from 'antd';
+import { Tabs, Layout, Menu, Dropdown, Spin, Card } from 'antd';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
@@ -107,8 +107,8 @@ class ProjectModule extends Component {
     }
   }
   handleUpdateConfig = (config)=>{
-    const {rootPath} = this.props;
-    const configs = {rootPath, ...config};
+    const { rootPath } = this.props;
+    const configs = { rootPath, ...config };
     this.props.setEnvData(configs);
   }
   renderProfile() {
@@ -136,7 +136,7 @@ class ProjectModule extends Component {
       );
       return <Setup {...setupProps}></Setup>;
     }
-    return null;
+    return <Card style={{ textAlign: 'center' }} bordered={false}>没有找到运行配置</Card>;
   }
   renderPackageVersions() {
     return <DependencyManager refresh={this.getInitData} {...this.props}/>;
@@ -156,7 +156,7 @@ class ProjectModule extends Component {
     );
     if (config && config.dll && config.dll.enable) {
       buildButton = (
-        <Dropdown overlay={
+        <Dropdown key="start-build" overlay={
           <Menu>
             <Menu.Item>
               <button

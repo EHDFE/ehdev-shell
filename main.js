@@ -1,5 +1,8 @@
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const fp = require('find-free-port');
+const fixPath = require('fix-path');
+
+fixPath();
 
 const pkg = require('./package.json');
 const APP_CONFIG = require('./CONFIG');
@@ -9,6 +12,8 @@ require('electron-context-menu')();
 let win;
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+const isDEV = process.env.NODE_ENV === 'development';
 
 const shouldQuit = app.makeSingleInstance(
   (otherInstArgv, otherInstWorkingDir) => {
@@ -67,7 +72,7 @@ function setupMenu() {
       ],
     },
   ];
-  if (process.env.NODE_ENV === 'development') {
+  if (isDEV) {
     template[0].submenu.unshift({
       role: 'reload',
     }, {
@@ -110,14 +115,29 @@ function createWindow() {
         height: APP_CONFIG.HEIGHT,
         minWidth: APP_CONFIG.MIN_WIDTH,
         minHeight: APP_CONFIG.MIN_HEIGHT,
+        show: isDEV,
       })
     );
+
     require('./src/index')(freePort, win.webContents);
     win.loadURL(`http://localhost:${freePort}`);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (!isDEV) {
+      win.once('ready-to-show', () => {
+        win.show();
+      });
+    } else {
       win.webContents.openDevTools();
     }
+
+    win.on('close', e => {
+      e.preventDefault();
+      ipcMain.once('SERVICE:stop-all-done', () => {
+        win.destroy();
+      });
+      // stop all services before close
+      ipcMain.emit('SERVICE:req-stop-all');
+    });
 
     win.on('closed', () => {
       win = null;

@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Popover, notification } from 'antd';
+import { Popover, notification } from 'antd';
 import RepoIcon from 'react-icons/lib/go/repo';
 import PlusIcon from 'react-icons/lib/go/plus';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -95,7 +95,7 @@ export default class FolderPicker extends Component {
     );
   }
   render() {
-    const { value, children } = this.props;
+    const { value } = this.props;
     return (
       <div className={styles.FolderPicker}>
         <RepoIcon size={26} />

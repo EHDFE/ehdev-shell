@@ -4,8 +4,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { Row, Col, Button, Modal, notification } from 'antd';
+// import classnames from 'classnames';
+import { Row, Col, Modal, notification } from 'antd';
 import MdFileUpload from 'react-icons/lib/md/file-upload';
 import MdRemoveRedEye from 'react-icons/lib/md/remove-red-eye';
 import MdDelete from 'react-icons/lib/md/delete';

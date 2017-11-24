@@ -18,7 +18,7 @@ import {
 const FormItem = Form.Item;
 const { Option } = Select;
 
-import styles from './index.less';
+// import styles from './index.less';
 
 @Form.create()
 @connect(state => ({

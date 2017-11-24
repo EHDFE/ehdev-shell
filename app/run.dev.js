@@ -10,7 +10,7 @@ const render = (Component, store) => {
     <AppContainer>
       <Provider store={store}>
         <div>
-          <Component store={store} />
+          <Component />
           <DevTools />
         </div>
       </Provider>

@@ -115,7 +115,7 @@ const fileReducer = handleActions({
   },
   'FILES/DEL': (state, { payload, error }) => {
     if (error) return state;
-    const { id, result } = payload;
+    const { id } = payload;
     const { fileMap, fileIds } = state;
     delete fileMap[id];
     return {

@@ -14,6 +14,8 @@ import Almanac from '../../components/component.almanac';
 import { actions } from './store';
 import { GREETING_WORDS } from '../../CONFIG';
 
+// import { Icon, Switch } from 'antd';
+
 import styles from './index.less';
 
 class DashboardModule extends Component {
@@ -22,7 +24,6 @@ class DashboardModule extends Component {
     assetsCount: PropTypes.number,
     projectsCount: PropTypes.number,
     weather: PropTypes.object,
-    wallpaper: PropTypes.object,
     projectsRank: PropTypes.array,
     date: PropTypes.string,
     weekday: PropTypes.number,
@@ -30,14 +31,16 @@ class DashboardModule extends Component {
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
-    getWallpaper: PropTypes.func,
   };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.date !== this.props.date) {
+      this.props.getWeather();
+    }
+  }
   componentDidMount() {
-    this.props.getWeather();
     this.props.getDate();
     this.props.getProjectList();
     this.props.getOverall();
-    this.props.getWallpaper();
   }
   renderInfoBar() {
     const { userName, weekday, weather } = this.props;
@@ -119,6 +122,7 @@ class DashboardModule extends Component {
               data-index={i + 1}
               className={styles.Dashboard__ProjectRankItem}
               key={o._id}
+              title={o.projectPath}
             >
               <p>{o.projectPath}</p>
             </li>
@@ -128,9 +132,10 @@ class DashboardModule extends Component {
     );
   }
   renderAlmanac() {
+    const { date } = this.props;
     return (
       <Card className={styles.Dashboard__AlmanacCard}>
-        <Almanac />
+        <Almanac date={date} />
       </Card>
     );
   }
@@ -156,26 +161,13 @@ class DashboardModule extends Component {
     );
   }
   render() {
-    let style =
-      this.props.wallpaper && this.props.wallpaper.images[0].url
-        ? {
-          background: `url(http://www.bing.com${this.props.wallpaper.images[0]
-            .url})`,
-          backgroundSize: 'cover',
-          backgroundAttachment: 'fixed',
-          height: '100vh',
-          overflowY: 'auto',
-        }
-        : {};
     return (
-      <div style={style}>
-        <div className={styles.Dashboard__Container}>
-          {this.renderInfoBar()}
-          {this.renderSummaryCards()}
-          {this.renderRecentsProjects()}
-          {this.renderAlmanac()}
-          {this.renderLastBuildStats()}
-        </div>
+      <div className={styles.Dashboard__Container}>
+        {this.renderInfoBar()}
+        {this.renderSummaryCards()}
+        {this.renderRecentsProjects()}
+        {this.renderAlmanac()}
+        {this.renderLastBuildStats()}
       </div>
     );
     // { this.renderBuildTimesRank() }
@@ -210,7 +202,6 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
-  getWallpaper: () => dispatch(actions.base.getWallpaper()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

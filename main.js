@@ -1,6 +1,15 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const fp = require('find-free-port');
 const fixPath = require('fix-path');
+const autoUpdater = require('electron-updater').autoUpdater;
+const log = require('electron-log');
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+
+autoUpdater.checkForUpdatesAndNotify();
+
 
 fixPath();
 

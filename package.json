@@ -16,8 +16,10 @@
     "clean-webpack-plugin": "^0.1.17",
     "electron-context-menu": "^0.9.1",
     "electron-is-dev": "^0.3.0",
-    "file-api": "^0.10.4",
+    "electron-log": "^2.2.11",
+    "electron-updater": "^2.16.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "file-api": "^0.10.4",
     "find-free-port": "^1.0.2",
     "fix-path": "^2.1.0",
     "html-webpack-plugin": "^2.30.1",
@@ -30,8 +32,8 @@
     "koa-views": "^6.1.1",
     "nedb": "^1.8.0",
     "nunjucks": "^3.0.1",
-    "sharp": "^0.18.4",
     "raven": "^2.2.1",
+    "sharp": "^0.18.4",
     "stats-webpack-plugin": "^0.6.1",
     "tinycolor2": "^1.4.1",
     "uglifyjs-webpack-plugin": "^1.1.0",
@@ -131,10 +133,12 @@
     ],
     "asar": false,
     "mac": {
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "publish": "github"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "publish": "github"
     }
   },
   "repository": {

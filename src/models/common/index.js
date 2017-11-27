@@ -4,12 +4,16 @@
  * TODO: clean wallpaper diretory
  */
 const path = require('path');
+const { URLSearchParams } = require('url');
 const send = require('koa-send');
 const { app } = require('electron');
-const { get, saveImage, stat } = require('../../utils/');
+const { httpGet, saveImage, stat, generateQRCode, md5 } = require('../../utils/');
 
 const BING_COVER_STORE_API = 'http://cn.bing.com/cnhp/coverstory/';
 const LOCAL_WALLPAPER_DIR = app.getPath('temp');
+const TRANSLATE_APP_ID = '20171124000099180';
+const TRANSLATE_APP_SECRET = 'qVUM_LdhWvRhX2ufic0F';
+const TRANSLATE_API_URL = 'http://api.fanyi.baidu.com/api/trans/vip/translate';
 
 const getDateString = () => {
   const date = new Date();
@@ -35,12 +39,16 @@ const saveWallpaper = async (filePath, urlPath) => {
 };
 
 class CommonAPI {
+  /**
+   * request wallpaper info from bing
+   * @param {*} ctx
+   */
   async getBingWallpaper(ctx) {
     const date = ctx.params.date ? ctx.params.date : getDateString();
     const picUrl = `/api/common/wallpaper/${date}`;
     const dateString = date.split('-').join('');
     try {
-      const coverstory = await get(`${BING_COVER_STORE_API}?d=${dateString}`);
+      const coverstory = await httpGet(`${BING_COVER_STORE_API}?d=${dateString}`);
       const result = Object.assign({
         url: picUrl,
       }, coverstory);
@@ -60,12 +68,60 @@ class CommonAPI {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
   }
+  /**
+   * handle daily image request
+   * @param {*} ctx
+   */
   async getLocalWallpaper(ctx) {
     const { date } = ctx.params;
     await send(ctx, `wallpapers/wallpaper@${date}.jpg`, {
       root: LOCAL_WALLPAPER_DIR,
       immutable: true,
     });
+  }
+  /**
+   * translate
+   */
+  async translate(ctx) {
+    const { query, from, to } = ctx.params;
+    const salt = new Date().getTime();
+    const queryObj = new URLSearchParams({
+      q: query,
+      from,
+      to,
+      appid: TRANSLATE_APP_ID,
+      salt,
+      sign: md5([TRANSLATE_APP_ID, query, salt, TRANSLATE_APP_SECRET].join('')),
+    });
+    try {
+      const response = await httpGet(
+        `${TRANSLATE_API_URL}?${queryObj.toString()}`
+      );
+      ctx.body = ctx.app.responser(response, true);
+    } catch (e) {
+      ctx.body = ctx.app.responser(e.toString(), false);
+    }
+  }
+  /**
+   * generate qrcode
+   * @param {*} ctx
+   */
+  async getQRCode(ctx) {
+    const { text } = ctx.params;
+    const opts = {
+      color: {
+        dark: '#000000ff',
+        light: '#ffffffff',
+      },
+    };
+    try {
+      const url = await generateQRCode(text, opts);
+      ctx.body = ctx.app.responser({
+        url,
+      }, true);
+    } catch (e) {
+      ctx.body = ctx.app.responser(e.toString(), false);
+    }
   }
 }
 

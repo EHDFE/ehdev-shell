@@ -152,6 +152,10 @@ function createWindow() {
       win = null;
     });
 
+    exports.closeWindow = () => {
+      win.close();
+    };
+
     // config menu
     setupMenu();
   });

@@ -10,6 +10,9 @@ import { createSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 import { Layout, Icon, Switch } from 'antd';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
+
+import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 
 import { actions } from './store';
 
@@ -29,13 +32,30 @@ class LayoutModule extends Component {
     attribute: PropTypes.string,
     getWallpaperInfo: PropTypes.func,
     children: PropTypes.any,
+    location: PropTypes.object.isRequired,
   }
   state = {
     viewMode: false,
     date: moment().format(dateFormat),
+    nav: this.getLayoutNav(this.props.location),
   }
   componentDidMount() {
     this.props.getWallpaperInfo(this.state.date);
+  }
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.location, this.props.location)) {
+      this.setState({
+        nav: this.getLayoutNav(nextProps.location),
+      });
+    }
+  }
+  getLayoutNav(location) {
+    const { pathname } = location;
+    const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
+    if (matched) {
+      return matched;
+    }
+    return null;
   }
   toggleViewMode = () => {
     this.setState({
@@ -88,13 +108,19 @@ class LayoutModule extends Component {
   render() {
     const today = moment().format(dateFormat);
     const { localImageUrl, children } = this.props;
-    const { date, viewMode } = this.state;
+    const { date, viewMode, nav } = this.state;
     const layoutProps = {
+      padding: 0,
       backgroundUrl: localImageUrl,
       viewMode,
       tintColor: '#fff',
       tintOpacity: 0.7,
     };
+    if (nav && nav.text) {
+      Object.assign(layoutProps, {
+        title: nav.text
+      });
+    }
     return (
       <Layout style={{ height: '100vh' }}>
         <SiderBar />

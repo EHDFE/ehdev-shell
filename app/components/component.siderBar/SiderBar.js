@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import isEqual from 'lodash/isEqual';
 // import classNames from 'classnames';
 
 import { Layout, Menu, Icon, Avatar } from 'antd/es/';
@@ -22,11 +23,28 @@ class SiderBar extends Component {
   static __ANT_LAYOUT_SIDER = true
   static propTypes = {
     history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   state = {
     collapsed: true,
-    selectedKey: null,
+    selectedKey: this.getSelectedKey(this.props),
+  }
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.location, this.props.location)) {
+      this.setState({
+        selectedKey: this.getSelectedKey(nextProps),
+      });
+    }
+  }
+  getSelectedKey(props) {
+    const { location } = props;
+    const { pathname } = location;
+    const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
+    if (matched) {
+      return matched.to;
+    }
+    return null;
   }
   onCollapse = (collapsed) => {
     this.setState({

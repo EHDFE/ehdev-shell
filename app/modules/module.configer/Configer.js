@@ -7,7 +7,6 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import {
-  Card,
   Button,
   Table,
   Popconfirm,
@@ -199,25 +198,23 @@ class ConfigerModule extends Component {
     const { markSource, markVisible } = this.state;
     return (
       <Page>
-        <Card title="引擎库">
-          <div className={styles.Configer__ActionBar}>
-            <Button type="primary" onClick={this.showConfigImporter}>添加引擎</Button>
-          </div>
-          { this.renderConfigList() }
-          <ConfigImportor
-            visible={this.state.importVisible}
-            onCancel={this.handleCloseImportor}
-            onConfirm={this.handleAddConfig}
-          />
-          <Modal
-            width={'80vw'}
-            visible={markVisible}
-            onCancel={this.closeMarkModal}
-            footer={null}
-          >
-            <Markdown source={markSource} />
-          </Modal>
-        </Card>
+        <div className={styles.Configer__ActionBar}>
+          <Button type="primary" onClick={this.showConfigImporter}>添加引擎</Button>
+        </div>
+        { this.renderConfigList() }
+        <ConfigImportor
+          visible={this.state.importVisible}
+          onCancel={this.handleCloseImportor}
+          onConfirm={this.handleAddConfig}
+        />
+        <Modal
+          width={'80vw'}
+          visible={markVisible}
+          onCancel={this.closeMarkModal}
+          footer={null}
+        >
+          <Markdown source={markSource} />
+        </Modal>
       </Page>
     );
   }

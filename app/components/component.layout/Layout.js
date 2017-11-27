@@ -16,6 +16,7 @@ import styles from './index.less';
 
 export default class LayoutComponent extends Component {
   static defaultProps = {
+    title: '',
     padding: 16,
     backgroundUrl: '',
     tintColor: '#fff',
@@ -24,6 +25,7 @@ export default class LayoutComponent extends Component {
     viewMode: false,
   }
   static propTypes = {
+    title: PropTypes.string,
     padding: PropTypes.number,
     backgroundUrl: PropTypes.string.isRequired,
     tintColor: PropTypes.string,
@@ -59,6 +61,7 @@ export default class LayoutComponent extends Component {
     scaleWidth: undefined,
     scaleHeight: undefined,
     blurUrl: undefined,
+    minHeader: false,
   }
   componentDidMount() {
     window.addEventListener('resize', this.handleResize, false);
@@ -127,6 +130,22 @@ export default class LayoutComponent extends Component {
     };
     image.src = backgroundUrl;
   }
+  renderLayoutHead() {
+    const { title } = this.props;
+    const { minHeader } = this.state;
+    return (
+      <header
+        className={classnames(
+          styles.Layout__Header,
+          {
+            [styles['Layout__Header--min']]: minHeader,
+          }
+        )}
+      >
+        <h1>{title}</h1>
+      </header>
+    );
+  }
   render() {
     const { padding, backgroundUrl, viewMode } = this.props;
     const { blurUrl, scaleWidth, scaleHeight } = this.state;
@@ -135,6 +154,8 @@ export default class LayoutComponent extends Component {
       backgroundImage: `url(${backgroundUrl})`,
     };
     const wrapperStyle = {
+      width: `calc(100vw - 80px - ${padding * 2}px)`,
+      minHeight: `calc(100vh - ${padding * 2}px)`,
     };
     if (blurUrl) {
       Object.assign(wrapperStyle, {
@@ -149,7 +170,7 @@ export default class LayoutComponent extends Component {
           style={layoutStyle}
           ref={node => this.wrapper = node}
         >
-          <div
+          <main
             style={wrapperStyle}
             className={
               classnames(
@@ -159,8 +180,11 @@ export default class LayoutComponent extends Component {
                 },
               )
             }>
-            { this.props.children || null }
-          </div>
+            { this.renderLayoutHead() }
+            <div className={styles.Layout__Content}>
+              { this.props.children || null }
+            </div>
+          </main>
         </div>
       </Layout>
     );

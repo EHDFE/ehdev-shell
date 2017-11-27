@@ -18,7 +18,7 @@ const Raven = require('raven');
 const apiRouter = require('./apiRegister');
 const { responser } = require('./utils/');
 
-module.exports = (PORT, webContent) => {
+module.exports = (PORT = 3000, webContent) => {
 
   const APP = new Koa();
   Raven.config(

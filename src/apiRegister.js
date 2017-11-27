@@ -5,12 +5,10 @@
 const Router = require('koa-router');
 const koaBody = require('koa-body');
 
-
 // Upload Models
 const UploadListAPI = require('./models/upload/list');
 const UploadFileAPI = require('./models/upload/file');
 const GenerateAPI = require('./models/upload/generate');
-
 
 // Project Models
 const ProjectEnvAPI = require('./models/project/env');
@@ -117,6 +115,8 @@ const commonRouter = Router();
 const common = new CommonAPI();
 
 commonRouter
+  .get('/translate/:from/:to/:query', common.translate)
+  .get('/qrcode/:text', common.getQRCode)
   .get('/bingWallpaper', common.getBingWallpaper)
   .get('/bingWallpaper/:date', common.getBingWallpaper)
   .get('/wallpaper/:date', common.getLocalWallpaper);

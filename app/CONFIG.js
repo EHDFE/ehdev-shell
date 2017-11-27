@@ -21,15 +21,15 @@ export const GLOBAL_NAV_CONFIG = [
     text: '引擎库',
   },
   {
+    to: '/images',
+    icon: 'picture',
+    text: '图片处理'
+  },
+  {
     to: '/user',
     icon: 'user',
     text: '个人中心',
   },
-  {
-    to: '/images',
-    icon: 'picture',
-    text: '图片处理'
-  }
 ];
 
 export const GREETING_WORDS = new Map([

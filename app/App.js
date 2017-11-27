@@ -10,9 +10,6 @@ moment.locale('zh-cn');
 
 import './index.less?no-css-module';
 
-// Components
-// import Layout from './components/component.layout/';
-
 // Pages
 import { DashboardModule } from './modules/module.dashboard/';
 import { ProjectModule } from './modules/module.project/';

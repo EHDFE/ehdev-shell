@@ -2,14 +2,9 @@
 
 .Layout {
   &__Control {
-    position: fixed;
-    left: 112px;
-    bottom: 32px;
     display: flex;
-    width: 100px;
+    width: 60px;
     justify-content: space-between;
-  }
-  &__Switch {
   }
   &__Btn {
     font-size: 24px;
@@ -23,7 +18,7 @@
   &__Info {
     position: fixed;
     left: 112px;
-    bottom: 60px;
+    bottom: 20px;
     padding: 8px;
     width: ~"calc(100vw - 144px)";
     background-color: rgba(0, 0, 0, 0.5);
@@ -35,6 +30,14 @@
 
     &Title {
       color: #fff;
+    }
+
+    &Foot {
+      display: flex;
+      justify-content: space-between;
+    }
+    &Meta {
+
     }
   }
 }

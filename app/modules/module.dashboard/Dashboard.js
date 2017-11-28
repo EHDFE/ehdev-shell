@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import classnames from 'classnames';
+import { Calendar } from 'antd';
 
 import Card from './Card';
 import * as WeatherIcon from '../../components/component.weatherIcon';
@@ -139,6 +140,13 @@ class DashboardModule extends Component {
       </Card>
     );
   }
+  renderCalendar() {
+    return (
+      <Card className={styles.Dashboard__CalendarCard}>
+        <Calendar fullscreen={false} />
+      </Card>
+    );
+  }
   renderServerRunningDurationRank() {
     return (
       <Card>
@@ -167,6 +175,7 @@ class DashboardModule extends Component {
         {this.renderSummaryCards()}
         {this.renderRecentsProjects()}
         {this.renderAlmanac()}
+        {this.renderCalendar()}
         {this.renderLastBuildStats()}
       </div>
     );

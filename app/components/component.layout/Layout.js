@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Layout } from 'antd/es/';
+import { Layout, Icon } from 'antd';
 import StackBlur from 'stackblur-canvas';
 import tinycolor from 'tinycolor2';
 import throttle from 'lodash/throttle';
@@ -17,25 +17,29 @@ import styles from './index.less';
 export default class LayoutComponent extends Component {
   static defaultProps = {
     title: '',
+    icon: '',
     padding: 16,
     backgroundUrl: '',
     tintColor: '#fff',
     tintOpacity: 0.4,
     blurSize: 40,
-    viewMode: false,
+    previewMode: false,
+    hasContent: true,
   }
   static propTypes = {
     title: PropTypes.string,
+    icon: PropTypes.string,
     padding: PropTypes.number,
     backgroundUrl: PropTypes.string.isRequired,
     tintColor: PropTypes.string,
     tintOpacity: PropTypes.number,
     blurSize: PropTypes.number,
-    viewMode: PropTypes.bool,
+    previewMode: PropTypes.bool,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.array,
     ]),
+    hasContent: PropTypes.bool,
   }
   static getScaleSize(imageWidth, imageHeight, targetWidth, targetHeight) {
     let scaleWidth, scaleHeight;
@@ -131,9 +135,9 @@ export default class LayoutComponent extends Component {
     image.src = backgroundUrl;
   }
   renderLayoutHead() {
-    const { title } = this.props;
+    const { title, icon } = this.props;
     const { minHeader } = this.state;
-    return (
+    return title ? (
       <header
         className={classnames(
           styles.Layout__Header,
@@ -142,12 +146,28 @@ export default class LayoutComponent extends Component {
           }
         )}
       >
-        <h1>{title}</h1>
+        <Icon
+          className={styles.Layout__HeaderIcon}
+          type={icon}
+          style={{
+            fontSize: 36,
+          }}
+        />
+        <h1 className={styles.Layout__HeaderTitle}>{title}</h1>
       </header>
-    );
+    ) : null;
+  }
+  renderContent() {
+    const { hasContent } = this.props;
+    const content = this.props.children || null;
+    return hasContent ? (
+      <div className={styles.Layout__Content}>
+        { content }
+      </div>
+    ) : content;
   }
   render() {
-    const { padding, backgroundUrl, viewMode } = this.props;
+    const { padding, backgroundUrl, previewMode } = this.props;
     const { blurUrl, scaleWidth, scaleHeight } = this.state;
     const layoutStyle = {
       padding,
@@ -176,14 +196,12 @@ export default class LayoutComponent extends Component {
               classnames(
                 styles.Layout__Wrapper,
                 {
-                  [styles['Layout__Wrapper--viewMode']]: viewMode,
+                  [styles['Layout__Wrapper--viewMode']]: previewMode,
                 },
               )
             }>
             { this.renderLayoutHead() }
-            <div className={styles.Layout__Content}>
-              { this.props.children || null }
-            </div>
+            { this.renderContent() }
           </main>
         </div>
       </Layout>

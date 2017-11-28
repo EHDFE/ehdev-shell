@@ -2,7 +2,7 @@
  * Console Component
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { PureComponent } from 'react';
 import throttle from 'lodash/throttle';
 import Terminal from 'xterm';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import styles from './index.less';
 
 Terminal.loadAddon('fit');
 
-export default class Console extends Component {
+export default class Console extends PureComponent {
   static defaultProps = {
     defaultValue: '',
     value: '',
@@ -33,7 +33,7 @@ export default class Console extends Component {
     this.terminal = new Terminal({
       cols: 30,
     });
-    this.terminal.open(this.root);
+    this.terminal.open(this.root, false);
     this.terminal.writeln(this.props.defaultValue);
     window.addEventListener('resize', this.resize, false);
     this.resize();

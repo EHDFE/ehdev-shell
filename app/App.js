@@ -14,7 +14,6 @@ import './index.less?no-css-module';
 import { DashboardModule } from './modules/module.dashboard/';
 import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
-import { ConsoleModule } from './modules/module.console/';
 import { ConfigerModule } from './modules/module.configer/';
 import { UserModule } from './modules/module.user/';
 import { ImageModule } from './modules/module.image/';
@@ -30,7 +29,6 @@ const App = () => (
       <Route path="/configer" component={ConfigerModule}/>
       <Route path="/user" component={UserModule}/>
       <Route path="/images" component={ImageModule}></Route>
-      <ConsoleModule />
     </LayoutModule>
   </BrowserRouter>
 );

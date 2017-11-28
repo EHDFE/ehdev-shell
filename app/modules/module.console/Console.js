@@ -2,7 +2,7 @@
  * Console Module
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
@@ -16,22 +16,21 @@ import { actions } from './store';
 import styles from './index.less';
 import Console from '../../components/component.console/';
 
-class ConsoleModule extends Component {
+const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+
+class ConsoleModule extends PureComponent {
 
   static propTypes = {
     content: PropTypes.string,
     lastLogContent: PropTypes.string,
     lastLogTime: PropTypes.number,
+    visible: PropTypes.bool,
     updateLog: PropTypes.func,
     clear: PropTypes.func,
-  }
-
-  state = {
-    isShow: null,
+    toggleVisible: PropTypes.func,
   }
 
   componentDidMount() {
-    const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
     ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
       if (arg.action === 'log' || arg.action === 'error') {
         const log = arg.data.replace(/\n/g, '\r\n');
@@ -40,10 +39,8 @@ class ConsoleModule extends Component {
     });
   }
 
-  consoleToggle = () => {
-    this.setState({
-      isShow: !this.state.isShow,
-    });
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
   }
 
   clearTerminal = () => {
@@ -52,8 +49,7 @@ class ConsoleModule extends Component {
   }
 
   render() {
-    const { content, lastLogContent, lastLogTime } = this.props;
-
+    const { visible, content, lastLogContent, lastLogTime, toggleVisible } = this.props;
     return (
       <div className={styles.Console}>
         <Popover
@@ -73,7 +69,7 @@ class ConsoleModule extends Component {
             type="primary"
             icon="code"
             className={styles['hover-btn']}
-            onClick={this.consoleToggle}
+            onClick={toggleVisible}
           />
         </Popover>
         <div
@@ -81,8 +77,8 @@ class ConsoleModule extends Component {
             classnames(
               styles['console-wrap'],
               {
-                [styles['console-wrap__show']]: this.state.isShow,
-                [styles['console-wrap__hide']]: !this.state.isShow,
+                [styles['console-wrap__show']]: visible,
+                [styles['console-wrap__hide']]: !visible,
               }
             )
           }
@@ -105,7 +101,8 @@ const consoleSelector = createSelector(
   pageState => ({
     content: pageState.content,
     lastLogContent: pageState.lastLog.content,
-    lastLogTime: pageState.lastLog.t
+    lastLogTime: pageState.lastLog.t,
+    visible: pageState.visible,
   })
 );
 
@@ -117,6 +114,7 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   clear: () => dispatch(actions.clean()),
   updateLog: data => dispatch(actions.updateLog(data)),
+  toggleVisible: () => dispatch(actions.toggleVisible()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConsoleModule);

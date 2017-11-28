@@ -12,6 +12,7 @@ const defaultState = {
     content: '',
     t: getTime(),
   },
+  visible: false,
 };
 
 /**
@@ -26,6 +27,14 @@ export const actions = createActions({
   },
   CLEAN: () => ({
     t: getTime(),
+  }),
+  TOGGLE_VISIBLE: () => ({
+  }),
+  SET_VISIBLE: () => ({
+    visible: true,
+  }),
+  SET_INVISIBLE: () => ({
+    visible: false,
   }),
 });
 
@@ -45,6 +54,7 @@ const consoleReducer = handleActions(
           content: log,
           t,
         },
+        visible: state.visible,
       };
     },
     CLEAN: (state, { payload }) => {
@@ -55,6 +65,34 @@ const consoleReducer = handleActions(
           content: '',
           t,
         },
+        visible: state.visible,
+      };
+    },
+    TOGGLE_VISIBLE: (state) => {
+      return {
+        ...state,
+        lastLog: {
+          ...state.lastLog,
+        },
+        visible: !state.visible,
+      };
+    },
+    SET_VISIBLE: (state) => {
+      return {
+        ...state,
+        lastLog: {
+          ...state.lastLog,
+        },
+        visible: state.visible,
+      };
+    },
+    SET_INVISIBLE: (state) => {
+      return {
+        ...state,
+        lastLog: {
+          ...state.lastLog,
+        },
+        visible: state.visible,
       };
     },
   },

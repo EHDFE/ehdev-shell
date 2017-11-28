@@ -16,6 +16,8 @@ import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 
 import { actions } from './store';
 
+import { ConsoleModule } from '../module.console/';
+
 import SiderBar from '../../components/component.siderBar/';
 import LayoutComponent from '../../components/component.layout/';
 
@@ -155,6 +157,7 @@ class LayoutModule extends Component {
             this.renderWallpaperInfo(),
           ]
         }
+        <ConsoleModule />
       </Layout>
     );
   }

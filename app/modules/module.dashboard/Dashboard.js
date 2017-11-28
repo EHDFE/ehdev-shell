@@ -164,7 +164,7 @@ class DashboardModule extends Component {
   renderLastBuildStats() {
     return (
       <Card className={styles.Dashboard__BuildAnalyse}>
-        <h3>上次构建分析</h3>
+        <h3>构建分析</h3>
       </Card>
     );
   }

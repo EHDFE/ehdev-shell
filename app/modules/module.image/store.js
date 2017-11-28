@@ -34,7 +34,6 @@ export const actions = createActions({
   },
   GENLIST: {
     GET: async params => {
-
       return {
         files: null,
         limit: null,
@@ -48,7 +47,6 @@ export const actions = createActions({
     ADD: file => ({ file }),
     // delete one file
     DEL: async id => {
-
       return id;
     },
     // add multiple files

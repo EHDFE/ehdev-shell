@@ -8,7 +8,7 @@ export const GLOBAL_NAV_CONFIG = [
   {
     to: '/project',
     icon: 'code',
-    text: '项目',
+    text: '工程',
   },
   {
     to: '/upload',

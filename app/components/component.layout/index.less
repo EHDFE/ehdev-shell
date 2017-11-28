@@ -23,10 +23,22 @@
   }
 
   &__Header {
+    display: flex;
     padding: 20px 16px;
-    height: 100px;
+    height: 60px;
+    align-items: center;
+
     &--min {
 
+    }
+    &Icon {
+      margin-right: 8px;
+      text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    &Title {
+      margin-bottom: 0;
+      font-size: 20px;
+      text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
     }
   }
 
@@ -36,6 +48,7 @@
     background-color: #fff;
     box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    min-height: ~"calc(100vh - 116px)";
+    height: ~"calc(100vh - 76px)";
+    overflow-y: auto;
   }
 }

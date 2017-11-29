@@ -55,7 +55,6 @@ export const actions = createActions({
     BATCH_DEL: ids => ({ ids }),
     DO_GEN: async (files, config) => {
       const over = await UPLOAD_API.gfile.post(files, config);
-
       return over;
     },
     CLEAR: files => ({ files }),
@@ -69,7 +68,6 @@ export const actions = createActions({
     },
     DO_GEN: async (files, config) => {
       const over = await UPLOAD_API.gfile.post(files, config);
-
       return over;
     },
     DEL: () => {},

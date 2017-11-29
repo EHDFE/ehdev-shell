@@ -18,6 +18,7 @@ import { ConfigerModule } from './modules/module.configer/';
 import { UserModule } from './modules/module.user/';
 import { ImageModule } from './modules/module.image/';
 import { LayoutModule } from './modules/module.layout/';
+import { QrCodeModule } from './modules/module.qrcode/';
 
 const App = () => (
   <BrowserRouter basename="/">
@@ -29,6 +30,7 @@ const App = () => (
       <Route path="/configer" component={ConfigerModule}/>
       <Route path="/user" component={UserModule}/>
       <Route path="/images" component={ImageModule}></Route>
+      <Route path="/qrcode" component={QrCodeModule}></Route>
     </LayoutModule>
   </BrowserRouter>
 );

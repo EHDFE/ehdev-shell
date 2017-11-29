@@ -11,7 +11,11 @@ const COMMON_API = {
       const res = await fetch(`${API_PATH}/bingWallpaper/${date}`);
       return handleResponse(res);
     }
-  }
+  },
+  async getQrCode(text) {
+    const res = await fetch(`${API_PATH}/qrcode/${encodeURIComponent(text)}`);
+    return handleResponse(res);
+  },
 };
 
 export default COMMON_API;

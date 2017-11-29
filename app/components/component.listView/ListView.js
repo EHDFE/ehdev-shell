@@ -137,7 +137,7 @@ export default class ListView extends Component {
   }
   renderGridView(data) {
     return (
-      <Row>
+      <Row type="flex">
         {
           data.map(d =>
             <Col xs={12} sm={8} lg={6} xl={4} xll={3} key={d._id}>

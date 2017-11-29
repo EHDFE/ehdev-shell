@@ -26,6 +26,11 @@ export const GLOBAL_NAV_CONFIG = [
     text: '图片处理'
   },
   {
+    to: '/qrcode',
+    icon: 'qrcode',
+    text: '二维码生成器'
+  },
+  {
     to: '/user',
     icon: 'user',
     text: '个人中心',

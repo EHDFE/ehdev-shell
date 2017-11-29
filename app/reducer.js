@@ -12,6 +12,7 @@ import { ConsoleReducer } from './modules/module.console/';
 import { UserReducer } from './modules/module.user/';
 import { ImageReducer } from './modules/module.image/';
 import { LayoutReducer } from './modules/module.layout/';
+import { QrcodeReducer } from './modules/module.qrcode/';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -22,6 +23,7 @@ const reducer = combineReducers({
   'page.user': UserReducer,
   'page.image': ImageReducer,
   'page.wallpaper': LayoutReducer,
+  'page.qrcode': QrcodeReducer,
 });
 
 export default reducer;

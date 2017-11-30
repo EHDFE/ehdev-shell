@@ -27,9 +27,11 @@ module.exports = (PORT = 3000, webContent) => {
   ).install();
   const APPDATA_PATH = app.getPath('appData');
   const USERDATA_PATH = app.getPath('userData');
+  // each db_list item will create a db file
   const DB_LIST = [
     'upload',
     'project',
+    'pomodora',
   ];
   APP.db = {};
   DB_LIST.forEach(name => {

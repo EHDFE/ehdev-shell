@@ -23,6 +23,8 @@ const ConfigerAPI = require('./models/configer/');
 // Dashboard Model
 const DashboardAPI = require('./models/dashboard/');
 
+const PomodoraAPI = require('./models/pomodora/');
+
 const CommonAPI = require('./models/common/');
 
 const apiRouter = Router();
@@ -110,6 +112,13 @@ dashboardRouter
   .get('/projects', dashboard.getProjectList)
   .get('/overall', dashboard.getOverall);
 
+const pomodoraRouter = Router();
+const pomodora = new PomodoraAPI();
+
+pomodoraRouter
+  .get('/tasks', pomodora.getGistory)
+  .post('/task', koaBody(), pomodora.create);
+
 // common router
 const commonRouter = Router();
 const common = new CommonAPI();
@@ -128,6 +137,7 @@ apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
 apiRouter.use('/configer', configerRouter.routes(), configerRouter.allowedMethods());
 apiRouter.use('/dashboard', dashboardRouter.routes(), dashboardRouter.allowedMethods());
+apiRouter.use('/pomodora', pomodoraRouter.routes(), pomodoraRouter.allowedMethods());
 apiRouter.use('/common', commonRouter.routes(), commonRouter.allowedMethods());
 
 module.exports = apiRouter;

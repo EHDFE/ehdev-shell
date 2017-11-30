@@ -31,6 +31,11 @@ export const GLOBAL_NAV_CONFIG = [
     text: '二维码生成器'
   },
   {
+    to: '/pomodora',
+    icon: 'clock-circle-o',
+    text: '番茄工作法',
+  },
+  {
     to: '/user',
     icon: 'user',
     text: '个人中心',

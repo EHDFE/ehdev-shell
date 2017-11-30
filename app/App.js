@@ -19,6 +19,7 @@ import { UserModule } from './modules/module.user/';
 import { ImageModule } from './modules/module.image/';
 import { LayoutModule } from './modules/module.layout/';
 import { QrCodeModule } from './modules/module.qrcode/';
+import { PomodoraModule } from './modules/module.pomodora/';
 
 const App = () => (
   <BrowserRouter basename="/">
@@ -31,6 +32,7 @@ const App = () => (
       <Route path="/user" component={UserModule}/>
       <Route path="/images" component={ImageModule}></Route>
       <Route path="/qrcode" component={QrCodeModule}></Route>
+      <Route path="/pomodora" component={PomodoraModule}></Route>
     </LayoutModule>
   </BrowserRouter>
 );

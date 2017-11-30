@@ -1,0 +1,35 @@
+@import '../../theme/index.less';
+
+.PomodoraModule {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__Editor {
+
+  }
+  &__TitleInput {
+    padding: 0 4px;
+    border-width: 0 0 2px;
+    border-style: solid;
+    border-color: @input-border-color;
+    font-size: 24px;
+    text-align: center;
+
+    &:hover {
+      border-bottom-color: @primary-color;
+    }
+
+    &:focus {
+      outline: 0 none;
+      border-bottom-color: @primary-color;
+    }
+  }
+
+  &__ControlBtn {
+    svg {
+      fill: #fff;
+    }
+  }
+}

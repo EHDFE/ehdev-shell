@@ -56,7 +56,7 @@
     "electron": "^1.8.1",
     "electron-builder": "^19.45.5",
     "electron-react-devtools": "^0.5.2",
-    "eslint": "^4.12.0",
+    "eslint": "^4.12.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-promise": "^3.6.0",

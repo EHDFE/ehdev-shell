@@ -3,12 +3,14 @@
  * @author ryan.bian
  */
 import { PureComponent } from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Slider } from 'antd';
-import { MorphReplace } from 'react-svg-morph';
-import PlayIcon from 'react-icons/lib/md/play-arrow';
-import PauseIcon from 'react-icons/lib/md/pause';
+import { Alert, Button, Icon, Slider } from 'antd';
+// import { MorphReplace } from 'react-svg-morph';
+// import PlayIcon from 'react-icons/lib/md/play-arrow';
+// import PauseIcon from 'react-icons/lib/md/pause';
+import LoopIcon from 'react-icons/lib/md/loop';
 
 import CircleTimer from '../../components/component.circleTimer/';
 
@@ -45,6 +47,7 @@ class PomodoraModule extends PureComponent {
     focusPeriod: 25,
     restPeriod: 5,
     countdown: undefined,
+    showSetting: false,
   }
   componentWillReceiveProps(nextProps) {
     if (!nextProps.current.id && this.props.current.id) {
@@ -110,20 +113,29 @@ class PomodoraModule extends PureComponent {
   }
   handleTimeUp = () => {
     const { current } = this.props;
-    const { title, status } = current;
+    const { status } = current;
+    const { focusPeriod, restPeriod } = this.state;
     let noticeTitle;
+    let message;
     if (status === 'focus') {
       noticeTitle = '休息一会';
+      message = `你已经连续专注 ${focusPeriod} 分钟了，休息以下更高效哦!`;
     } else {
       noticeTitle = '休息结束';
+      message = `你已经休息了 ${restPeriod} 分钟，继续专注！`;
     }
     new Notification(noticeTitle, {
-      body: `${title} lalala`,
+      body: message,
+    });
+  }
+  handleSettingToggle = () => {
+    this.setState({
+      showSetting: !this.state.showSetting,
     });
   }
   renderJobConfig() {
     const { current } = this.props;
-    const { title, focusPeriod, restPeriod } = this.state;
+    const { title, focusPeriod, restPeriod, showSetting } = this.state;
     const sliderProps = {
       min: 1,
       max: 60,
@@ -146,14 +158,27 @@ class PomodoraModule extends PureComponent {
     }
     return (
       <div className={styles.PomodoraModule__Editor}>
-        <input
-          type="text"
-          placeholder="输入任务名称"
-          className={styles.PomodoraModule__TitleInput}
-          value={title}
-          onChange={this.handleTitleChange}
-        />
-        <div>
+        <div className={styles.PomodoraModule__Head}>
+          <input
+            type="text"
+            placeholder="输入任务名称"
+            className={styles.PomodoraModule__TitleInput}
+            value={title}
+            onChange={this.handleTitleChange}
+          />
+          <button
+            className={styles.PomodoraModule__SettingTrigger}
+            onClick={this.handleSettingToggle}
+          >
+            <Icon type="setting" />
+          </button>
+        </div>
+        <div className={classnames(
+          styles.PomodoraModule__Setting,
+          {
+            [styles['PomodoraModule__Setting--visible']]: showSetting,
+          },
+        )}>
           <h4>专注时长</h4>
           <Slider
             {...sliderProps}
@@ -193,21 +218,30 @@ class PomodoraModule extends PureComponent {
     const { current } = this.props;
     return (
       <div className={styles.PomodoraModule}>
+        <Alert
+          type="info"
+          showIcon
+          message="知识豆"
+          description="番茄工作法（英语：Pomodoro Technique）是一种时间管理法方法，在上世纪八十年代由Francesco Cirillo创立。[1] 该方法使用一个定时器来分割出一个一般为25分钟的工作时间和5分钟的休息时间，而那些时间段被称为pomodori，为意大利语单词 pomodoro（中文：番茄）之复数。"
+        />
         { this.renderJobConfig() }
         { this.renderTimer() }
-        <Button
-          type="primary"
-          className={styles.PomodoraModule__ControlBtn}
-          disabled={!current.id}
-          onClick={this.handleClickControlBtn}
-        >
-          <MorphReplace width={32} height={32}>
-            { !this.state.start ?
-              <PlayIcon key={'play'} size={32} /> :
-              <PauseIcon key={'stop'} size={32} />
+        <div className={styles.PomodoraModule__Controls}>
+          <Button
+            type="danger"
+            className={
+              classnames(
+                styles.PomodoraModule__ControlBtn,
+                styles['PomodoraModule__ControlBtn--danger'],
+              )
             }
-          </MorphReplace>
-        </Button>
+            disabled={!current.id}
+            onClick={this.handleClickControlBtn}
+            ghost
+          >
+            <LoopIcon size={24} />
+          </Button>
+        </div>
       </div>
     );
   }

@@ -17,7 +17,7 @@ class CircleTimer extends PureComponent {
     duration: undefined,
     width: 200,
     status: 'active',
-    onTimesUp() {},
+    onTimeUp() {},
   }
   static propTypes = {
     id: PropTypes.string,
@@ -49,7 +49,7 @@ class CircleTimer extends PureComponent {
       return;
     }
     if (nextProps.id !== this.props.id) {
-      this.updateDuration(nextProps);
+      return this.updateDuration(nextProps);
     }
   }
   updateDuration(props) {

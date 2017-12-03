@@ -3,6 +3,7 @@
  * @author ryan.bian
  */
 import { PureComponent } from 'react';
+import classnames from 'classnames';
 import throttle from 'lodash/throttle';
 import Terminal from 'xterm';
 import PropTypes from 'prop-types';
@@ -14,46 +15,57 @@ Terminal.loadAddon('fit');
 
 export default class Console extends PureComponent {
   static defaultProps = {
-    defaultValue: '',
+    className: '',
+    id: null,
     value: '',
-    updateTimeStamp: undefined,
   }
   static propTypes = {
-    defaultValue: PropTypes.string,
+    className: PropTypes.string,
+    id: PropTypes.number,
     value: PropTypes.string,
-    updateTimeStamp: PropTypes.number,
   }
   constructor(props) {
     super(props);
     this.resize = throttle(function() {
       this.terminal.fit();
-    }.bind(this), 500);
+      this.clearTerminal();
+      this.writeContent(this.props);
+    }.bind(this), 500, {
+      leading: false,
+    });
   }
   componentDidMount() {
     this.terminal = new Terminal({
-      cols: 30,
+      cursorBlink: false,
     });
     this.terminal.open(this.root, false);
-    this.terminal.writeln(this.props.defaultValue);
+    setTimeout(() => {
+      this.writeContent(this.props);
+      this.terminal.fit();
+    }, 500);
     window.addEventListener('resize', this.resize, false);
-    this.resize();
   }
   componentWillReceiveProps(nextProps) {
-    if (this.props.updateTimeStamp !== nextProps.updateTimeStamp) {
-      this.terminal.write(nextProps.value);
+    if (this.props.id !== nextProps.id || this.props.value !== nextProps.value) {
+      this.clearTerminal();
+      this.writeContent(nextProps);
     }
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
     this.terminal.destroy();
   }
+  writeContent(props) {
+    props.value && this.terminal.write(props.value);
+  }
   clearTerminal() {
     this.terminal.clear();
   }
   render() {
+    const { className } = this.props;
     return (
       <div
-        className={styles.Console__Wrapper}
+        className={classnames(className, styles.Console__Wrapper)}
         ref={node => this.root = node}
       />
     );

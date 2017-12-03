@@ -1,13 +1,13 @@
 @import '../../theme/index.less';
 
-.Console {
+.ConsoleModule {
   position: fixed;
   bottom: 80px;
   right: 30px;
   width: 0;
   height: 0;
   z-index: @zindex-popover;
-  .hover-btn {
+  &__FloatButton {
     position: absolute;
     z-index: 1;
     bottom: -50px;
@@ -19,21 +19,22 @@
     text-align: center;
     font-size: 21px;
   }
-  .console-wrap {
+  &__Wrap {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 80vw;
-    height: 80vh;
+    width: ~"calc(70vw + 80px)";
+    height: 70vh;
+    display: flex;
     transform-origin: right bottom;
-    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.35);
+    // box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.35);
     will-change: transform;
 
-    &__show {
+    &--show {
       transform: scale(1, 1);
       animation: consoleShow 0.3s forwards;
     }
-    &__hide {
+    &--hide {
       transform: scale(0, 0);
       animation: consoleHide 0.3s forwards;
     }
@@ -54,10 +55,63 @@
       transform: scale(0, 0);
     }
   }
-  &__MenuBtn {
-    border: 0 none;
-    background: none;
-    cursor: pointer;
-    outline: 0 none;
+
+  &__Tabs {
+    flex: 0 0 95px;
+    padding: 20px 0;
+    width: 95px;
+    &List {
+      list-style: none;
+    }
+    &Item {
+      margin: 1px 0;
+      transition: transform @ease-in-circ @animation-duration-base;
+
+      &:hover {
+        transform: translateX(-25px);
+      }
+    }
+    &Button {
+      display: flex;
+      padding: 4px 8px;
+      width: 120px;
+      border-radius: 3px 0 0 3px;
+      align-items: center;
+      justify-content: space-between;
+      background: none;
+      border: 0 none;
+      cursor: pointer;
+      color: #fff;
+
+      > svg {
+        flex: 0 0 18px;
+      }
+      &:focus {
+        outline: 0 none;
+      }
+      &--server {
+        background-color: @primary-color;
+      }
+      &--build, &--dll_build {
+        background-color: @success-color;
+      }
+      &--other {
+        background-color: @warning-color;
+      }
+    }
+    &Title {
+      white-space: nowrap;
+    }
   }
+
+  &__Content {
+    transform: translateZ(0);
+  }
+
+  // &__MenuBtn {
+  //   border: 0 none;
+  //   background: none;
+  //   cursor: pointer;;
+  //   outline: 0 none;
+  // }
 }

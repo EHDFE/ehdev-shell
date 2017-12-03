@@ -30,6 +30,7 @@ class ServiceAPI {
         CONFIGER_FOLDER_PATH: ConfigerFolderPath,
         NODE_ENV: 'development',
       },
+      category: 'SERVER',
     });
     ctx.app.db.project.update(
       {
@@ -75,6 +76,7 @@ class ServiceAPI {
         CONFIGER_FOLDER_PATH: ConfigerFolderPath,
         NODE_ENV: 'production',
       },
+      category: isDll ? 'DLL_BUILD' : 'BUILD',
     });
     ctx.app.db.project.update(
       {

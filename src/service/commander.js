@@ -16,6 +16,7 @@ module.exports = {
    * @param {string} options.cwd - the execution path of the command
    * @param {object} options.webContent - webContent used to communicate msg with render
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
+   * @param {string} options.category - pass to client for ui usage
    */
   run(commands, options) {
     const config = Object.assign(
@@ -25,6 +26,7 @@ module.exports = {
         cwd: process.cwd(),
         webContent: undefined,
         useCnpm: true,
+        category: 'OTHER',
       },
       options
     );
@@ -51,9 +53,6 @@ module.exports = {
       serviceStore.set(pid, ps);
     }
 
-    // ps.stdout.pipe(process.stdout);
-    // ps.stderr.pipe(process.stderr);
-
     const ret = new Promise((resolve, reject) => {
       let res = Buffer.from('');
       ps.stdout.on('data', data => {
@@ -61,6 +60,7 @@ module.exports = {
           data: data.toString(),
           pid,
           action: 'log',
+          category: config.category,
         });
         res = Buffer.concat([res, data]);
       });
@@ -69,6 +69,7 @@ module.exports = {
           data: data.toString(),
           pid,
           action: 'log',
+          category: config.category,
         });
         res = Buffer.concat([res, data]);
       });
@@ -77,6 +78,7 @@ module.exports = {
           data: err.toString(),
           pid,
           action: 'error',
+          category: config.category,
         });
         reject(err);
         serviceStore.delete(pid);
@@ -89,6 +91,7 @@ module.exports = {
           },
           pid,
           action: 'exit',
+          category: config.category,
         });
         serviceStore.delete(pid);
         if (config.parseResult) {

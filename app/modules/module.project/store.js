@@ -1,3 +1,4 @@
+
 /**
  * Project Store
  * @author ryan.bian
@@ -37,8 +38,14 @@ export const actions = createActions({
         config,
       };
     },
-    SET_ENV: async (configs) =>{
-      await PROJECT_API.root.editConfig(configs);
+    SET_ENV: async (configs, rootPath, dispatch) => {
+      try {
+        await PROJECT_API.root.editConfig(configs);
+        dispatch(actions.env.getEnv(rootPath));
+        return {};
+      } catch (e) {
+        throw new Error(e);
+      }
     },
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);

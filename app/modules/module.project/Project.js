@@ -106,10 +106,10 @@ class ProjectModule extends Component {
       this.props.stopBuilder(pid);
     }
   }
-  handleUpdateConfig = (config)=>{
+  handleUpdateConfig = config => {
     const { rootPath } = this.props;
     const configs = { rootPath, ...config };
-    this.props.setEnvData(configs);
+    this.props.setEnvData(configs, rootPath);
   }
   renderProfile() {
     const { pkg } = this.props;
@@ -271,7 +271,7 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
-  setEnvData: config => dispatch(actions.env.setEnv(config)),
+  setEnvData: (config, rootPath) => dispatch(actions.env.setEnv(config, rootPath, dispatch)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),

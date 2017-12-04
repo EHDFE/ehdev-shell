@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
 import IconTerminal from 'react-icons/lib/fa/terminal';
-import IconTrash from 'react-icons/lib/fa/trash-o';
+import IconClose from 'react-icons/lib/fa/close';
 import { Badge, Button } from 'antd';
 
 import { actions } from './store';
@@ -57,7 +57,7 @@ class ConsoleModule extends PureComponent {
     }
   }
   renderTabs() {
-    const { logList } = this.props;
+    const { id, logList } = this.props;
     return (
       <aside className={styles.ConsoleModule__Tabs}>
         <ul className={styles.ConsoleModule__TabsList}>
@@ -77,6 +77,9 @@ class ConsoleModule extends PureComponent {
                   className={
                     classnames(
                       styles.ConsoleModule__TabsItem,
+                      {
+                        [styles['ConsoleModule__TabsItem--active']]: d.id === id,
+                      },
                     )
                   }
                 >
@@ -94,9 +97,9 @@ class ConsoleModule extends PureComponent {
                     >
                       {icon}
                       <div className={styles.ConsoleModule__TabsTitle}>
-                        pid:{d.id}
+                        {d.id}
                       </div>
-                      <IconTrash data-action="delete" size={18} />
+                      <IconClose data-action="delete" size={18} />
                     </button>
                   </Badge>
                 </li>

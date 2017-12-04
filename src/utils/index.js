@@ -9,10 +9,12 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 const QRCode = require('qrcode');
+const glob = require('glob');
 
 const mkdir = exports.mkdir = promisify(fs.mkdir);
 exports.stat = promisify(fs.stat);
 exports.readFile = promisify(fs.readFile);
+exports.glob = promisify(glob);
 
 
 /**

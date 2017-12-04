@@ -2,12 +2,12 @@
  * Project Module
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tabs, Layout, Menu, Dropdown, Spin, Card } from 'antd';
+import { Tabs, Layout, Menu, Dropdown, Spin, Card, Icon } from 'antd';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
@@ -20,6 +20,7 @@ import styles from './index.less';
 import Page from '../../components/component.page/';
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
+import EslintResult from '../../components/component.eslint.result/';
 
 import Profile from './Profile';
 import Setup from './Setup';
@@ -27,10 +28,13 @@ import Setup from './Setup';
 const { TabPane } = Tabs;
 const { Content } = Layout;
 
-class ProjectModule extends Component {
+class ProjectModule extends PureComponent {
   static propTypes = {
     rootPath: PropTypes.string,
     pkg: PropTypes.object,
+    runnable: PropTypes.bool,
+    useESlint: PropTypes.bool,
+    lintResult: PropTypes.array,
     config: PropTypes.object,
     service: PropTypes.object,
     getEnvData: PropTypes.func,
@@ -42,13 +46,12 @@ class ProjectModule extends Component {
     stopBuilder: PropTypes.func,
     getOutdated: PropTypes.func,
     getPkgInfo: PropTypes.func,
+    getESlintResult: PropTypes.func,
   }
-
   state = {
     defaultActiveKey: 'profile',
     loading: false
   }
-
   componentDidMount() {
     this.getInitData();
   }
@@ -66,7 +69,10 @@ class ProjectModule extends Component {
     }
     const { rootPath } = this.props;
     if (rootPath) {
-      return Promise.all([this.props.getEnvData(rootPath), this.props.getPkgInfo(rootPath)]).then(()=> {
+      Promise.all([
+        this.props.getEnvData(rootPath),
+        this.props.getPkgInfo(rootPath),
+      ]).then(()=> {
         if (tag) {
           this.setState({
             loading: false
@@ -106,10 +112,14 @@ class ProjectModule extends Component {
       this.props.stopBuilder(pid);
     }
   }
-  handleUpdateConfig = (config)=>{
+  handleUpdateConfig = config => {
     const { rootPath } = this.props;
     const configs = { rootPath, ...config };
-    this.props.setEnvData(configs);
+    this.props.setEnvData(configs, rootPath);
+  }
+  handleUpdateEslint = () => {
+    const { rootPath } = this.props;
+    this.props.getESlintResult(rootPath);
   }
   renderProfile() {
     const { pkg } = this.props;
@@ -142,7 +152,8 @@ class ProjectModule extends Component {
     return <DependencyManager refresh={this.getInitData} {...this.props}/>;
   }
   renderActionBar() {
-    const { service, config } = this.props;
+    const { service, runnable, config } = this.props;
+    let actions;
     let buildButton = (
       <button
         className={styles.Project__ActionBarButton}
@@ -154,46 +165,7 @@ class ProjectModule extends Component {
         构建
       </button>
     );
-    if (config && config.dll && config.dll.enable) {
-      buildButton = (
-        <Dropdown key="start-build" overlay={
-          <Menu>
-            <Menu.Item>
-              <button
-                className={styles['Project__ActionBarButton--trigger']}
-                key={'start-dll-build'}
-                disabled={!!service.pid}
-                onClick={this.handleStartDllBuilder}
-              >
-                DLL构建
-              </button>
-            </Menu.Item>
-          </Menu>
-        }>
-          {buildButton}
-        </Dropdown>
-      );
-    }
-    const actions = [
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'start-server'}
-        disabled={!!service.pid}
-        onClick={this.handleStartServer}
-      >
-        <IconPlay size={22} />
-        启动
-      </button>,
-      buildButton,
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'stop'}
-        disabled={!service.pid}
-        onClick={this.handleStopService}
-      >
-        <IconStop size={22} />
-        停止
-      </button>,
+    let refreshButton = (
       <button
         className={styles.Project__ActionBarButton}
         key={'update'}
@@ -201,9 +173,61 @@ class ProjectModule extends Component {
       >
         <MdAutorenew size={22} />
           刷新
-      </button>,
-    ];
+      </button>
+    );
+    if (runnable) {
+      if (config && config.dll && config.dll.enable) {
+        buildButton = (
+          <Dropdown key="start-build" overlay={
+            <Menu>
+              <Menu.Item>
+                <button
+                  className={styles['Project__ActionBarButton--trigger']}
+                  key={'start-dll-build'}
+                  disabled={!!service.pid}
+                  onClick={this.handleStartDllBuilder}
+                >
+                  DLL构建
+                </button>
+              </Menu.Item>
+            </Menu>
+          }>
+            {buildButton}
+          </Dropdown>
+        );
+      }
+      actions = [
+        <button
+          className={styles.Project__ActionBarButton}
+          key={'start-server'}
+          disabled={!!service.pid}
+          onClick={this.handleStartServer}
+        >
+          <IconPlay size={22} />
+          启动
+        </button>,
+        buildButton,
+        <button
+          className={styles.Project__ActionBarButton}
+          key={'stop'}
+          disabled={!service.pid}
+          onClick={this.handleStopService}
+        >
+          <IconStop size={22} />
+          停止
+        </button>,
+        refreshButton,
+      ];
+    } else {
+      actions = [
+        refreshButton
+      ];
+    }
     return <div className={styles.Project__ActionBar}>{actions}</div>;
+  }
+  renderLintResult() {
+    const { rootPath, lintResult } = this.props;
+    return <EslintResult rootPath={rootPath} data={lintResult} />;
   }
   tabKey = (key) => {
     this.setState({
@@ -211,7 +235,7 @@ class ProjectModule extends Component {
     });
   }
   render() {
-    const { rootPath, setRootPath, pkg } = this.props;
+    const { rootPath, runnable, useESlint, setRootPath, pkg } = this.props;
     return (
       <Page>
         <Layout className={styles.Project__Layout}>
@@ -234,9 +258,30 @@ class ProjectModule extends Component {
                 <TabPane tab="基础信息" key="profile">
                   { this.renderProfile() }
                 </TabPane>
-                <TabPane tab="运行配置" key="config">
+                {
+                  useESlint ?
+                    <TabPane
+                      tab={
+                        [
+                          '代码质量',
+                          <button
+                            className={styles.Project__EslintBtn}
+                            onClick={this.handleUpdateEslint}
+                            key="refresh"
+                          >
+                            <Icon type="reload" />
+                          </button>,
+                        ]
+                      }
+                      key="eslint"
+                    >
+                      { this.renderLintResult() }
+                    </TabPane> :
+                    null
+                }
+                { runnable ? <TabPane tab="运行配置" key="config">
                   { this.renderSetup() }
-                </TabPane>
+                </TabPane> : null }
                 <TabPane tab="依赖管理" key="versions">
                   { this.renderPackageVersions() }
                 </TabPane>
@@ -271,13 +316,14 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
-  setEnvData: config => dispatch(actions.env.setEnv(config)),
+  setEnvData: (config, rootPath) => dispatch(actions.env.setEnv(config, rootPath, dispatch)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: pid => dispatch(actions.service.stopServer(pid)),
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
   stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
   getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
-  getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath))
+  getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath)),
+  getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath))
 });
 
 export default connect(

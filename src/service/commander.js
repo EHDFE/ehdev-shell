@@ -54,7 +54,10 @@ module.exports = {
     }
 
     const ret = new Promise((resolve, reject) => {
-      let res = Buffer.from('');
+      let res;
+      if (config.parseResult === 'json') {
+        res = Buffer.from('');
+      }
       ps.stdout.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
           data: data.toString(),
@@ -62,7 +65,7 @@ module.exports = {
           action: 'log',
           category: config.category,
         });
-        res = Buffer.concat([res, data]);
+        (config.parseResult === 'json') && Buffer.concat([res, data]);
       });
       ps.stderr.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
@@ -71,7 +74,6 @@ module.exports = {
           action: 'log',
           category: config.category,
         });
-        res = Buffer.concat([res, data]);
       });
       ps.on('error', err => {
         webContent && webContent.send(COMMAND_OUTPUT, {
@@ -94,15 +96,11 @@ module.exports = {
           category: config.category,
         });
         serviceStore.delete(pid);
-        if (config.parseResult) {
-          if (config.parseResult === 'json') {
-            try {
-              resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
-            } catch (e) {
-              reject(res.toString());
-            }
-          } else {
-            resolve(res.toString());
+        if (config.parseResult === 'json') {
+          try {
+            resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
+          } catch (e) {
+            reject(res.toString());
           }
         }
       });

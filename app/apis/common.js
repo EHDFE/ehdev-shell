@@ -16,6 +16,10 @@ const COMMON_API = {
     const res = await fetch(`${API_PATH}/qrcode/${encodeURIComponent(text)}`);
     return handleResponse(res);
   },
+  async getESlintResult(cwd) {
+    const res = await fetch(`${API_PATH}/eslint/${encodeURIComponent(cwd)}`);
+    return handleResponse(res);
+  },
 };
 
 export default COMMON_API;

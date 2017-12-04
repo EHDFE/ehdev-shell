@@ -2,7 +2,7 @@
  * Layout Component
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Layout, Icon } from 'antd';
@@ -14,7 +14,7 @@ import isEqual from 'lodash/isEqual';
 
 import styles from './index.less';
 
-export default class LayoutComponent extends Component {
+export default class LayoutComponent extends PureComponent {
   static defaultProps = {
     title: '',
     icon: '',

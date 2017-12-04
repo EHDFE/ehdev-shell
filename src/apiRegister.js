@@ -128,7 +128,8 @@ commonRouter
   .get('/qrcode/:text', common.getQRCode)
   .get('/bingWallpaper', common.getBingWallpaper)
   .get('/bingWallpaper/:date', common.getBingWallpaper)
-  .get('/wallpaper/:date', common.getLocalWallpaper);
+  .get('/wallpaper/:date', common.getLocalWallpaper)
+  .get('/eslint/:cwd', common.runESlint);
 
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());

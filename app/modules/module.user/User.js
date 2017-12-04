@@ -86,7 +86,6 @@ class User extends Component {
       labelCol: { span: 6 },
       wrapperCol: { offset: 1, span: 17 },
     };
-
     return (
       <Page>
         <Form onSubmit={this.handleSubmit} className={styles.User__Card}>

@@ -48,19 +48,29 @@
     margin: 0 0 0 4px;
     font-size: 20px;
   }
-}
-.Profile {
-  &__Title {
 
+  &__EslintBtn {
+    margin-left: 4px;
+    padding: 0;
+    background: none;
+    border: 0 none;
+    cursor: pointer;
+    &:focus {
+      outline: 0 none;
+    }
   }
 }
 
 .Setup{
   &__Card{
     // padding: 10px 10px 2px;
-    border: 1px solid @border-color-split;
     margin: 10px;
+    // background-color: @background-color-base;
+    border: 1px solid @border-color-split;
     :global{
+      // .ant-card-head {
+      //   background: none;
+      // }
       .ant-card-body{
         padding: 0;
       }

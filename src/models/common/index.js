@@ -7,6 +7,8 @@ const path = require('path');
 const { URLSearchParams } = require('url');
 const send = require('koa-send');
 const { app } = require('electron');
+const { CLIEngine } = require('eslint');
+
 const { httpGet, saveImage, stat, generateQRCode, md5 } = require('../../utils/');
 
 const BING_COVER_STORE_API = 'http://cn.bing.com/cnhp/coverstory/';
@@ -122,6 +124,22 @@ class CommonAPI {
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);
     }
+  }
+  /**
+   * run eslint
+   */
+  runESlint(ctx) {
+    const { cwd } = ctx.params;
+    const cli = new CLIEngine({
+      cwd,
+    });
+    const report = cli.executeOnFiles(['.']);
+    const formatter = cli.getFormatter('json');
+    const result = formatter(report.results);
+    ctx.body = ctx.app.responser(
+      JSON.parse(result),
+      true,
+    );
   }
 }
 

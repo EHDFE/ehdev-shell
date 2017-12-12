@@ -31,6 +31,7 @@ const { Content } = Layout;
 class ProjectModule extends PureComponent {
   static propTypes = {
     rootPath: PropTypes.string,
+    prevRootPath: PropTypes.string,
     pkg: PropTypes.object,
     runnable: PropTypes.bool,
     useESlint: PropTypes.bool,
@@ -235,7 +236,7 @@ class ProjectModule extends PureComponent {
     });
   }
   render() {
-    const { rootPath, runnable, useESlint, setRootPath, pkg } = this.props;
+    const { rootPath, prevRootPath, runnable, useESlint, setRootPath, pkg } = this.props;
     return (
       <Page>
         <Layout className={styles.Project__Layout}>
@@ -245,10 +246,12 @@ class ProjectModule extends PureComponent {
                 onChange={value => {
                   setRootPath(value);
                 }}
+                prevValue={prevRootPath}
                 value={rootPath}
               >
                 <h3 className={styles.Project__ProjectName}>
                   { pkg && pkg.name || '请选择项目' }
+                  <Icon type="setting" className={styles.Project__ProjectNameIcon} />
                 </h3>
               </FolderPicker>
               { this.renderActionBar() }

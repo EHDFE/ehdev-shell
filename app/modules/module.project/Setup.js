@@ -70,7 +70,6 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
         );
       }
       if (Array.isArray(config[item])) {
-
         return (
           <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
@@ -80,7 +79,10 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
               {...itemProps}
             >
               {getFieldDecorator(field, {
-                initialValue: config[item]
+                initialValue: config[item].map(d => {
+                  if (isString(d)) return d;
+                  return JSON.stringify(d);
+                })
               })(
                 <Select mode="tags"></Select>
               )

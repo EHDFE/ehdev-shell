@@ -20,6 +20,7 @@ const defaultState = {
     runnable: false,
     useESlint: false,
     lintResult: [],
+    prevRootPath: undefined,
   },
   service: {
     runningService: null,
@@ -122,6 +123,7 @@ const envReducer = handleActions({
   'ENV/SET_ROOT_PATH': (state, { payload }) => ({
     ...state,
     rootPath: payload,
+    prevRootPath: state.rootPath,
     lintResult: [],
   }),
   'ENV/GET_ENV': (state, { payload, error }) => {

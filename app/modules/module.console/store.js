@@ -1,6 +1,7 @@
 /**
  * Console Store
  * @author hefan
+ * TODO: set max lines for each config
  */
 import { createActions, handleActions } from 'redux-actions';
 import moment from 'moment';

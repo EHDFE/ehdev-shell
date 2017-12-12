@@ -21,13 +21,14 @@ class ServiceAPI {
   startServer(ctx) {
     const { root, port, configerName } = ctx.request.body;
     const _port = port || 3000;
-    const { pid } = Commander.run(`node ${serverScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName} --port=${_port}`, {
+    const { pid } = Commander.run(`node ${serverScriptPath} --port=${_port}`, {
       cwd: root,
       webContent: ctx.app.webContent,
       parseResult: false,
       env: {
         SHELL_NODE_MODULES_PATH,
         CONFIGER_FOLDER_PATH: ConfigerFolderPath,
+        CONFIGER_NAME: configerName,
         NODE_ENV: 'development',
       },
       category: 'SERVER',
@@ -63,9 +64,9 @@ class ServiceAPI {
     const { root, configerName, isDll } = ctx.request.body;
     let command;
     if (isDll) {
-      command = `node ${dllBuilderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`;
+      command = `node ${dllBuilderScriptPath}`;
     } else {
-      command = `node ${builderScriptPath} --ConfigerPath="${ConfigerFolderPath}" --ConfigerName=${configerName}`;
+      command = `node ${builderScriptPath}`;
     }
     const { pid } = Commander.run(command, {
       cwd: root,
@@ -74,6 +75,7 @@ class ServiceAPI {
       env: {
         SHELL_NODE_MODULES_PATH,
         CONFIGER_FOLDER_PATH: ConfigerFolderPath,
+        CONFIGER_NAME: configerName,
         NODE_ENV: 'production',
       },
       category: isDll ? 'DLL_BUILD' : 'BUILD',

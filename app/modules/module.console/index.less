@@ -23,7 +23,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    width: ~"calc(70vw + 30px)";
+    width: ~"calc(70vw + 70px)";
     height: 70vh;
     display: flex;
     transform-origin: right bottom;
@@ -57,9 +57,9 @@
   }
 
   &__Tabs {
-    flex: 0 0 30px;
+    flex: 0 0 70px;
     padding: 20px 0;
-    width: 30px;
+    width: 70px;
     &List {
       list-style: none;
     }
@@ -68,10 +68,10 @@
       transition: transform @ease-in-circ @animation-duration-base;
 
       &:hover {
-        transform: translateX(-68px);
+        transform: translateX(-30px);
       }
       &--active {
-        transform: translateX(-46px);
+        transform: translateX(-30px);
       }
     }
     &Button {

@@ -30,10 +30,15 @@ class ConfigerAPI {
     const configs = pkg.dependencies && Object.keys(pkg.dependencies) || [];
     for (const pkgName of configs) {
       if (pkgName.startsWith('ehdev-configer-')) {
+        let readme, history;
+        try {
+          readme = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/README.md`), 'utf-8');
+        } catch (e) { /* ignore */ }
+        try {
+          history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/HISTORY.md`), 'utf-8');
+        } catch (e) { /* ignore */ }
         try {
           const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));
-          const readme = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/README.md`), 'utf-8');
-          const history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/HISTORY.md`), 'utf-8');
           deps.push({
             id: pkgName,
             name: pkgName,
@@ -42,9 +47,7 @@ class ConfigerAPI {
             readme,
             history,
           });
-        } catch (e) {
-          // nothing
-        }
+        } catch (e) { /* ignore */ }
       }
     }
     ctx.body = ctx.app.responser(deps, true);

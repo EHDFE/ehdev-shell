@@ -16,11 +16,13 @@ import styles from './index.less';
 export default class FolderPicker extends Component {
   static defaultProps = {
     value: '',
+    prevValue: undefined,
     onChange() {},
     children: undefined,
   }
   static propTypes = {
     value: PropTypes.string,
+    prevValue: PropTypes.string,
     onChange: PropTypes.func,
     children: PropTypes.any,
   }
@@ -36,57 +38,70 @@ export default class FolderPicker extends Component {
       this.props.onChange(value);
     }
   }
+  handleChangePrev = e => {
+    this.props.onChange(this.props.prevValue);
+  }
   openFileExplorer = () => {
     const { value } = this.props;
     shell.showItemInFolder(value);
   }
   renderContent() {
-    const { value, children } = this.props;
+    const { value, prevValue, children } = this.props;
+    const menuItems = [
+      <CopyToClipboard
+        text={value}
+        key="copy"
+        onCopy={() => {
+          notification.success({
+            message: '复制成功',
+          });
+        }}
+      >
+        <button
+          className={styles.FolderPicker__PopoverButton}
+        >
+          复制路径
+        </button>
+      </CopyToClipboard>,
+      <button
+        className={styles.FolderPicker__PopoverButton}
+        key="open"
+        onClick={this.openFileExplorer}
+      >
+        打开目录
+      </button>,
+      // <button
+      //   className={styles.FolderPicker__PopoverButton}
+      //   key="editor"
+      // >
+      //   打开编辑器
+      // </button>,
+      <button
+        className={styles.FolderPicker__PopoverButton}
+        onClick={this.handleClick}
+        key="change"
+      >
+        切换项目
+      </button>,
+    ];
+    if (prevValue) {
+      menuItems.push(
+        <button
+          className={styles.FolderPicker__PopoverButton}
+          onClick={this.handleChangePrev}
+          key="previous"
+        >
+          回到上一个目录
+        </button>
+      );
+    }
     return (
       <Popover
         placement={'bottomLeft'}
         title={'快捷操作'}
         content={
           <div className={styles.FolderPicker__Popover}>
-            {
-              [
-                <CopyToClipboard
-                  text={value}
-                  key="copy"
-                  onCopy={() => {
-                    notification.success({
-                      message: '复制成功',
-                    });
-                  }}
-                >
-                  <button
-                    className={styles.FolderPicker__PopoverButton}
-                  >
-                    复制路径
-                  </button>
-                </CopyToClipboard>,
-                <button
-                  className={styles.FolderPicker__PopoverButton}
-                  key="open"
-                  onClick={this.openFileExplorer}
-                >
-                  打开目录
-                </button>,
-                // <button
-                //   className={styles.FolderPicker__PopoverButton}
-                //   key="editor"
-                // >
-                //   打开编辑器
-                // </button>,
-                <button
-                  className={styles.FolderPicker__PopoverButton}
-                  onClick={this.handleClick}
-                  key="change"
-                >
-                  切换项目
-                </button>,
-              ]
-            }
+            { menuItems }
           </div>
         }
       >

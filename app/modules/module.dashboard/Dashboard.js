@@ -13,6 +13,7 @@ import Card from './Card';
 import * as WeatherIcon from '../../components/component.weatherIcon';
 import Almanac from '../../components/component.almanac';
 import { actions } from './store';
+import { actions as projectActions } from '../module.project/store';
 import { GREETING_WORDS } from '../../CONFIG';
 
 // import { Icon, Switch } from 'antd';
@@ -21,6 +22,7 @@ import styles from './index.less';
 
 class DashboardModule extends Component {
   static propTypes = {
+    history: PropTypes.object,
     userName: PropTypes.string,
     assetsCount: PropTypes.number,
     projectsCount: PropTypes.number,
@@ -32,6 +34,7 @@ class DashboardModule extends Component {
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
     getOverall: PropTypes.func,
+    setProjectRoot: PropTypes.func,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.date !== this.props.date) {
@@ -42,6 +45,14 @@ class DashboardModule extends Component {
     this.props.getDate();
     this.props.getProjectList();
     this.props.getOverall();
+  }
+  navigateToProject = e => {
+    e.preventDefault();
+    const target = e.target;
+    const rootPath = target.getAttribute('href');
+    this.props.setProjectRoot(rootPath);
+    const { history } = this.props;
+    history.push('/project');
   }
   renderInfoBar() {
     const { userName, weekday, weather } = this.props;
@@ -125,7 +136,12 @@ class DashboardModule extends Component {
               key={o._id}
               title={o.projectPath}
             >
-              <p>{o.projectPath}</p>
+              <p>
+                <a
+                  href={o.projectPath}
+                  onClick={this.navigateToProject}
+                >{o.projectPath.split('/').pop()}</a>
+              </p>
             </li>
           ))}
         </ul>
@@ -202,7 +218,7 @@ const mapStateToProps = state =>
     userInfoSelector,
     (base, projectsRank, userInfo) => ({
       ...base,
-      projectsRank,
+      projectsRank: projectsRank.slice(0, 6),
       userName: userInfo.name,
     })
   );
@@ -211,6 +227,7 @@ const mapDispatchToProps = dispatch => ({
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
+  setProjectRoot: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);

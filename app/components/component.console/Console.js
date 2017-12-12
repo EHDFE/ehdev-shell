@@ -18,11 +18,13 @@ export default class Console extends PureComponent {
     className: '',
     id: null,
     value: '',
+    visible: false,
   }
   static propTypes = {
     className: PropTypes.string,
     id: PropTypes.number,
     value: PropTypes.string,
+    visible: PropTypes.bool,
   }
   constructor(props) {
     super(props);
@@ -49,6 +51,11 @@ export default class Console extends PureComponent {
     if (this.props.id !== nextProps.id || this.props.value !== nextProps.value) {
       this.clearTerminal();
       this.writeContent(nextProps);
+    }
+    if (!this.props.visible && nextProps.visible) {
+      setTimeout(() => {
+        this.terminal.fit();
+      }, 1000);
     }
   }
   componentWillUnmount() {

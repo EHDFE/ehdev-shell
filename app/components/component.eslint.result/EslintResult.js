@@ -4,8 +4,9 @@
  */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Tag } from 'antd';
+import { Table, Tag, Icon, message } from 'antd';
 import G2 from '@antv/g2';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 import styles from './index.less';
 
@@ -13,28 +14,20 @@ import styles from './index.less';
 G2.track(false);
 
 const columns = [{
-  title: 'Path',
-  dataIndex: 'filePath',
-  render: (text, row, index) => {
-    return {
-      children: text,
-      props: {
-        rowSpan: row.rowSpan,
-      },
-    };
-  },
-}, {
   title: 'Line',
   dataIndex: 'line',
+  key: 'line',
   width: 70,
 }, {
   title: 'Column',
   width: 70,
   dataIndex: 'column',
+  key: 'column',
 }, {
   title: 'Type',
   width: 70,
   dataIndex: 'severity',
+  key: 'severity',
   /* eslint-disable react/display-name */
   render: (text, row, index) => {
     if (text === 1) {
@@ -46,9 +39,11 @@ const columns = [{
 }, {
   title: 'Message',
   dataIndex: 'message',
+  key: 'message',
 }, {
   title: 'Rule ID',
   dataIndex: 'ruleId',
+  key: 'ruleId',
   /* eslint-disable react/display-name */
   render: text => (
     <a
@@ -72,6 +67,7 @@ class EslintResult extends Component {
     //   forceFit: true,
     // });
     // this.updateChart(this.props.data);
+    // console.log('componentDidMount');
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -81,14 +77,17 @@ class EslintResult extends Component {
   updateData(data, rootPath) {
     const errorData = data
       .filter(d => d.errorCount !== 0 || d.warningCount !== 0);
-    const renderData = errorData.reduce((prev, d) => {
-      return prev.concat(d.messages.map((o, i) => Object.assign({}, o, {
-        filePath: d.filePath.replace(rootPath, '${projectRoot}'),
-        source: d.source,
-        rowSpan: i >= 1 ? 0 : d.messages.length,
-      })));
-    }, []);
-    return renderData;
+    // const renderData = errorData.reduce((prev, d) => {
+    //   return prev.concat(d.messages.map((o, i) => Object.assign({}, o, {
+    //     filePath: d.filePath.replace(rootPath, '${projectRoot}'),
+    //     source: d.source,
+    //     rowSpan: i >= 1 ? 0 : d.messages.length,
+    //   })));
+    // }, []);
+    return errorData;
+  }
+  afterCopy() {
+    message.success('已复制');
   }
   render() {
     // <div
@@ -98,11 +97,31 @@ class EslintResult extends Component {
     const { data } = this.state;
     const props = {
       pagination: false,
-      size: 'middle',
+      size: 'small',
+      className: styles.EslintResult__Table,
     };
     return (
       <div className={styles.EslintResult}>
-        <Table {...props} columns={columns} dataSource={data} />
+        {
+          data.map(d => (
+            <Table
+              {...props}
+              key={d.filePath}
+              title={() => [
+                d.filePath,
+                <CopyToClipboard
+                  key="copy"
+                  text={d.filePath}
+                  onCopy={this.afterCopy}
+                >
+                  <Icon type="copy" className={styles.EslintResult__CopyButton} />
+                </CopyToClipboard>,
+              ]}
+              columns={columns}
+              dataSource={d.messages}
+            />
+          ))
+        }
       </div>
     );
   }

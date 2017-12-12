@@ -128,7 +128,8 @@ class CommonAPI {
   /**
    * run eslint
    */
-  runESlint(ctx) {
+  async runESlint(ctx, next) {
+    await next();
     const { cwd } = ctx.params;
     const cli = new CLIEngine({
       cwd,

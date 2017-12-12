@@ -60,16 +60,18 @@ module.exports = {
       }
       ps.stdout.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
-          data: data.toString(),
+          dataBuffer: data,
           pid,
           action: 'log',
           category: config.category,
         });
-        (config.parseResult === 'json') && Buffer.concat([res, data]);
+        if (config.parseResult === 'json') {
+          res = Buffer.concat([res, data]);
+        }
       });
       ps.stderr.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
-          data: data.toString(),
+          dataBuffer: data,
           pid,
           action: 'log',
           category: config.category,

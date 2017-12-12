@@ -2,7 +2,7 @@
  * generate file Model
  * @author Hefan
  */
-const ImageMin = require('../upload/imagemain');
+const ImageMin = require('./imagemain');
 
 class GenerateAPI {
   /**

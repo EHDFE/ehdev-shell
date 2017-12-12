@@ -32,11 +32,13 @@ getProdConfig(projectConfig)
       const dllConfigs = dllConfigParser(projectConfig);
       if (dllConfigs) {
         webpackConfig.plugins.unshift(dllConfigs.getPlugin());
-        webpackConfig.plugins.push(
-          new AddAssetHtmlPlugin({
-            filepath: path.resolve(PROJECT_ROOT, 'src/dll/*.js'),
-          })
-        );
+        if (!projectConfig.ignoreHtmlTemplate) {
+          webpackConfig.plugins.push(
+            new AddAssetHtmlPlugin({
+              filepath: path.resolve(PROJECT_ROOT, 'src/dll/*.js'),
+            })
+          );
+        }
       }
       webpackConfig.plugins.push(
         new UglifyJsPlugin(getUglifyJsOptions(projectConfig)),
@@ -44,6 +46,10 @@ getProdConfig(projectConfig)
           '../stats.json',
           'verbose'
         ),
+        new Webpack.DefinePlugin({
+          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+          'process.env.DEBUG': JSON.stringify(process.env.DEBUG)
+        }),
       );
       Object.assign(webpackConfig, {
         profile: true,

@@ -20,6 +20,7 @@ import styles from './index.less';
 import Console from '../../components/component.console/';
 
 const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+const LogBuffer = {};
 
 class ConsoleModule extends PureComponent {
 
@@ -35,11 +36,18 @@ class ConsoleModule extends PureComponent {
   }
 
   componentDidMount() {
+    const decoder = new TextDecoder();
     ipcRenderer.on(COMMAND_OUTPUT, (event, arg) => {
       if (arg.action === 'log' || arg.action === 'error') {
-        const { pid, data, category } = arg;
-        const log = data.replace(/\n/g, '\r\n');
-        this.props.createLog(pid, category, log);
+        const { pid, dataBuffer, category } = arg;
+        const log = decoder.decode(dataBuffer).replace(/\n/g, '\r\n');
+        LogBuffer[`${pid}_timer`] && clearTimeout(LogBuffer[`${pid}_timer`]);
+        Object.assign(LogBuffer, {
+          [pid]: LogBuffer[pid] ? LogBuffer[pid] + log : log,
+          [`${pid}_timer`]: setTimeout(() => {
+            this.dispatchLog(pid, category);
+          }, 100),
+        });
       }
     });
   }
@@ -48,13 +56,27 @@ class ConsoleModule extends PureComponent {
     ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
   }
 
+  dispatchLog(pid, category) {
+    const log = LogBuffer[pid];
+    this.props.createLog(pid, category, log);
+    delete LogBuffer[pid];
+    delete LogBuffer[`${pid}_timer`];
+  }
+
   handleActive(id, e) {
     const target = e.target;
-    if (target.dataset.action === 'delete') {
-      this.props.deleteLog(id);
-    } else {
-      this.props.setActive(id);
+    const tagName = target.tagName.toLowerCase();
+    if (tagName === 'g' || tagName === 'path') {
+      let svgNode = target;
+      while (svgNode.tagName.toLowerCase() !== 'svg') {
+        svgNode = svgNode.parentElement;
+      }
+      if (svgNode.dataset.action === 'delete') {
+        this.props.deleteLog(id);
+        return;
+      }
     }
+    this.props.setActive(id);
   }
   renderTabs() {
     const { id, logList } = this.props;
@@ -66,7 +88,7 @@ class ConsoleModule extends PureComponent {
               let icon;
               if (d.category === 'SERVER') {
                 icon = <IconPlay size={18} />;
-              } else if (d.category === 'BUILD') {
+              } else if (d.category === 'BUILD' || d.category === 'DLL_BUILD') {
                 icon = <IconBuild size={18} />;
               } else {
                 icon = <IconTerminal size={18} />;
@@ -99,7 +121,7 @@ class ConsoleModule extends PureComponent {
                       <div className={styles.ConsoleModule__TabsTitle}>
                         {d.id}
                       </div>
-                      <IconClose data-action="delete" size={18} />
+                      <IconClose size={18} data-action="delete" />
                     </button>
                   </Badge>
                 </li>
@@ -138,6 +160,7 @@ class ConsoleModule extends PureComponent {
             id={id}
             value={content}
             ref={con => (this.con = con)}
+            visible={visible}
           />
         </div>
       </div>

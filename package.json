@@ -30,7 +30,7 @@
     "koa-views": "^6.1.1",
     "nedb": "^1.8.0",
     "nunjucks": "^3.0.1",
-    "raven": "^2.2.1",
+    "raven": "^2.3.0",
     "stats-webpack-plugin": "^0.6.1",
     "tinycolor2": "^1.4.1",
     "uglifyjs-webpack-plugin": "^1.1.0",

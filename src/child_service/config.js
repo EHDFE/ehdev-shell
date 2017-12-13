@@ -13,7 +13,7 @@ const UglifyJsPlugin = exports.UglifyJsPlugin = require(path.join(SHELL_NODE_MOD
 const defaultUglifyOptions = {
   cache: false,
   parallel: true,
-  sourceMap: false,
+  sourceMap: true,
   uglifyOptions: {
     compress: {
       warnings: false,

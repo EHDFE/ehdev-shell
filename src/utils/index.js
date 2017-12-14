@@ -107,7 +107,11 @@ exports.httpGet = url => new Promise((resolve, reject) => {
       result += chunk;
     });
     res.on('end', () => {
-      resolve(JSON.parse(result));
+      try {
+        resolve(JSON.parse(result));
+      } catch (e) {
+        reject(e);
+      }
     });
   });
   req.on('error', (e) => {

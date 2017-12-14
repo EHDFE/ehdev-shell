@@ -72,7 +72,7 @@ class SiderBar extends Component {
       iconType = 'left-circle-o';
     }
     return (
-      <div>
+      <div className={styles.SiderBar__Trigger}>
         <Icon
           type={iconType}
           style={{
@@ -107,6 +107,7 @@ class SiderBar extends Component {
           selectedKeys={[selectedKey]}
           onSelect={this.onSelectMenu}
           theme={'dark'}
+          className={styles.SiderBar__Menu}
         >
           {
             GLOBAL_NAV_CONFIG.map(d => (

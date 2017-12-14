@@ -19,6 +19,9 @@ module.exports = env => {
         request: '../../locale' // resolved relatively
       });
     }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': env.prod ? JSON.stringify('production') : JSON.stringify('development'),
+    }),
   ];
   if (env.prod) {
     plugins.push(

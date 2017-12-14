@@ -60,6 +60,10 @@ const getDevServerConfig = PROJECT_CONFIG => {
     // open the browser automaticly
     open: true,
     useLocalIp: true,
+    headers: {
+      // TODO: make it configable in Jarvis
+      'Access-Control-Allow-Origin': '*',
+    },
   };
 };
 

@@ -32,7 +32,7 @@ export default class Console extends PureComponent {
       this.terminal.fit();
       this.clearTerminal();
       this.writeContent(this.props);
-    }.bind(this), 500, {
+    }.bind(this), 250, {
       leading: false,
     });
   }
@@ -55,7 +55,7 @@ export default class Console extends PureComponent {
     if (!this.props.visible && nextProps.visible) {
       setTimeout(() => {
         this.terminal.fit();
-      }, 1000);
+      }, 500);
     }
   }
   componentWillUnmount() {

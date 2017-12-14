@@ -18,7 +18,7 @@
     "electron-context-menu": "^0.9.1",
     "electron-is-dev": "^0.3.0",
     "electron-log": "^2.2.11",
-    "electron-updater": "^2.17.0",
+    "electron-updater": "^2.17.6",
     "eslint": "^4.13.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-api": "^0.10.4",

@@ -1,3 +1,4 @@
+
 /**
  * Project Store
  * @author ryan.bian
@@ -8,13 +9,18 @@ import { ipcRenderer } from 'electron';
 
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
+import COMMON_API from '../../apis/common';
 
 const defaultState = {
   env: {
     rootPath: undefined,
     pkg: undefined,
     config: undefined,
-    pkgInfo: {}
+    pkgInfo: {},
+    runnable: false,
+    useESlint: false,
+    lintResult: [],
+    prevRootPath: undefined,
   },
   service: {
     runningService: null,
@@ -31,14 +37,22 @@ export const actions = createActions({
       return rootPath;
     },
     GET_ENV: async rootPath => {
-      const { pkg, config } = await PROJECT_API.root.post(rootPath);
+      const { pkg, config, runnable, useESlint } = await PROJECT_API.root.post(rootPath);
       return {
         pkg,
         config,
+        runnable,
+        useESlint,
       };
     },
-    SET_ENV: async (configs) =>{
-      await PROJECT_API.root.editConfig(configs);
+    SET_ENV: async (configs, rootPath, dispatch) => {
+      try {
+        await PROJECT_API.root.editConfig(configs);
+        dispatch(actions.env.getEnv(rootPath));
+        return {};
+      } catch (e) {
+        throw new Error(e);
+      }
     },
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);
@@ -51,6 +65,9 @@ export const actions = createActions({
       return {
         pkgInfo: data
       };
+    },
+    GET_LINT_RESULT: async rootPath => {
+      return await COMMON_API.getESlintResult(rootPath);
     },
   },
   SERVICE: {
@@ -106,6 +123,8 @@ const envReducer = handleActions({
   'ENV/SET_ROOT_PATH': (state, { payload }) => ({
     ...state,
     rootPath: payload,
+    prevRootPath: state.rootPath,
+    lintResult: [],
   }),
   'ENV/GET_ENV': (state, { payload, error }) => {
     if (error) return state;
@@ -133,6 +152,13 @@ const envReducer = handleActions({
     return {
       ...state,
       ...payload,
+    };
+  },
+  'ENV/GET_LINT_RESULT': (state, { payload, error }) => {
+    if (error) return state;
+    return {
+      ...state,
+      lintResult: payload,
     };
   }
 }, defaultState.env);

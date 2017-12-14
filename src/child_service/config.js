@@ -4,15 +4,17 @@
 const path = require('path');
 const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
 const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
+const defaultsDeep = require('lodash/defaultsDeep');
 
 const ExtractTextPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'extract-text-webpack-plugin'));
 const CleanWebpackPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'clean-webpack-plugin'));
 const UglifyJsPlugin = exports.UglifyJsPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'uglifyjs-webpack-plugin'));
 
-const getUglifyJsOptions = exports.getUglifyJsOptions = projectConfig => ({
+const defaultUglifyOptions = {
+  cache: false,
   parallel: true,
+  sourceMap: true,
   uglifyOptions: {
-    ie8: !!projectConfig.supportIE8,
     compress: {
       warnings: false,
       // Disabled because of an issue with Uglify breaking seemingly valid code:
@@ -28,8 +30,16 @@ const getUglifyJsOptions = exports.getUglifyJsOptions = projectConfig => ({
       ascii_only: true,
     },
   },
-  sourceMap: true,
-});
+};
+
+const getUglifyJsOptions = exports.getUglifyJsOptions = projectConfig => {
+  const options = defaultsDeep(defaultUglifyOptions, {
+    uglifyOptions: {
+      ie8: !!projectConfig.supportIE8,
+    },
+  }, projectConfig.uglifyConfig || {});
+  return options;
+};
 
 // webpack path
 const Webpack = exports.Webpack = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack'));
@@ -39,8 +49,8 @@ exports.WebpackDevServer = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack-d
 const PROJECT_ROOT = exports.PROJECT_ROOT = process.cwd();
 
 // configer info
-const ConfigerFolder = process.argv[2].split('=')[1];
-const ConfigerName = process.argv[3].split('=')[1];
+const ConfigerFolder = process.env.CONFIGER_FOLDER_PATH;
+const ConfigerName = process.env.CONFIGER_NAME;
 const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
 
 let port;
@@ -70,11 +80,12 @@ exports.dllConfigParser = projectConfig => {
   const {
     include,
   } = projectConfig.dll;
-  const manifestPath = path.join(PROJECT_ROOT, 'src/manifest.json');
+  const manifestPath = path.resolve(PROJECT_ROOT, 'src/manifest.json');
   const dllConfig = {
     entry: {
       dll: include,
     },
+    context: PROJECT_ROOT,
     output: {
       path: path.join(PROJECT_ROOT, 'src/dll'),
       filename: '[name].[hash:8].js',

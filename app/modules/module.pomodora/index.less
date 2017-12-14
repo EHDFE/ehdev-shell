@@ -1,0 +1,77 @@
+@import '../../theme/index.less';
+
+.PomodoraModule {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__Editor {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__Head {
+    margin-bottom: 20px;
+  }
+  &__TitleInput {
+    padding: 0 4px;
+    border-width: 0 0 2px;
+    border-style: solid;
+    border-color: @input-border-color;
+    font-size: 24px;
+    text-align: center;
+
+    &:hover {
+      border-bottom-color: @primary-color;
+    }
+
+    &:focus {
+      outline: 0 none;
+      border-bottom-color: @primary-color;
+    }
+  }
+
+  &__SettingTrigger {
+    background: none;
+    border: 0 none;
+    cursor: pointer;
+
+    &:hover {
+      color: @primary-color;
+    }
+
+    &:focus {
+      outline: 0 none;
+    }
+  }
+
+  &__Setting {
+    display: none;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid @border-color-base;
+    align-self: stretch;
+
+    &--visible {
+      display: block
+    }
+  }
+
+  &__Controls {
+    display: flex;
+    margin-top: 20px;
+  }
+
+  &__ControlBtn {
+    margin: 0 10px;
+    &--danger {
+      &:not([disabled]) {
+        svg {
+          fill: @highlight-color;
+        }
+      }
+    }
+  }
+}

@@ -1,60 +1,124 @@
 /**
  * Console Store
  * @author hefan
+ * TODO: set max lines for each config
  */
 import { createActions, handleActions } from 'redux-actions';
+import moment from 'moment';
 
-const getTime = () => new Date().getTime();
+const MAX_CONSOLE_ITEM_LIMIT = 10;
 
 const defaultState = {
-  content: '',
-  lastLog: {
-    content: '',
-    t: getTime(),
-  },
+  ids: [],
+  entities: {},
+  activeId: null,
+  visible: false,
 };
 
 /**
  * Console's action
  */
 export const actions = createActions({
-  UPDATE_LOG: log => {
+  CREATE_LOG: (pid, category, content) => {
     return {
-      log,
-      t: getTime(),
+      category,
+      content,
+      id: pid,
+      updateTime: moment().valueOf(),
+      checked: false,
     };
   },
-  CLEAN: () => ({
-    t: getTime(),
+  DELETE_LOG: id => {
+    return id;
+  },
+  ACTIVE_LOG: id => {
+    return id;
+  },
+  SET_VISIBLE: () => ({
+    visible: true,
   }),
-});
+  SET_INVISIBLE: () => ({
+    visible: false,
+  }),
+}, 'TOGGLE_VISIBLE');
 
 /**
  * Console's  reducer
  */
 const consoleReducer = handleActions(
   {
-    UPDATE_LOG: (state, { payload }) => {
-      const { log, t } = payload;
+    CREATE_LOG: (state, { payload }) => {
+      const { id, content } = payload;
+      let entity, ids;
+      if (state.ids.includes(id)) {
+        entity = {
+          ...state.entities[id],
+          content: state.entities[id].content + content,
+          updateTime: payload.updateTime,
+          checked: payload.checked,
+        };
+        ids = [...state.ids];
+      } else {
+        ids = [id, ...state.ids];
+        entity = payload;
+      }
+      const entities = {
+        ...state.entities,
+        [id]: entity,
+      };
+      if (ids.length > MAX_CONSOLE_ITEM_LIMIT) {
+        const deleteIds = ids.splice(MAX_CONSOLE_ITEM_LIMIT);
+        deleteIds.forEach(id => {
+          delete entities[id];
+        });
+      }
       return {
-        content: [
-          state.content,
-          log,
-        ].join(''),
-        lastLog: {
-          content: log,
-          t,
-        },
+        ids,
+        entities,
+        activeId: id,
+        visible: state.visible,
       };
     },
-    CLEAN: (state, { payload }) => {
-      const { t } = payload;
+    DELETE_LOG: (state, { payload }) => {
+      const newIds = state.ids.filter(id => id !== payload);
+      const newEntities = Object.assign({}, state.entities);
+      delete newEntities[payload];
       return {
-        content: '',
-        lastLog: {
-          content: '',
-          t,
+        ids: newIds,
+        entities: newEntities,
+        activeId: newIds.length > 0 ? newIds[0] : null,
+        visible: state.visible,
+      };
+    },
+    ACTIVE_LOG: (state, { payload }) => {
+      if (!state.ids.includes(payload)) return state;
+      return {
+        ...state,
+        entities: {
+          ...state.entities,
+          [payload]: Object.assign(state.entities[payload], {
+            checked: true,
+          }),
         },
+        activeId: payload,
+      };
+    },
+    TOGGLE_VISIBLE: (state) => {
+      return {
+        ...state,
+        visible: !state.visible,
+      };
+    },
+    SET_VISIBLE: (state) => {
+      return {
+        ...state,
+        visible: state.visible,
+      };
+    },
+    SET_INVISIBLE: (state) => {
+      return {
+        ...state,
+        visible: state.visible,
       };
     },
   },

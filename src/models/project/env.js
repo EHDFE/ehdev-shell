@@ -3,21 +3,34 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { readJSON, writeJSON } = require('../../utils/');
+const { readJSON, writeJSON, glob } = require('../../utils/');
 
 class ProjectEnvAPI {
   async setRoot(ctx) {
     const { rootPath } = ctx.params;
+    let projectConfig;
+    let runnable;
+    try {
+      projectConfig = await readJSON(
+        path.join(rootPath, 'abc.json')
+      );
+      runnable = true;
+    } catch (e) {
+      runnable = false;
+    }
     try {
       const pkg = await readJSON(
         path.join(rootPath, 'package.json')
       );
-      const projectConfig = await readJSON(
-        path.join(rootPath, 'abc.json')
-      );
+      const files = await glob('.eslintrc*', {
+        cwd: rootPath,
+        nodir: true,
+      });
       ctx.body = ctx.app.responser({
         pkg,
         config: projectConfig,
+        runnable,
+        useESlint: files.length > 0,
       }, true);
     } catch (e) {
       ctx.body = ctx.app.responser(e.toString(), false);

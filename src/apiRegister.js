@@ -5,7 +5,6 @@
 const Router = require('koa-router');
 const koaBody = require('koa-body');
 
-
 // Upload Models
 const UploadListAPI = require('./models/upload/list');
 const UploadFileAPI = require('./models/upload/file');
@@ -24,6 +23,8 @@ const ConfigerAPI = require('./models/configer/');
 
 // Dashboard Model
 const DashboardAPI = require('./models/dashboard/');
+
+const PomodoraAPI = require('./models/pomodora/');
 
 const CommonAPI = require('./models/common/');
 
@@ -112,14 +113,24 @@ dashboardRouter
   .get('/projects', dashboard.getProjectList)
   .get('/overall', dashboard.getOverall);
 
+const pomodoraRouter = Router();
+const pomodora = new PomodoraAPI();
+
+pomodoraRouter
+  .get('/tasks', pomodora.getGistory)
+  .post('/task', koaBody(), pomodora.create);
+
 // common router
 const commonRouter = Router();
 const common = new CommonAPI();
 
 commonRouter
+  .get('/translate/:from/:to/:query', common.translate)
+  .get('/qrcode/:text', common.getQRCode)
   .get('/bingWallpaper', common.getBingWallpaper)
   .get('/bingWallpaper/:date', common.getBingWallpaper)
-  .get('/wallpaper/:date', common.getLocalWallpaper);
+  .get('/wallpaper/:date', common.getLocalWallpaper)
+  .get('/eslint/:cwd', common.runESlint);
 
 // combine all subrouters
 apiRouter.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
@@ -128,6 +139,7 @@ apiRouter.use('/npm', npmRouter.routes(), projectRouter.allowedMethods());
 apiRouter.use('/service', serviceRouter.routes(), serviceRouter.allowedMethods());
 apiRouter.use('/configer', configerRouter.routes(), configerRouter.allowedMethods());
 apiRouter.use('/dashboard', dashboardRouter.routes(), dashboardRouter.allowedMethods());
+apiRouter.use('/pomodora', pomodoraRouter.routes(), pomodoraRouter.allowedMethods());
 apiRouter.use('/common', commonRouter.routes(), commonRouter.allowedMethods());
 
 module.exports = apiRouter;

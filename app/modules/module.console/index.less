@@ -1,12 +1,13 @@
-.Console {
+@import '../../theme/index.less';
+
+.ConsoleModule {
   position: fixed;
   bottom: 80px;
   right: 30px;
-  z-index: 100;
-  background: #000;
-  box-shadow: 0 6px 100px 0 rgba(0, 0, 0, 0.35);
-  border-radius: 4px;
-  .hover-btn {
+  width: 0;
+  height: 0;
+  z-index: @zindex-popover;
+  &__FloatButton {
     position: absolute;
     z-index: 1;
     bottom: -50px;
@@ -17,50 +18,103 @@
     border-radius: 50%;
     text-align: center;
     font-size: 21px;
-    opacity: 0.5;
-    &:hover{
-      opacity: 1;
-    }
   }
-  .console-wrap {
-    // padding: 15px;
-    width: 0;
-    height: 0;
-    // transform: scale(0,0);
-    transition: 0.3s;
-    overflow: hidden;
-    &__show {
-      // transform: scale(1,1);
+  &__Wrap {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: ~"calc(70vw + 70px)";
+    height: 70vh;
+    display: flex;
+    transform-origin: right bottom;
+    // box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.35);
+    will-change: transform;
+
+    &--show {
+      transform: scale(1, 1);
       animation: consoleShow 0.3s forwards;
     }
-    &__hide {
+    &--hide {
+      transform: scale(0, 0);
       animation: consoleHide 0.3s forwards;
     }
   }
   @keyframes consoleShow {
     0% {
-      width: 0;
-      height: 0;
+      transform: scale(0, 0);
     }
     100% {
-      width: 80vw;
-      height: 80vh;
+      transform: scale(1, 1);
     }
   }
   @keyframes consoleHide {
     0% {
-      width: 80vw;
-      height: 80vh;
+      transform: scale(1, 1);
     }
     100% {
-      width: 0;
-      height: 0;
+      transform: scale(0, 0);
     }
   }
-  &__MenuBtn {
-    border: 0 none;
-    background: none;
-    cursor: pointer;
-    outline: 0 none;
+
+  &__Tabs {
+    flex: 0 0 70px;
+    padding: 20px 0;
+    width: 70px;
+    &List {
+      list-style: none;
+    }
+    &Item {
+      margin: 1px 0;
+      transition: transform @ease-in-circ @animation-duration-base;
+
+      &:hover {
+        transform: translateX(-30px);
+      }
+      &--active {
+        transform: translateX(-30px);
+      }
+    }
+    &Button {
+      display: flex;
+      padding: 4px 8px;
+      width: 100px;
+      border-radius: 3px 0 0 3px;
+      align-items: center;
+      justify-content: space-between;
+      background: none;
+      border: 0 none;
+      cursor: pointer;
+      color: #fff;
+
+      > svg {
+        flex: 0 0 18px;
+      }
+      &:focus {
+        outline: 0 none;
+      }
+      &--server {
+        background-color: @primary-color;
+      }
+      &--build, &--dll_build {
+        background-color: @success-color;
+      }
+      &--other {
+        background-color: @warning-color;
+      }
+    }
+    &Title {
+      white-space: nowrap;
+    }
   }
+
+  &__Content {
+    transform: translateZ(0);
+  }
+
+  // &__MenuBtn {
+  //   border: 0 none;
+  //   background: none;
+  //   cursor: pointer;;
+  //   outline: 0 none;
+  // }
 }

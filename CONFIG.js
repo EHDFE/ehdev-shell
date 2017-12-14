@@ -7,6 +7,7 @@ const APP_CONFIG = {
   BROWSER_CONFIG: {
     // Enables scroll bounce (rubber banding) effect on macOS
     scrollBounce: true,
+    frame: false,
   },
 };
 

@@ -34,7 +34,6 @@ export const actions = createActions({
   },
   GENLIST: {
     GET: async params => {
-
       return {
         files: null,
         limit: null,
@@ -48,7 +47,6 @@ export const actions = createActions({
     ADD: file => ({ file }),
     // delete one file
     DEL: async id => {
-
       return id;
     },
     // add multiple files
@@ -57,7 +55,6 @@ export const actions = createActions({
     BATCH_DEL: ids => ({ ids }),
     DO_GEN: async (files, config) => {
       const over = await UPLOAD_API.gfile.post(files, config);
-
       return over;
     },
     CLEAR: files => ({ files }),
@@ -71,7 +68,6 @@ export const actions = createActions({
     },
     DO_GEN: async (files, config) => {
       const over = await UPLOAD_API.gfile.post(files, config);
-
       return over;
     },
     DEL: () => {},

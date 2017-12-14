@@ -18,7 +18,7 @@ const Raven = require('raven');
 const apiRouter = require('./apiRegister');
 const { responser } = require('./utils/');
 
-module.exports = (PORT, webContent) => {
+module.exports = (PORT = 3000, webContent) => {
 
   const APP = new Koa();
   Raven.config(
@@ -27,9 +27,11 @@ module.exports = (PORT, webContent) => {
   ).install();
   const APPDATA_PATH = app.getPath('appData');
   const USERDATA_PATH = app.getPath('userData');
+  // each db_list item will create a db file
   const DB_LIST = [
     'upload',
     'project',
+    'pomodora',
   ];
   APP.db = {};
   DB_LIST.forEach(name => {

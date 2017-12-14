@@ -8,7 +8,7 @@ export const GLOBAL_NAV_CONFIG = [
   {
     to: '/project',
     icon: 'code',
-    text: '项目',
+    text: '工程',
   },
   {
     to: '/upload',
@@ -20,16 +20,26 @@ export const GLOBAL_NAV_CONFIG = [
     icon: 'api',
     text: '引擎库',
   },
+  // {
+  //   to: '/images',
+  //   icon: 'picture',
+  //   text: '图片处理'
+  // },
+  {
+    to: '/qrcode',
+    icon: 'qrcode',
+    text: '二维码生成器'
+  },
+  {
+    to: '/pomodora',
+    icon: 'clock-circle-o',
+    text: '番茄工作法',
+  },
   {
     to: '/user',
     icon: 'user',
     text: '个人中心',
   },
-  // {
-  //   to: '/images',
-  //   icon: 'picture',
-  //   text: '图片处理'
-  // }
 ];
 
 export const GREETING_WORDS = new Map([

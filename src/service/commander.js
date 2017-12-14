@@ -16,6 +16,7 @@ module.exports = {
    * @param {string} options.cwd - the execution path of the command
    * @param {object} options.webContent - webContent used to communicate msg with render
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
+   * @param {string} options.category - pass to client for ui usage
    */
   run(commands, options) {
     const config = Object.assign(
@@ -25,6 +26,7 @@ module.exports = {
         cwd: process.cwd(),
         webContent: undefined,
         useCnpm: true,
+        category: 'OTHER',
       },
       options
     );
@@ -51,32 +53,36 @@ module.exports = {
       serviceStore.set(pid, ps);
     }
 
-    // ps.stdout.pipe(process.stdout);
-    // ps.stderr.pipe(process.stderr);
-
     const ret = new Promise((resolve, reject) => {
-      let res = Buffer.from('');
+      let res;
+      if (config.parseResult === 'json') {
+        res = Buffer.from('');
+      }
       ps.stdout.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
-          data: data.toString(),
+          dataBuffer: data,
           pid,
           action: 'log',
+          category: config.category,
         });
-        res = Buffer.concat([res, data]);
+        if (config.parseResult === 'json') {
+          res = Buffer.concat([res, data]);
+        }
       });
       ps.stderr.on('data', data => {
         webContent && webContent.send(COMMAND_OUTPUT, {
-          data: data.toString(),
+          dataBuffer: data,
           pid,
           action: 'log',
+          category: config.category,
         });
-        res = Buffer.concat([res, data]);
       });
       ps.on('error', err => {
         webContent && webContent.send(COMMAND_OUTPUT, {
           data: err.toString(),
           pid,
           action: 'error',
+          category: config.category,
         });
         reject(err);
         serviceStore.delete(pid);
@@ -89,17 +95,14 @@ module.exports = {
           },
           pid,
           action: 'exit',
+          category: config.category,
         });
         serviceStore.delete(pid);
-        if (config.parseResult) {
-          if (config.parseResult === 'json') {
-            try {
-              resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
-            } catch (e) {
-              reject(res.toString());
-            }
-          } else {
-            resolve(res.toString());
+        if (config.parseResult === 'json') {
+          try {
+            resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
+          } catch (e) {
+            reject(res.toString());
           }
         }
       });

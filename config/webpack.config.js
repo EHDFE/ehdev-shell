@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 
 module.exports = env => {
 
@@ -75,6 +76,10 @@ module.exports = env => {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('development'),
+      }),
+      // warns you when multiple versions of the same package exist in a build.
+      new DuplicatePackageCheckerPlugin({
+        showHelp: true,
       }),
     );
   }

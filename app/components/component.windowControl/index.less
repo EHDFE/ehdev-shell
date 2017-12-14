@@ -1,0 +1,41 @@
+.WindowControl {
+  position: fixed;
+  right: 8px;
+  top: 8px;
+  display: flex;
+  width: 160px;
+  justify-content: space-between;
+  z-index: 999;
+  transform: scale(0.55);
+  transform-origin: top right;
+
+  &__Button {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    border: 0 none;
+    flex: 0 0 40px;
+    background: none;
+    color: #999;
+    transition: color ease-out 0.2s;
+    cursor: pointer;
+    outline: 0 none;
+
+    &:hover {
+      color: #666;
+    }
+
+    &--close {
+      // background-color: #fc5753;
+      // border-color: #df4744;
+    }
+    &--minimize {
+      // background-color: #fdbc40;
+      // border-color: #de9f34;
+    }
+    &--fullscreen {
+      // background-color: #33c748;
+      // border-color: #27aa35;
+    }
+  }
+}

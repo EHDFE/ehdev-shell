@@ -12,10 +12,12 @@ Javis aims to provide an easy to use gui tool for developers.
 
 TL;DR
 
-- Provide the project scarffold with pre-defined structure.
-- Support dev server & bundle project.
-- Dependency management.
-- Images upload.
+## Features
+
+### Projects Module
+- Build in webpack engine with easy to understand configiration.
+- Eslint issues viewer.
+- Easy and visualized dependency management.
 
 ## Dev Environment Setup
 

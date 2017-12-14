@@ -8,10 +8,15 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
-import { Layout, Icon, Switch } from 'antd';
+import { Layout, Icon } from 'antd';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
+
+import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 
 import { actions } from './store';
+
+import { ConsoleModule } from '../module.console/';
 
 import SiderBar from '../../components/component.siderBar/';
 import LayoutComponent from '../../components/component.layout/';
@@ -22,6 +27,7 @@ const dateFormat = 'YYYY-MM-DD';
 
 class LayoutModule extends Component {
   static propTypes = {
+    previewMode: PropTypes.bool,
     localImageUrl: PropTypes.string,
     title: PropTypes.string,
     paras: PropTypes.arrayOf(PropTypes.string),
@@ -29,18 +35,29 @@ class LayoutModule extends Component {
     attribute: PropTypes.string,
     getWallpaperInfo: PropTypes.func,
     children: PropTypes.any,
+    location: PropTypes.object.isRequired,
   }
   state = {
-    viewMode: false,
     date: moment().format(dateFormat),
+    nav: this.getLayoutNav(this.props.location),
   }
   componentDidMount() {
     this.props.getWallpaperInfo(this.state.date);
   }
-  toggleViewMode = () => {
-    this.setState({
-      viewMode: !this.state.viewMode,
-    });
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.location, this.props.location)) {
+      this.setState({
+        nav: this.getLayoutNav(nextProps.location),
+      });
+    }
+  }
+  getLayoutNav(location) {
+    const { pathname } = location;
+    const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
+    if (matched) {
+      return matched;
+    }
+    return null;
   }
   prev = () => {
     const { date } = this.state;
@@ -62,15 +79,16 @@ class LayoutModule extends Component {
     this.props.getWallpaperInfo(nextDate);
   }
   renderWallpaperInfo() {
-    const { title, paras, provider, attribute } = this.props;
-    const { viewMode } = this.state;
+    const today = moment().format(dateFormat);
+    const { previewMode, title, paras, provider, attribute } = this.props;
+    const { date } = this.state;
     return (
       <div
         key="content"
         className={classnames(
           styles.Layout__Info,
           {
-            [styles['Layout__Info--hide']]: !viewMode,
+            [styles['Layout__Info--hide']]: !previewMode,
           },
         )}
       >
@@ -78,23 +96,56 @@ class LayoutModule extends Component {
           {title}{provider}
         </h2>
         <p>{paras.join('\n')}</p>
-        <div>
-          <Icon type="environment-o" />
-          {attribute}
+        <div className={styles.Layout__InfoFoot}>
+          <div className={styles.Layout__InfoMeta}>
+            <Icon type="environment-o" />
+            {attribute}
+          </div>
+          <div className={styles.Layout__Control}>
+            <Icon
+              className={styles.Layout__Btn}
+              type="left-circle-o"
+              onClick={this.prev}
+            />
+            <Icon
+              className={classnames(
+                styles.Layout__Btn,
+                {
+                  [styles['Layout__Btn--disabled']]: today === date,
+                },
+              )}
+              type="right-circle-o"
+              data-disabled={today === date}
+              onClick={this.next}
+            />
+          </div>
         </div>
       </div>
     );
   }
   render() {
-    const today = moment().format(dateFormat);
-    const { localImageUrl, children } = this.props;
-    const { date, viewMode } = this.state;
+    const { location, previewMode, localImageUrl, children } = this.props;
+    const { nav } = this.state;
+    const { pathname } = location;
     const layoutProps = {
+      padding: 0,
       backgroundUrl: localImageUrl,
-      viewMode,
+      previewMode,
       tintColor: '#fff',
       tintOpacity: 0.7,
+      hasContent: true,
     };
+    if (nav && nav.text) {
+      Object.assign(layoutProps, {
+        title: nav.text,
+        icon: nav.icon,
+      });
+    }
+    if (pathname === '/' || pathname === '/dashboard') {
+      Object.assign(layoutProps, {
+        hasContent: false,
+      });
+    }
     return (
       <Layout style={{ height: '100vh' }}>
         <SiderBar />
@@ -104,30 +155,9 @@ class LayoutModule extends Component {
               {children}
             </LayoutComponent>,
             this.renderWallpaperInfo(),
-            <div key="control" className={styles.Layout__Control}>
-              <Switch
-                className={styles.Layout__Switch}
-                defaultChecked={false} onChange={this.toggleViewMode}
-              />
-              <Icon
-                className={styles.Layout__Btn}
-                type="left-circle-o"
-                onClick={this.prev}
-              />
-              <Icon
-                className={classnames(
-                  styles.Layout__Btn,
-                  {
-                    [styles['Layout__Btn--disabled']]: today === date,
-                  },
-                )}
-                type="right-circle-o"
-                data-disabled={today === date}
-                onClick={this.next}
-              />
-            </div>,
           ]
         }
+        <ConsoleModule />
       </Layout>
     );
   }
@@ -139,6 +169,7 @@ const mapStateToProps = state => createSelector(
   wallpaperSelector,
   (info) => {
     return {
+      previewMode: info.previewMode,
       localImageUrl: info.url,
       title: info.title,
       paras: [info.para1, info.para2],

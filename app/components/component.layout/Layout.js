@@ -2,10 +2,10 @@
  * Layout Component
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Layout } from 'antd/es/';
+import { Layout, Icon } from 'antd';
 import StackBlur from 'stackblur-canvas';
 import tinycolor from 'tinycolor2';
 import throttle from 'lodash/throttle';
@@ -14,26 +14,32 @@ import isEqual from 'lodash/isEqual';
 
 import styles from './index.less';
 
-export default class LayoutComponent extends Component {
+export default class LayoutComponent extends PureComponent {
   static defaultProps = {
+    title: '',
+    icon: '',
     padding: 16,
     backgroundUrl: '',
     tintColor: '#fff',
     tintOpacity: 0.4,
     blurSize: 40,
-    viewMode: false,
+    previewMode: false,
+    hasContent: true,
   }
   static propTypes = {
+    title: PropTypes.string,
+    icon: PropTypes.string,
     padding: PropTypes.number,
     backgroundUrl: PropTypes.string.isRequired,
     tintColor: PropTypes.string,
     tintOpacity: PropTypes.number,
     blurSize: PropTypes.number,
-    viewMode: PropTypes.bool,
+    previewMode: PropTypes.bool,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.array,
     ]),
+    hasContent: PropTypes.bool,
   }
   static getScaleSize(imageWidth, imageHeight, targetWidth, targetHeight) {
     let scaleWidth, scaleHeight;
@@ -59,6 +65,7 @@ export default class LayoutComponent extends Component {
     scaleWidth: undefined,
     scaleHeight: undefined,
     blurUrl: undefined,
+    minHeader: false,
   }
   componentDidMount() {
     window.addEventListener('resize', this.handleResize, false);
@@ -127,14 +134,48 @@ export default class LayoutComponent extends Component {
     };
     image.src = backgroundUrl;
   }
+  renderLayoutHead() {
+    const { title, icon } = this.props;
+    const { minHeader } = this.state;
+    return title ? (
+      <header
+        className={classnames(
+          styles.Layout__Header,
+          {
+            [styles['Layout__Header--min']]: minHeader,
+          }
+        )}
+      >
+        <Icon
+          className={styles.Layout__HeaderIcon}
+          type={icon}
+          style={{
+            fontSize: 36,
+          }}
+        />
+        <h1 className={styles.Layout__HeaderTitle}>{title}</h1>
+      </header>
+    ) : null;
+  }
+  renderContent() {
+    const { hasContent } = this.props;
+    const content = this.props.children || null;
+    return hasContent ? (
+      <div className={styles.Layout__Content}>
+        { content }
+      </div>
+    ) : content;
+  }
   render() {
-    const { padding, backgroundUrl, viewMode } = this.props;
+    const { padding, backgroundUrl, previewMode } = this.props;
     const { blurUrl, scaleWidth, scaleHeight } = this.state;
     const layoutStyle = {
       padding,
       backgroundImage: `url(${backgroundUrl})`,
     };
     const wrapperStyle = {
+      width: `calc(100vw - 80px - ${padding * 2}px)`,
+      minHeight: `calc(100vh - ${padding * 2}px)`,
     };
     if (blurUrl) {
       Object.assign(wrapperStyle, {
@@ -149,18 +190,19 @@ export default class LayoutComponent extends Component {
           style={layoutStyle}
           ref={node => this.wrapper = node}
         >
-          <div
+          <main
             style={wrapperStyle}
             className={
               classnames(
                 styles.Layout__Wrapper,
                 {
-                  [styles['Layout__Wrapper--viewMode']]: viewMode,
+                  [styles['Layout__Wrapper--viewMode']]: previewMode,
                 },
               )
             }>
-            { this.props.children || null }
-          </div>
+            { this.renderLayoutHead() }
+            { this.renderContent() }
+          </main>
         </div>
       </Layout>
     );

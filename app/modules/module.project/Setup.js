@@ -4,11 +4,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Input, Switch, Button, Row, Col, Card  } from 'antd';
-import _ from 'lodash';
+import { Form, Select, Input, Switch, Button, Row, Col, Card } from 'antd';
+import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
+import isBoolean from 'lodash/isBoolean';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
-
 
 const FormItem = Form.Item;
 
@@ -58,7 +59,7 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
         field = prefix + '.' + item;
       }
 
-      if (_.isPlainObject(config[item])) {
+      if (isPlainObject(config[item])) {
         return (
           <Card title={item} key={field} className={styles.Setup__Card} bordered={false}>
             <Config config={config[item]}
@@ -68,8 +69,7 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
           </Card>
         );
       }
-      if (_.isArray(config[item])) {
-
+      if (Array.isArray(config[item])) {
         return (
           <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
@@ -79,7 +79,10 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
               {...itemProps}
             >
               {getFieldDecorator(field, {
-                initialValue: config[item]
+                initialValue: config[item].map(d => {
+                  if (isString(d)) return d;
+                  return JSON.stringify(d);
+                })
               })(
                 <Select mode="tags"></Select>
               )
@@ -87,7 +90,7 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
             </FormItem>
           </Card>
         );
-      } else if (_.isString(config[item])) {
+      } else if (isString(config[item])) {
         return (
           <Card className={styles.Setup__Card} bordered={false} key={field}>
             <FormItem
@@ -101,7 +104,7 @@ const Config = ({ config, getFieldDecorator, prefix = '' })=>{
             </FormItem>
           </Card>
         );
-      } else if (_.isBoolean(config[item])) {
+      } else if (isBoolean(config[item])) {
         return (
           <Card className={styles.Setup__Card} key={field}>
             <FormItem

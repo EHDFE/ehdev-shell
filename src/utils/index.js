@@ -4,9 +4,18 @@
  */
 const { promisify } = require('util');
 const fs = require('fs');
+const crypto = require('crypto');
 const http = require('http');
 const https = require('https');
 const path = require('path');
+const QRCode = require('qrcode');
+const glob = require('glob');
+
+const mkdir = exports.mkdir = promisify(fs.mkdir);
+exports.stat = promisify(fs.stat);
+exports.readFile = promisify(fs.readFile);
+exports.glob = promisify(glob);
+
 
 /**
  * transform response format
@@ -58,13 +67,11 @@ exports.writeJSON = (file, json) => new Promise((resolve, reject) => {
   });
 });
 
-exports.readFile = promisify(fs.readFile);
-
 /**
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path
  */
-exports.hasDir = path => new Promise((resolve, reject) => {
+const hasDir = exports.hasDir = path => new Promise((resolve, reject) => {
   fs.stat(path, (err, stats) => {
     if (!err && stats.isDirectory()) {
       resolve();
@@ -92,7 +99,7 @@ exports.hasFile = path => new Promise((resolve, reject) => {
  * http.request
  * @param {string} options - request option
  */
-exports.get = url => new Promise((resolve, reject) => {
+exports.httpGet = url => new Promise((resolve, reject) => {
   const req = http.get(url, (res) => {
     res.setEncoding('utf8');
     let result = '';
@@ -112,23 +119,21 @@ exports.get = url => new Promise((resolve, reject) => {
   });
 });
 
-const makeDir = (filePath) => new Promise((resolve, reject) => {
-  fs.stat(filePath, (err, stats) => {
-    if (!err && stats.isDirectory()) {
-      resolve();
-    } else {
-      fs.mkdir(filePath, err2 => {
-        if (err2) {
-          reject(err2);
-        } else {
-          resolve();
-        }
-      });
-    }
-  });
-});
+const makeDir = async path => {
+  let dirExist;
+  try {
+    await hasDir(path);
+    dirExist = true;
+  } catch (e) {
+    dirExist = false;
+  }
+  if (!dirExist) {
+    return mkdir(path);
+  }
+  return dirExist;
+};
 
-const makeRequest = (filePath, options) => new Promise((resolve, reject) => {
+const saveRemoteFile = (filePath, options) => new Promise((resolve, reject) => {
   const req = https.request(options, (res) => {
     res.pipe(fs.createWriteStream(filePath));
     res.on('end', ()=>{
@@ -148,11 +153,28 @@ const makeRequest = (filePath, options) => new Promise((resolve, reject) => {
 exports.saveImage = async (filePath, options) => {
   try {
     await makeDir(path.dirname(filePath));
-    return await makeRequest(filePath, options);
+    return await saveRemoteFile(filePath, options);
   } catch (e) {
     throw Error(e);
   }
 };
 
-exports.mkdir = promisify(fs.mkdir);
-exports.stat = promisify(fs.stat);
+/**
+ * generate qrcode
+ * @param {string} text
+ * @param {object} options
+ */
+exports.generateQRCode = (text, options) => new Promise((resolve, reject) => {
+  QRCode.toDataURL(text, options, (err, url) => {
+    if (err) {
+      return reject(err);
+    }
+    resolve(url);
+  });
+});
+
+/**
+ * generate md5 code
+ * @param {string} str
+ */
+exports.md5 = str => crypto.createHash('md5').update(str).digest('hex');

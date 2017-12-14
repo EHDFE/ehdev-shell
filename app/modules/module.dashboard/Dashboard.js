@@ -140,7 +140,7 @@ class DashboardModule extends Component {
                 <a
                   href={o.projectPath}
                   onClick={this.navigateToProject}
-                >{o.projectPath.split('/').pop()}</a>
+                >{o.projectPath ? o.projectPath.split('/').pop() : ''}</a>
               </p>
             </li>
           ))}

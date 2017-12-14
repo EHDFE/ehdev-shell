@@ -16,7 +16,7 @@ import { ProjectModule } from './modules/module.project/';
 import { UploadModule } from './modules/module.upload/';
 import { ConfigerModule } from './modules/module.configer/';
 import { UserModule } from './modules/module.user/';
-import { ImageModule } from './modules/module.image/';
+// import { ImageModule } from './modules/module.image/';
 import { LayoutModule } from './modules/module.layout/';
 import { QrCodeModule } from './modules/module.qrcode/';
 import { PomodoraModule } from './modules/module.pomodora/';
@@ -30,11 +30,11 @@ const App = () => (
       <Route path="/upload" component={UploadModule}/>
       <Route path="/configer" component={ConfigerModule}/>
       <Route path="/user" component={UserModule}/>
-      <Route path="/images" component={ImageModule}></Route>
       <Route path="/qrcode" component={QrCodeModule}></Route>
       <Route path="/pomodora" component={PomodoraModule}></Route>
     </LayoutModule>
   </BrowserRouter>
 );
+// <Route path="/images" component={ImageModule}></Route>
 
 export default App;

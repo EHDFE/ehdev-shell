@@ -95,11 +95,12 @@ const localConfigerReducer = handleActions({
 const remoteConfigerReducer = handleActions({
   GET_REMOTE_CONFIGS: (state, { payload }) => {
     const maps = {};
-    payload.forEach(d => {
+    const validConfigs = payload.filter(d => d.name.startsWith('ehdev-configer-'));
+    validConfigs.forEach(d => {
       maps[d.name] = d;
     });
     return {
-      configIds: payload.map(d => d.name),
+      configIds: validConfigs.map(d => d.name),
       configMap: maps,
     };
   },

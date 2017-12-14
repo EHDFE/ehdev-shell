@@ -35,7 +35,7 @@ class ConfigerAPI {
           readme = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/README.md`), 'utf-8');
         } catch (e) { /* ignore */ }
         try {
-          history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/HISTORY.md`), 'utf-8');
+          history = await readFile(path.join(ConfigerFolderPath, `node_modules/${pkgName}/CHANGELOG.md`), 'utf-8');
         } catch (e) { /* ignore */ }
         try {
           const configPkg = await readJSON(path.join(ConfigerFolderPath, `node_modules/${pkgName}/package.json`));

@@ -6,6 +6,8 @@
 import { createActions, handleActions } from 'redux-actions';
 import moment from 'moment';
 
+const MAX_CONSOLE_ITEM_LIMIT = 10;
+
 const defaultState = {
   ids: [],
   entities: {},
@@ -60,12 +62,19 @@ const consoleReducer = handleActions(
         ids = [id, ...state.ids];
         entity = payload;
       }
+      const entities = {
+        ...state.entities,
+        [id]: entity,
+      };
+      if (ids.length > MAX_CONSOLE_ITEM_LIMIT) {
+        const deleteIds = ids.splice(MAX_CONSOLE_ITEM_LIMIT);
+        deleteIds.forEach(id => {
+          delete entities[id];
+        });
+      }
       return {
         ids,
-        entities: {
-          ...state.entities,
-          [id]: entity,
-        },
+        entities,
         activeId: id,
         visible: state.visible,
       };

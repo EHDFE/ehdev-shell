@@ -45,7 +45,7 @@
     "webpack-dev-server": "^2.9.6"
   },
   "devDependencies": {
-    "@antv/g2": "^3.0.1",
+    "@antv/g2": "^3.0.2",
     "antd": "^3.0.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.3",

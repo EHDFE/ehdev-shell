@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ehdev's gui shell",
   "main": "main.js",
   "keywords": [

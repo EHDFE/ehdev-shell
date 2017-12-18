@@ -157,7 +157,7 @@ class LayoutModule extends Component {
             this.renderWallpaperInfo(),
           ]
         }
-        <ConsoleModule />
+        { !previewMode ? <ConsoleModule /> : null }
       </Layout>
     );
   }

@@ -222,7 +222,7 @@ class PomodoraModule extends PureComponent {
           type="info"
           showIcon
           message="知识豆"
-          description="番茄工作法（英语：Pomodoro Technique）是一种时间管理法方法，在上世纪八十年代由Francesco Cirillo创立。[1] 该方法使用一个定时器来分割出一个一般为25分钟的工作时间和5分钟的休息时间，而那些时间段被称为pomodori，为意大利语单词 pomodoro（中文：番茄）之复数。"
+          description="番茄工作法（英语：Pomodoro Technique）是一种时间管理法方法，在上世纪八十年代由Francesco Cirillo创立。该方法使用一个定时器来分割出一个一般为25分钟的工作时间和5分钟的休息时间，而那些时间段被称为pomodori，为意大利语单词 pomodoro（中文：番茄）之复数。"
         />
         { this.renderJobConfig() }
         { this.renderTimer() }

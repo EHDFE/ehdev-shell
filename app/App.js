@@ -21,19 +21,23 @@ import { LayoutModule } from './modules/module.layout/';
 import { QrCodeModule } from './modules/module.qrcode/';
 import { PomodoraModule } from './modules/module.pomodora/';
 
+import ErrorBoundary from './components/component.errorBoundary/';
+
 const App = () => (
-  <BrowserRouter basename="/">
-    <LayoutModule>
-      <Route exact path="/" component={DashboardModule}/>
-      <Route exact path="/dashboard" component={DashboardModule}/>
-      <Route path="/project" component={ProjectModule}/>
-      <Route path="/upload" component={UploadModule}/>
-      <Route path="/configer" component={ConfigerModule}/>
-      <Route path="/user" component={UserModule}/>
-      <Route path="/qrcode" component={QrCodeModule}></Route>
-      <Route path="/pomodora" component={PomodoraModule}></Route>
-    </LayoutModule>
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter basename="/">
+      <LayoutModule>
+        <Route exact path="/" component={DashboardModule}/>
+        <Route exact path="/dashboard" component={DashboardModule}/>
+        <Route path="/project" component={ProjectModule}/>
+        <Route path="/upload" component={UploadModule}/>
+        <Route path="/configer" component={ConfigerModule}/>
+        <Route path="/user" component={UserModule}/>
+        <Route path="/qrcode" component={QrCodeModule}></Route>
+        <Route path="/pomodora" component={PomodoraModule}></Route>
+      </LayoutModule>
+    </BrowserRouter>
+  </ErrorBoundary>
 );
 // <Route path="/images" component={ImageModule}></Route>
 

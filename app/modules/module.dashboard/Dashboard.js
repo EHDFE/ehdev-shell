@@ -206,9 +206,10 @@ const projectsSelector = createSelector(
   dashboardPageSelector,
   state => state.projects
 );
-const projectsRankSelector = createSelector(projectsSelector, state =>
-  state.list.slice(0).sort((a, b) => b.count - a.count)
-);
+const projectsRankSelector = createSelector(projectsSelector, state => {
+  const list = Array.isArray(state.list) ? state.list : [];
+  return list.slice(0).sort((a, b) => b.count - a.count);
+});
 const userInfoSelector = createSelector(userPageSelector, state => state.user);
 
 const mapStateToProps = state =>

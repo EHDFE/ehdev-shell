@@ -67,8 +67,10 @@ const getDevServerConfig = PROJECT_CONFIG => {
   };
 };
 
+const ip = getLocalIP();
 getDevConfig(projectConfig, {
   port: PORT,
+  ip,
 }).then(async webpackConfig => {
   // add provide plugin if has the config
   if (projectConfig.providePluginConfig) {
@@ -99,7 +101,6 @@ getDevConfig(projectConfig, {
   const compiler = Webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
   server.listen(PORT, '0.0.0.0', () => {
-    const ip = getLocalIP();
     const url = chalk.underline(`http://${ip}:${PORT}`);
     noticeLog('SERVER', `start at ${url}`);
   });

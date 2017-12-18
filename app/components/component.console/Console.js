@@ -29,9 +29,11 @@ export default class Console extends PureComponent {
   constructor(props) {
     super(props);
     this.resize = throttle(function() {
-      this.terminal.fit();
-      this.clearTerminal();
-      this.writeContent(this.props);
+      if (this.props.visible) {
+        this.terminal.fit();
+        this.clearTerminal();
+        this.writeContent(this.props);
+      }
     }.bind(this), 250, {
       leading: false,
     });
@@ -55,6 +57,8 @@ export default class Console extends PureComponent {
     if (!this.props.visible && nextProps.visible) {
       setTimeout(() => {
         this.terminal.fit();
+        this.clearTerminal();
+        this.writeContent(nextProps);
       }, 500);
     }
   }

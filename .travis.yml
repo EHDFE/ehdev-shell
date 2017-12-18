@@ -55,6 +55,7 @@ deploy:
     - "dist/**.zip"
     - "dist/**.dmg"
     - "dist/**.exe"
+    - "dist/**.yml"
   skip_cleanup: true
   on:
     repo: EHDFE/ehdev-shell

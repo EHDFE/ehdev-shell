@@ -2,6 +2,7 @@
  * Service Base Class
  */
 const { ipcMain } = require('electron');
+const { killPid } = require('../utils/index');
 
 class ServiceStore {
   constructor() {
@@ -10,8 +11,9 @@ class ServiceStore {
   }
   stopAllService() {
     for (const [pid, ps] of this.store.entries()) {
-      ps.kill('SIGTERM');
-      this.store.delete(pid);
+      killPid(ps, pid, () => {
+        this.store.delete(pid);
+      });
     }
     ipcMain.emit('SERVICE:stop-all-done');
   }
@@ -27,8 +29,9 @@ class ServiceStore {
   delete(pid) {
     const ps = this.store.get(pid);
     if (ps) {
-      this.store.delete(pid);
-      ps.kill('SIGTERM');
+      killPid(ps, pid, () => {
+        this.store.delete(pid);
+      });
     }
   }
 }

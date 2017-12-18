@@ -4,6 +4,8 @@
  */
 const { promisify } = require('util');
 const fs = require('fs');
+const os = require('os');
+const { exec } = require('child_process');
 const crypto = require('crypto');
 const http = require('http');
 const https = require('https');
@@ -178,3 +180,19 @@ exports.generateQRCode = (text, options) => new Promise((resolve, reject) => {
  * @param {string} str
  */
 exports.md5 = str => crypto.createHash('md5').update(str).digest('hex');
+
+exports.killPid = (ps, pid, callback) => {
+  const platform = os.platform();
+  if (platform === 'win32') {
+    // windows
+    exec(`taskkill /pid ${pid} /T /F`, callback);
+  } else {
+    // unix
+    try {
+      ps.kill('SIGTERM');
+    } catch (e) {
+      return callback(e);
+    }
+    return callback();
+  }
+};

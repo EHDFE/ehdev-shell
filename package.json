@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@antv/g2": "^3.0.1",
-    "antd": "^3.0.0",
+    "antd": "^3.0.2",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.3",
     "babel-loader": "^7.1.2",

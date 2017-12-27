@@ -1,24 +1,44 @@
 /**
  * common apis
  */
-import { handleResponse } from './utils';
+// import { handleResponse } from './utils';
 
-const API_PATH = '/api/common';
+// const API_PATH = '/api/common';
+import { remote } from 'electron';
+
+let remoteAPI;
+if (process.env.NODE_ENV === 'production') {
+  remoteAPI = remote.require('./main-build/apiService');
+} else {
+  remoteAPI = remote.require('../src/apiService');
+}
 
 const COMMON_API = {
   wallpaper: {
     async getBingWallpaper(date) {
-      const res = await fetch(`${API_PATH}/bingWallpaper/${date}`);
-      return handleResponse(res);
+      try {
+        const res = await remoteAPI.common.getBingWallpaper(date);
+        return res;
+      } catch (e) {
+        throw e;
+      }
     }
   },
   async getQrCode(text) {
-    const res = await fetch(`${API_PATH}/qrcode/${encodeURIComponent(text)}`);
-    return handleResponse(res);
+    try {
+      const res = await remoteAPI.common.getQRCode(text);
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
   async getESlintResult(cwd) {
-    const res = await fetch(`${API_PATH}/eslint/${encodeURIComponent(cwd)}`);
-    return handleResponse(res);
+    try {
+      const res = await remoteAPI.common.runESlint(cwd);
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
 };
 

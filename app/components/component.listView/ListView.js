@@ -15,7 +15,7 @@ import moment from 'moment';
 
 import FileCard from '../component.fileCard/';
 
-import APP_CONFIG from '../../../CONFIG';
+import APP_CONFIG from '../../MAIN_CONFIG';
 
 import styles from './index.less';
 

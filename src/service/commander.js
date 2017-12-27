@@ -3,6 +3,7 @@
  */
 const { spawn } = require('child_process');
 const { serviceStore } = require('./index');
+const { webContents } = require('electron');
 
 const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
@@ -14,7 +15,6 @@ module.exports = {
    * @param {boolean|string} options.parseResult - if true, the function will return a promise that resolve a json response.
    * @param {object} options.env - the execution environment variables
    * @param {string} options.cwd - the execution path of the command
-   * @param {object} options.webContent - webContent used to communicate msg with render
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
    * @param {string} options.category - pass to client for ui usage
    */
@@ -24,7 +24,6 @@ module.exports = {
         parseResult: 'json',
         env: {},
         cwd: process.cwd(),
-        webContent: undefined,
         useCnpm: true,
         category: 'OTHER',
       },
@@ -48,7 +47,7 @@ module.exports = {
     }
     const ps = spawn(command, runtimeArgs, spawnOptions);
     const { pid } = ps;
-    const { webContent } = config;
+    const webContentArray = webContents.getAllWebContents();
     if (pid) {
       serviceStore.set(pid, ps);
     }
@@ -59,43 +58,51 @@ module.exports = {
         res = Buffer.from('');
       }
       ps.stdout.on('data', data => {
-        webContent && webContent.send(COMMAND_OUTPUT, {
-          dataBuffer: data,
-          pid,
-          action: 'log',
-          category: config.category,
+        webContentArray.forEach(webContent => {
+          webContent && webContent.send(COMMAND_OUTPUT, {
+            dataBuffer: data,
+            pid,
+            action: 'log',
+            category: config.category,
+          });
         });
         if (config.parseResult === 'json') {
           res = Buffer.concat([res, data]);
         }
       });
       ps.stderr.on('data', data => {
-        webContent && webContent.send(COMMAND_OUTPUT, {
-          dataBuffer: data,
-          pid,
-          action: 'log',
-          category: config.category,
+        webContentArray.forEach(webContent => {
+          webContent && webContent.send(COMMAND_OUTPUT, {
+            dataBuffer: data,
+            pid,
+            action: 'log',
+            category: config.category,
+          });
         });
       });
       ps.on('error', err => {
-        webContent && webContent.send(COMMAND_OUTPUT, {
-          data: err.toString(),
-          pid,
-          action: 'error',
-          category: config.category,
+        webContentArray.forEach(webContent => {
+          webContent && webContent.send(COMMAND_OUTPUT, {
+            data: err.toString(),
+            pid,
+            action: 'error',
+            category: config.category,
+          });
         });
         reject(err);
         serviceStore.delete(pid);
       });
       ps.on('exit', (code, signal) => {
-        webContent && webContent.send(COMMAND_OUTPUT, {
-          data: {
-            code,
-            signal,
-          },
-          pid,
-          action: 'exit',
-          category: config.category,
+        webContentArray.forEach(webContent => {
+          webContent && webContent.send(COMMAND_OUTPUT, {
+            data: {
+              code,
+              signal,
+            },
+            pid,
+            action: 'exit',
+            category: config.category,
+          });
         });
         serviceStore.delete(pid);
         if (config.parseResult === 'json') {

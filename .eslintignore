@@ -1,3 +1,5 @@
-dist/*
-build/*
+app/dist/*
+app/main-build/*
 assets/*
+app/node_modules/*
+app/dll/*

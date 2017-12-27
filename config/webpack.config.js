@@ -4,6 +4,11 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+const port = process.env.PORT || 1212;
 
 module.exports = env => {
 
@@ -45,10 +50,10 @@ module.exports = env => {
     extractLibiaryStyle = new ExtractTextPlugin('lib.css');
     extractAppStyle = new ExtractTextPlugin('app.css');
     plugins.push(
-      new webpack.DllReferencePlugin({
-        context: path.resolve(__dirname, '..'),
-        manifest: require('../assets/dll/manifest.prod.json'),
-      }),
+      // new webpack.DllReferencePlugin({
+      //   context: path.resolve(__dirname, '../app'),
+      //   manifest: require('../app/dll/manifest.prod.json'),
+      // }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
@@ -70,8 +75,8 @@ module.exports = env => {
     });
     plugins.push(
       new webpack.DllReferencePlugin({
-        context: path.resolve(__dirname, '..'),
-        manifest: require('../assets/dll/manifest.dev.json'),
+        context: path.resolve(__dirname, '../app'),
+        manifest: require('../app/dll/manifest.dev.json'),
       }),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
@@ -98,26 +103,46 @@ module.exports = env => {
     new webpack.ProvidePlugin({
       React: 'react',
     }),
+    new HtmlWebpackPlugin({
+      template: 'index.html',
+    }),
   );
 
-  return {
+  if (env.dev) {
+    plugins.push(
+      new AddAssetHtmlWebpackPlugin([{
+        filepath: require.resolve('../app/dll/dll.dev.js'),
+      }])
+    );
+  } else {
+    plugins.push(
+      new BundleAnalyzerPlugin({
+        analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+        openAnalyzer: process.env.OPEN_ANALYZER === 'true'
+      }),
+    );
+  }
+
+  const ret = {
+    context: path.resolve(__dirname, '../app'),
     entry: {
       app: env.prod ?
         [
           'babel-polyfill',
-          process.cwd() + '/app/index',
+          './index',
         ] : [
           'babel-polyfill',
           'react-hot-loader/patch',
-          'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
-          // 'webpack/hot/only-dev-server',
-          process.cwd() + '/app/index',
+          `webpack-dev-server/client?http://localhost:${port}/`,
+          // 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
+          'webpack/hot/only-dev-server',
+          './index',
         ],
     },
     output: {
-      path: path.resolve(__dirname, '../assets'),
+      path: path.resolve(__dirname, '../app/dist'),
       filename: env.prod ? '[name].min.js' : '[name].js',
-      publicPath: '/assets/',
+      publicPath: env.prod ? '../dist/' : '/',
     },
     module: {
       rules: [
@@ -192,5 +217,36 @@ module.exports = env => {
     devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
+    node: {
+      __dirname: false,
+      __filename: false
+    },
   };
+
+  if (!env.prod) {
+    Object.assign(ret, {
+      devServer: {
+        port,
+        publicPath: '/',
+        compress: true,
+        noInfo: false,
+        inline: true,
+        lazy: false,
+        hot: true,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        contentBase: path.join(__dirname, '../app/dist'),
+        watchOptions: {
+          aggregateTimeout: 300,
+          ignored: /node_modules/,
+          poll: 100
+        },
+        historyApiFallback: {
+          verbose: true,
+          disableDotRule: false,
+        }
+      },
+    });
+  }
+
+  return ret;
 };

@@ -23,7 +23,6 @@ const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 const LogBuffer = {};
 
 class ConsoleModule extends PureComponent {
-
   static propTypes = {
     id: PropTypes.number,
     logList: PropTypes.array,

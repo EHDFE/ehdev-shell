@@ -9,18 +9,17 @@
     "develop-tool",
     "electron"
   ],
+  "scripts": {
+    "postinstall": "npm rebuild --runtime=electron --target=1.8.1 --disturl=https://atom.io/download/atom-shell --build-from-source"
+  },
   "dependencies": {
     "add-asset-html-webpack-plugin": "^2.1.2",
     "chalk": "^2.3.0",
     "clean-webpack-plugin": "^0.1.17",
     "duplicate-package-checker-webpack-plugin": "^2.0.2",
-    "electron-context-menu": "^0.9.1",
     "electron-is-dev": "^0.3.0",
-    "electron-log": "^2.2.13",
-    "electron-updater": "^2.17.6",
     "eslint": "^4.14.0",
     "extract-text-webpack-plugin": "^3.0.2",
-    "fix-path": "^2.1.0",
     "html-webpack-plugin": "^2.30.1",
     "stats-webpack-plugin": "^0.6.1",
     "uglifyjs-webpack-plugin": "^1.1.4",

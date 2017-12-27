@@ -23,8 +23,8 @@ const defaultState = {
     prevRootPath: undefined,
   },
   service: {
-    runningService: null,
-    pid: null,
+    pids: [],
+    instances: {},
   },
 };
 
@@ -75,42 +75,58 @@ export const actions = createActions({
       const { pid } = await SERVICE_API.server.start(params);
       const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
-          dispatch(actions.service.stopServer(pid, true));
+          dispatch(actions.service.stopServer(arg.pid, true));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
-        runningService: 'server',
         pid,
+        rootPath: params.root,
+        type: 'server',
       };
     },
     STOP_SERVER: async (pid, stopped) => {
       if (!stopped) {
-        await SERVICE_API.server.stop(pid);
+        try {
+          await SERVICE_API.server.stop(pid);
+          return {
+            pid,
+          };
+        } catch (e) {
+          throw e;
+        }
       } else {
-        return {};
+        return { pid };
       }
     },
     START_BUILDER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.builder.start(params);
       const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
-          dispatch(actions.service.stopBuilder(pid, true));
+          dispatch(actions.service.stopBuilder(arg.pid, true));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       return {
-        runningService: 'builder',
         pid,
+        rootPath: params.root,
+        type: 'builder',
       };
     },
     STOP_BUILDER: async (pid, stopped) => {
       if (!stopped) {
-        await SERVICE_API.builder.stop(pid);
+        try {
+          await SERVICE_API.builder.stop(pid);
+          return {
+            pid,
+          };
+        } catch (e) {
+          throw e;
+        }
       } else {
-        return {};
+        return { pid };
       }
     }
   },
@@ -169,32 +185,58 @@ const envReducer = handleActions({
 const serviceReducer = handleActions({
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid, runningService } = payload;
+    const { pid, rootPath, type } = payload;
+    const pids = state.pids || [];
+    const instances = state.instances || {};
+    if (pids && pids.includes(pid)) return state;
     return {
-      runningService,
-      pid,
+      pids: pids.concat(pid),
+      instances: {
+        ...instances,
+        [pid]: {
+          pid,
+          type,
+          rootPath,
+        },
+      }
     };
   },
-  'SERVICE/STOP_SERVER': (state, { error }) => {
+  'SERVICE/STOP_SERVER': (state, { payload, error }) => {
     if (error) return state;
+    const instances = Object.assign({}, state.instances);
+    const pids = state.pids || [];
+    delete instances[payload.pid];
     return {
-      runningService: null,
-      pid: null,
+      pids: pids.filter(id => id !== payload.pid),
+      instances,
     };
   },
   'SERVICE/START_BUILDER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid, runningService } = payload;
+    const { pid, rootPath, type } = payload;
+    const pids = state.pids || [];
+    const instances = state.instances || {};
+    if (pids.includes(pid)) return state;
     return {
-      runningService,
-      pid,
+      pids: pids.concat(pid),
+      instances: {
+        ...instances,
+        [pid]: {
+          pid,
+          type,
+          rootPath,
+        },
+      }
     };
   },
-  'SERVICE/STOP_BUILDER': (state, { error }) => {
+  'SERVICE/STOP_BUILDER': (state, { payload, error }) => {
     if (error) return state;
+    const instances = Object.assign({}, state.instances);
+    const pids = state.pids || [];
+    delete instances[payload.pid];
     return {
-      runningService: null,
-      pid: null,
+      pids: pids.filter(id => id !== payload.pid),
+      instances,
     };
   },
 }, defaultState.service);

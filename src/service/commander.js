@@ -17,6 +17,7 @@ module.exports = {
    * @param {string} options.cwd - the execution path of the command
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
    * @param {string} options.category - pass to client for ui usage
+   * @param {object} options.args - arguments to passthrough
    */
   run(commands, options) {
     const config = Object.assign(
@@ -26,6 +27,7 @@ module.exports = {
         cwd: process.cwd(),
         useCnpm: true,
         category: 'OTHER',
+        args: {},
       },
       options
     );
@@ -64,6 +66,7 @@ module.exports = {
             pid,
             action: 'log',
             category: config.category,
+            args: config.args,
           });
         });
         if (config.parseResult === 'json') {
@@ -77,6 +80,7 @@ module.exports = {
             pid,
             action: 'log',
             category: config.category,
+            args: config.args,
           });
         });
       });
@@ -87,6 +91,7 @@ module.exports = {
             pid,
             action: 'error',
             category: config.category,
+            args: config.args,
           });
         });
         reject(err);
@@ -102,6 +107,7 @@ module.exports = {
             pid,
             action: 'exit',
             category: config.category,
+            args: config.args,
           });
         });
         serviceStore.delete(pid);

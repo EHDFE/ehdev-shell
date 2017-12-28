@@ -54,8 +54,8 @@ const ConfigerName = process.env.CONFIGER_NAME;
 const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
 
 let port;
-if (process.argv[4]) {
-  port = + process.argv[4].split('=')[1];
+if (process.argv[2]) {
+  port = + process.argv[2].split('=')[1];
 }
 // dev server port
 exports.PORT = port ? port : 3000;

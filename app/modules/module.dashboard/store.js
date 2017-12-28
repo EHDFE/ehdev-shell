@@ -22,7 +22,7 @@ const defaultState = {
 export const actions = createActions({
   BASE: {
     GET_WEATHER: async () => {
-      const response = await fetch(`//api.openweathermap.org/data/2.5/weather?id=1808926&units=metric&APPID=${WEATHER_APPID}`);
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=1808926&units=metric&APPID=${WEATHER_APPID}`);
       let result;
       try {
         result = await response.json();

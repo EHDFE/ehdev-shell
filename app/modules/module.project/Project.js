@@ -12,6 +12,7 @@ import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
 import MdAutorenew from 'react-icons/lib/md/autorenew';
+import IconMoreVert from 'react-icons/lib/md/more-vert';
 
 import { actions } from './store';
 
@@ -24,11 +25,17 @@ import EslintResult from '../../components/component.eslint.result/';
 
 import Profile from './Profile';
 import Setup from './Setup';
+import RuntimeConfigModal from './RuntimeConfigModal';
 
 const { TabPane } = Tabs;
 const { Content } = Layout;
 
 class ProjectModule extends PureComponent {
+  static defaultProps = {
+    runtimeConfig: {
+      port: 3000,
+    },
+  }
   static propTypes = {
     rootPath: PropTypes.string,
     prevRootPath: PropTypes.string,
@@ -39,6 +46,9 @@ class ProjectModule extends PureComponent {
     config: PropTypes.object,
     pids: PropTypes.array,
     currentService: PropTypes.object,
+    runtimeConfig: PropTypes.shape({
+      port: PropTypes.number,
+    }).isRequired,
     getEnvData: PropTypes.func,
     setEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
@@ -49,10 +59,12 @@ class ProjectModule extends PureComponent {
     getOutdated: PropTypes.func,
     getPkgInfo: PropTypes.func,
     getESlintResult: PropTypes.func,
+    updateRuntimeConfig: PropTypes.func,
   }
   state = {
     defaultActiveKey: 'profile',
-    loading: false
+    loading: false,
+    runtimeConfigerVisible: false,
   }
   componentDidMount() {
     this.getInitData();
@@ -84,35 +96,42 @@ class ProjectModule extends PureComponent {
     }
   }
   handleStartServer = () => {
-    const { config } = this.props;
+    const { pkg, config, runtimeConfig } = this.props;
     this.props.startServer({
       root: this.props.rootPath,
-      port: 3000,
+      port: runtimeConfig.port,
+      projectName: pkg.name,
       configerName: `ehdev-configer-${config.type}`,
     });
   }
   handleStartBuilder = () => {
-    const { config } = this.props;
+    const { pkg, config } = this.props;
     this.props.startBuilder({
       root: this.props.rootPath,
+      projectName: pkg.name,
       configerName: `ehdev-configer-${config.type}`,
     });
   }
   handleStartDllBuilder = () => {
-    const { config } = this.props;
+    const { pkg, config } = this.props;
     this.props.startBuilder({
       root: this.props.rootPath,
+      projectName: pkg.name,
       configerName: `ehdev-configer-${config.type}`,
       isDll: true,
     });
   }
   handleStopService = () => {
-    const { currentService } = this.props;
+    const { pkg, currentService } = this.props;
     if (!currentService) return;
     if (currentService.type === 'server') {
-      this.props.stopServer(currentService.pid);
+      this.props.stopServer(currentService.pid, false, {
+        projectName: pkg.name,
+      });
     } else if (currentService.type === 'builder') {
-      this.props.stopBuilder(currentService.pid);
+      this.props.stopBuilder(currentService.pid, false, {
+        projectName: pkg.name,
+      });
     }
   }
   handleUpdateConfig = config => {
@@ -123,6 +142,19 @@ class ProjectModule extends PureComponent {
   handleUpdateEslint = () => {
     const { rootPath } = this.props;
     this.props.getESlintResult(rootPath);
+  }
+  hanleCloseRuntimeConfiger = configData => {
+    if (configData) {
+      this.props.updateRuntimeConfig(configData);
+    }
+    this.setState({
+      runtimeConfigerVisible: false,
+    });
+  }
+  showRuntimeConfiger = () => {
+    this.setState({
+      runtimeConfigerVisible: true,
+    });
   }
   renderProfile() {
     const { pkg } = this.props;
@@ -195,20 +227,42 @@ class ProjectModule extends PureComponent {
               </Menu.Item>
             </Menu>
           }>
-            {buildButton}
+            <div className={styles['Project__ActionBarGrid']}>
+              { buildButton }
+              <IconMoreVert />
+            </div>
           </Dropdown>
         );
       }
       actions = [
-        <button
-          className={styles.Project__ActionBarButton}
-          key={'start-server'}
-          disabled={currentService}
-          onClick={this.handleStartServer}
+        <Dropdown
+          key="start-server"
+          overlay={
+            <Menu>
+              <Menu.Item>
+                <button
+                  className={styles['Project__ActionBarButton--trigger']}
+                  key={'advance-config'}
+                  onClick={this.showRuntimeConfiger}
+                >
+                  运行配置
+                </button>
+              </Menu.Item>
+            </Menu>
+          }
         >
-          <IconPlay size={22} />
-          启动
-        </button>,
+          <div className={styles['Project__ActionBarGrid']}>
+            <button
+              className={styles.Project__ActionBarButton}
+              disabled={currentService}
+              onClick={this.handleStartServer}
+            >
+              <IconPlay size={22} />
+              启动
+            </button>
+            <IconMoreVert />
+          </div>
+        </Dropdown>,
         buildButton,
         <button
           className={styles.Project__ActionBarButton}
@@ -238,7 +292,14 @@ class ProjectModule extends PureComponent {
     });
   }
   render() {
-    const { rootPath, prevRootPath, runnable, useESlint, setRootPath, pkg } = this.props;
+    const { rootPath, prevRootPath, runnable, useESlint, setRootPath, pkg, runtimeConfig } = this.props;
+    const { runtimeConfigerVisible } = this.state;
+    const runtimeConfigerProps = {
+      visible: runtimeConfigerVisible,
+      close: this.hanleCloseRuntimeConfiger,
+      closeWithData: this.hanleCloseRuntimeConfiger,
+      formData: runtimeConfig,
+    };
     return (
       <Page>
         <Layout className={styles.Project__Layout}>
@@ -292,6 +353,7 @@ class ProjectModule extends PureComponent {
                 </TabPane>
               </Tabs>
             </Spin>
+            <RuntimeConfigModal {...runtimeConfigerProps} />
           </Content>
         </Layout>
       </Page>
@@ -327,12 +389,13 @@ const mapDispatchToProps = dispatch => ({
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
   setEnvData: (config, rootPath) => dispatch(actions.env.setEnv(config, rootPath, dispatch)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
-  stopServer: pid => dispatch(actions.service.stopServer(pid)),
+  stopServer: (...args) => dispatch(actions.service.stopServer(...args)),
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
-  stopBuilder: pid => dispatch(actions.service.stopBuilder(pid)),
+  stopBuilder: (...args) => dispatch(actions.service.stopBuilder(...args)),
   getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
   getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath)),
-  getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath))
+  getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath)),
+  updateRuntimeConfig: config => dispatch(actions.env.updateRuntimeConfig(config)),
 });
 
 export default connect(

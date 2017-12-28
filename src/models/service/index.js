@@ -31,6 +31,9 @@ exports.startServer = async (config) => {
       NODE_ENV: 'development',
     },
     category: 'SERVER',
+    args: {
+      projectName: require(`${root}/package.json`).name,
+    },
   });
   context.getDataBase('project').update(
     {
@@ -75,6 +78,9 @@ exports.startBuilder = async (config) => {
       NODE_ENV: 'production',
     },
     category: isDll ? 'DLL_BUILD' : 'BUILD',
+    args: {
+      projectName: require(`${root}/package.json`).name,
+    },
   });
   context.getDataBase('project').update(
     {

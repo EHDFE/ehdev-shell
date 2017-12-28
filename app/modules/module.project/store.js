@@ -11,6 +11,8 @@ import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 import COMMON_API from '../../apis/common';
 
+import showNotification from '../../utils/notification';
+
 const defaultState = {
   env: {
     rootPath: undefined,
@@ -21,6 +23,9 @@ const defaultState = {
     useESlint: false,
     lintResult: [],
     prevRootPath: undefined,
+    runtimeConfig: {
+      port: 3000,
+    },
   },
   service: {
     pids: [],
@@ -54,6 +59,7 @@ export const actions = createActions({
         throw new Error(e);
       }
     },
+    UPDATE_RUNTIME_CONFIG: config => config,
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);
       return {
@@ -75,47 +81,53 @@ export const actions = createActions({
       const { pid } = await SERVICE_API.server.start(params);
       const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
-          dispatch(actions.service.stopServer(arg.pid, true));
+          dispatch(actions.service.stopServer(arg.pid, true, params));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      showNotification('启动开发环境', {
+        body: `项目名: ${params.projectName}\n端口: ${params.port}\n进程PID: ${pid}`,
+      });
       return {
         pid,
         rootPath: params.root,
         type: 'server',
       };
     },
-    STOP_SERVER: async (pid, stopped) => {
+    STOP_SERVER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
           await SERVICE_API.server.stop(pid);
-          return {
-            pid,
-          };
+          return { pid };
         } catch (e) {
           throw e;
         }
-      } else {
-        return { pid };
       }
+      showNotification('停止开发环境', {
+        body: `项目名: ${params.projectName}\n进程PID: ${pid}`
+      });
+      return { pid };
     },
     START_BUILDER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.builder.start(params);
       const startListener = function (dispatch, event, arg) {
         if (arg.action === 'exit' || arg.action === 'error') {
-          dispatch(actions.service.stopBuilder(arg.pid, true));
+          dispatch(actions.service.stopBuilder(arg.pid, true, params));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      showNotification('开始构建', {
+        body: `项目名: ${params.projectName}\n进程PID: ${pid}`,
+      });
       return {
         pid,
         rootPath: params.root,
         type: 'builder',
       };
     },
-    STOP_BUILDER: async (pid, stopped) => {
+    STOP_BUILDER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
           await SERVICE_API.builder.stop(pid);
@@ -125,9 +137,11 @@ export const actions = createActions({
         } catch (e) {
           throw e;
         }
-      } else {
-        return { pid };
       }
+      showNotification('构建已停止', {
+        body: `项目名: ${params.projectName}\n进程PID: ${pid}`
+      });
+      return { pid };
     }
   },
 });
@@ -141,6 +155,7 @@ const envReducer = handleActions({
     rootPath: payload,
     prevRootPath: state.rootPath,
     lintResult: [],
+    runtimeConfig: { ...defaultState.env.runtimeConfig },
   }),
   'ENV/GET_ENV': (state, { payload, error }) => {
     if (error) return state;
@@ -154,6 +169,12 @@ const envReducer = handleActions({
     return {
       ...state,
       ...payload,
+    };
+  },
+  'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
+    return {
+      ...state,
+      runtimeConfig: Object.assign({}, state.runtimeConfig, payload),
     };
   },
   'ENV/GET_OUTDATED': (state, { payload, error }) => {

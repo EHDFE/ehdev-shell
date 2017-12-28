@@ -148,5 +148,9 @@
   "bugs": {
     "url": "https://github.com/EHDFE/ehdev-shell/issues"
   },
+  "devEngines": {
+    "node": ">=8.x",
+    "npm": ">=5.x"
+  },
   "homepage": "https://github.com/EHDFE/ehdev-shell#readme"
 }

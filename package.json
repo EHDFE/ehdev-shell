@@ -23,7 +23,7 @@
     "nedb": "^1.8.0",
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.0",
-    "qrcode": "^1.0.0",
+    "qrcode": "^1.0.1",
     "raven": "^2.3.0",
     "raven-for-redux": "^1.1.1",
     "react": "^16.2.0",

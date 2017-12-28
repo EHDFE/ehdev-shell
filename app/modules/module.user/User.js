@@ -16,7 +16,7 @@ import Page from '../../components/component.page/';
 import CityPicker from '../../components/component.cityPicker';
 
 const FormItem = Form.Item;
-const FILE_PATH = '/api/upload/file';
+const FILE_PATH = 'http://image.tf56.com/fastdfsWeb/upload';
 
 function getBase64(img, callback) {
   const reader = new FileReader();

@@ -2,53 +2,69 @@
  * configer apis
  * @author ryan.bian
  */
-import { handleResponse } from './utils';
+// import { handleResponse } from './utils';
 
-const API_PATH = '/api/configer';
+// const API_PATH = '/api/configer';
+import { remote } from 'electron';
+
+let remoteAPI;
+if (process.env.NODE_ENV === 'production') {
+  remoteAPI = remote.require('./main-build/apiService');
+} else {
+  remoteAPI = remote.require('../src/apiService');
+}
 
 const CONFIGER_API = {
   async get() {
-    const res = await fetch(`${API_PATH}/configs`);
-    return handleResponse(res);
+    try {
+      const res = await remoteAPI.configer.getConfigs();
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
   async getConfigsFromNpm() {
-    const res = await fetch(`${API_PATH}/remoteConfigs`);
-    return handleResponse(res);
+    try {
+      const res = await remoteAPI.configer.getRemoteConfigs();
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
   async add(configerName) {
-    const res = await fetch(`${API_PATH}/config`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const res = await remoteAPI.configer.add({
         configerName,
-      }),
-    });
-    return handleResponse(res);
+      });
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
   async upload(files) {
 
   },
-  async remove(name) {
-    if (!name) return Promise.reject('no config name provided!');
-    const res = await fetch(`${API_PATH}/config/${name}`, {
-      method: 'delete',
-    });
-    return handleResponse(res);
+  async remove(configerName) {
+    if (!configerName) return Promise.reject('no config name provided!');
+    try {
+      const res = await remoteAPI.configer.remove({
+        configerName,
+      });
+      return res;
+    } catch (e) {
+      throw e;
+    }
   },
   async upgrade(configerName, version) {
-    const res = await fetch(`${API_PATH}/config`, {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      const res = await remoteAPI.configer.upgrade({
         configerName,
         version,
-      }),
-    });
-    return handleResponse(res);
+      });
+      return res;
+    } catch (e) {
+      throw e;
+    }
   }
 };
 

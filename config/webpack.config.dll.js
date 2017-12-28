@@ -5,10 +5,10 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 module.exports = env => {
   const plugins = [
     new webpack.DllPlugin({
-      context: path.join(__dirname, '..'),
+      context: path.join(__dirname, '../app'),
       path: path.join(
         __dirname,
-        env.prod ? '../assets/dll/manifest.prod.json' : '../assets/dll/manifest.dev.json'
+        env.prod ? '../app/dll/manifest.prod.json' : '../app/dll/manifest.dev.json'
       ),
       name: '[name]',
     }),
@@ -34,6 +34,7 @@ module.exports = env => {
     );
   }
   return {
+    context: path.resolve(__dirname, '../app'),
     entry: {
       dll: [
         'react',
@@ -56,10 +57,11 @@ module.exports = env => {
       ],
     },
     output: {
-      path: path.join(__dirname, '../assets/dll/'),
+      path: path.join(__dirname, '../app/dll/'),
       filename: env.prod ? '[name].prod.js' : '[name].dev.js',
       library: '[name]',
     },
     plugins,
+    devtool: 'source-map',
   };
 };

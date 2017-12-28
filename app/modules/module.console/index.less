@@ -55,28 +55,62 @@
       transform: scale(0, 0);
     }
   }
+  @keyframes titleRunner {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
 
   &__Tabs {
+    display: flex;
     flex: 0 0 70px;
     padding: 20px 0;
     width: 70px;
+    flex-direction: column;
+    justify-content: space-between;
     &List {
       list-style: none;
     }
     &Item {
       margin: 1px 0;
-      transition: transform @ease-in-circ @animation-duration-base;
+      // transition: transform @ease-in-circ @animation-duration-base;
+      transform: translateX(-30px);
+
+      &--active {
+      }
+      &--stoped {
+        .ConsoleModule__TabsButton {
+          background-color: #999;
+        }
+      }
+
+      svg {
+        &:nth-child(2) {
+          display: none;
+        }
+      }
 
       &:hover {
-        transform: translateX(-30px);
-      }
-      &--active {
-        transform: translateX(-30px);
+        .ConsoleModule__TabsTitle--content {
+          transform: translateX(-100%);
+          animation: titleRunner ease-in-out 1s;
+        }
+        svg {
+          &:nth-child(1) {
+            display: none;
+          }
+          &:nth-child(2) {
+            display: block;
+          }
+        }
       }
     }
     &Button {
       display: flex;
-      padding: 4px 8px;
+      padding: 4px;
       width: 100px;
       border-radius: 3px 0 0 3px;
       align-items: center;
@@ -103,7 +137,21 @@
       }
     }
     &Title {
-      white-space: nowrap;
+      margin-left: 2px;
+      flex: 1 0 72px;
+      overflow: hidden;
+      &--content {
+        display: block;
+        padding-right: 100%;
+        white-space: nowrap;
+      }
+    }
+
+    &--fixed {
+      > button {
+        margin-left: 44px;
+        width: 26px;
+      }
     }
   }
 

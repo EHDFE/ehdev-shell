@@ -25,7 +25,7 @@ import ErrorBoundary from './components/component.errorBoundary/';
 
 const App = () => (
   <ErrorBoundary>
-    <BrowserRouter basename="/">
+    <BrowserRouter basename={window.location.pathname}>
       <LayoutModule>
         <Route exact path="/" component={DashboardModule}/>
         <Route exact path="/dashboard" component={DashboardModule}/>

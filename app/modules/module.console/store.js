@@ -19,13 +19,14 @@ const defaultState = {
  * Console's action
  */
 export const actions = createActions({
-  CREATE_LOG: (pid, category, content) => {
+  CREATE_LOG: (pid, category, content, args) => {
     return {
       category,
       content,
-      id: pid,
+      id: category === 'OTHER' ? 0 : pid,
       updateTime: moment().valueOf(),
       checked: false,
+      projectName: args.projectName,
     };
   },
   DELETE_LOG: id => {
@@ -48,7 +49,7 @@ export const actions = createActions({
 const consoleReducer = handleActions(
   {
     CREATE_LOG: (state, { payload }) => {
-      const { id, content } = payload;
+      const { id, content, category } = payload;
       let entity, ids;
       if (state.ids.includes(id)) {
         entity = {
@@ -56,6 +57,7 @@ const consoleReducer = handleActions(
           content: state.entities[id].content + content,
           updateTime: payload.updateTime,
           checked: payload.checked,
+          projectName: payload.projectName,
         };
         ids = [...state.ids];
       } else {
@@ -66,17 +68,28 @@ const consoleReducer = handleActions(
         ...state.entities,
         [id]: entity,
       };
-      if (ids.length > MAX_CONSOLE_ITEM_LIMIT) {
-        const deleteIds = ids.splice(MAX_CONSOLE_ITEM_LIMIT);
+      if (ids.length > MAX_CONSOLE_ITEM_LIMIT + 1) {
+        const idx = ids.indexOf(0);
+        let remainIds;
+        if (idx === -1) {
+          remainIds = ids;
+        } else {
+          remainIds = ids.slice(0, idx).concat(ids.slice(idx + 1));
+        }
+        const deleteIds = remainIds.splice(MAX_CONSOLE_ITEM_LIMIT);
+        if (idx !== -1) {
+          remainIds.unshift(0);
+        }
         deleteIds.forEach(id => {
           delete entities[id];
         });
+        ids = remainIds;
       }
       return {
+        ...state,
         ids,
         entities,
-        activeId: id,
-        visible: state.visible,
+        activeId: category === 'OTHER' ? state.activeId : id,
       };
     },
     DELETE_LOG: (state, { payload }) => {

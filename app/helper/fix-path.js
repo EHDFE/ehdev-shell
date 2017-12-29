@@ -1,5 +1,7 @@
+const { spawn } = require('child_process');
+
 const getUnixShellEnvironment = () => {
-  const promise = new Promise((c, e) => {
+  return new Promise((resolve, reject) => {
     const runAsNode = process.env['ELECTRON_RUN_AS_NODE'];
     const noAttach = process.env['ELECTRON_NO_ATTACH_CONSOLE'];
     const mark = 'JARVIS';
@@ -18,12 +20,12 @@ const getUnixShellEnvironment = () => {
     });
 
     const buffers = [];
-    child.on('error', () => c({}));
+    child.on('error', e => reject(e));
     child.stdout.on('data', b => buffers.push(b));
 
     child.on('close', (code, signal) => {
       if (code !== 0) {
-        return e(new Error('Failed to get environment'));
+        return reject(new Error('Failed to get environment'));
       }
 
       const raw = Buffer.concat(buffers).toString('utf8');
@@ -48,15 +50,12 @@ const getUnixShellEnvironment = () => {
         // https://github.com/Microsoft/vscode/issues/22593#issuecomment-336050758
         delete env['XDG_RUNTIME_DIR'];
 
-        c(env);
+        resolve(env);
       } catch (err) {
-        e(err);
+        reject(err);
       }
     });
   });
-
-  // swallow errors
-  return promise.then(null, () => ({}));
 };
 
 module.exports = getUnixShellEnvironment;

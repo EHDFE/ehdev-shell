@@ -164,8 +164,10 @@ app.on('ready', () => {
   if (process.platform === 'darwin') {
     getUnixShellEnvironment().then(shellEnv => {
       Object.assign(process.env, shellEnv);
-    }).catch(() => {
+      createWindow();
+    }).catch(err => {
       // TODO: show error
+      createWindow();
     });
   } else {
     createWindow();

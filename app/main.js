@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
+const getUnixShellEnvironment = require('./helper/fix-path');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
@@ -159,7 +160,17 @@ function createWindow() {
   setupMenu();
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  if (process.platform === 'darwin') {
+    getUnixShellEnvironment().then(shellEnv => {
+      Object.assign(process.env, shellEnv);
+    }).catch(() => {
+      // TODO: show error
+    });
+  } else {
+    createWindow();
+  }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

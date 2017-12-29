@@ -123,6 +123,7 @@
     "files": [
       "dist",
       "main-build",
+      "helper",
       "child_service",
       "package.json",
       "main.js",

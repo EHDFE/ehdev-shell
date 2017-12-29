@@ -62,6 +62,7 @@ module.exports = env => {
         uglifyOptions: {
           ecma: 6,
         },
+        sourceMap: true,
       }),
       extractLibiaryStyle,
       extractAppStyle

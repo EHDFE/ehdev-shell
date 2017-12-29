@@ -10,6 +10,7 @@ const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,
 } = require('../../utils/env');
+const { readJSON } = require('../../utils/index');
 const context = require('../../context');
 
 const APP_PATH = app.getAppPath();
@@ -21,6 +22,7 @@ const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
 exports.startServer = async (config) => {
   const { root, port, configerName } = config;
   const _port = port || 3000;
+  const pkg = await readJSON(`${root}/package.json`);
   const { pid } = Commander.run(`node ${serverScriptPath} --port=${_port}`, {
     cwd: root,
     parseResult: false,
@@ -29,10 +31,11 @@ exports.startServer = async (config) => {
       CONFIGER_FOLDER_PATH: ConfigerFolderPath,
       CONFIGER_NAME: configerName,
       NODE_ENV: 'development',
+      PATH: process.env.PATH,
     },
     category: 'SERVER',
     args: {
-      projectName: require(`${root}/package.json`).name,
+      projectName: pkg.name,
     },
   });
   context.getDataBase('project').update(
@@ -68,6 +71,7 @@ exports.startBuilder = async (config) => {
   } else {
     command = `node ${builderScriptPath}`;
   }
+  const pkg = await readJSON(`${root}/package.json`);
   const { pid } = Commander.run(command, {
     cwd: root,
     parseResult: false,
@@ -76,10 +80,11 @@ exports.startBuilder = async (config) => {
       CONFIGER_FOLDER_PATH: ConfigerFolderPath,
       CONFIGER_NAME: configerName,
       NODE_ENV: 'production',
+      PATH: process.env.PATH,
     },
     category: isDll ? 'DLL_BUILD' : 'BUILD',
     args: {
-      projectName: require(`${root}/package.json`).name,
+      projectName: pkg.name,
     },
   });
   context.getDataBase('project').update(

@@ -72,9 +72,9 @@ export const actions = createActions({
         pkgInfo: data
       };
     },
-    GET_LINT_RESULT: async rootPath => {
-      return await COMMON_API.getESlintResult(rootPath);
-    },
+    // GET_LINT_RESULT: async rootPath => {
+    //   return await COMMON_API.getESlintResult(rootPath);
+    // },
   },
   SERVICE: {
     START_SERVER: async (params, dispatch) => {

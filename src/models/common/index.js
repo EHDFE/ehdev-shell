@@ -6,7 +6,7 @@
 const path = require('path');
 const { format, URLSearchParams } = require('url');
 const { app } = require('electron');
-const { CLIEngine } = require('eslint');
+// const { CLIEngine } = require('eslint');
 
 const { httpGet, saveImage, stat, generateQRCode, md5 } = require('../../utils/');
 
@@ -128,15 +128,15 @@ exports.getQRCode = async text => {
 /**
  * run eslint
  */
-exports.runESlint = async cwd => {
-  const cli = new CLIEngine({
-    cwd,
-  });
-  const report = cli.executeOnFiles(['.']);
-  const formatter = cli.getFormatter('json');
-  const result = formatter(report.results);
-  return JSON.parse(result);
-};
+// exports.runESlint = async cwd => {
+//   const cli = new CLIEngine({
+//     cwd,
+//   });
+//   const report = cli.executeOnFiles(['.']);
+//   const formatter = cli.getFormatter('json');
+//   const result = formatter(report.results);
+//   return JSON.parse(result);
+// };
 
 // class CommonAPI {
 //   /**

@@ -60,7 +60,7 @@
       transform: translateX(0%);
     }
     100% {
-      transform: translateX(-100%);
+      transform: translate(~"calc(-100% + 72px)");
     }
   }
 
@@ -95,7 +95,7 @@
 
       &:hover {
         .ConsoleModule__TabsTitle--content {
-          transform: translateX(-100%);
+          transform: translate(~"calc(-100% + 72px)");
           animation: titleRunner ease-in-out 1s;
         }
         svg {
@@ -140,9 +140,9 @@
       margin-left: 2px;
       flex: 1 0 72px;
       overflow: hidden;
+      text-align: left;
       &--content {
-        display: block;
-        padding-right: 100%;
+        display: inline-block;
         white-space: nowrap;
       }
     }

@@ -4,7 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -40,13 +40,18 @@ module.exports = {
       'process.env.DEBUG_PROD': JSON.stringify(process.env.DEBUG_PROD || 'false')
     }),
     new webpack.NamedModulesPlugin(),
+    new UglifyJSPlugin({
+      uglifyOptions: {
+        ecma: 8,
+      },
+    }),
   ],
 
-  externals: {
-    eslint: {
-      commonjs2: 'eslint',
-    }
-  },
+  // externals: {
+  //   eslint: {
+  //     commonjs2: 'eslint',
+  //   }
+  // },
 
   /**
    * Disables webpack processing of __dirname and __filename.

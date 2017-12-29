@@ -32,14 +32,14 @@ const COMMON_API = {
       throw e;
     }
   },
-  async getESlintResult(cwd) {
-    try {
-      const res = await remoteAPI.common.runESlint(cwd);
-      return res;
-    } catch (e) {
-      throw e;
-    }
-  },
+  // async getESlintResult(cwd) {
+  //   try {
+  //     const res = await remoteAPI.common.runESlint(cwd);
+  //     return res;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // },
 };
 
 export default COMMON_API;

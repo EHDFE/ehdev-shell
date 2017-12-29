@@ -21,7 +21,7 @@ import styles from './index.less';
 import Page from '../../components/component.page/';
 import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
-import EslintResult from '../../components/component.eslint.result/';
+// import EslintResult from '../../components/component.eslint.result/';
 
 import Profile from './Profile';
 import Setup from './Setup';
@@ -58,7 +58,7 @@ class ProjectModule extends PureComponent {
     stopBuilder: PropTypes.func,
     getOutdated: PropTypes.func,
     getPkgInfo: PropTypes.func,
-    getESlintResult: PropTypes.func,
+    // getESlintResult: PropTypes.func,
     updateRuntimeConfig: PropTypes.func,
   }
   state = {
@@ -139,10 +139,10 @@ class ProjectModule extends PureComponent {
     const configs = { rootPath, ...config };
     this.props.setEnvData(configs, rootPath);
   }
-  handleUpdateEslint = () => {
-    const { rootPath } = this.props;
-    this.props.getESlintResult(rootPath);
-  }
+  // handleUpdateEslint = () => {
+  //   const { rootPath } = this.props;
+  //   this.props.getESlintResult(rootPath);
+  // }
   hanleCloseRuntimeConfiger = configData => {
     if (configData) {
       this.props.updateRuntimeConfig(configData);
@@ -282,10 +282,10 @@ class ProjectModule extends PureComponent {
     }
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }
-  renderLintResult() {
-    const { rootPath, lintResult } = this.props;
-    return <EslintResult rootPath={rootPath} data={lintResult} />;
-  }
+  // renderLintResult() {
+  //   const { rootPath, lintResult } = this.props;
+  //   return <EslintResult rootPath={rootPath} data={lintResult} />;
+  // }
   tabKey = (key) => {
     this.setState({
       defaultActiveKey: key
@@ -300,6 +300,27 @@ class ProjectModule extends PureComponent {
       closeWithData: this.hanleCloseRuntimeConfiger,
       formData: runtimeConfig,
     };
+    // {
+    //   useESlint ?
+    //     <TabPane
+    //       tab={
+    //         [
+    //           '代码质量',
+    //           <button
+    //             className={styles.Project__EslintBtn}
+    //             onClick={this.handleUpdateEslint}
+    //             key="refresh"
+    //           >
+    //             <Icon type="reload" />
+    //           </button>,
+    //         ]
+    //       }
+    //       key="eslint"
+    //     >
+    //       { this.renderLintResult() }
+    //     </TabPane> :
+    //     null
+    // }
     return (
       <Page>
         <Layout className={styles.Project__Layout}>
@@ -324,27 +345,6 @@ class ProjectModule extends PureComponent {
                 <TabPane tab="基础信息" key="profile">
                   { this.renderProfile() }
                 </TabPane>
-                {
-                  useESlint ?
-                    <TabPane
-                      tab={
-                        [
-                          '代码质量',
-                          <button
-                            className={styles.Project__EslintBtn}
-                            onClick={this.handleUpdateEslint}
-                            key="refresh"
-                          >
-                            <Icon type="reload" />
-                          </button>,
-                        ]
-                      }
-                      key="eslint"
-                    >
-                      { this.renderLintResult() }
-                    </TabPane> :
-                    null
-                }
                 { runnable ? <TabPane tab="运行配置" key="config">
                   { this.renderSetup() }
                 </TabPane> : null }
@@ -394,7 +394,7 @@ const mapDispatchToProps = dispatch => ({
   stopBuilder: (...args) => dispatch(actions.service.stopBuilder(...args)),
   getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
   getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath)),
-  getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath)),
+  // getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath)),
   updateRuntimeConfig: config => dispatch(actions.env.updateRuntimeConfig(config)),
 });
 

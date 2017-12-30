@@ -20,7 +20,7 @@ const WindowControl = ({
   visibility,
   onRequestClose,
   onRequestMinimize,
-  onRequestFullscreen,
+  onRequestMaximize,
   onRequestToggleVisible,
 }) => {
   return (
@@ -52,7 +52,7 @@ const WindowControl = ({
           styles.WindowControl__Button,
           styles['WindowControl__Button--fullscreen']
         )}
-        onClick={onRequestFullscreen}
+        onClick={onRequestMaximize}
       >
         <FullscreenIcon {...IconProps} />
       </button>
@@ -77,7 +77,7 @@ WindowControl.propTypes = {
   visibility: PropTypes.oneOf(['visible', 'hidden']),
   onRequestClose: PropTypes.func,
   onRequestMinimize: PropTypes.func,
-  onRequestFullscreen: PropTypes.func,
+  onRequestMaximize: PropTypes.func,
   onRequestToggleVisible: PropTypes.func,
 };
 

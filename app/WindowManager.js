@@ -14,10 +14,13 @@ const setWindowMinimize = () => {
   const win = remote.getCurrentWindow();
   win.minimize();
 };
-const setWindowFullscreen = () => {
+const setWindowMaximize = () => {
   const win = remote.getCurrentWindow();
-  const isFullScreen = win.isFullScreen();
-  win.setFullScreen(!isFullScreen);
+  if (win.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win.maximize();
+  }
 };
 
 const WindowManager = ({ previewMode, togglePreviewMode }) => (
@@ -25,7 +28,7 @@ const WindowManager = ({ previewMode, togglePreviewMode }) => (
     visibility={previewMode ? 'hidden' : 'visible'}
     onRequestClose={setWindowClose}
     onRequestMinimize={setWindowMinimize}
-    onRequestFullscreen={setWindowFullscreen}
+    onRequestMaximize={setWindowMaximize}
     onRequestToggleVisible={togglePreviewMode}
   />
 );

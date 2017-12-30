@@ -41,7 +41,7 @@ class RuntimeConfigModal extends PureComponent {
         <FormItem
           {...formItemLayout}
           label="端口"
-          extra="设置启动当前开发环境服务的端口号"
+          extra="设置启动当前开发环境的端口号"
         >
           {getFieldDecorator('port', {
             initialValue: formData.port,

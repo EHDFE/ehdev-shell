@@ -11,7 +11,6 @@ import { Calendar } from 'antd';
 
 import Card from './Card';
 import * as WeatherIcon from '../../components/component.weatherIcon';
-import Almanac from '../../components/component.almanac';
 import { actions } from './store';
 import { actions as projectActions } from '../module.project/store';
 import { GREETING_WORDS } from '../../CONFIG';
@@ -148,14 +147,6 @@ class DashboardModule extends Component {
       </Card>
     );
   }
-  renderAlmanac() {
-    const { date } = this.props;
-    return (
-      <Card className={styles.Dashboard__AlmanacCard}>
-        <Almanac date={date} />
-      </Card>
-    );
-  }
   renderCalendar() {
     return (
       <Card className={styles.Dashboard__CalendarCard}>
@@ -190,7 +181,6 @@ class DashboardModule extends Component {
         {this.renderInfoBar()}
         {this.renderSummaryCards()}
         {this.renderRecentsProjects()}
-        {this.renderAlmanac()}
         {this.renderCalendar()}
         {this.renderLastBuildStats()}
       </div>

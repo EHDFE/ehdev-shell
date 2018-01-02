@@ -18,7 +18,7 @@
     "less-loader": "^4.0.5",
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
-    "moment-duration-format": "^2.1.0",
+    "moment-duration-format": "^2.1.1",
     "nedb": "^1.8.0",
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.0",

@@ -53,7 +53,7 @@ exports.getBingWallpaper = async (date = getDateString()) => {
       url: format({
         protocol: 'file',
         slashes: true,
-        pathname: localImagePath,
+        pathname: localImagePath.replace(/\\/g, '/'),
       }),
     }, coverstory);
     const dateDiff = (new Date().getTime() - new Date(date).getTime()) / 86400000;

@@ -43,7 +43,7 @@
     "sharp": "^0.18.4",
     "stackblur-canvas": "^1.4.0",
     "tinycolor2": "^1.4.1",
-    "xterm": "^2.9.2"
+    "xterm": "^3.0.1"
   },
   "devDependencies": {
     "add-asset-html-webpack-plugin": "^2.1.2",

@@ -64,7 +64,7 @@
     "electron-log": "^2.2.13",
     "electron-react-devtools": "^0.5.2",
     "electron-updater": "^2.18.0",
-    "eslint": "^4.14.0",
+    "eslint": "^4.15.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-promise": "^3.6.0",

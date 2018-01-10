@@ -11,8 +11,8 @@ const render = (Component, store) => {
     <AppContainer>
       <Provider store={store}>
         <div>
-          <WindowManager />
           <Component />
+          <WindowManager />
           <DevTools />
         </div>
       </Provider>

@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "An electron based developing tool for feds.",
   "keywords": [
     "ehdev",
@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@antv/g2": "^3.0.3",
-    "antd": "^3.0.3",
+    "antd": "^3.1.0",
     "bizcharts": "^3.0.5",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
@@ -22,9 +22,9 @@
     "nedb": "^1.8.0",
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.0",
-    "qrcode": "^1.0.0",
+    "qrcode": "^1.2.0",
     "raven": "^2.3.0",
-    "raven-for-redux": "^1.1.1",
+    "raven-for-redux": "^1.2.0",
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.2.0",
@@ -43,7 +43,7 @@
     "sharp": "^0.18.4",
     "stackblur-canvas": "^1.4.0",
     "tinycolor2": "^1.4.1",
-    "xterm": "^2.9.2"
+    "xterm": "^3.0.1"
   },
   "devDependencies": {
     "add-asset-html-webpack-plugin": "^2.1.2",
@@ -61,11 +61,11 @@
     "css-loader": "^0.28.7",
     "duplicate-package-checker-webpack-plugin": "^2.0.2",
     "electron": "^1.8.1",
-    "electron-builder": "^19.49.3",
+    "electron-builder": "^19.52.1",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.13",
     "electron-react-devtools": "^0.5.2",
-    "electron-updater": "^2.17.6",
+    "electron-updater": "^2.18.0",
     "eslint": "^4.14.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
@@ -87,7 +87,7 @@
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.10.0",
     "webpack-bundle-analyzer": "^2.9.1",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.10.0"
   },
   "pre-commit": [
     "precommit-msg",

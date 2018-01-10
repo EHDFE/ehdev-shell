@@ -101,7 +101,7 @@ getDevConfig(projectConfig, {
   const compiler = Webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
   server.listen(PORT, '0.0.0.0', () => {
-    const url = chalk.underline(`http://${ip}:${PORT}`);
+    const url = chalk.underline(`${projectConfig.https ? 'https' : 'http'}://${ip}:${PORT}`);
     noticeLog('SERVER', `start at ${url}`);
   });
 }).catch((e) => {

@@ -80,7 +80,7 @@ export const actions = createActions({
     START_SERVER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.server.start(params);
       const startListener = function (dispatch, event, arg) {
-        if (arg.action === 'exit' || arg.action === 'error') {
+        if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
           dispatch(actions.service.stopServer(arg.pid, true, params));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }
@@ -112,7 +112,7 @@ export const actions = createActions({
     START_BUILDER: async (params, dispatch) => {
       const { pid } = await SERVICE_API.builder.start(params);
       const startListener = function (dispatch, event, arg) {
-        if (arg.action === 'exit' || arg.action === 'error') {
+        if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
           dispatch(actions.service.stopBuilder(arg.pid, true, params));
           ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
         }

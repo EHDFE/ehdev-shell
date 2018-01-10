@@ -4,14 +4,14 @@
  */
 import { PureComponent } from 'react';
 import classnames from 'classnames';
-import throttle from 'lodash/throttle';
-import Terminal from 'xterm';
 import PropTypes from 'prop-types';
+import { Terminal } from 'xterm';
+import * as fit from 'xterm/lib/addons/fit/fit';
 import 'xterm/lib/xterm.css';
 
 import styles from './index.less';
 
-Terminal.loadAddon('fit');
+Terminal.applyAddon(fit);
 
 export default class Console extends PureComponent {
   static defaultProps = {
@@ -19,64 +19,73 @@ export default class Console extends PureComponent {
     id: null,
     value: '',
     visible: false,
+    size: 'normal',
   }
   static propTypes = {
     className: PropTypes.string,
     id: PropTypes.number,
     value: PropTypes.string,
     visible: PropTypes.bool,
-  }
-  constructor(props) {
-    super(props);
-    this.resize = throttle(function() {
-      if (this.props.visible) {
-        this.terminal.fit();
-        this.clearTerminal();
-        this.writeContent(this.props);
-      }
-    }.bind(this), 250, {
-      leading: false,
-    });
+    size: PropTypes.oneOf(['normal', 'large']),
   }
   componentDidMount() {
-    this.terminal = new Terminal({
-      cursorBlink: false,
-    });
-    this.terminal.open(this.root, false);
-    setTimeout(() => {
+    if (this.props.visible) {
       this.writeContent(this.props);
-      this.terminal.fit();
-    }, 500);
-    window.addEventListener('resize', this.resize, false);
+    }
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.id !== nextProps.id || this.props.value !== nextProps.value) {
-      this.clearTerminal();
       this.writeContent(nextProps);
-    }
-    if (!this.props.visible && nextProps.visible) {
-      setTimeout(() => {
-        this.terminal.fit();
-        this.clearTerminal();
+    } else {
+      if (!this.props.visible && nextProps.visible) {
         this.writeContent(nextProps);
-      }, 500);
+      }
+    }
+    if (this.props.size !== nextProps.size) {
+      setTimeout(() => {
+        this.terminal && this.terminal.fit();
+        this.writeContent(nextProps);
+      }, 0);
     }
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resize);
     this.terminal.destroy();
   }
-  writeContent(props) {
-    props.value && this.terminal.write(props.value);
+  getTerminalInstance() {
+    if (!this.terminal) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.terminal = new Terminal({
+            cursorBlink: false,
+            scrollback: 5000,
+          });
+          this.terminal.open(this.root);
+          this.terminal.fit();
+          resolve(this.terminal);
+        }, 500);
+      });
+    }
+    return this.terminal;
+  }
+  async writeContent(props) {
+    if (props.value) {
+      this.terminal = await this.getTerminalInstance();
+      this.terminal.clear();
+      this.terminal.write(props.value);
+    }
   }
   clearTerminal() {
     this.terminal.clear();
   }
   render() {
-    const { className } = this.props;
+    const { className, size } = this.props;
     return (
       <div
-        className={classnames(className, styles.Console__Wrapper)}
+        className={classnames(
+          className,
+          styles.Console__Wrapper,
+          styles[`Console__Wrapper--${size}`],
+        )}
         ref={node => this.root = node}
       />
     );

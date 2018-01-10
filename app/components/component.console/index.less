@@ -3,11 +3,18 @@
 .Console__Wrapper {
   padding: 0 10px;
   border-radius: 4px;
-  width: 70vw;
-  height: 70vh;
   background-color: #1a1a1a;
 
   :global(.xterm-viewport) {
     overflow-y: hidden!important;
+  }
+
+  &--normal {
+    width: 630px;
+    height: 400px;
+  }
+  &--large {
+    width: ~"calc(100vw - 160px)";
+    height: ~"calc(100vh - 130px)";
   }
 }

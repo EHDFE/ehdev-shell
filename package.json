@@ -11,7 +11,6 @@
   "dependencies": {
     "@antv/g2": "^3.0.3",
     "antd": "^3.1.0",
-    "bizcharts": "^3.0.5",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "less": "^2.7.3",

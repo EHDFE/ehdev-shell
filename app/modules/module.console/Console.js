@@ -12,7 +12,7 @@ import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconBuild from 'react-icons/lib/fa/codepen';
 import IconTerminal from 'react-icons/lib/fa/terminal';
 import IconClose from 'react-icons/lib/fa/close';
-import { Badge, Button } from 'antd';
+import { Badge, Button, Popover } from 'antd';
 
 import { actions } from './store';
 
@@ -35,6 +35,11 @@ class ConsoleModule extends PureComponent {
     toggleVisible: PropTypes.func,
   }
 
+  state = {
+    size: 'normal',
+    sizeControlVisible: false,
+  }
+
   componentDidMount() {
     const decoder = new TextDecoder();
     ipcRenderer.on(COMMAND_OUTPUT, (event, data) => {
@@ -52,6 +57,14 @@ class ConsoleModule extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.visible && this.props.visible) {
+      this.setState({
+        sizeControlVisible: false,
+      });
+    }
+  }
+
   componentWillUnmount() {
     ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
   }
@@ -61,6 +74,32 @@ class ConsoleModule extends PureComponent {
     this.props.createLog(pid, category, log, args);
     delete LogBuffer[pid];
     delete LogBuffer[`${pid}_timer`];
+  }
+
+  handleToggleSize = () => {
+    const { size } = this.state;
+    this.setState({
+      size: size === 'normal' ? 'large' : 'normal',
+    });
+  }
+
+  handleMouseEnter = () => {
+    if (this.props.visible) {
+      this.hideTimer && clearTimeout(this.hideTimer);
+      this.setState({
+        sizeControlVisible: true,
+      });
+    }
+  }
+  handleMouseLeave = () => {
+    if (this.props.visible) {
+      this.hideTimer && clearTimeout(this.hideTimer);
+      this.hideTimer = setTimeout(() => {
+        this.setState({
+          sizeControlVisible: false,
+        });
+      }, 500);
+    }
   }
 
   handleActive(id, e) {
@@ -149,16 +188,45 @@ class ConsoleModule extends PureComponent {
     );
   }
 
+  renderSizeControl() {
+    const { size } = this.state;
+    let icon;
+    if (size === 'normal') {
+      icon = 'arrows-alt';
+    } else {
+      icon = 'shrink';
+    }
+    return (
+      <Button
+        type="dashed"
+        icon={icon}
+        onClick={this.handleToggleSize}
+        onMouseEnter={this.handleMouseEnter}
+      />
+    );
+  }
+
   render() {
     const { id, visible, content, toggleVisible } = this.props;
+    const { size, sizeControlVisible } = this.state;
     return (
       <div className={styles.ConsoleModule}>
-        <Button
-          type="primary"
-          icon="code"
-          className={styles.ConsoleModule__FloatButton}
-          onClick={toggleVisible}
-        />
+        <Popover
+          placement="left"
+          content={this.renderSizeControl()}
+          trigger="hover"
+          visible={sizeControlVisible}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+        >
+          <Button
+            type="primary"
+            icon="code"
+            shape="circle"
+            className={styles.ConsoleModule__FloatButton}
+            onClick={toggleVisible}
+          />
+        </Popover>
         <div
           className={
             classnames(
@@ -177,6 +245,7 @@ class ConsoleModule extends PureComponent {
             value={content}
             ref={con => (this.con = con)}
             visible={visible}
+            size={size}
           />
         </div>
       </div>

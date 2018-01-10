@@ -3,3 +3,4 @@ app/main-build/*
 assets/*
 app/node_modules/*
 app/dll/*
+node_modules/*

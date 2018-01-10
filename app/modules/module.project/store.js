@@ -9,7 +9,7 @@ import { ipcRenderer } from 'electron';
 
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
-import COMMON_API from '../../apis/common';
+// import COMMON_API from '../../apis/common';
 
 import showNotification from '../../utils/notification';
 

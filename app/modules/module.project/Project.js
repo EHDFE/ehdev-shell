@@ -292,7 +292,7 @@ class ProjectModule extends PureComponent {
     });
   }
   render() {
-    const { rootPath, prevRootPath, runnable, useESlint, setRootPath, pkg, runtimeConfig } = this.props;
+    const { rootPath, prevRootPath, runnable, setRootPath, pkg, runtimeConfig } = this.props;
     const { runtimeConfigerVisible } = this.state;
     const runtimeConfigerProps = {
       visible: runtimeConfigerVisible,

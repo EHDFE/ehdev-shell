@@ -61,7 +61,7 @@
     "electron": "^1.8.1",
     "electron-builder": "^19.52.1",
     "electron-context-menu": "^0.9.1",
-    "electron-log": "^2.2.13",
+    "electron-log": "^2.2.14",
     "electron-react-devtools": "^0.5.2",
     "electron-updater": "^2.18.0",
     "eslint": "^4.14.0",

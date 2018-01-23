@@ -38,7 +38,7 @@
     "redux-promise": "^0.5.3",
     "remarkable": "^1.7.1",
     "reselect": "^3.0.1",
-    "semver": "^5.4.1",
+    "semver": "^5.5.0",
     "stackblur-canvas": "^1.4.0",
     "tinycolor2": "^1.4.1",
     "xterm": "^3.0.1"

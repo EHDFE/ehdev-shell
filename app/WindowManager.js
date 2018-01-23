@@ -1,6 +1,7 @@
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+// import { notification } from 'antd';
 
 import { actions } from './modules/module.layout/store';
 
@@ -22,6 +23,19 @@ const setWindowMaximize = () => {
     win.maximize();
   }
 };
+
+ipcRenderer.on('update-download-progress', (e, msg) => {
+  // console.log(msg);
+  // notification.info({
+  //   duration: false,
+  //   key: 'id',
+  //   message: '下载更新',
+  //   description: msg,
+  //   onClose() {
+  //     return false;
+  //   }
+  // });
+});
 
 const WindowManager = ({ previewMode, togglePreviewMode }) => (
   <WindowControl

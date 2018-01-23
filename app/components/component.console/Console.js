@@ -9,6 +9,9 @@ import { Terminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';
 import 'xterm/lib/xterm.css';
 
+const DEFAULT_WINDOWS_FONT_FAMILY = 'Consolas, \'Courier New\', monospace';
+const DEFAULT_MAC_FONT_FAMILY = 'Menlo, Monaco, \'Courier New\', monospace';
+
 import styles from './index.less';
 
 Terminal.applyAddon(fit);
@@ -57,7 +60,13 @@ export default class Console extends PureComponent {
         setTimeout(() => {
           this.terminal = new Terminal({
             cursorBlink: false,
-            scrollback: 5000,
+            scrollback: 3000,
+            enableBold: true,
+            fontSize: 14,
+            lineHeight: 1.2,
+            fontFamily: process.platform === 'darwin' ? DEFAULT_MAC_FONT_FAMILY : DEFAULT_WINDOWS_FONT_FAMILY,
+            cancelEvents: true,
+            disableStdin: true,
           });
           this.terminal.open(this.root);
           this.terminal.fit();

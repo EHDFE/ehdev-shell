@@ -213,56 +213,63 @@ class ProjectModule extends PureComponent {
     if (runnable) {
       if (config && config.dll && config.dll.enable) {
         buildButton = (
-          <Dropdown key="start-build" overlay={
-            <Menu>
-              <Menu.Item>
-                <button
-                  className={styles['Project__ActionBarButton--trigger']}
-                  key={'start-dll-build'}
-                  disabled={currentService}
-                  onClick={this.handleStartDllBuilder}
-                >
-                  DLL构建
-                </button>
-              </Menu.Item>
-            </Menu>
-          }>
-            <div className={styles['Project__ActionBarGrid']}>
-              { buildButton }
-              <IconMoreVert />
-            </div>
-          </Dropdown>
+          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
+            { buildButton }
+            <Dropdown
+              trigger={['click']}
+              placement="bottomRight"
+              overlay={
+                <Menu>
+                  <Menu.Item>
+                    <button
+                      className={styles['Project__ActionBarButton--trigger']}
+                      key={'start-dll-build'}
+                      disabled={currentService}
+                      onClick={this.handleStartDllBuilder}
+                    >
+                      DLL构建
+                    </button>
+                  </Menu.Item>
+                </Menu>
+              }>
+              <IconMoreVert className={styles['Project__ActionBarMore']} />
+            </Dropdown>
+          </div>
         );
       }
       actions = [
-        <Dropdown
-          key="start-server"
-          overlay={
-            <Menu>
-              <Menu.Item>
-                <button
-                  className={styles['Project__ActionBarButton--trigger']}
-                  key={'advance-config'}
-                  onClick={this.showRuntimeConfiger}
-                >
-                  运行配置
-                </button>
-              </Menu.Item>
-            </Menu>
-          }
+        <div
+          key="start-server"        
+          className={styles['Project__ActionBarGrid']}
         >
-          <div className={styles['Project__ActionBarGrid']}>
-            <button
-              className={styles.Project__ActionBarButton}
-              disabled={currentService}
-              onClick={this.handleStartServer}
-            >
-              <IconPlay size={22} />
-              启动
-            </button>
-            <IconMoreVert />
-          </div>
-        </Dropdown>,
+          <button
+            className={styles.Project__ActionBarButton}
+            disabled={currentService}
+            onClick={this.handleStartServer}
+          >
+            <IconPlay size={22} />
+            启动
+          </button>
+          <Dropdown
+            trigger={['click']}
+            placement="bottomRight"
+            overlay={
+              <Menu>
+                <Menu.Item>
+                  <button
+                    className={styles['Project__ActionBarButton--trigger']}
+                    key={'advance-config'}
+                    onClick={this.showRuntimeConfiger}
+                  >
+                    运行配置
+                  </button>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <IconMoreVert className={styles['Project__ActionBarMore']} />
+          </Dropdown>
+        </div>,
         buildButton,
         <button
           className={styles.Project__ActionBarButton}

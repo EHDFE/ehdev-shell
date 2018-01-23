@@ -2,7 +2,7 @@
  * backend starter
  * @author ryan.bian
  */
-const { app } = require('electron');
+const { app, dialog, webContents } = require('electron');
 const Raven = require('raven');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
@@ -16,6 +16,48 @@ Raven.config(
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
+
+function sendStatusToWindow(msg) {
+  log.info(msg);
+  const webContentList = webContents.getAllWebContents();
+  webContentList.map(w => {
+    w.send('update-download-progress', msg);
+  });
+}
+
+setInterval(() => {
+  sendStatusToWindow(Math.random());
+}, 1000);
+
+autoUpdater.on('update-available', info => {
+  dialog.showMessageBox({
+    type: 'info',
+    title: '更新提示',
+    message: `发现可用更新: v${info.version}，点击更新下载?`,
+    buttons: ['更新', '忽略']
+  }, (buttonIndex) => {
+    if (buttonIndex === 0) {
+      autoUpdater.downloadUpdate();
+    }
+  });
+});
+autoUpdater.on('update-downloaded', () => {
+  dialog.showMessageBox({
+    title: '安装更新',
+    message: '更新包下载完成，重启并安装...'
+  }, () => {
+    setImmediate(() => autoUpdater.quitAndInstall());
+  });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  const log_message = [
+    `Download speed: ${progressObj.bytesPerSecond}`,
+    `Downloaded  ${progressObj.percent}%`,
+    `${progressObj.transferred}/${progressObj.total}`,
+  ];
+  sendStatusToWindow(log_message.join('\r'));
+});
 
 app.on('ready', function()  {
   autoUpdater.checkForUpdatesAndNotify();

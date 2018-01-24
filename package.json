@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "An electron based developing tool for feds.",
   "keywords": [
     "ehdev",

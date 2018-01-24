@@ -67,6 +67,7 @@ module.exports = {
             action: 'log',
             category: config.category,
             args: config.args,
+            root: config.cwd,
           });
         });
         if (config.parseResult === 'json') {
@@ -81,6 +82,7 @@ module.exports = {
             action: 'log',
             category: config.category,
             args: config.args,
+            root: config.cwd,
           });
         });
       });
@@ -92,6 +94,7 @@ module.exports = {
             action: 'error',
             category: config.category,
             args: config.args,
+            root: config.cwd,
           });
         });
         reject(err);
@@ -108,6 +111,7 @@ module.exports = {
             action: 'exit',
             category: config.category,
             args: config.args,
+            root: config.cwd,
           });
         });
         serviceStore.delete(pid);

@@ -40,7 +40,6 @@ module.exports = env => {
         'react',
         'react-copy-to-clipboard',
         'react-dom',
-        'redux-localstorage',
         'react-redux',
         'redux',
         'redux-actions',

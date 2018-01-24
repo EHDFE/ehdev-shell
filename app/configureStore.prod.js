@@ -1,7 +1,7 @@
 import { applyMiddleware, createStore, compose } from 'redux';
 import promiseMiddleware from 'redux-promise';
-import persistState from 'redux-localstorage';
 import createRavenMiddleware from 'raven-for-redux';
+import localforage from 'localforage';
 
 import reducer from './reducer';
 
@@ -13,7 +13,17 @@ const enhancer = compose(
     createRavenMiddleware(window.Raven, {
     }),
   ),
-  persistState(['page.dashboard', 'page.project', 'page.console', 'page.user'])
 );
 
-export default createStore(reducer, enhancer);
+export default () => new Promise(resolve => {
+  localforage.getItem('APP_STATE')
+    .then(res => {
+      resolve(
+        createStore(reducer, res, enhancer)
+      );
+    }).catch(() => {
+      resolve(
+        createStore(reducer, enhancer)
+      );
+    });
+});

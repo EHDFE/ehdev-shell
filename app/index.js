@@ -1,10 +1,12 @@
 /**
  * @author ryan.bian
  */
-import { shell } from 'electron';
+import { shell, ipcRenderer } from 'electron';
+import localforage from 'localforage';
 import App from './App';
 import render from './run';
-import store from './configureStore';
+import getStore from './configureStore';
+
 
 window.addEventListener('click', e => {
   if (e.target.tagName.toLowerCase() === 'a' &&
@@ -14,10 +16,31 @@ window.addEventListener('click', e => {
   }
 }, false);
 
-render(App, store);
+getStore()
+  .then(store => {
 
-if (module.hot) {
-  module.hot.accept('./App', () => {
+    const saveState = () => {
+      localforage.setItem('APP_STATE', store.getState());
+    };
+
+    ipcRenderer.on('APP_WILL_CLOSE', () => {
+      saveState();
+    });
+    ipcRenderer.on('APP:unresponsive', () => {
+      saveState();
+    });
+
+    const SAVE_INTERVAL = 60 * 1000;
+    setInterval(() => {
+      saveState();
+    }, SAVE_INTERVAL);
+
     render(App, store);
+    
+    if (module.hot) {
+      module.hot.accept('./App', () => {
+        render(App, store);
+      });
+    }
   });
-}
+

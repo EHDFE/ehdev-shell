@@ -25,9 +25,9 @@ function sendStatusToWindow(msg) {
   });
 }
 
-setInterval(() => {
-  sendStatusToWindow(Math.random());
-}, 1000);
+// setInterval(() => {
+//   sendStatusToWindow(Math.random());
+// }, 1000);
 
 autoUpdater.on('update-available', info => {
   dialog.showMessageBox({

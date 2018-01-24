@@ -11,7 +11,7 @@ import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 // import COMMON_API from '../../apis/common';
 
-import showNotification from '../../utils/notification';
+// import showNotification from '../../utils/notification';
 
 const defaultState = {
   env: {
@@ -86,9 +86,6 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
-      showNotification('启动开发环境', {
-        body: `项目名: ${params.projectName}\n端口: ${params.port}\n进程PID: ${pid}`,
-      });
       return {
         pid,
         rootPath: params.root,
@@ -104,9 +101,6 @@ export const actions = createActions({
           throw e;
         }
       }
-      showNotification('停止开发环境', {
-        body: `项目名: ${params.projectName}\n进程PID: ${pid}`
-      });
       return { pid };
     },
     START_BUILDER: async (params, dispatch) => {
@@ -118,9 +112,6 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
-      showNotification('开始构建', {
-        body: `项目名: ${params.projectName}\n进程PID: ${pid}`,
-      });
       return {
         pid,
         rootPath: params.root,
@@ -138,9 +129,6 @@ export const actions = createActions({
           throw e;
         }
       }
-      showNotification('构建已停止', {
-        body: `项目名: ${params.projectName}\n进程PID: ${pid}`
-      });
       return { pid };
     }
   },

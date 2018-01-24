@@ -7,6 +7,7 @@ import { createActions, handleActions } from 'redux-actions';
 import moment from 'moment';
 
 const MAX_CONSOLE_ITEM_LIMIT = 10;
+const MAX_LOG_LENGTH = 10000;
 
 const defaultState = {
   ids: [],
@@ -19,7 +20,7 @@ const defaultState = {
  * Console's action
  */
 export const actions = createActions({
-  CREATE_LOG: (pid, category, content, args) => {
+  CREATE_LOG: (pid, category, content, args, root) => {
     return {
       category,
       content,
@@ -27,6 +28,7 @@ export const actions = createActions({
       updateTime: moment().valueOf(),
       checked: false,
       projectName: args.projectName,
+      root,
     };
   },
   DELETE_LOG: id => {
@@ -52,9 +54,15 @@ const consoleReducer = handleActions(
       const { id, content, category } = payload;
       let entity, ids;
       if (state.ids.includes(id)) {
+        let newContent = state.entities[id].content + content;
+        if (category === 'OTHER') {
+          if (newContent.length > MAX_LOG_LENGTH) {
+            newContent = newContent.substr(newContent.length - MAX_LOG_LENGTH);
+          }
+        }
         entity = {
           ...state.entities[id],
-          content: state.entities[id].content + content,
+          content: newContent,
           updateTime: payload.updateTime,
           checked: payload.checked,
           projectName: payload.projectName,

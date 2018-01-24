@@ -1,13 +1,10 @@
 import { applyMiddleware, createStore, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import promiseMiddleware from 'redux-promise';
-import persistState from 'redux-localstorage';
-// import createRavenMiddleware from 'raven-for-redux';
+import localforage from 'localforage';
 
 import reducer from './reducer';
 import DevTools from './DevTools';
-
-// window.Raven.config('https://d2e7d99b1c414fe0ab0b02b67f17c1c8@sentry.io/247420').install();
 
 const logger = createLogger({
   level: 'info',
@@ -19,14 +16,22 @@ const enhancer = compose(
   applyMiddleware(
     promiseMiddleware,
     logger,
-    // createRavenMiddleware(window.Raven, {
-    // })
   ),
-  persistState(['page.dashboard', 'page.project', 'page.console', 'page.user']),
   DevTools.instrument(monitorReducer, {
     maxAge: 50,
     shouldCatchErrors: true,
   })
 );
 
-export default createStore(reducer, enhancer);
+export default () => new Promise(resolve => {
+  localforage.getItem('APP_STATE')
+    .then(res => {
+      resolve(
+        createStore(reducer, res, enhancer)
+      );
+    }).catch(() => {
+      resolve(
+        createStore(reducer, enhancer)
+      );
+    });
+});

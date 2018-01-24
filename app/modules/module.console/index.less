@@ -80,6 +80,20 @@
         .ConsoleModule__TabsButton {
           background-color: #999;
         }
+        &:hover {
+          .ConsoleModule__TabsTitle--content {
+            transform: translate(~"calc(-100% + 72px)");
+            animation: titleRunner ease-in-out 1s;
+          }
+          svg {
+            &:nth-child(1) {
+              display: none;
+            }
+            &:nth-child(2) {
+              display: block;
+            }
+          }
+        }
       }
 
       svg {
@@ -88,20 +102,6 @@
         }
       }
 
-      &:hover {
-        .ConsoleModule__TabsTitle--content {
-          transform: translate(~"calc(-100% + 72px)");
-          animation: titleRunner ease-in-out 1s;
-        }
-        svg {
-          &:nth-child(1) {
-            display: none;
-          }
-          &:nth-child(2) {
-            display: block;
-          }
-        }
-      }
     }
     &Button {
       display: flex;

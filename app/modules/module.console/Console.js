@@ -15,6 +15,7 @@ import IconClose from 'react-icons/lib/fa/close';
 import { Badge, Button, Popover } from 'antd';
 
 import { actions } from './store';
+import { actions as projectActions } from '../module.project/store';
 
 import styles from './index.less';
 import Console from '../../components/component.console/';
@@ -33,6 +34,7 @@ class ConsoleModule extends PureComponent {
     deleteLog: PropTypes.func,
     setActive: PropTypes.func,
     toggleVisible: PropTypes.func,
+    setRootPath: PropTypes.func,
   }
 
   state = {
@@ -44,13 +46,13 @@ class ConsoleModule extends PureComponent {
     const decoder = new TextDecoder();
     ipcRenderer.on(COMMAND_OUTPUT, (event, data) => {
       if (data.action === 'log' || data.action === 'error') {
-        const { pid, dataBuffer, category, args } = data;
+        const { pid, dataBuffer, category, args, root } = data;
         const log = decoder.decode(dataBuffer).replace(/\n/g, '\r\n');
         LogBuffer[`${pid}_timer`] && clearTimeout(LogBuffer[`${pid}_timer`]);
         Object.assign(LogBuffer, {
           [pid]: LogBuffer[pid] ? LogBuffer[pid] + log : log,
           [`${pid}_timer`]: setTimeout(() => {
-            this.dispatchLog(pid, category, args);
+            this.dispatchLog(pid, category, args, root);
           }, 100),
         });
       }
@@ -69,9 +71,9 @@ class ConsoleModule extends PureComponent {
     ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
   }
 
-  dispatchLog(pid, category, args) {
+  dispatchLog(pid, category, args, root) {
     const log = LogBuffer[pid];
-    this.props.createLog(pid, category, log, args);
+    this.props.createLog(pid, category, log, args, root);
     delete LogBuffer[pid];
     delete LogBuffer[`${pid}_timer`];
   }
@@ -117,6 +119,11 @@ class ConsoleModule extends PureComponent {
     }
     this.props.setActive(id);
   }
+  handleToggleProject(root, e) {
+    if (root) {
+      this.props.setRootPath(root);
+    }
+  }
   renderTabs() {
     const { id, logList, pids } = this.props;
     return (
@@ -154,6 +161,7 @@ class ConsoleModule extends PureComponent {
                         )
                       }
                       onClick={this.handleActive.bind(this, d.id)}
+                      onDoubleClick={this.handleToggleProject.bind(this, d.root)}
                     >
                       {icon}
                       <IconClose size={18} data-action="delete" />
@@ -280,10 +288,11 @@ const mapStateToProps = (state) => createSelector(
 );
 
 const mapDispatchToProps = dispatch => ({
-  createLog: (pid, category, content, args) => dispatch(actions.createLog(pid, category, content, args)),
+  createLog: (pid, category, content, args, root) => dispatch(actions.createLog(pid, category, content, args, root)),
   deleteLog: id => dispatch(actions.deleteLog(id)),
   setActive: id => dispatch(actions.activeLog(id)),
   toggleVisible: () => dispatch(actions.toggleVisible()),
+  setRootPath: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConsoleModule);

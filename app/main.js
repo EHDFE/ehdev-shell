@@ -139,8 +139,15 @@ function createWindow() {
     });
   }
 
+  ['unresponsive'].forEach(eventName => {
+    win.on(eventName, e => {
+      win.webContents.send(`APP:${eventName}`);
+    });
+  });
+
   win.on('close', e => {
     e.preventDefault();
+    win.webContents.send('APP_WILL_CLOSE');
     ipcMain.once('SERVICE:stop-all-done', () => {
       win.destroy();
     });

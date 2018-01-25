@@ -63,7 +63,7 @@
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",
     "electron-react-devtools": "^0.5.3",
-    "electron-updater": "^2.20.0",
+    "electron-updater": "^2.20.1",
     "eslint": "^4.16.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",

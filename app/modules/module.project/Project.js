@@ -230,11 +230,7 @@ class ProjectModule extends PureComponent {
                     <button
                       className={styles['Project__ActionBarButton--trigger']}
                       key={'start-dll-build'}
-<<<<<<< HEAD
-                      disabled={currentService}
-=======
                       disabled={builderRunning}
->>>>>>> update master
                       onClick={this.handleStartDllBuilder}
                     >
                       DLL构建
@@ -249,20 +245,12 @@ class ProjectModule extends PureComponent {
       }
       actions = [
         <div
-<<<<<<< HEAD
-          key="start-server"        
-=======
           key="start-server"
->>>>>>> update master
           className={styles['Project__ActionBarGrid']}
         >
           <button
             className={styles.Project__ActionBarButton}
-<<<<<<< HEAD
-            disabled={currentService}
-=======
             disabled={serverRunning}
->>>>>>> update master
             onClick={this.handleStartServer}
           >
             <IconPlay size={22} />

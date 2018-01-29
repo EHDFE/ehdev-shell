@@ -52,7 +52,7 @@ export default class Console extends PureComponent {
     }
   }
   componentWillUnmount() {
-    this.terminal.destroy();
+    this.terminal && this.terminal.destroy();
   }
   getTerminalInstance() {
     if (!this.terminal) {

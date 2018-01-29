@@ -8,7 +8,7 @@ import { Form, Row, Col } from 'antd';
 
 const FormItem = Form.Item;
 
-import styles from './index.less';
+import styles from '../index.less';
 
 const Profile = (props) => {
   const { name, version, author, description } = props;

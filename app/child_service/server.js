@@ -6,7 +6,6 @@ const path = require('path');
 const {
   Webpack,
   WebpackDevServer,
-  PORT,
   projectConfig,
   getDevConfig,
   getProvidePlugin,
@@ -16,10 +15,14 @@ const {
   getLocalIP,
 } = require('./config');
 
-const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
+const { SHELL_NODE_MODULES_PATH, RUNTIME_CONFIG } = process.env;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
 const DuplicatePackageCheckerPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'duplicate-package-checker-webpack-plugin'));
 const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
+const RuntimeConfig = Object.assign({
+  port: 3000,
+  https: false,
+}, JSON.parse(RUNTIME_CONFIG));
 
 const getDevServerConfig = PROJECT_CONFIG => {
 
@@ -48,7 +51,7 @@ const getDevServerConfig = PROJECT_CONFIG => {
     // as we specified in the config. In development, we always serve from /.
     publicPath: '/',
     // Enable HTTPS if the project config's variable is set to 'true'
-    https: !!PROJECT_CONFIG.https,
+    https: RuntimeConfig.https,
     host: '0.0.0.0',
     overlay: true,
     historyApiFallback: PROJECT_CONFIG.historyApiFallback || false,
@@ -69,7 +72,7 @@ const getDevServerConfig = PROJECT_CONFIG => {
 
 const ip = getLocalIP();
 getDevConfig(projectConfig, {
-  port: PORT,
+  port: RuntimeConfig.port,
   ip,
 }).then(async webpackConfig => {
   // add provide plugin if has the config
@@ -100,8 +103,8 @@ getDevConfig(projectConfig, {
   );
   const compiler = Webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, getDevServerConfig(projectConfig));
-  server.listen(PORT, '0.0.0.0', () => {
-    const url = chalk.underline(`${projectConfig.https ? 'https' : 'http'}://${ip}:${PORT}`);
+  server.listen(RuntimeConfig.port, '0.0.0.0', () => {
+    const url = chalk.underline(`${RuntimeConfig.https ? 'https' : 'http'}://${ip}:${RuntimeConfig.port}`);
     noticeLog('SERVER', `start at ${url}`);
   });
 }).catch((e) => {

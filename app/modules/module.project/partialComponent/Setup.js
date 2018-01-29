@@ -13,7 +13,7 @@ import { docco } from 'react-syntax-highlighter/styles/hljs';
 
 const FormItem = Form.Item;
 
-import styles from './index.less';
+import styles from '../index.less';
 
 const itemProps = {
   labelCol: {

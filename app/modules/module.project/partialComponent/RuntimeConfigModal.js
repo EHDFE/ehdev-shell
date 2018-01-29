@@ -3,7 +3,7 @@
  */
 import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, Select } from 'antd';
+import { Modal, Form, Select, Switch } from 'antd';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -20,6 +20,7 @@ class RuntimeConfigModal extends PureComponent {
     closeWithData: PropTypes.func,
     formData: PropTypes.shape({
       port: PropTypes.number,
+      https: PropTypes.bool,
     }),
   }
   handleConfirm = () => {
@@ -53,6 +54,17 @@ class RuntimeConfigModal extends PureComponent {
                 ))
               }
             </Select>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="启用HTTPS"
+        >
+          {getFieldDecorator('https', {
+            initialValue: formData.https,
+            valuePropName: 'checked',
+          })(
+            <Switch />
           )}
         </FormItem>
       </Form>

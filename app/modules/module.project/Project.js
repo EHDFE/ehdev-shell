@@ -7,12 +7,7 @@ import PropTypes from 'prop-types';
 // import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tabs, Layout, Menu, Dropdown, Spin, Card, Icon } from 'antd';
-import IconPlay from 'react-icons/lib/fa/play-circle-o';
-import IconStop from 'react-icons/lib/fa/stop-circle-o';
-import IconBuild from 'react-icons/lib/fa/codepen';
-import MdAutorenew from 'react-icons/lib/md/autorenew';
-import IconMoreVert from 'react-icons/lib/md/more-vert';
+import { Tabs, Layout, Spin, Card, Icon } from 'antd';
 
 import { actions } from './store';
 
@@ -23,9 +18,10 @@ import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
 // import EslintResult from '../../components/component.eslint.result/';
 
-import Profile from './Profile';
-import Setup from './Setup';
-import RuntimeConfigModal from './RuntimeConfigModal';
+import Profile from './partialComponent/Profile';
+import Setup from './partialComponent/Setup';
+import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
+import ProjectAction from './partialComponent/Action';
 
 const { TabPane } = Tabs;
 const { Content } = Layout;
@@ -106,6 +102,7 @@ class ProjectModule extends PureComponent {
       port: runtimeConfig.port,
       projectName: pkg.name,
       configerName: `ehdev-configer-${config.type}`,
+      runtimeConfig,
     });
   }
   handleStartBuilder = () => {
@@ -125,9 +122,8 @@ class ProjectModule extends PureComponent {
       isDll: true,
     });
   }
-  handleStopService = e => {
+  handleStopService = (type, pid) => {
     const { pkg } = this.props;
-    const { type, pid } = e.target.dataset;
     if (type === 'server') {
       this.props.stopServer(pid, false, {
         projectName: pkg.name,
@@ -192,127 +188,19 @@ class ProjectModule extends PureComponent {
   }
   renderActionBar() {
     const { currentServiceList, runnable, config } = this.props;
-    const serverRunning = currentServiceList.find(d => d.type === 'server');
-    const builderRunning = currentServiceList.find(d => d.type === 'builder');
-    let actions;
-    let buildButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'start-build'}
-        disabled={builderRunning}
-        onClick={this.handleStartBuilder}
-      >
-        <IconBuild size={22} />
-        构建
-      </button>
-    );
-    let refreshButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'update'}
-        onClick={()=>{this.getInitData('refresh');}}
-      >
-        <MdAutorenew size={22} />
-          刷新
-      </button>
-    );
-    if (runnable) {
-      if (config && config.dll && config.dll.enable) {
-        buildButton = (
-          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
-            { buildButton }
-            <Dropdown
-              trigger={['click']}
-              placement="bottomRight"
-              overlay={
-                <Menu>
-                  <Menu.Item>
-                    <button
-                      className={styles['Project__ActionBarButton--trigger']}
-                      key={'start-dll-build'}
-                      disabled={builderRunning}
-                      onClick={this.handleStartDllBuilder}
-                    >
-                      DLL构建
-                    </button>
-                  </Menu.Item>
-                </Menu>
-              }>
-              <IconMoreVert className={styles['Project__ActionBarMore']} />
-            </Dropdown>
-          </div>
-        );
-      }
-      actions = [
-        <div
-          key="start-server"
-          className={styles['Project__ActionBarGrid']}
-        >
-          <button
-            className={styles.Project__ActionBarButton}
-            disabled={serverRunning}
-            onClick={this.handleStartServer}
-          >
-            <IconPlay size={22} />
-            启动
-          </button>
-          <Dropdown
-            trigger={['click']}
-            placement="bottomRight"
-            overlay={
-              <Menu>
-                <Menu.Item>
-                  <button
-                    className={styles['Project__ActionBarButton--trigger']}
-                    key={'advance-config'}
-                    onClick={this.showRuntimeConfiger}
-                  >
-                    运行配置
-                  </button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <IconMoreVert className={styles['Project__ActionBarMore']} />
-          </Dropdown>
-        </div>,
-        buildButton,
-      ];
-      if (serverRunning) {
-        actions.push(
-          <button
-            className={styles.Project__ActionBarButton}
-            key={'stop-server'}
-            onClick={this.handleStopService}
-            data-type={'server'}
-            data-pid={serverRunning.pid}
-          >
-            <IconStop size={22} />
-            停止服务
-          </button>
-        );
-      }
-      if (builderRunning) {
-        actions.push(
-          <button
-            className={styles.Project__ActionBarButton}
-            key={'stop-builder'}
-            onClick={this.handleStopService}
-            data-type={'builder'}
-            data-pid={builderRunning.pid}
-          >
-            <IconStop size={22} />
-            停止构建
-          </button>
-        );
-      }
-      actions.push(refreshButton);
-    } else {
-      actions = [
-        refreshButton
-      ];
-    }
-    return <div className={styles.Project__ActionBar}>{actions}</div>;
+    const props = {
+      runningServer: currentServiceList.find(d => d.type === 'server'),
+      runningBuilder: currentServiceList.find(d => d.type === 'builder'),
+      runnable,
+      dllEnable: config && config.dll && config.dll.enable,
+      getInitData: this.getInitData,
+      handleStartServer: this.handleStartServer,
+      handleStartBuilder: this.handleStartBuilder,
+      handleStopService: this.handleStopService,
+      handleStartDllBuilder: this.handleStartDllBuilder,
+      onClickRuntimeConfiger: this.showRuntimeConfiger,
+    };
+    return <ProjectAction {...props} />;
   }
   // renderLintResult() {
   //   const { rootPath, lintResult } = this.props;

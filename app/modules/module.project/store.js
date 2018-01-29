@@ -25,6 +25,7 @@ const defaultState = {
     prevRootPath: undefined,
     runtimeConfig: {
       port: 3000,
+      https: false,
     },
   },
   service: {
@@ -41,15 +42,7 @@ export const actions = createActions({
       PROJECT_API.root.makeRecord(rootPath);
       return rootPath;
     },
-    GET_ENV: async rootPath => {
-      const { pkg, config, runnable, useESlint } = await PROJECT_API.root.post(rootPath);
-      return {
-        pkg,
-        config,
-        runnable,
-        useESlint,
-      };
-    },
+    GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
     SET_ENV: async (configs, rootPath, dispatch) => {
       try {
         await PROJECT_API.root.editConfig(configs);

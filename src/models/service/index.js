@@ -20,10 +20,9 @@ const builderScriptPath = path.join(APP_PATH, './child_service/builder');
 const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
 
 exports.startServer = async (config) => {
-  const { root, port, configerName } = config;
-  const _port = port || 3000;
+  const { root, configerName, runtimeConfig } = config;
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = Commander.run(`node ${serverScriptPath} --port=${_port}`, {
+  const { pid } = Commander.run(`node ${serverScriptPath}`, {
     cwd: root,
     parseResult: false,
     env: {
@@ -32,6 +31,7 @@ exports.startServer = async (config) => {
       CONFIGER_NAME: configerName,
       NODE_ENV: 'development',
       PATH: process.env.PATH,
+      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
     },
     category: 'SERVER',
     args: {

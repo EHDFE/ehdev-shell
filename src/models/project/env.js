@@ -5,6 +5,7 @@
 const path = require('path');
 const { readJSON, writeJSON, glob } = require('../../utils/');
 const context = require('../../context');
+const scmProvider = require('../../provider/scm');
 
 exports.setRoot = async rootPath => {
   let projectConfig;
@@ -25,11 +26,13 @@ exports.setRoot = async rootPath => {
       cwd: rootPath,
       nodir: true,
     });
+    const scmInfo = await scmProvider.detect(rootPath);
     return {
       pkg,
       config: projectConfig,
       runnable,
       useESlint: files.length > 0,
+      scmInfo,
     };
   } catch (e) {
     throw e;

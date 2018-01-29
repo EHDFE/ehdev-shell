@@ -95,7 +95,7 @@ export const actions = createActions({
     STOP_SERVER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
-          await SERVICE_API.server.stop(pid);
+          await SERVICE_API.server.stop(+pid);
           return { pid };
         } catch (e) {
           throw e;
@@ -121,7 +121,7 @@ export const actions = createActions({
     STOP_BUILDER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
-          await SERVICE_API.builder.stop(pid);
+          await SERVICE_API.builder.stop(+pid);
           return {
             pid,
           };

@@ -45,7 +45,11 @@ class ProjectModule extends PureComponent {
     lintResult: PropTypes.array,
     config: PropTypes.object,
     pids: PropTypes.array,
-    currentService: PropTypes.object,
+    currentServiceList: PropTypes.arrayOf(PropTypes.shape({
+      pid: PropTypes.number.isRequired,
+      rootPath: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['server', 'builder']),
+    })),
     runtimeConfig: PropTypes.shape({
       port: PropTypes.number,
     }).isRequired,
@@ -121,15 +125,15 @@ class ProjectModule extends PureComponent {
       isDll: true,
     });
   }
-  handleStopService = () => {
-    const { pkg, currentService } = this.props;
-    if (!currentService) return;
-    if (currentService.type === 'server') {
-      this.props.stopServer(currentService.pid, false, {
+  handleStopService = e => {
+    const { pkg } = this.props;
+    const { type, pid } = e.target.dataset;
+    if (type === 'server') {
+      this.props.stopServer(pid, false, {
         projectName: pkg.name,
       });
-    } else if (currentService.type === 'builder') {
-      this.props.stopBuilder(currentService.pid, false, {
+    } else if (type === 'builder') {
+      this.props.stopBuilder(pid, false, {
         projectName: pkg.name,
       });
     }
@@ -187,13 +191,15 @@ class ProjectModule extends PureComponent {
     return <DependencyManager refresh={this.getInitData} {...this.props}/>;
   }
   renderActionBar() {
-    const { currentService, runnable, config } = this.props;
+    const { currentServiceList, runnable, config } = this.props;
+    const serverRunning = currentServiceList.find(d => d.type === 'server');
+    const builderRunning = currentServiceList.find(d => d.type === 'builder');
     let actions;
     let buildButton = (
       <button
         className={styles.Project__ActionBarButton}
         key={'start-build'}
-        disabled={currentService}
+        disabled={builderRunning}
         onClick={this.handleStartBuilder}
       >
         <IconBuild size={22} />
@@ -224,7 +230,11 @@ class ProjectModule extends PureComponent {
                     <button
                       className={styles['Project__ActionBarButton--trigger']}
                       key={'start-dll-build'}
+<<<<<<< HEAD
                       disabled={currentService}
+=======
+                      disabled={builderRunning}
+>>>>>>> update master
                       onClick={this.handleStartDllBuilder}
                     >
                       DLL构建
@@ -239,12 +249,20 @@ class ProjectModule extends PureComponent {
       }
       actions = [
         <div
+<<<<<<< HEAD
           key="start-server"        
+=======
+          key="start-server"
+>>>>>>> update master
           className={styles['Project__ActionBarGrid']}
         >
           <button
             className={styles.Project__ActionBarButton}
+<<<<<<< HEAD
             disabled={currentService}
+=======
+            disabled={serverRunning}
+>>>>>>> update master
             onClick={this.handleStartServer}
           >
             <IconPlay size={22} />
@@ -271,17 +289,36 @@ class ProjectModule extends PureComponent {
           </Dropdown>
         </div>,
         buildButton,
-        <button
-          className={styles.Project__ActionBarButton}
-          key={'stop'}
-          disabled={!currentService}
-          onClick={this.handleStopService}
-        >
-          <IconStop size={22} />
-          停止
-        </button>,
-        refreshButton,
       ];
+      if (serverRunning) {
+        actions.push(
+          <button
+            className={styles.Project__ActionBarButton}
+            key={'stop-server'}
+            onClick={this.handleStopService}
+            data-type={'server'}
+            data-pid={serverRunning.pid}
+          >
+            <IconStop size={22} />
+            停止服务
+          </button>
+        );
+      }
+      if (builderRunning) {
+        actions.push(
+          <button
+            className={styles.Project__ActionBarButton}
+            key={'stop-builder'}
+            onClick={this.handleStopService}
+            data-type={'builder'}
+            data-pid={builderRunning.pid}
+          >
+            <IconStop size={22} />
+            停止构建
+          </button>
+        );
+      }
+      actions.push(refreshButton);
     } else {
       actions = [
         refreshButton
@@ -388,7 +425,7 @@ const mapStateToProps = (state) => createSelector(
   (env, service) => ({
     ...env,
     pids: service.pids || [],
-    currentService: service.instancesList.find(d => env.rootPath === d.rootPath),
+    currentServiceList: service.instancesList.filter(d => env.rootPath === d.rootPath),
   }),
 );
 const mapDispatchToProps = dispatch => ({

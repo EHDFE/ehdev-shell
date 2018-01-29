@@ -9,8 +9,13 @@
     "electron"
   ],
   "dependencies": {
+<<<<<<< HEAD
     "@antv/g2": "^3.0.3",
     "antd": "^3.1.4",
+=======
+    "@antv/g2": "^3.0.4",
+    "antd": "^3.1.6",
+>>>>>>> update master
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "less": "^2.7.3",
@@ -59,11 +64,19 @@
     "css-loader": "^0.28.9",
     "duplicate-package-checker-webpack-plugin": "^2.1.0",
     "electron": "^1.8.2-beta.4",
+<<<<<<< HEAD
     "electron-builder": "^19.55.1",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",
     "electron-react-devtools": "^0.5.3",
     "electron-updater": "^2.20.0",
+=======
+    "electron-builder": "^19.55.3",
+    "electron-context-menu": "^0.9.1",
+    "electron-log": "^2.2.14",
+    "electron-react-devtools": "^0.5.3",
+    "electron-updater": "^2.20.1",
+>>>>>>> update master
     "eslint": "^4.16.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
@@ -80,7 +93,11 @@
     "redux-devtools-log-monitor": "^1.4.0",
     "redux-logger": "^3.0.6",
     "shebang-loader": "0.0.1",
+<<<<<<< HEAD
     "source-map-support": "^0.5.2",
+=======
+    "source-map-support": "^0.5.3",
+>>>>>>> update master
     "style-loader": "^0.20.1",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.10.0",
@@ -97,7 +114,11 @@
     "debug": "cross-env NODE_ENV=development electron --inspect=5858 .",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "eslint --cache ./app",
+<<<<<<< HEAD
     "lint-fix": "eslint --cache ./ --fix",
+=======
+    "lint-fix": "eslint --cache ./app --fix",
+>>>>>>> update master
     "build-prod": "webpack --env.prod --config ./config/webpack.config.js --progress",
     "pack": "electron-builder --dir",
     "dist-all": "electron-builder -mw",

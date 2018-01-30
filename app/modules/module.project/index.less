@@ -2,11 +2,12 @@
 
 .Project {
   &__Layout {
-    background: none;
+    display: grid;
+    height: 100%;
+    grid-template-rows: 36px ~"calc(100% - 36px)";
   }
   &__TopBar {
     display: flex;
-    height: 36px;
     justify-content: space-between;
     align-items: center;
   }
@@ -72,6 +73,11 @@
     &:focus {
       outline: 0 none;
     }
+  }
+
+  &__TabContent {
+    height: ~"calc(100vh - 204px)";
+    overflow: auto;
   }
 }
 

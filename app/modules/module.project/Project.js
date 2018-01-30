@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 // import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tabs, Layout, Spin, Card, Icon } from 'antd';
+import { Tabs, Spin, Card, Icon } from 'antd';
 
 import { actions } from './store';
 
@@ -24,7 +24,6 @@ import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
 import ProjectAction from './partialComponent/Action';
 
 const { TabPane } = Tabs;
-const { Content } = Layout;
 
 class ProjectModule extends PureComponent {
   static defaultProps = {
@@ -60,6 +59,7 @@ class ProjectModule extends PureComponent {
     getPkgInfo: PropTypes.func,
     // getESlintResult: PropTypes.func,
     updateRuntimeConfig: PropTypes.func,
+    pkgInfo: PropTypes.object,
   }
   state = {
     defaultActiveKey: 'profile',
@@ -75,25 +75,26 @@ class ProjectModule extends PureComponent {
       this.props.getPkgInfo(nextProps.rootPath);
     }
   }
-  getInitData = (tag) => {
-    if (tag) {
+  getInitData = hasLoading => {
+    if (hasLoading) {
       this.setState({
         loading: true
       });
     }
     const { rootPath } = this.props;
     if (rootPath) {
-      Promise.all([
+      return Promise.all([
         this.props.getEnvData(rootPath),
         this.props.getPkgInfo(rootPath),
       ]).then(()=> {
-        if (tag) {
+        if (hasLoading) {
           this.setState({
             loading: false
           });
         }
       });
     }
+    return Promise.resolve();
   }
   handleStartServer = () => {
     const { pkg, config, runtimeConfig } = this.props;
@@ -184,7 +185,14 @@ class ProjectModule extends PureComponent {
     return <Card style={{ textAlign: 'center' }} bordered={false}>没有找到运行配置</Card>;
   }
   renderPackageVersions() {
-    return <DependencyManager refresh={this.getInitData} {...this.props}/>;
+    const  { pkgInfo, pkg, rootPath } = this.props;
+    const props = {
+      pkgInfo,
+      pkg,
+      rootPath,
+      refresh: this.getInitData,
+    };
+    return <DependencyManager {...props} />;
   }
   renderActionBar() {
     const { currentServiceList, runnable, config } = this.props;
@@ -243,39 +251,43 @@ class ProjectModule extends PureComponent {
     // }
     return (
       <Page>
-        <Layout className={styles.Project__Layout}>
-          <Content>
-            <div className={styles.Project__TopBar}>
-              <FolderPicker
-                onChange={value => {
-                  setRootPath(value);
-                }}
-                prevValue={prevRootPath}
-                value={rootPath}
-              >
-                <h3 className={styles.Project__ProjectName}>
-                  { pkg && pkg.name || '请选择项目' }
-                  <Icon type="setting" className={styles.Project__ProjectNameIcon} />
-                </h3>
-              </FolderPicker>
-              { this.renderActionBar() }
-            </div>
-            <Spin spinning={this.state.loading}>
-              <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
-                <TabPane tab="基础信息" key="profile">
+        <div className={styles.Project__Layout}>
+          <div className={styles.Project__TopBar}>
+            <FolderPicker
+              onChange={value => {
+                setRootPath(value);
+              }}
+              prevValue={prevRootPath}
+              value={rootPath}
+            >
+              <h3 className={styles.Project__ProjectName}>
+                { pkg && pkg.name || '请选择项目' }
+                <Icon type="setting" className={styles.Project__ProjectNameIcon} />
+              </h3>
+            </FolderPicker>
+            { this.renderActionBar() }
+          </div>
+          <Spin className={styles.Project__ContentSpin} spinning={this.state.loading}>
+            <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+              <TabPane tab="基础信息" key="profile">
+                <div className={styles.Project__TabContent}>
                   { this.renderProfile() }
-                </TabPane>
-                { runnable ? <TabPane tab="运行配置" key="config">
+                </div>
+              </TabPane>
+              { runnable ? <TabPane tab="运行配置" key="config">
+                <div className={styles.Project__TabContent}>
                   { this.renderSetup() }
-                </TabPane> : null }
-                <TabPane tab="依赖管理" key="versions">
+                </div>
+              </TabPane> : null }
+              <TabPane tab="依赖管理" key="versions">
+                <div className={styles.Project__TabContent}>
                   { this.renderPackageVersions() }
-                </TabPane>
-              </Tabs>
-            </Spin>
-            <RuntimeConfigModal {...runtimeConfigerProps} />
-          </Content>
-        </Layout>
+                </div>
+              </TabPane>
+            </Tabs>
+          </Spin>
+          <RuntimeConfigModal {...runtimeConfigerProps} />
+        </div>
       </Page>
     );
   }

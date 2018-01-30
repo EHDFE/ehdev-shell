@@ -6,7 +6,6 @@ const path = require('path');
 const Commander = require('../../service/commander');
 const { hasDir, hasFile, mkdir, readJSON, readFile } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
-// const context = require('../../context');
 
 const initFolder = () => {
   hasFile(ConfigerFolderPackagePath).then(file => {

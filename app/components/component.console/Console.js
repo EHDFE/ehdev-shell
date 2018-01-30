@@ -77,7 +77,7 @@ export default class Console extends PureComponent {
     return this.terminal;
   }
   async writeContent(props) {
-    if (props.value) {
+    if (props.value && props.visible) {
       this.terminal = await this.getTerminalInstance();
       this.terminal.clear();
       this.terminal.write(props.value);

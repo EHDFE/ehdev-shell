@@ -36,7 +36,7 @@ getStore()
     }, SAVE_INTERVAL);
 
     render(App, store);
-    
+
     if (module.hot) {
       module.hot.accept('./App', () => {
         render(App, store);

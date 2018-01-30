@@ -8,8 +8,8 @@ import { Form, Select, Input, Switch, Button, Row, Col, Card } from 'antd';
 import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
 import isBoolean from 'lodash/isBoolean';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import SyntaxHighlighter from 'react-syntax-highlighter/prism';
+import { coy } from 'react-syntax-highlighter/styles/prism';
 
 const FormItem = Form.Item;
 
@@ -197,8 +197,7 @@ class Setup extends React.Component {
             ref={(inst) => this.form = inst}/>
         </Col>
         <Col {...colProps}>
-
-          <SyntaxHighlighter language='javascript' style={docco}>{JSON.stringify(fields, null, 2)}</SyntaxHighlighter>
+          <SyntaxHighlighter language="javascript" style={coy}>{JSON.stringify(fields, null, 2)}</SyntaxHighlighter>
           <Col span={24} className={styles.Setup__Button}>
             <Button type="primary" htmlType="submit" size="large" onClick={this.handleSubmit}>提交</Button>
             <Button style={{ marginLeft: 20 }} size="large" onClick={this.handleReset}>

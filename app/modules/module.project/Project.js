@@ -40,6 +40,10 @@ class ProjectModule extends PureComponent {
     lintResult: PropTypes.array,
     config: PropTypes.object,
     pids: PropTypes.array,
+    scmInfo: PropTypes.shape({
+      isGitProject: PropTypes.bool,
+      isSvnProject: PropTypes.bool,
+    }),
     currentServiceList: PropTypes.arrayOf(PropTypes.shape({
       pid: PropTypes.number.isRequired,
       rootPath: PropTypes.string.isRequired,
@@ -158,8 +162,12 @@ class ProjectModule extends PureComponent {
     });
   }
   renderProfile() {
-    const { pkg } = this.props;
-    const profileProps = {};
+    const { pkg, scmInfo, rootPath } = this.props;
+    const profileProps = {
+      rootPath,
+      isGitProject: scmInfo.isGitProject,
+      isSvnProject: scmInfo.isSvnProject,
+    };
     if (pkg) {
       Object.assign(profileProps, {
         name: pkg.name,

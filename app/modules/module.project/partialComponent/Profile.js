@@ -4,99 +4,106 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Row, Col } from 'antd';
+import { Icon } from 'antd';
 
-const FormItem = Form.Item;
-
-import styles from '../index.less';
+import styles from './profile.less';
 
 const Profile = (props) => {
-  const { name, version, author, description } = props;
-  const itemProps = {
-    labelCol: {
-      xs: {
-        span: 6,
-      },
-      sm: {
-        span: 4
-      },
-      lg: {
-        span: 3,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        offset: 1,
-        span: 17,
-      },
-      sm: {
-        offset: 1,
-        span: 19,
-      },
-      lg: {
-        offset: 1,
-        span: 18,
-      },
-    },
-    colon: false,
-  };
-  const colProps = {
-    xs: 24,
-    sm: 12,
-    xl: 8,
-  };
+  const {
+    rootPath,
+    name,
+    version,
+    author,
+    description,
+    isGitProject,
+    isSvnProject,
+  } = props;
+  const items = [
+    <div key="rootPath" className={styles.Profile__Item}>
+      <div className={styles.Profile__ItemLabel}>
+        <Icon type="home" />根目录
+      </div>
+      <div className={styles.Profile__ItemContent}>{rootPath}</div>
+    </div>
+  ];
+  if (isSvnProject || isGitProject) {
+    items.push(
+      <div key="scm" className={styles.Profile__Item}>
+        <div className={styles.Profile__ItemLabel}>
+          <Icon type="fork" />版本管理
+        </div>
+        <div className={styles.Profile__ItemContent}>
+          {isSvnProject && 'svn'}
+          {isGitProject && 'git'}
+        </div>
+      </div>
+    );
+  }
+  if (name) {
+    items.push(
+      <div key="name" className={styles.Profile__Item}>
+        <div className={styles.Profile__ItemLabel}>
+          <Icon type="book" />项目名称
+        </div>
+        <div className={styles.Profile__ItemContent}>{name}</div>
+      </div>
+    );
+  }
+  if (version) {
+    items.push(
+      <div key="version" className={styles.Profile__Item}>
+        <div className={styles.Profile__ItemLabel}>
+          <Icon type="tag-o" />版本号
+        </div>
+        <div className={styles.Profile__ItemContent}>{version}</div>
+      </div>
+    );
+  }
+  if (author) {
+    items.push(
+      <div key="author" className={styles.Profile__Item}>
+        <div className={styles.Profile__ItemLabel}>
+          <Icon type="user" />作者
+        </div>
+        <div className={styles.Profile__ItemContent}>{author}</div>
+      </div>
+    );
+  }
+  if (description) {
+    items.push(
+      <div key="description" className={styles.Profile__Item}>
+        <div className={styles.Profile__ItemLabel}>
+          <Icon type="profile" />描述
+        </div>
+        <div className={styles.Profile__ItemContent}>{description}</div>
+      </div>
+    );
+  }
   return (
-    <Form className={styles.Profile}>
-      <Row>
-        <Col {...colProps}>
-          <FormItem
-            label={<h3 className={styles.Profile__Title}>名称</h3>}
-            {...itemProps}
-          >
-            { name }
-          </FormItem>
-        </Col>
-        <Col {...colProps}>
-          <FormItem
-            label={<h3 className={styles.Profile__Title}>作者</h3>}
-            {...itemProps}
-          >
-            { author }
-          </FormItem>
-        </Col>
-        <Col {...colProps}>
-          <FormItem
-            label={<h3 className={styles.Profile__Title}>版本号</h3>}
-            {...itemProps}
-          >
-            { version }
-          </FormItem>
-        </Col>
-        <Col {...colProps}>
-          <FormItem
-            label={<h3 className={styles.Profile__Title}>描述</h3>}
-            {...itemProps}
-          >
-            { description }
-          </FormItem>
-        </Col>
-      </Row>
-    </Form>
+    <section className={styles.Profile}>
+      { items }
+    </section>
   );
 };
 
 PropTypes.defaultProps = {
+  rootPath: '',
   name: '',
   version: '',
   description: '',
   author: '',
+  isGitProject: false,
+  isSvnProject: false,
 };
 
 Profile.propTypes = {
+  rootPath: PropTypes.string,
   name: PropTypes.string,
   version: PropTypes.string,
   description: PropTypes.string,
   author: PropTypes.string,
+  isGitProject: PropTypes.bool,
+  isSvnProject: PropTypes.bool,
 };
 
 export default Profile;

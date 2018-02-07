@@ -1,5 +1,5 @@
 import CommandManager from './Manager';
-import commands from './commands.json';
+import commands from './commands';
 
 const commandManager = new CommandManager(commands);
 

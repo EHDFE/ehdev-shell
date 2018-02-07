@@ -10,8 +10,7 @@ import { ipcRenderer } from 'electron';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 // import COMMON_API from '../../apis/common';
-
-// import showNotification from '../../utils/notification';
+import notificationManager from '../../service/notification';
 
 const defaultState = {
   env: {
@@ -71,7 +70,8 @@ export const actions = createActions({
   },
   SERVICE: {
     START_SERVER: async (params, dispatch) => {
-      const { pid } = await SERVICE_API.server.start(params);
+      const { runtimeConfig } = params;
+      const { pid, ip } = await SERVICE_API.server.start(params);
       const startListener = function (dispatch, event, arg) {
         if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
           dispatch(actions.service.stopServer(arg.pid, true, params));
@@ -79,6 +79,14 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      notificationManager.send({
+        title: '开发服务启动成功',
+        message: '点击打开浏览器',
+        onClick() {
+          const protocol = runtimeConfig.https ? 'https://' : 'http://';
+          notificationManager.openBrowser(`${protocol}${ip}:${runtimeConfig.port}`);
+        },
+      });
       return {
         pid,
         rootPath: params.root,

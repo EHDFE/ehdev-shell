@@ -10,7 +10,7 @@ const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,
 } = require('../../utils/env');
-const { readJSON } = require('../../utils/index');
+const { readJSON, getLocalIP } = require('../../utils');
 const context = require('../../context');
 
 const APP_PATH = app.getAppPath();
@@ -49,8 +49,10 @@ exports.startServer = async (config) => {
     },
     { upsert: true }
   );
+  const ip = getLocalIP();
   return {
     pid,
+    ip,
   };
 };
 

@@ -165,8 +165,8 @@ class ProjectModule extends PureComponent {
     const { pkg, scmInfo, rootPath } = this.props;
     const profileProps = {
       rootPath,
-      isGitProject: scmInfo.isGitProject,
-      isSvnProject: scmInfo.isSvnProject,
+      isGitProject: scmInfo && scmInfo.isGitProject,
+      isSvnProject: scmInfo && scmInfo.isSvnProject,
     };
     if (pkg) {
       Object.assign(profileProps, {

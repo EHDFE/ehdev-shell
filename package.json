@@ -22,6 +22,7 @@
     "moment-duration-format": "^2.2.1",
     "mousetrap": "^1.6.1",
     "nedb": "^1.8.0",
+    "node-notifier": "^5.2.1",
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.0",
     "qrcode": "^1.2.0",

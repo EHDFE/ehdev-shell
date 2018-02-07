@@ -1,4 +1,5 @@
 ![Jarvis](http://image.tf56.com/dfs/group1/M00/3F/22/CiFBCVoXseOAJz1_AAAjpvFXiYk329.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell?ref=badge_shield)
 
 ---
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
@@ -43,6 +44,6 @@ Javis aims to provide an easy to use gui tool for developers.
 
 - `Cannot download winCodeSign, attempt #1: Error: Request timed out` refer to [https://github.com/electron-userland/electron-builder/issues/1859#issuecomment-320922905](https://github.com/electron-userland/electron-builder/issues/1859#issuecomment-320922905)
 
-## License
 
+## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell?ref=badge_large)

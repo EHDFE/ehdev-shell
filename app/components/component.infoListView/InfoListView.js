@@ -11,11 +11,11 @@ import MdDelete from 'react-icons/lib/md/delete';
 
 import FileCard from '../component.fileCard/';
 
-import APP_CONFIG from '../../../CONFIG';
+import APP_CONFIG from '../../MAIN_CONFIG';
 
 import styles from './index.less';
 
-export default class ListView extends Component {
+export default class InfoListView extends Component {
   static defaultProps = {
     viewMode: 'grid',
     data: [],
@@ -99,7 +99,7 @@ export default class ListView extends Component {
               <FileCard
                 url={d.url}
                 name={d.name}
-                type={d.type}
+                type={d.mime || d.type}
                 mask={this.renderItemActions(d, true)}
               />
             </Col>
@@ -116,9 +116,9 @@ export default class ListView extends Component {
             <div className={styles.ListView__listItem} key={d._id}>
               <div>
                 <p className={styles.ListView__listName}>{ d.name }</p>
-                <p className={styles.ListView__listTime}>原图：{ Math.round(d.size / 1000) }KB</p>
+                <p className={styles.ListView__listTime}>原图：{ (d.size / 1024).toFixed(2) }KB</p>
                 {
-                  d.csize ? <p className={styles.ListView__listTime}>压缩后：{ Math.round(d.csize / 1000) }KB</p> : ''
+                  d.bytes ? <p className={styles.ListView__listTime}>压缩后：{ (d.bytes / 1024).toFixed(2) }KB</p> : ''
                 }
               </div>
               <div className={styles.ListView__listItemAction}>
@@ -136,6 +136,7 @@ export default class ListView extends Component {
     const { data } = this.props;
     const { previewModalVisible, previewDataId } = this.state;
     const previewItem = data.find(d => d._id === previewDataId);
+    
     const modalProps = {
       width: APP_CONFIG.WIDTH - 130,
       visible: previewModalVisible,

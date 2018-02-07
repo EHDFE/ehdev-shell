@@ -40,6 +40,14 @@ const COMMON_API = {
   //     throw e;
   //   }
   // },
+  async imageMin(params) {
+    try {
+      const res = await remoteAPI.imageMin(params);
+      return res;
+    } catch (e) {
+      throw e;
+    }
+  }
 };
 
 export default COMMON_API;

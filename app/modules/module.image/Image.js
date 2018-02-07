@@ -25,20 +25,16 @@ class ImageModule extends Component {
   static propTypes = {
     listType: PropTypes.oneOf(['grid', 'list']),
     fileList: PropTypes.array.isRequired,
-    fetchFileList: PropTypes.func,
     setListType: PropTypes.func,
-    upload: PropTypes.func,
     addFile: PropTypes.func,
     delFile: PropTypes.func,
     clearFile: PropTypes.func,
     generate: PropTypes.object,
     gUpConfig: PropTypes.func,
-    gUpList: PropTypes.func,
     doGenerate: PropTypes.func,
   }
   componentWillMount() {
-    // const { fetchFileList } = this.props;
-    // fetchFileList();
+    // this.props.clearFile();
   }
   handleChangeListType = e => {
     this.props.setListType(e.target.value);
@@ -125,7 +121,7 @@ const listTypeSelector = createSelector(
 );
 const fileListSelector = createSelector(
   processPageSelector,
-  pageState => Object.keys(pageState.files.fileMap).map(id => pageState.files.fileMap[id]),
+  pageState => Object.keys(pageState.gfiles.fileMap).map(id => pageState.gfiles.fileMap[id]),
 );
 const generateConfigSelector = createSelector(
   processPageSelector,
@@ -151,13 +147,10 @@ const mapStateToProps = (state, ownProps) => createSelector(
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   setListType: type => dispatch(actions.genlayout.setListType(type)),
-  fetchFileList: params => dispatch(actions.genlist.get(params)),
   addFile: file => dispatch(actions.genfiles.add(file)),
   delFile: id => dispatch(actions.genfiles.del(id)),
   clearFile: () => dispatch(actions.genfiles.clear()),
-  upload: (id, file) => dispatch(actions.genfiles.upload(id, file)),
   gUpConfig: c => dispatch(actions.generate.upConfig(c)),
-  gUpList: l => dispatch(actions.generate.upList(l)),
   doGenerate: (files, config) => dispatch(actions.genfiles.doGen(files, config))
 });
 

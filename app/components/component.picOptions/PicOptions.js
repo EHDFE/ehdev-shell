@@ -14,10 +14,6 @@ const RadioGroup = Radio.Group;
 import styles from './index.less';
 
 export default class PicOptions extends Component {
-  static defaultProps = {
-    onChange() {},
-    genParams: {},
-  }
   static propTypes = {
     onChange: PropTypes.func,
     genParams: PropTypes.object,
@@ -162,7 +158,7 @@ export default class PicOptions extends Component {
     return (
       <div styles={styles.PicOptions}>
         {this.renderQuality()}
-        {this.renderFormat()}
+        {/* {this.renderFormat()} */}
         {this.renderToWebp()}
         <div className={styles.PicOptions__row}>
           <Input

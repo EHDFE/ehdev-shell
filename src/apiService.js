@@ -8,6 +8,7 @@ const configer = require('./models/configer/index');
 const common = require('./models/common/index');
 const uploadList = require('./models/upload/list');
 const dashboard = require('./models/dashboard/index');
+const imageMin = require('./models/image/index');
 
 const apiService = {
   root: {
@@ -27,6 +28,7 @@ const apiService = {
     deleteList: uploadList.del,
   },
   dashboard,
+  imageMin
 };
 
 module.exports = apiService;

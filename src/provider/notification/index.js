@@ -1,28 +1,22 @@
 const notifier = require('node-notifier');
+const { EventEmitter } = require('events');
+
+const emitter = new EventEmitter();
+
+notifier.on('click', (...args) => {
+  emitter.emit('click', ...args);
+});
+notifier.on('timeout', (...args) => {
+  emitter.emit('timeout', ...args);
+});
 
 module.exports = {
-  notify(config, responser, callbacks = {}) {
+  notify(config, responser) {
     notifier.notify(
       config,
       responser,
     );
 
-    const {
-      onClick,
-      onTimeout,
-    } = callbacks;
-
-    if (onClick) {
-      notifier.on('click', (notifierObject, options) => {
-        onClick();
-      });
-    }
-
-    if (onTimeout) {
-      notifier.on('timeout', (notifierObject, options) => {
-        onTimeout();
-      });
-    }
-
+    return emitter;
   },
 };

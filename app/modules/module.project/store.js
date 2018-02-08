@@ -80,8 +80,8 @@ export const actions = createActions({
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
       notificationManager.send({
-        title: '开发服务启动成功',
-        message: '点击打开浏览器',
+        title: '开发服务',
+        message: '启动开发服务，点击打开页面！',
         onClick() {
           const protocol = runtimeConfig.https ? 'https://' : 'http://';
           notificationManager.openBrowser(`${protocol}${ip}:${runtimeConfig.port}`);
@@ -97,6 +97,10 @@ export const actions = createActions({
       if (!stopped) {
         try {
           await SERVICE_API.server.stop(+pid);
+          notificationManager.send({
+            title: '开发服务',
+            message: '服务已停止！'
+          });
           return { pid };
         } catch (e) {
           throw e;
@@ -113,6 +117,10 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      notificationManager.send({
+        title: '构建项目',
+        message: '构建中！'
+      });
       return {
         pid,
         rootPath: params.root,
@@ -123,6 +131,12 @@ export const actions = createActions({
       if (!stopped) {
         try {
           await SERVICE_API.builder.stop(+pid);
+          notificationManager.send({
+            title: '构建项目',
+            message: '构建已停止！',
+            onClick() {
+            },
+          });
           return {
             pid,
           };

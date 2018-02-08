@@ -8,11 +8,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export default class NotificationManager {
-  constructor() {
-  }
   send(
     config,
-    responser = () => {}
+    responser = (err, response) => {}
   ) {
     if (!config.title && !config.message) {
       // eslint-disable-next-line
@@ -27,10 +25,16 @@ export default class NotificationManager {
       onTimeout,
       ...notifyConfig
     } = config;
-    remoteAPI.providers.notification.notify(notifyConfig, responser, {
-      onClick,
-      onTimeout,
-    });
+
+    const emitter = remoteAPI.providers.notification.notify(notifyConfig, responser);
+    if (notifyConfig.wait) {
+      if (onClick) {
+        emitter.once('click', onClick);
+      }
+      if (onTimeout) {
+        emitter.once('timeout', onTimeout);
+      }
+    }
   }
   openBrowser(address) {
     shell.openExternal(address);

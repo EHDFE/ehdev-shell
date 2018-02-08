@@ -132,7 +132,11 @@
       "main.js",
       "MAIN_CONFIG.js"
     ],
-    "asar": false,
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/**",
+      "child_service/**"
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "publish": "github"

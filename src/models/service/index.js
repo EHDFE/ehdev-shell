@@ -3,17 +3,16 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { app } = require('electron');
+// const { app } = require('electron');
 const { serviceStore } = require('../../service/index');
 const Commander = require('../../service/commander');
 const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,
+  APP_PATH,
 } = require('../../utils/env');
 const { readJSON, getLocalIP } = require('../../utils');
 const context = require('../../context');
-
-const APP_PATH = app.getAppPath();
 
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');

@@ -42,6 +42,7 @@ autoUpdater.on('update-downloaded', () => {
     title: '安装更新',
     message: '更新包下载完成，重启并安装...'
   }, () => {
+    log.info('update-downloaded');
     setImmediate(() => autoUpdater.quitAndInstall());
   });
 });
@@ -52,6 +53,7 @@ autoUpdater.on('download-progress', (progressObj) => {
     `Downloaded  ${progressObj.percent}%`,
     `${progressObj.transferred}/${progressObj.total}`,
   ];
+  log.info(`download-progress: ${progressObj.percent}`);
   sendStatusToWindow(log_message.join('\r'));
 });
 

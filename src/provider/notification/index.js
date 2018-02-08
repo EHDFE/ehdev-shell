@@ -1,5 +1,6 @@
-const notifier = require('node-notifier');
+const log = require('electron-log');
 const { EventEmitter } = require('events');
+const notifier = require('node-notifier');
 
 const emitter = new EventEmitter();
 
@@ -14,7 +15,14 @@ module.exports = {
   notify(config, responser) {
     notifier.notify(
       config,
-      responser,
+      (error, response, metadata) => {
+        if (error) {
+          log.error(error.toString());
+          responser && responser(error);
+        } else {
+          responser && responser(error, response, metadata);
+        }
+      },
     );
 
     return emitter;

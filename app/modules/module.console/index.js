@@ -1,4 +1,4 @@
-export ConsoleModule from './Console';
+export default from './Console';
 export {
   default as ConsoleReducer,
   actions

@@ -76,9 +76,9 @@ exports.writeJSON = (file, json) => new Promise((resolve, reject) => {
 const hasDir = exports.hasDir = path => new Promise((resolve, reject) => {
   fs.stat(path, (err, stats) => {
     if (!err && stats.isDirectory()) {
-      resolve();
+      resolve(true);
     } else {
-      reject();
+      resolve(false);
     }
   });
 });
@@ -90,9 +90,9 @@ const hasDir = exports.hasDir = path => new Promise((resolve, reject) => {
 exports.hasFile = path => new Promise((resolve, reject) => {
   fs.stat(path, (err, stats) => {
     if (!err && stats.isFile()) {
-      resolve();
+      resolve(true);
     } else {
-      reject();
+      resolve(false);
     }
   });
 });
@@ -122,13 +122,7 @@ exports.httpGet = url => new Promise((resolve, reject) => {
 });
 
 const makeDir = async path => {
-  let dirExist;
-  try {
-    await hasDir(path);
-    dirExist = true;
-  } catch (e) {
-    dirExist = false;
-  }
+  let dirExist = await hasDir(path);
   if (!dirExist) {
     return mkdir(path);
   }
@@ -195,4 +189,11 @@ exports.killPid = (ps, pid, callback) => {
     }
     return callback();
   }
+};
+
+exports.getLocalIP = () => {
+  const ifs = require('os').networkInterfaces();
+  return Object.keys(ifs)
+    .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
+    .filter(x => x)[0].address;
 };

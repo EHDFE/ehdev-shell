@@ -6,22 +6,25 @@ const path = require('path');
 const Commander = require('../../service/commander');
 const { hasDir, hasFile, mkdir, readJSON, readFile } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
-// const context = require('../../context');
 
 const initFolder = () => {
-  hasFile(ConfigerFolderPackagePath).catch(() => {
-    Commander.run('npm init --yes', {
-      cwd: ConfigerFolderPath,
-    });
+  hasFile(ConfigerFolderPackagePath).then(file => {
+    if (!file) {
+      Commander.run('npm init --yes', {
+        cwd: ConfigerFolderPath,
+      });
+    }
   });
 };
-hasDir(ConfigerFolderPath).then(() => {
-  initFolder();
-}).catch(() => {
-  mkdir(ConfigerFolderPath)
-    .then(() => {
-      initFolder();
-    });
+hasDir(ConfigerFolderPath).then(dir => {
+  if (dir) {
+    initFolder();
+  } else {
+    mkdir(ConfigerFolderPath)
+      .then(() => {
+        initFolder();
+      });
+  }
 });
 
 exports.getConfigs = async () => {

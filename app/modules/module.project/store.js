@@ -10,8 +10,7 @@ import { ipcRenderer } from 'electron';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 // import COMMON_API from '../../apis/common';
-
-// import showNotification from '../../utils/notification';
+import notificationManager from '../../service/notification';
 
 const defaultState = {
   env: {
@@ -25,6 +24,7 @@ const defaultState = {
     prevRootPath: undefined,
     runtimeConfig: {
       port: 3000,
+      https: false,
     },
   },
   service: {
@@ -41,15 +41,7 @@ export const actions = createActions({
       PROJECT_API.root.makeRecord(rootPath);
       return rootPath;
     },
-    GET_ENV: async rootPath => {
-      const { pkg, config, runnable, useESlint } = await PROJECT_API.root.post(rootPath);
-      return {
-        pkg,
-        config,
-        runnable,
-        useESlint,
-      };
-    },
+    GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
     SET_ENV: async (configs, rootPath, dispatch) => {
       try {
         await PROJECT_API.root.editConfig(configs);
@@ -78,7 +70,8 @@ export const actions = createActions({
   },
   SERVICE: {
     START_SERVER: async (params, dispatch) => {
-      const { pid } = await SERVICE_API.server.start(params);
+      const { runtimeConfig } = params;
+      const { pid, ip } = await SERVICE_API.server.start(params);
       const startListener = function (dispatch, event, arg) {
         if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
           dispatch(actions.service.stopServer(arg.pid, true, params));
@@ -86,6 +79,14 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      notificationManager.send({
+        title: '开发服务',
+        message: '启动开发服务，点击打开页面！',
+        onClick() {
+          const protocol = runtimeConfig.https ? 'https://' : 'http://';
+          notificationManager.openBrowser(`${protocol}${ip}:${runtimeConfig.port}`);
+        },
+      });
       return {
         pid,
         rootPath: params.root,
@@ -95,7 +96,11 @@ export const actions = createActions({
     STOP_SERVER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
-          await SERVICE_API.server.stop(pid);
+          await SERVICE_API.server.stop(+pid);
+          notificationManager.send({
+            title: '开发服务',
+            message: '服务已停止！'
+          });
           return { pid };
         } catch (e) {
           throw e;
@@ -112,6 +117,10 @@ export const actions = createActions({
         }
       }.bind(this, dispatch);
       ipcRenderer.on(COMMAND_OUTPUT, startListener);
+      notificationManager.send({
+        title: '构建项目',
+        message: '构建中！'
+      });
       return {
         pid,
         rootPath: params.root,
@@ -121,7 +130,13 @@ export const actions = createActions({
     STOP_BUILDER: async (pid, stopped, params) => {
       if (!stopped) {
         try {
-          await SERVICE_API.builder.stop(pid);
+          await SERVICE_API.builder.stop(+pid);
+          notificationManager.send({
+            title: '构建项目',
+            message: '构建已停止！',
+            onClick() {
+            },
+          });
           return {
             pid,
           };

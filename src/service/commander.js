@@ -56,7 +56,7 @@ module.exports = {
 
     const ret = new Promise((resolve, reject) => {
       let res;
-      if (config.parseResult === 'json') {
+      if (config.parseResult) {
         res = Buffer.from('');
       }
       ps.stdout.on('data', data => {
@@ -70,7 +70,7 @@ module.exports = {
             root: config.cwd,
           });
         });
-        if (config.parseResult === 'json') {
+        if (config.parseResult) {
           res = Buffer.concat([res, data]);
         }
       });
@@ -85,6 +85,9 @@ module.exports = {
             root: config.cwd,
           });
         });
+        if (config.parseResult === 'string') {
+          res = Buffer.concat([res, data]);
+        }
       });
       ps.on('error', err => {
         webContentArray.forEach(webContent => {
@@ -115,11 +118,16 @@ module.exports = {
           });
         });
         serviceStore.delete(pid);
-        if (config.parseResult === 'json') {
-          try {
-            resolve(res.toString() === '' ? {} : JSON.parse(res.toString()));
-          } catch (e) {
-            reject(res.toString());
+        if (config.parseResult) {
+          const str = res.toString();
+          if (config.parseResult === 'json') {
+            try {
+              resolve(str === '' ? {} : JSON.parse(str));
+            } catch (e) {
+              reject(e.toString());
+            }
+          } else {
+            resolve(str);
           }
         }
       });

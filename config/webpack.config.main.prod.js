@@ -40,18 +40,19 @@ module.exports = {
       'process.env.DEBUG_PROD': JSON.stringify(process.env.DEBUG_PROD || 'false')
     }),
     new webpack.NamedModulesPlugin(),
-    new UglifyJSPlugin({
-      uglifyOptions: {
-        ecma: 8,
-      },
-    }),
+    // new UglifyJSPlugin({
+    //   uglifyOptions: {
+    //     ecma: 8,
+    //   },
+    // }),
   ],
 
-  // externals: {
-  //   eslint: {
-  //     commonjs2: 'eslint',
-  //   }
-  // },
+  externals: {
+    'node-notifier': 'node-notifier',
+    // eslint: {
+    //   commonjs2: 'eslint',
+    // }
+  },
 
   /**
    * Disables webpack processing of __dirname and __filename.
@@ -60,6 +61,6 @@ module.exports = {
    */
   node: {
     __dirname: false,
-    __filename: false
+    __filename: false,
   },
 };

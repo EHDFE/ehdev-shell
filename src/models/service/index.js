@@ -3,27 +3,25 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { app } = require('electron');
+// const { app } = require('electron');
 const { serviceStore } = require('../../service/index');
 const Commander = require('../../service/commander');
 const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,
+  APP_PATH,
 } = require('../../utils/env');
-const { readJSON } = require('../../utils/index');
+const { readJSON, getLocalIP } = require('../../utils');
 const context = require('../../context');
-
-const APP_PATH = app.getAppPath();
 
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');
 const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
 
 exports.startServer = async (config) => {
-  const { root, port, configerName } = config;
-  const _port = port || 3000;
+  const { root, configerName, runtimeConfig } = config;
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = Commander.run(`node ${serverScriptPath} --port=${_port}`, {
+  const { pid } = Commander.run(`node ${serverScriptPath}`, {
     cwd: root,
     parseResult: false,
     env: {
@@ -32,6 +30,7 @@ exports.startServer = async (config) => {
       CONFIGER_NAME: configerName,
       NODE_ENV: 'development',
       PATH: process.env.PATH,
+      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
     },
     category: 'SERVER',
     args: {
@@ -49,8 +48,10 @@ exports.startServer = async (config) => {
     },
     { upsert: true }
   );
+  const ip = getLocalIP();
   return {
     pid,
+    ip,
   };
 };
 

@@ -16,6 +16,7 @@ import { Badge, Button, Popover } from 'antd';
 
 import { actions } from './store';
 import { actions as projectActions } from '../module.project/store';
+import commandManager from '../../service/command';
 
 import styles from './index.less';
 import Console from '../../components/component.console/';
@@ -57,6 +58,18 @@ class ConsoleModule extends PureComponent {
         });
       }
     });
+    this.removeAllListeners = commandManager.addListeners({
+      'console:show': () => {
+        if (!this.props.visible) {
+          this.props.toggleVisible();
+        }
+      },
+      'console:hide': () => {
+        if (this.props.visible) {
+          this.props.toggleVisible();
+        }
+      },
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -69,6 +82,7 @@ class ConsoleModule extends PureComponent {
 
   componentWillUnmount() {
     ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
+    this.removeAllListeners();
   }
 
   dispatchLog(pid, category, args, root) {

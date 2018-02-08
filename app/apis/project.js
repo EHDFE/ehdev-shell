@@ -41,40 +41,27 @@ const PROJECT_API = {
       } catch (e) {
         throw e;
       }
-      // const res = await fetch(`${PROJECT_PATH}/config/${encodeURIComponent(rootPath)}`, {
-      //   method: 'put',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(config),
-      // });
-      // return handleResponse(res, {
-      //   errorNotification: true,
-      //   successNotification: true,
-      //   successMsg: '更新成功!',
-      // });
     }
   },
   pkg: {
+    async install(packageName, env) {
+      return await remoteAPI.npm.install(packageName, env);
+    },
+    async uninstall(packageName, env) {
+      return await remoteAPI.npm.uninstall(packageName, env);
+    },
+    async update(rootPath) {
+      return await remoteAPI.npm.update(rootPath);
+    },
     async outdated(packageName) {
-      try {
-        const res = await remoteAPI.npm.outdated(
-          packageName ? packageName + '/' : '',
-        );
-        return res;
-      } catch (e) {
-        throw e;
-      }
+      return await remoteAPI.npm.outdated(
+        packageName ? packageName + '/' : '',
+      );
     },
     async getAllVersions(rootPath) {
-      try {
-        const res = await remoteAPI.npm.allVersions('', {
-          rootPath,
-        });
-        return res;
-      } catch (e) {
-        throw e;
-      }
+      return await remoteAPI.npm.allVersions('', {
+        rootPath,
+      });
     }
   },
 };

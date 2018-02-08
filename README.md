@@ -5,8 +5,10 @@
 [![Build Status](https://travis-ci.org/EHDFE/ehdev-shell.svg)](https://travis-ci.org/EHDFE/ehdev-shell)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dcd2d67edf7946dba8afa86693d2b511)](https://www.codacy.com/app/macisi/ehdev-shell?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EHDFE/ehdev-shell&amp;utm_campaign=Badge_Grade)
 [![GitHub tag](https://img.shields.io/github/tag/ehdfe/ehdev-shell.svg)]()
+[![Github All Releases](https://img.shields.io/github/downloads/ehdfe/ehdev-shell/total.svg)]()
 [![David](https://img.shields.io/david/EHDFE/ehdev-shell.svg)]()
 [![David](https://img.shields.io/david/dev/EHDFE/ehdev-shell.svg)]()
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell?ref=badge_shield)
 
 ## Introduction
 Javis aims to provide an easy to use gui tool for developers.

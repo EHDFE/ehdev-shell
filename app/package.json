@@ -10,7 +10,7 @@
     "electron"
   ],
   "scripts": {
-    "postinstall": "npm rebuild --runtime=electron --target=1.8.1 --disturl=https://atom.io/download/atom-shell --build-from-source"
+    "postinstall": "npm rebuild --runtime=electron --target=1.8.2 --disturl=https://atom.io/download/atom-shell --build-from-source"
   },
   "dependencies": {
     "add-asset-html-webpack-plugin": "^2.1.2",
@@ -19,10 +19,11 @@
     "duplicate-package-checker-webpack-plugin": "^2.0.2",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-plugin": "^2.30.1",
+    "node-notifier": "^5.2.1",
     "stats-webpack-plugin": "^0.6.1",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.10.0"
+    "webpack-dev-server": "^2.11.1"
   },
   "author": "ryan.bian",
   "license": "MIT",

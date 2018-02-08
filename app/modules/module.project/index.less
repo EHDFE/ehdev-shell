@@ -2,11 +2,12 @@
 
 .Project {
   &__Layout {
-    background: none;
+    display: grid;
+    height: 100%;
+    grid-template-rows: 36px ~"calc(100% - 36px)";
   }
   &__TopBar {
     display: flex;
-    height: 36px;
     justify-content: space-between;
     align-items: center;
   }
@@ -20,7 +21,7 @@
     &Button {
       display: inline-flex;
       margin: 0 5px;
-      width: 70px;
+      // width: 70px;
       background: none;
       border: 0 none;
       cursor: pointer;
@@ -44,6 +45,9 @@
           color: @disabled-color;
           cursor: not-allowed;
         }
+      }
+      > svg {
+        margin-right: 0.5em;
       }
     }
     &Grid {
@@ -73,9 +77,14 @@
       outline: 0 none;
     }
   }
+
+  &__TabContent {
+    height: ~"calc(100vh - 204px)";
+    overflow: auto;
+  }
 }
 
-.Setup{
+.Setup {
   &__Card {
     // padding: 10px 10px 2px;
     margin: 10px;
@@ -110,17 +119,17 @@
       }
     }
   }
-  &__FormItem{
+  &__FormItem {
     margin-bottom: 0;
     background-color: @background-color-base;
   }
-  &__Bash{
+  &__Bash {
     padding: 30px 20px;
     font-size: 14px;
     border-radius: 4px;
     background-color: @border-color-split;
   }
-  &__Button{
+  &__Button {
     margin-top: 20px;
     margin-bottom: 20px;
     text-align: center;

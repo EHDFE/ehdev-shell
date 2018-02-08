@@ -1,20 +1,19 @@
-import React, { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Radio, Button, Spin, notification } from 'antd';
+import { Table, Radio, Button, Spin, notification, Tooltip } from 'antd';
 import AddDev from '../component.addDev/';
+import projectAPI from '../../apis/project';
 
 import styles from './index.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-class DependencyManager extends Component {
+class DependencyManager extends PureComponent {
   static propTypes = {
     pkgInfo: PropTypes.object,
     pkg: PropTypes.object,
     rootPath: PropTypes.string,
-    getPkgInfo: PropTypes.func,
-    getEnvData: PropTypes.func,
     refresh: PropTypes.func,
   };
 
@@ -26,10 +25,18 @@ class DependencyManager extends Component {
     modalVisible: false,
   };
 
+  componentDidMount() {
+    this.updateState(this.state.tab);
+  }
+  componentWillReceiveProps() {
+    this.updateState(this.state.tab);
+  }
+
   filterData = e => {
     const value = e.target.value;
     this.updateState(value);
   };
+
   updateState(tab) {
     this.setState((prevState, props) => {
       const { pkg, pkgInfo } = props;
@@ -41,7 +48,8 @@ class DependencyManager extends Component {
             dangerUpdate:
               d &&
               d.outdated &&
-              d.current && d.current.split('.')[0] !== d.latest.split('.')[0],
+              d.current &&
+              d.current.split('.')[0] !== d.latest.split('.')[0],
           })
         );
       }
@@ -59,10 +67,14 @@ class DependencyManager extends Component {
       this.setState({
         loading: false,
       });
+    }).catch(() => {
+      this.setState({
+        loading: false,
+      });
     });
-  };
+  }
   updatepkg = (record, index) => {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       let data = [...prevState.dataSource];
       data[index]['isUpdating'] = true;
       return {
@@ -70,32 +82,11 @@ class DependencyManager extends Component {
         loading: true,
       };
     });
-    this.installpkg(
+    this.installPkg(
+      record.packageName,
       this.props.rootPath,
-      [{ packageName: record.packageName }],
       this.state.tab === 'dependencies' ? '--save' : '--save-dev'
-    ).then(data => {
-      if (data.success) {
-        Promise.all([
-          this.props.getPkgInfo(this.props.rootPath),
-          this.props.getEnvData(this.props.rootPath),
-        ]).then(() => {
-          this.setState({
-            loading: false,
-          });
-          notification['success']({
-            message: 'SUCCESS',
-            description: `${record.packageName} has been updated!`,
-          });
-        });
-      } else {
-        notification['error']({
-          message: 'ERROR MESSAGE',
-          description: data.errorMsg,
-          duration: null,
-        });
-      }
-    });
+    );
   };
   batchUpdate = () => {
     if (!this.state.selectedRows) {
@@ -104,50 +95,57 @@ class DependencyManager extends Component {
     this.setState({
       loading: true,
     });
-    this.installpkg(
+    this.installPkg(
+      this.state.selectedRows.map(d => [d.packageName, d.version].join('@')),
       this.props.rootPath,
-      this.state.selectedRows,
-      this.state.tab === 'dependencies' ? '--save' : '--save-dev'
-    ).then(data => {
-      if (data.success) {
-        Promise.all([
-          this.props.getPkgInfo(this.props.rootPath),
-          this.props.getEnvData(this.props.rootPath),
-        ]).then(() => {
-          this.setState({
-            loading: false,
-            selectedRowKeys: [],
-          });
+      this.state.tab === 'dependencies' ? '-S' : '-D'
+    );
+  }
+
+  handleUpdateDep = async () => {
+    const { rootPath } = this.props;
+    const result = await projectAPI.pkg.update(rootPath);
+    if (result.success) {
+      this.refresh()
+        .then(() => {
           notification['success']({
             message: 'SUCCESS',
-            description: 'All selected packages have been updated!',
+            description: '依赖更新成功!',
           });
         });
-      } else {
-        notification['error']({
-          message: 'ERROR MESSAGE',
-          description: data.errorMsg,
-          duration: null,
-        });
-      }
-    });
-  };
+    } else {
+      notification['error']({
+        message: 'ERROR MESSAGE',
+        description: '依赖更新失败',
+        duration: null,
+      });
+    }
+  }
 
-  installpkg = (rootPath, packages, type) => {
-    return fetch('/api/npm/install', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        rootPath,
-        args: `${type}`,
-        packages,
-      }),
-    }).then(res => res.json());
-  };
-  uninstallpkg = (record, index) => {
-    this.setState((prevState) => {
+  installPkg = async (packages, rootPath, type) => {
+    const result = await projectAPI.pkg.install(packages, {
+      rootPath,
+      args: type,
+    });
+    if (result.success) {
+      this.refresh().then(() => {
+        notification['success']({
+          message: 'SUCCESS',
+          description: '依赖已更新!',
+        });
+      });
+    } else {
+      notification['error']({
+        message: 'ERROR MESSAGE',
+        description: '依赖更新失败',
+        duration: null,
+      });
+    }
+    return result;
+  }
+  uninstallPkg = async (record, index) => {
+    const { rootPath, refresh } = this.props;
+    this.setState(prevState => {
       let data = [...prevState.dataSource];
       data[index]['isDeleting'] = true;
       return {
@@ -155,58 +153,41 @@ class DependencyManager extends Component {
         loading: true,
       };
     });
-    fetch(`/api/npm/uninstall/${record.packageName}`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        rootPath: this.props.rootPath,
+    const result = await projectAPI.pkg.uninstall(
+      record.packageName,
+      {
+        rootPath: rootPath,
         args: this.state.tab === 'dependencies' ? '--save' : '--save-dev',
-      }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          Promise.all([
-            this.props.getPkgInfo(this.props.rootPath),
-            this.props.getEnvData(this.props.rootPath),
-          ]).then(() => {
-            this.setState({
-              loading: false,
-            });
-            notification['success']({
-              message: 'SUCCESS',
-              description: `${record.packageName} has been deleted!`,
-            });
-          });
-        } else {
-          notification['error']({
-            message: 'ERROR MESSAGE',
-            description: data.errorMsg,
-            duration: null,
-          });
-        }
+      }
+    );
+    if (result.success) {
+      refresh().then(() => {
+        notification['success']({
+          message: 'SUCCESS',
+          description: `${record.packageName} 删除成功!`,
+        });
       });
-  };
-
-  componentDidMount() {
-    this.updateState(this.state.tab);
-  }
-  componentWillReceiveProps() {
-    this.updateState(this.state.tab);
+    } else {
+      notification['error']({
+        message: 'ERROR MESSAGE',
+        description: `${record.packageName} 删除失败!`,
+        duration: null,
+      });
+    }
   }
 
   showModal = () => {
     this.setState({
       modalVisible: true,
     });
-  };
+  }
+
   hideModal = () => {
     this.setState({
       modalVisible: false,
     });
-  };
+  }
+
   render() {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
@@ -252,12 +233,12 @@ class DependencyManager extends Component {
                 style={{ marginRight: '20px' }}
                 size="small"
               >
-                更新
+                升级
               </Button>
               <Button
                 type="danger"
                 size="small"
-                onClick={() => this.uninstallpkg(record, index)}
+                onClick={() => this.uninstallPkg(record, index)}
               >
                 删除
               </Button>
@@ -276,27 +257,36 @@ class DependencyManager extends Component {
           <div className={styles.Manager__Action}>
             <Button
               size="small"
-              onClick={ this.batchUpdate }
-              disabled = {!this.props.pkg }
+              onClick={this.batchUpdate}
+              disabled={!this.props.pkg}
             >
-              批量更新
+              批量升级
             </Button>
-            <Button
-              type="primary"
-              size="small"
-              onClick={this.showModal}
-              disabled = {!this.props.pkg }
-            >
-              添加依赖
-            </Button>
+            <div>
+              <Button
+                type="primary"
+                size="small"
+                onClick={this.showModal}
+                disabled={!this.props.pkg}
+              >
+                添加依赖
+              </Button>
+              <Tooltip title="npm update">
+                <Button
+                  size="small"
+                  onClick={this.handleUpdateDep}
+                  disabled={!this.props.pkg}
+                >
+                  更新依赖
+                </Button>
+              </Tooltip>
+            </div>
           </div>
           <AddDev
             visible={this.state.modalVisible}
             hideModal={this.hideModal}
-            installpck={this.installpkg}
-            refresh={this.refresh}
+            installPkg={this.installPkg}
             rootPath={this.props.rootPath}
-            tab={this.state.tab}
           />
           <Table
             rowSelection={rowSelection}

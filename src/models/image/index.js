@@ -4,6 +4,7 @@
  */
 const generate = require('./generate');
 const imageInfo = require('image-info');
+const { shell } = require('electron');
 
 function imageInfo2(path) {
   return new Promise(function(resolve, reject) {
@@ -34,6 +35,12 @@ const imageMin = async ({ fileArr, config }) => {
     }
   }
 
+  try {
+    shell.openItem(config.output + '/');
+  } catch (error) {
+    throw error;
+  }
+
   if (res && res.length) {
     return {
       result: 'success',
@@ -47,6 +54,7 @@ const imageMin = async ({ fileArr, config }) => {
       data: res
     };
   }
+
 };
 
 module.exports = imageMin;

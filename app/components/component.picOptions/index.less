@@ -18,4 +18,15 @@
     width: calc(~"100% - 80px");
     vertical-align: middle;
   }
+  &__clearfix{
+    zoom: 1;
+    &::before, &::after{
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+}
+:global(.ant-col-8){
+  padding: 10px 0;
 }

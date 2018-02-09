@@ -12,34 +12,53 @@ const imageminGifsicle = require('imagemin-gifsicle');
  *
  */
 const ImageMin = async ({ fileArr, config }) => {
-
   const { output, quality, webp } = config;
   let paths = [];
   fileArr.map(file => {
-      paths.push(file.path);
+    paths.push(file.path);
   });
-  
+
+  let formatConfig = {};
+  for (const key in config) {
+    if (config.hasOwnProperty(key)) {
+      const value = config[key];
+      const pArr = key.split('-');
+      if (pArr.length === 2) {
+        const fItem = pArr[0];
+        const fKey = pArr[1];
+        if (!formatConfig[fItem]) {
+          formatConfig[fItem] = {};
+        }
+        formatConfig[fItem][fKey] = value;
+      }
+    }
+  }
+
+  if (formatConfig.svg) {
+    let { svgo } = formatConfig.svg;
+    var svgPugins = [];
+    svgo.map(item => {
+      svgPugins.push({
+        [item]: true
+      });
+    });
+  }
   let res1;
   try {
     res1 = await imagemin(paths, output, {
       use: [
-        imageminPngquant({
-          quality: quality,
-          speed: 4,
-          verbose: true
-        }),
-        imageminMozjpeg({
-          quality: quality
-        }),
-  
+        imageminPngquant(
+          Object.assign({}, { quality: quality }, formatConfig.png)
+        ),
+        imageminMozjpeg(
+          Object.assign({}, { quality: quality }, formatConfig.jpg)
+        ),
         imageminSvgo({
-          removeTitle: true,
-          removeDesc: true,
-          removeXMLNS: true
+          plugins: svgPugins
         }),
-        imageminGifsicle({
-          optimizationLevel: 2
-        }),
+        imageminGifsicle(
+          Object.assign({}, { optimizationLevel: 2 }, formatConfig.gif)
+        )
       ]
     });
   } catch (error) {
@@ -47,7 +66,7 @@ const ImageMin = async ({ fileArr, config }) => {
   }
 
   let res2;
-  if(webp) {
+  if (webp) {
     let webpOutput = output + '/webp';
 
     try {
@@ -58,27 +77,19 @@ const ImageMin = async ({ fileArr, config }) => {
 
       res2 = await imagemin(paths, webpOutput, {
         use: [
-          imageminWebp({
-            quality: quality,
-            lossless: true
-          })
+          imageminWebp(
+            Object.assign({}, { quality: quality }, formatConfig.webp)
+          )
         ]
       });
     } catch (error) {
       throw error;
     }
-    
+
+    return [res1, res2];
   }
 
-  return [res1, res2];
-
+  return [res1];
 };
 
 module.exports = ImageMin;
-
-
-
-
-
-
-

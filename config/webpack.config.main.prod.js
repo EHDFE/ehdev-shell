@@ -4,11 +4,9 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-  devtool: 'source-map',
-
   target: 'electron-main',
 
   context: path.resolve(__dirname, '../'),
@@ -39,7 +37,6 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       'process.env.DEBUG_PROD': JSON.stringify(process.env.DEBUG_PROD || 'false')
     }),
-    new webpack.NamedModulesPlugin(),
     // new UglifyJSPlugin({
     //   uglifyOptions: {
     //     ecma: 8,

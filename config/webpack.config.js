@@ -5,7 +5,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+// const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const port = process.env.PORT || 1212;
@@ -92,8 +93,8 @@ module.exports = env => {
 
   plugins.push(
     // Add module names to factory functions so they appear in browser profiler.
-    new webpack.NamedModulesPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+    // new webpack.NamedModulesPlugin(),
+    // new webpack.NoEmitOnErrorsPlugin(),
     new webpack.ContextReplacementPlugin(/^\.\/locale$/, (context) => {
       if ( !/\/moment\//.test(context.context) ) return;
       Object.assign(context, {
@@ -111,9 +112,13 @@ module.exports = env => {
 
   if (env.dev) {
     plugins.push(
-      new AddAssetHtmlWebpackPlugin([{
-        filepath: require.resolve('../app/dll/dll.dev.js'),
-      }])
+      // new AddAssetHtmlWebpackPlugin([{
+      //   filepath: require.resolve('../app/dll/dll.dev.js'),
+      // }])
+      new HtmlWebpackIncludeAssetsPlugin({
+        assets: require.resolve('../app/dll/dll.dev.js'),
+        append: false,
+      })
     );
   } else {
     plugins.push(
@@ -215,7 +220,7 @@ module.exports = env => {
         }
       ],
     },
-    devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
+    // devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
     node: {

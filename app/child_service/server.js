@@ -84,6 +84,7 @@ const ip = getLocalIP();
 getDevConfig(projectConfig, {
   port: RuntimeConfig.port,
   ip,
+  https: RuntimeConfig.https,
 }).then(async webpackConfig => {
   // add provide plugin if has the config
   if (projectConfig.providePluginConfig) {

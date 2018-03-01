@@ -13,7 +13,9 @@ const {
   PROJECT_ROOT,
   noticeLog,
   getLocalIP,
+  ConfigerFolderPath,
 } = require('./config');
+const { getHttpsConfig } = require('./util');
 
 const { SHELL_NODE_MODULES_PATH, RUNTIME_CONFIG } = process.env;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
@@ -23,6 +25,14 @@ const RuntimeConfig = Object.assign({
   port: 3000,
   https: false,
 }, JSON.parse(RUNTIME_CONFIG));
+
+if (RuntimeConfig.https) {
+  if (typeof RuntimeConfig.https === 'boolean') {
+    Object.assign(RuntimeConfig, {
+      https: getHttpsConfig(ConfigerFolderPath),
+    });
+  }
+}
 
 const getDevServerConfig = PROJECT_CONFIG => {
 
@@ -74,6 +84,7 @@ const ip = getLocalIP();
 getDevConfig(projectConfig, {
   port: RuntimeConfig.port,
   ip,
+  https: RuntimeConfig.https,
 }).then(async webpackConfig => {
   // add provide plugin if has the config
   if (projectConfig.providePluginConfig) {

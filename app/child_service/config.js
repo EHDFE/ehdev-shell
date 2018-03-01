@@ -56,6 +56,8 @@ const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
 const projectConfig = require(`${PROJECT_ROOT}/abc.json`);
 const { DEFAULT_PROJECT_CONFIG, getDevConfig, getProdConfig } = require(ConfigPath);
 
+exports.ConfigerFolderPath = ConfigerFolder;
+
 // project config
 exports.projectConfig = Object.assign({}, DEFAULT_PROJECT_CONFIG, projectConfig);
 exports.getDevConfig = getDevConfig;

@@ -52,6 +52,7 @@ getProdConfig(projectConfig)
         }),
       );
       Object.assign(webpackConfig, {
+        mode: 'production',
         profile: true,
       });
       const compiler = Webpack(webpackConfig);

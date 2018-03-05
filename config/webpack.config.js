@@ -27,7 +27,7 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
-      },
+      }
     },
   ];
   const appStyleConfig = [
@@ -43,8 +43,8 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
-      },
-    },
+      }
+    }
   ];
 
   if (env.prod) {
@@ -106,7 +106,7 @@ module.exports = env => {
       React: 'react',
     }),
     new HtmlWebpackPlugin({
-      template: 'index.html',
+      template: './app/index.html',
     }),
   );
 
@@ -116,8 +116,9 @@ module.exports = env => {
       //   filepath: require.resolve('../app/dll/dll.dev.js'),
       // }])
       new HtmlWebpackIncludeAssetsPlugin({
-        assets: require.resolve('../app/dll/dll.dev.js'),
+        assets: 'dll/dll.dev.js',
         append: false,
+        publicPath: '/',
       })
     );
   } else {
@@ -130,19 +131,19 @@ module.exports = env => {
   }
 
   const ret = {
-    context: path.resolve(__dirname, '../app'),
+    context: path.resolve(__dirname, '..'),
     entry: {
       app: env.prod ?
         [
           'babel-polyfill',
-          './index',
+          './app/index',
         ] : [
           'babel-polyfill',
-          'react-hot-loader/patch',
-          `webpack-dev-server/client?http://localhost:${port}/`,
+          // 'react-hot-loader/patch',
+          // `/webpack-dev-server/client?http://localhost:${port}`,
           // 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
-          'webpack/hot/only-dev-server',
-          './index',
+          // '/webpack/hot/only-dev-server',
+          './app/index',
         ],
     },
     output: {
@@ -220,6 +221,9 @@ module.exports = env => {
         }
       ],
     },
+    resolve: {
+      extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
+    },
     // devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
@@ -238,9 +242,10 @@ module.exports = env => {
         noInfo: false,
         inline: true,
         lazy: false,
-        hot: true,
+        // hot: true,
+        hotOnly: true,
         headers: { 'Access-Control-Allow-Origin': '*' },
-        contentBase: path.join(__dirname, '../app/dist'),
+        contentBase: path.join(__dirname, '../app'),
         watchOptions: {
           aggregateTimeout: 300,
           ignored: /node_modules/,
@@ -249,7 +254,7 @@ module.exports = env => {
         historyApiFallback: {
           verbose: true,
           disableDotRule: false,
-        }
+        },
       },
     });
   }

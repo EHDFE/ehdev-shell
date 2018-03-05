@@ -5,6 +5,7 @@
 import { BrowserRouter, Route } from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
+import { hot } from 'react-hot-loader';
 
 moment.locale('zh-cn');
 
@@ -46,4 +47,4 @@ const App = () => (
 );
 // <Route path="/images" component={ImageModule}></Route>
 
-export default App;
+export default hot(module)(App);

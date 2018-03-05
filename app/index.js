@@ -17,10 +17,3 @@ window.addEventListener('click', e => {
 }, false);
 
 render(App, store, persistor);
-
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    render(App, store, persistor);
-  });
-}
-

@@ -86,6 +86,9 @@ getDevConfig(projectConfig, {
   ip,
   https: RuntimeConfig.https,
 }).then(async webpackConfig => {
+  Object.assign(webpackConfig, {
+    mode: 'development',
+  });
   // add provide plugin if has the config
   if (projectConfig.providePluginConfig) {
     Object.assign(webpackConfig, {

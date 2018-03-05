@@ -77,6 +77,7 @@ exports.dllConfigParser = projectConfig => {
   } = projectConfig.dll;
   const manifestPath = path.resolve(PROJECT_ROOT, 'src/manifest.json');
   const dllConfig = {
+    mode: 'production',
     entry: {
       dll: include,
     },

@@ -64,7 +64,7 @@
     "css-loader": "^0.28.9",
     "duplicate-package-checker-webpack-plugin": "^2.1.0",
     "electron": "^1.8.2",
-    "electron-builder": "^20.1.1",
+    "electron-builder": "^20.2.1",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",
     "electron-react-devtools": "^0.5.3",

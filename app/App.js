@@ -37,8 +37,8 @@ const App = () => (
           <Route path="/upload" component={UploadModule}/>
           <Route path="/configer" component={ConfigerModule}/>
           <Route path="/user" component={UserModule}/>
-          <Route path="/qrcode" component={QrCodeModule}></Route>
-          <Route path="/pomodora" component={PomodoraModule}></Route>
+          <Route path="/qrcode" component={QrCodeModule} />
+          <Route path="/pomodora" component={PomodoraModule} />
           <CommandPalette />
         </LayoutModule>
       </BrowserRouter>

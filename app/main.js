@@ -113,6 +113,7 @@ function createWindow() {
       minWidth: APP_CONFIG.MIN_WIDTH,
       minHeight: APP_CONFIG.MIN_HEIGHT,
       show: isDEV,
+      // vibrancy: 'medium-light',
       webPreferences: {
         webSecurity: false,
       },

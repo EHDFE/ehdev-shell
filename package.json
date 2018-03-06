@@ -76,7 +76,7 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
     "glob": "^7.1.2",
-    "html-webpack-include-assets-plugin": "github:jharris4/html-webpack-include-assets-plugin",
+    "html-webpack-include-assets-plugin": "^1.0.3",
     "html-webpack-plugin": "^3.0.4",
     "pre-commit": "^1.2.2",
     "redux-devtools": "^3.4.1",

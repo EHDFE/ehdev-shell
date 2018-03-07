@@ -18,7 +18,7 @@
     "less-loader": "^4.0.5",
     "localforage": "^1.6.0",
     "lodash": "^4.17.4",
-    "moment": "^2.20.1",
+    "moment": "^2.21.0",
     "moment-duration-format": "^2.2.1",
     "mousetrap": "^1.6.1",
     "nedb": "^1.8.0",

@@ -2,7 +2,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
@@ -58,13 +58,13 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      new UglifyJSPlugin({
-        parallel: true,
-        uglifyOptions: {
-          ecma: 6,
-        },
-        sourceMap: true,
-      }),
+      // new UglifyJSPlugin({
+      //   parallel: true,
+      //   uglifyOptions: {
+      //     ecma: 6,
+      //   },
+      //   sourceMap: true,
+      // }),
       extractLibiaryStyle,
       extractAppStyle
     );

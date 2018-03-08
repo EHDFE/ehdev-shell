@@ -1,4 +1,4 @@
-import { applyMiddleware, createStore, compose } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import promiseMiddleware from 'redux-promise';
 import createRavenMiddleware from 'raven-for-redux';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -16,19 +16,15 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, reducer);
 
-const enhancer = compose(
-  applyMiddleware(
-    promiseMiddleware,
-    createRavenMiddleware(window.Raven, {
-    }),
-  ),
-);
 
 export default () => {
-  const store = createStore(persistedReducer, enhancer);
-  const persistor = persistStore(store);
+  const enhancer = applyMiddleware(
+    promiseMiddleware,
+    createRavenMiddleware(window.Raven),
+  );
+  let store = createStore(persistedReducer, enhancer);
   return {
     store,
-    persistor,
+    persistor: persistStore(store),
   };
 };

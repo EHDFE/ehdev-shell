@@ -63,7 +63,7 @@
     "css-loader": "^0.28.9",
     "duplicate-package-checker-webpack-plugin": "^2.1.0",
     "electron": "^1.8.2",
-    "electron-builder": "~20.2.0",
+    "electron-builder": "~20.4.0",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",
     "electron-react-devtools": "^0.5.3",
@@ -109,7 +109,7 @@
     "dist-all": "electron-builder -mw",
     "dist-mac": "electron-builder -m",
     "dist-win": "electron-builder -w",
-    "postinstall": "concurrently \"electron-builder install-app-deps\"",
+    "postinstall": "electron-builder install-app-deps",
     "build": "concurrently \"npm run build-main \" \"npm run build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --mode development --env.dev --config ./config/webpack.config.dll.js --progress --verbose",
     "build-main": "cross-env NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.main.prod.js --progress --verbose",
@@ -119,7 +119,7 @@
   },
   "build": {
     "productName": "Jarvis",
-    "appId": "com.ehdev.jarvis",
+    "appId": "com.ehdfe.jarvis",
     "directories": {
       "buildResources": "resources",
       "output": "release"

@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 
 const port = process.env.PORT || 1212;
 
@@ -115,6 +116,7 @@ module.exports = env => {
       // new AddAssetHtmlWebpackPlugin([{
       //   filepath: require.resolve('../app/dll/dll.dev.js'),
       // }])
+      new ErrorOverlayWebpackPlugin(),
       new HtmlWebpackIncludeAssetsPlugin({
         assets: 'dll/dll.dev.js',
         append: false,

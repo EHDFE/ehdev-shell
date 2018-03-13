@@ -20,6 +20,7 @@ const { getHttpsConfig } = require('./util');
 const { SHELL_NODE_MODULES_PATH, RUNTIME_CONFIG } = process.env;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
 const DuplicatePackageCheckerPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'duplicate-package-checker-webpack-plugin'));
+const ErrorOverlayPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'error-overlay-webpack-plugin'));
 const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 const RuntimeConfig = Object.assign({
   port: 3000,
@@ -107,6 +108,7 @@ getDevConfig(projectConfig, {
     );
   }
   webpackConfig.plugins.push(
+    new ErrorOverlayPlugin(),
     new DuplicatePackageCheckerPlugin({
       showHelp: true,
     }),

@@ -37,11 +37,6 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       'process.env.DEBUG_PROD': JSON.stringify(process.env.DEBUG_PROD || 'false')
     }),
-    // new UglifyJSPlugin({
-    //   uglifyOptions: {
-    //     ecma: 8,
-    //   },
-    // }),
   ],
 
   externals: {

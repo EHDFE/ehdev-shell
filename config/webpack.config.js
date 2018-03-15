@@ -168,12 +168,12 @@ module.exports = env => {
                       'env',
                       {
                         targets: {
-                          chrome: 59,
+                          chrome: 61,
                         },
                         useBuiltIns: true,
                         modules: false,
                         // refer to: https://github.com/gaearon/react-hot-loader/issues/313
-                        include: ['transform-es2015-classes'],
+                        // include: ['transform-es2015-classes'],
                       },
                     ],
                     'stage-1',

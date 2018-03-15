@@ -13,6 +13,8 @@ import {
   Badge,
   Tooltip,
   Modal,
+  Select,
+  Icon,
 } from 'antd';
 import semver from 'semver';
 
@@ -21,6 +23,7 @@ import Page from '../../components/component.page/';
 import Markdown from '../../components/component.markdown/';
 
 import { actions } from './store';
+const { Option } = Select;
 
 import styles from './index.less';
 
@@ -41,11 +44,13 @@ class ConfigerModule extends Component {
     uploadConfig: PropTypes.func,
     upgradeConfig: PropTypes.func,
     removeConfig: PropTypes.func,
+    getConfigerVersions: PropTypes.func,
   }
   state = {
     importVisible: false,
     markSource: '',
     markVisible: false,
+    versionEditorStatus: {},
   }
   componentWillMount() {
     this.props.getConfigs();
@@ -97,6 +102,97 @@ class ConfigerModule extends Component {
       markVisible: false,
     });
   }
+  renderVersionGrid = (text, record) => {
+    const { versionEditorStatus } = this.state;
+    const ret = [];
+    if (versionEditorStatus[record.name]) {
+      ret.push(
+        <Select
+          key="select"
+          value={versionEditorStatus[record.name]}
+          onFocus={() => {
+            this.props.getConfigerVersions(record.name);
+          }}
+          onChange={value => {
+            this.setState({
+              versionEditorStatus: {
+                ...versionEditorStatus,
+                [record.name]: value,
+              },
+            });
+          }}
+          optionLabelProp="value"
+          size="small"
+          className={styles['Configer__Selector--wrapper']}
+        >
+          {
+            record.versions && record.versions.map(d =>
+              <Option value={d.version} key={d.version}>
+                <p className={styles['Configer__Selector--version']}>{d.version}</p>
+                {d.tag ? <p className={styles['Configer__Selector--tag']}>{d.tag}</p> : ''}
+              </Option>
+            )
+          }
+        </Select>
+      );
+      ret.push(
+        <Button.Group key="action" size="small">
+          <Button
+            onClick={() => {
+              this.props.upgradeConfig(record.name, versionEditorStatus[record.name]);
+              this.setState({
+                versionEditorStatus: {
+                  ...versionEditorStatus,
+                  [record.name]: false,
+                }
+              });
+            }}
+          >
+            <Icon type="check" />
+          </Button>
+          <Button
+            onClick={() => {
+              this.setState({
+                versionEditorStatus: {
+                  ...versionEditorStatus,
+                  [record.name]: false,
+                }
+              });
+            }}
+          >
+            <Icon type="close" />
+          </Button>
+        </Button.Group>
+      );
+    } else {
+      if (record.upgradable) {
+        ret.push(
+          <Tooltip key="notify" title={record.latestVersion}>
+            <Badge dot>
+              {text}
+            </Badge>
+          </Tooltip>
+        );
+      } else {
+        ret.push(<span key="version">{text}</span>);
+      }
+      ret.push(
+        <Icon
+          type="edit"
+          key="edit"
+          onClick={() => {
+            this.setState({
+              versionEditorStatus: {
+                ...versionEditorStatus,
+                [record.name]: record.version,
+              }
+            });
+          }}
+        />
+      );
+    }
+    return ret;
+  }
   renderConfigList() {
     const { pending, localConfigs } = this.props;
     const props = {
@@ -126,20 +222,12 @@ class ConfigerModule extends Component {
         {
           title: '版本',
           dataIndex: 'version',
-          render: (text, record) => {
-            return record.upgradable ? (
-              <Tooltip title={record.latestVersion}>
-                <Badge dot>
-                  {text}
-                </Badge>
-              </Tooltip>
-            ) : text;
-          },
+          render: this.renderVersionGrid,
         },
         {
           title: '操作',
           key: 'action',
-          render: (text, record) => {
+          render: (data, record) => {
             const btns = [
               <button
                 className={styles['Configer__Item--action']}
@@ -252,6 +340,7 @@ const mapDispatchToProps = dispatch => ({
   uploadConfig: () => dispatch(actions.upload()),
   removeConfig: name => dispatch(actions.remove(name, dispatch)),
   upgradeConfig: (name, version) => dispatch(actions.upgrade(name, version, dispatch)),
+  getConfigerVersions: name => dispatch(actions.getPkgVersions(name)),
 });
 
 export default connect(

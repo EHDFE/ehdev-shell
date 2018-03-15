@@ -65,6 +65,14 @@ const CONFIGER_API = {
     } catch (e) {
       throw e;
     }
+  },
+  async getVersions(pkgName) {
+    try {
+      const versions = await remoteAPI.configer.getVersions(pkgName);
+      return versions;
+    } catch (e) {
+      throw e;
+    }
   }
 };
 

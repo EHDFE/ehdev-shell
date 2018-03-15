@@ -11,8 +11,8 @@ const {
   dllConfigParser,
   PROJECT_ROOT,
   noticeLog,
-  UglifyJsPlugin,
-  getUglifyJsOptions,
+  // UglifyJsPlugin,
+  // getUglifyJsOptions,
 } = require('./config');
 
 const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
@@ -41,7 +41,7 @@ getProdConfig(projectConfig)
         }
       }
       webpackConfig.plugins.push(
-        new UglifyJsPlugin(getUglifyJsOptions(projectConfig)),
+        // new UglifyJsPlugin(getUglifyJsOptions(projectConfig)),
         new StatsPlugin(
           '../stats.json',
           'verbose'
@@ -52,6 +52,7 @@ getProdConfig(projectConfig)
         }),
       );
       Object.assign(webpackConfig, {
+        mode: 'production',
         profile: true,
       });
       const compiler = Webpack(webpackConfig);

@@ -7,12 +7,7 @@ import PropTypes from 'prop-types';
 // import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Tabs, Layout, Menu, Dropdown, Spin, Card, Icon } from 'antd';
-import IconPlay from 'react-icons/lib/fa/play-circle-o';
-import IconStop from 'react-icons/lib/fa/stop-circle-o';
-import IconBuild from 'react-icons/lib/fa/codepen';
-import MdAutorenew from 'react-icons/lib/md/autorenew';
-import IconMoreVert from 'react-icons/lib/md/more-vert';
+import { Tabs, Spin, Card, Icon } from 'antd';
 
 import { actions } from './store';
 
@@ -23,12 +18,12 @@ import FolderPicker from '../../components/component.folderPicker/';
 import DependencyManager from '../../components/component.dependencyManager/';
 // import EslintResult from '../../components/component.eslint.result/';
 
-import Profile from './Profile';
-import Setup from './Setup';
-import RuntimeConfigModal from './RuntimeConfigModal';
+import Profile from './partialComponent/Profile';
+import Setup from './partialComponent/Setup';
+import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
+import ProjectAction from './partialComponent/Action';
 
 const { TabPane } = Tabs;
-const { Content } = Layout;
 
 class ProjectModule extends PureComponent {
   static defaultProps = {
@@ -45,7 +40,15 @@ class ProjectModule extends PureComponent {
     lintResult: PropTypes.array,
     config: PropTypes.object,
     pids: PropTypes.array,
-    currentService: PropTypes.object,
+    scmInfo: PropTypes.shape({
+      isGitProject: PropTypes.bool,
+      isSvnProject: PropTypes.bool,
+    }),
+    currentServiceList: PropTypes.arrayOf(PropTypes.shape({
+      pid: PropTypes.number.isRequired,
+      rootPath: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['server', 'builder']),
+    })),
     runtimeConfig: PropTypes.shape({
       port: PropTypes.number,
     }).isRequired,
@@ -60,6 +63,7 @@ class ProjectModule extends PureComponent {
     getPkgInfo: PropTypes.func,
     // getESlintResult: PropTypes.func,
     updateRuntimeConfig: PropTypes.func,
+    pkgInfo: PropTypes.object,
   }
   state = {
     defaultActiveKey: 'profile',
@@ -75,25 +79,26 @@ class ProjectModule extends PureComponent {
       this.props.getPkgInfo(nextProps.rootPath);
     }
   }
-  getInitData = (tag) => {
-    if (tag) {
+  getInitData = hasLoading => {
+    if (hasLoading) {
       this.setState({
         loading: true
       });
     }
     const { rootPath } = this.props;
     if (rootPath) {
-      Promise.all([
+      return Promise.all([
         this.props.getEnvData(rootPath),
         this.props.getPkgInfo(rootPath),
       ]).then(()=> {
-        if (tag) {
+        if (hasLoading) {
           this.setState({
             loading: false
           });
         }
       });
     }
+    return Promise.resolve();
   }
   handleStartServer = () => {
     const { pkg, config, runtimeConfig } = this.props;
@@ -102,6 +107,7 @@ class ProjectModule extends PureComponent {
       port: runtimeConfig.port,
       projectName: pkg.name,
       configerName: `ehdev-configer-${config.type}`,
+      runtimeConfig,
     });
   }
   handleStartBuilder = () => {
@@ -121,15 +127,14 @@ class ProjectModule extends PureComponent {
       isDll: true,
     });
   }
-  handleStopService = () => {
-    const { pkg, currentService } = this.props;
-    if (!currentService) return;
-    if (currentService.type === 'server') {
-      this.props.stopServer(currentService.pid, false, {
+  handleStopService = (type, pid) => {
+    const { pkg } = this.props;
+    if (type === 'server') {
+      this.props.stopServer(pid, false, {
         projectName: pkg.name,
       });
-    } else if (currentService.type === 'builder') {
-      this.props.stopBuilder(currentService.pid, false, {
+    } else if (type === 'builder') {
+      this.props.stopBuilder(pid, false, {
         projectName: pkg.name,
       });
     }
@@ -157,8 +162,12 @@ class ProjectModule extends PureComponent {
     });
   }
   renderProfile() {
-    const { pkg } = this.props;
-    const profileProps = {};
+    const { pkg, scmInfo, rootPath } = this.props;
+    const profileProps = {
+      rootPath,
+      isGitProject: scmInfo && scmInfo.isGitProject,
+      isSvnProject: scmInfo && scmInfo.isSvnProject,
+    };
     if (pkg) {
       Object.assign(profileProps, {
         name: pkg.name,
@@ -184,110 +193,30 @@ class ProjectModule extends PureComponent {
     return <Card style={{ textAlign: 'center' }} bordered={false}>没有找到运行配置</Card>;
   }
   renderPackageVersions() {
-    return <DependencyManager refresh={this.getInitData} {...this.props}/>;
+    const  { pkgInfo, pkg, rootPath } = this.props;
+    const props = {
+      pkgInfo,
+      pkg,
+      rootPath,
+      refresh: this.getInitData,
+    };
+    return <DependencyManager {...props} />;
   }
   renderActionBar() {
-    const { currentService, runnable, config } = this.props;
-    let actions;
-    let buildButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'start-build'}
-        disabled={currentService}
-        onClick={this.handleStartBuilder}
-      >
-        <IconBuild size={22} />
-        构建
-      </button>
-    );
-    let refreshButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'update'}
-        onClick={()=>{this.getInitData('refresh');}}
-      >
-        <MdAutorenew size={22} />
-          刷新
-      </button>
-    );
-    if (runnable) {
-      if (config && config.dll && config.dll.enable) {
-        buildButton = (
-          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
-            { buildButton }
-            <Dropdown
-              trigger={['click']}
-              placement="bottomRight"
-              overlay={
-                <Menu>
-                  <Menu.Item>
-                    <button
-                      className={styles['Project__ActionBarButton--trigger']}
-                      key={'start-dll-build'}
-                      disabled={currentService}
-                      onClick={this.handleStartDllBuilder}
-                    >
-                      DLL构建
-                    </button>
-                  </Menu.Item>
-                </Menu>
-              }>
-              <IconMoreVert className={styles['Project__ActionBarMore']} />
-            </Dropdown>
-          </div>
-        );
-      }
-      actions = [
-        <div
-          key="start-server"        
-          className={styles['Project__ActionBarGrid']}
-        >
-          <button
-            className={styles.Project__ActionBarButton}
-            disabled={currentService}
-            onClick={this.handleStartServer}
-          >
-            <IconPlay size={22} />
-            启动
-          </button>
-          <Dropdown
-            trigger={['click']}
-            placement="bottomRight"
-            overlay={
-              <Menu>
-                <Menu.Item>
-                  <button
-                    className={styles['Project__ActionBarButton--trigger']}
-                    key={'advance-config'}
-                    onClick={this.showRuntimeConfiger}
-                  >
-                    运行配置
-                  </button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <IconMoreVert className={styles['Project__ActionBarMore']} />
-          </Dropdown>
-        </div>,
-        buildButton,
-        <button
-          className={styles.Project__ActionBarButton}
-          key={'stop'}
-          disabled={!currentService}
-          onClick={this.handleStopService}
-        >
-          <IconStop size={22} />
-          停止
-        </button>,
-        refreshButton,
-      ];
-    } else {
-      actions = [
-        refreshButton
-      ];
-    }
-    return <div className={styles.Project__ActionBar}>{actions}</div>;
+    const { currentServiceList, runnable, config } = this.props;
+    const props = {
+      runningServer: currentServiceList.find(d => d.type === 'server'),
+      runningBuilder: currentServiceList.find(d => d.type === 'builder'),
+      runnable,
+      dllEnable: config && config.dll && config.dll.enable,
+      getInitData: this.getInitData,
+      handleStartServer: this.handleStartServer,
+      handleStartBuilder: this.handleStartBuilder,
+      handleStopService: this.handleStopService,
+      handleStartDllBuilder: this.handleStartDllBuilder,
+      onClickRuntimeConfiger: this.showRuntimeConfiger,
+    };
+    return <ProjectAction {...props} />;
   }
   // renderLintResult() {
   //   const { rootPath, lintResult } = this.props;
@@ -330,39 +259,43 @@ class ProjectModule extends PureComponent {
     // }
     return (
       <Page>
-        <Layout className={styles.Project__Layout}>
-          <Content>
-            <div className={styles.Project__TopBar}>
-              <FolderPicker
-                onChange={value => {
-                  setRootPath(value);
-                }}
-                prevValue={prevRootPath}
-                value={rootPath}
-              >
-                <h3 className={styles.Project__ProjectName}>
-                  { pkg && pkg.name || '请选择项目' }
-                  <Icon type="setting" className={styles.Project__ProjectNameIcon} />
-                </h3>
-              </FolderPicker>
-              { this.renderActionBar() }
-            </div>
-            <Spin spinning={this.state.loading}>
-              <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
-                <TabPane tab="基础信息" key="profile">
+        <div className={styles.Project__Layout}>
+          <div className={styles.Project__TopBar}>
+            <FolderPicker
+              onChange={value => {
+                setRootPath(value);
+              }}
+              prevValue={prevRootPath}
+              value={rootPath}
+            >
+              <h3 className={styles.Project__ProjectName}>
+                { pkg && pkg.name || '请选择项目' }
+                <Icon type="setting" className={styles.Project__ProjectNameIcon} />
+              </h3>
+            </FolderPicker>
+            { this.renderActionBar() }
+          </div>
+          <Spin className={styles.Project__ContentSpin} spinning={this.state.loading}>
+            <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+              <TabPane tab="基础信息" key="profile">
+                <div className={styles.Project__TabContent}>
                   { this.renderProfile() }
-                </TabPane>
-                { runnable ? <TabPane tab="运行配置" key="config">
+                </div>
+              </TabPane>
+              { runnable ? <TabPane tab="运行配置" key="config">
+                <div className={styles.Project__TabContent}>
                   { this.renderSetup() }
-                </TabPane> : null }
-                <TabPane tab="依赖管理" key="versions">
+                </div>
+              </TabPane> : null }
+              <TabPane tab="依赖管理" key="versions">
+                <div className={styles.Project__TabContent}>
                   { this.renderPackageVersions() }
-                </TabPane>
-              </Tabs>
-            </Spin>
-            <RuntimeConfigModal {...runtimeConfigerProps} />
-          </Content>
-        </Layout>
+                </div>
+              </TabPane>
+            </Tabs>
+          </Spin>
+          <RuntimeConfigModal {...runtimeConfigerProps} />
+        </div>
       </Page>
     );
   }
@@ -388,7 +321,7 @@ const mapStateToProps = (state) => createSelector(
   (env, service) => ({
     ...env,
     pids: service.pids || [],
-    currentService: service.instancesList.find(d => env.rootPath === d.rootPath),
+    currentServiceList: service.instancesList.filter(d => env.rootPath === d.rootPath),
   }),
 );
 const mapDispatchToProps = dispatch => ({

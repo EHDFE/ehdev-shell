@@ -65,6 +65,13 @@ export const actions = createActions({
     dispatch(actions.setPending(true));
   },
   SET_PENDING: pending => pending,
+  GET_PKG_VERSIONS: async name => {
+    const versions = await CONFIGER_API.getVersions(name);
+    return {
+      versions,
+      name,
+    };
+  },
 });
 
 const localConfigerReducer = handleActions({
@@ -89,6 +96,19 @@ const localConfigerReducer = handleActions({
   },
   UPGRADE: (state, { payload }) => {
     return state;
+  },
+  GET_PKG_VERSIONS: (state, { payload }) => {
+    const { versions, name } = payload;
+    return {
+      configIds: state.configIds,
+      configMap: {
+        ...state.configMap,
+        [name]: {
+          ...state.configMap[name],
+          versions,
+        },
+      },
+    };
   },
 }, defaultState.local);
 

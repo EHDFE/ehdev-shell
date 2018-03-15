@@ -10,6 +10,8 @@ const uploadList = require('./models/upload/list');
 const dashboard = require('./models/dashboard/index');
 const imageMin = require('./models/image/index');
 
+const providers = require('./provider');
+
 const apiService = {
   root: {
     setRoot,
@@ -28,7 +30,8 @@ const apiService = {
     deleteList: uploadList.del,
   },
   dashboard,
-  imageMin
+  imageMin,
+  providers,
 };
 
 module.exports = apiService;

@@ -4,16 +4,16 @@
  */
 import { combineReducers } from 'redux';
 
-import { ProjectReducer } from './modules/module.project/';
-import { DashboardReducer } from './modules/module.dashboard/';
-import { UploadReducer } from './modules/module.upload/';
-import { ConfigerReducer } from './modules/module.configer/';
-import { ConsoleReducer } from './modules/module.console/';
-import { UserReducer } from './modules/module.user/';
-import { ImageReducer } from './modules/module.image/';
-import { LayoutReducer } from './modules/module.layout/';
-import { QrcodeReducer } from './modules/module.qrcode/';
-import { PomodoraReducer } from './modules/module.pomodora/';
+import { default as ProjectReducer } from './modules/module.project/store';
+import { default as DashboardReducer } from './modules/module.dashboard/store';
+import { default as UploadReducer } from './modules/module.upload/store';
+import { default as ConfigerReducer } from './modules/module.configer/store';
+import { default as ConsoleReducer } from './modules/module.console/store';
+import { default as UserReducer } from './modules/module.user/store';
+import { default as ImageReducer } from './modules/module.image/store';
+import { default as LayoutReducer } from './modules/module.layout/store';
+import { default as QrcodeReducer } from './modules/module.qrcode/store';
+import { default as PomodoraReducer } from './modules/module.pomodora/store';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,

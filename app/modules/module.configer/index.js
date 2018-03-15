@@ -1,4 +1,4 @@
-export ConfigerModule from './Configer';
+export default from './Configer';
 export {
   default as ConfigerReducer,
   actions

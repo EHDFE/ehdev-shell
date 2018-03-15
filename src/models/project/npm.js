@@ -10,46 +10,74 @@ const Commander = require('../../service/commander');
  * install dependence
  */
 exports.install = async (packageName = '', env) => {
-  const { rootPath, args, version, packages } = env;
-  let packageList = '';
-  if (packageName) {
-    packageList = `${packageName}@${version ? version : 'latest'}`;
-  } else if (packages) {
-    if (Array.isArray(packages)) {
-      packages.forEach(d => {
-        packageList += ` ${d.packageName}@${d.version
-          ? d.version
-          : 'latest'}`;
-      });
+  const { rootPath, args } = env;
+  const packageList = [];
+  if (Array.isArray(packageName)) {
+    packageName.forEach(d => {
+      packageList.push(d);
+    });
+  } else {
+    packageList.push(packageName);
+  }
+  try {
+    const data = await Commander.run(`npm i ${packageList.join(' ')} ${args || ''}`, {
+      cwd: rootPath,
+      parseResult: 'string',
+    });
+    let success = true;
+    if (/ERR/.test(data)) {
+      success = false;
     }
+    return {
+      success,
+      data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e.toString(),
+    };
   }
-  const data = await Commander.run(`npm i ${packageList} ${args || ''}`, {
-    cwd: rootPath,
-    parseResult: 'string',
-  });
-  let success = true;
-  if (/ERR/.test(data)) {
-    success = false;
-  }
-  return {
-    success,
-    data,
-  };
 };
 
 exports.uninstall = async (packageName = '', env) => {
   const { rootPath, args } = env;
-  const data = await Commander.run(
-    `npm uninstall ${packageName} ${args || ''}`,
-    {
+  try {
+    const data = await Commander.run(
+      `npm uninstall ${packageName} ${args || ''}`,
+      {
+        cwd: rootPath,
+        parseResult: 'string',
+      }
+    );
+    return {
+      success: true,
+      data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e.toString(),
+    };
+  }
+};
+
+exports.update = async (rootPath) => {
+  try {
+    const data = await Commander.run('npm update', {
       cwd: rootPath,
       parseResult: 'string',
-    }
-  );
-  return {
-    success: true,
-    data,
-  };
+    });
+    return {
+      success: true,
+      data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e.toString(),
+    };
+  }
 };
 
 exports.ls = async (packageName = '', env) => {

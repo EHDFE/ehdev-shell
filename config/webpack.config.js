@@ -2,11 +2,13 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+// const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 
 const port = process.env.PORT || 1212;
 
@@ -26,7 +28,7 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
-      },
+      }
     },
   ];
   const appStyleConfig = [
@@ -42,8 +44,8 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
-      },
-    },
+      }
+    }
   ];
 
   if (env.prod) {
@@ -57,13 +59,13 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      new UglifyJSPlugin({
-        parallel: true,
-        uglifyOptions: {
-          ecma: 6,
-        },
-        sourceMap: true,
-      }),
+      // new UglifyJSPlugin({
+      //   parallel: true,
+      //   uglifyOptions: {
+      //     ecma: 6,
+      //   },
+      //   sourceMap: true,
+      // }),
       extractLibiaryStyle,
       extractAppStyle
     );
@@ -92,8 +94,8 @@ module.exports = env => {
 
   plugins.push(
     // Add module names to factory functions so they appear in browser profiler.
-    new webpack.NamedModulesPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+    // new webpack.NamedModulesPlugin(),
+    // new webpack.NoEmitOnErrorsPlugin(),
     new webpack.ContextReplacementPlugin(/^\.\/locale$/, (context) => {
       if ( !/\/moment\//.test(context.context) ) return;
       Object.assign(context, {
@@ -105,15 +107,21 @@ module.exports = env => {
       React: 'react',
     }),
     new HtmlWebpackPlugin({
-      template: 'index.html',
+      template: './app/index.html',
     }),
   );
 
   if (env.dev) {
     plugins.push(
-      new AddAssetHtmlWebpackPlugin([{
-        filepath: require.resolve('../app/dll/dll.dev.js'),
-      }])
+      // new AddAssetHtmlWebpackPlugin([{
+      //   filepath: require.resolve('../app/dll/dll.dev.js'),
+      // }])
+      new ErrorOverlayWebpackPlugin(),
+      new HtmlWebpackIncludeAssetsPlugin({
+        assets: 'dll/dll.dev.js',
+        append: false,
+        publicPath: '/',
+      })
     );
   } else {
     plugins.push(
@@ -125,19 +133,19 @@ module.exports = env => {
   }
 
   const ret = {
-    context: path.resolve(__dirname, '../app'),
+    context: path.resolve(__dirname, '..'),
     entry: {
       app: env.prod ?
         [
           'babel-polyfill',
-          './index',
+          './app/index',
         ] : [
           'babel-polyfill',
-          'react-hot-loader/patch',
-          `webpack-dev-server/client?http://localhost:${port}/`,
+          // 'react-hot-loader/patch',
+          // `/webpack-dev-server/client?http://localhost:${port}`,
           // 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
-          'webpack/hot/only-dev-server',
-          './index',
+          // '/webpack/hot/only-dev-server',
+          './app/index',
         ],
     },
     output: {
@@ -160,12 +168,12 @@ module.exports = env => {
                       'env',
                       {
                         targets: {
-                          chrome: 59,
+                          chrome: 61,
                         },
                         useBuiltIns: true,
                         modules: false,
                         // refer to: https://github.com/gaearon/react-hot-loader/issues/313
-                        include: ['transform-es2015-classes'],
+                        // include: ['transform-es2015-classes'],
                       },
                     ],
                     'stage-1',
@@ -215,7 +223,10 @@ module.exports = env => {
         }
       ],
     },
-    devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
+    resolve: {
+      extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
+    },
+    // devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
     node: {
@@ -233,9 +244,10 @@ module.exports = env => {
         noInfo: false,
         inline: true,
         lazy: false,
-        hot: true,
+        // hot: true,
+        hotOnly: true,
         headers: { 'Access-Control-Allow-Origin': '*' },
-        contentBase: path.join(__dirname, '../app/dist'),
+        contentBase: path.join(__dirname, '../app'),
         watchOptions: {
           aggregateTimeout: 300,
           ignored: /node_modules/,
@@ -244,7 +256,7 @@ module.exports = env => {
         historyApiFallback: {
           verbose: true,
           disableDotRule: false,
-        }
+        },
       },
     });
   }

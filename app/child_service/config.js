@@ -53,15 +53,10 @@ const ConfigerFolder = process.env.CONFIGER_FOLDER_PATH;
 const ConfigerName = process.env.CONFIGER_NAME;
 const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
 
-let port;
-if (process.argv[2]) {
-  port = + process.argv[2].split('=')[1];
-}
-// dev server port
-exports.PORT = port ? port : 3000;
-
 const projectConfig = require(`${PROJECT_ROOT}/abc.json`);
 const { DEFAULT_PROJECT_CONFIG, getDevConfig, getProdConfig } = require(ConfigPath);
+
+exports.ConfigerFolderPath = ConfigerFolder;
 
 // project config
 exports.projectConfig = Object.assign({}, DEFAULT_PROJECT_CONFIG, projectConfig);
@@ -82,6 +77,7 @@ exports.dllConfigParser = projectConfig => {
   } = projectConfig.dll;
   const manifestPath = path.resolve(PROJECT_ROOT, 'src/manifest.json');
   const dllConfig = {
+    mode: 'production',
     entry: {
       dll: include,
     },

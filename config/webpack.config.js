@@ -28,6 +28,7 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
+        javascriptEnabled: true
       }
     },
   ];
@@ -44,6 +45,7 @@ module.exports = env => {
       loader: 'less-loader',
       options: {
         noIeCompat: true,
+        javascriptEnabled: true
       }
     }
   ];

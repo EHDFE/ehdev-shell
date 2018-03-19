@@ -9,12 +9,12 @@
     "electron"
   ],
   "dependencies": {
-    "@antv/g2": "^3.0.3",
+    "@antv/g2": "^3.0.5-beta.6",
     "antd": "^3.3.0",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "fuzzaldrin-plus": "^0.6.0",
-    "less": "^2.7.3",
+    "less": "^3.0.1",
     "less-loader": "^4.0.5",
     "localforage": "^1.6.0",
     "lodash": "^4.17.4",
@@ -91,8 +91,8 @@
     "uglifyjs-webpack-plugin": "^1.2.0",
     "webpack": "~4.1.0",
     "webpack-bundle-analyzer": "^2.11.0",
-    "webpack-cli": "^2.0.9",
-    "webpack-dev-server": "^3.0.0"
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1"
   },
   "pre-commit": [
     "precommit-msg",

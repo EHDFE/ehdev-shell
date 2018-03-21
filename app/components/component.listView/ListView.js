@@ -15,7 +15,7 @@ import moment from 'moment';
 
 import FileCard from '../component.fileCard/';
 
-import APP_CONFIG from '../../MAIN_CONFIG';
+import CONFIG from '../../suite/CONFIG';
 
 import styles from './index.less';
 
@@ -179,7 +179,7 @@ export default class ListView extends Component {
     const { previewModalVisible, previewDataId } = this.state;
     const previewItem = data.find(d => d._id === previewDataId);
     const modalProps = {
-      width: APP_CONFIG.WIDTH - 130,
+      width: CONFIG.WIDTH - 130,
       visible: previewModalVisible,
       closable: false,
       onCancel: () => {

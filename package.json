@@ -28,7 +28,7 @@
     "qrcode": "^1.2.0",
     "raven": "^2.4.2",
     "raven-for-redux": "^1.2.0",
-    "react": "^16.2.0",
+    "react": "^16.3.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.2.0",

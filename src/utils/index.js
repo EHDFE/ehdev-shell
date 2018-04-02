@@ -13,6 +13,8 @@ const path = require('path');
 const QRCode = require('qrcode');
 const glob = require('glob');
 
+const platform = os.platform();
+
 const mkdir = exports.mkdir = promisify(fs.mkdir);
 exports.stat = promisify(fs.stat);
 exports.readFile = promisify(fs.readFile);
@@ -175,21 +177,26 @@ exports.generateQRCode = (text, options) => new Promise((resolve, reject) => {
  */
 exports.md5 = str => crypto.createHash('md5').update(str).digest('hex');
 
-exports.killPid = (ps, pid, callback) => {
-  const platform = os.platform();
+exports.killPid = (ps, pid) => new Promise((resolve, reject) => {
   if (platform === 'win32') {
     // windows
-    exec(`taskkill /pid ${pid} /T /F`, callback);
+    exec(`taskkill /pid ${pid} /T /F`, err => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
   } else {
     // unix
     try {
       ps.kill('SIGTERM');
+      resolve();
     } catch (e) {
-      return callback(e);
+      return reject(new Error(e));
     }
-    return callback();
   }
-};
+});
 
 exports.getLocalIP = () => {
   const ifs = require('os').networkInterfaces();

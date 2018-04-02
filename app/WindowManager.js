@@ -8,12 +8,13 @@ import { actions } from './modules/module.layout/store';
 import WindowControl from './components/component.windowControl/';
 
 const setWindowClose = () => {
-  const win = remote.getCurrentWindow();
-  win.close();
+  // const win = remote.getCurrentWindow();
+  // win.close();
+  remote.app.quit();
 };
 const setWindowMinimize = () => {
   const win = remote.getCurrentWindow();
-  win.minimize();
+  win.hide();
 };
 const setWindowMaximize = () => {
   const win = remote.getCurrentWindow();

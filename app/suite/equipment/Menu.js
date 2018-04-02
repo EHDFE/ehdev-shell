@@ -1,5 +1,5 @@
 const { app, shell, Menu } = require('electron');
-const pkg = require('../package.json');
+const pkg = require('../../package.json');
 
 class MenuController {
   constructor() {

@@ -9,7 +9,7 @@
     "electron"
   ],
   "dependencies": {
-    "@antv/g2": "^3.0.5-beta.6",
+    "@antv/g2": "^3.0.5-beta.7",
     "antd": "^3.3.0",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",

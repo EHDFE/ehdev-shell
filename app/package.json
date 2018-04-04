@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "An electron based developing tool for feds.",
   "main": "main.js",
   "keywords": [
@@ -21,7 +21,7 @@
     "node-notifier": "^5.2.1",
     "stats-webpack-plugin": "^0.6.1",
     "uglifyjs-webpack-plugin": "^1.2.0",
-    "webpack": "~4.1.0",
+    "webpack": "~4.4.1",
     "webpack-dev-server": "^3.1.1"
   },
   "author": "ryan.bian",

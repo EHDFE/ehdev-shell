@@ -26,7 +26,7 @@
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.0",
     "qrcode": "^1.2.0",
-    "raven": "^2.4.2",
+    "raven": "^2.5.0",
     "raven-for-redux": "^1.2.0",
     "react": "^16.3.0",
     "react-copy-to-clipboard": "^5.0.1",

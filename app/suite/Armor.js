@@ -73,39 +73,10 @@ class Armor {
         pathname: require('path').join(__dirname, 'dist/index.html'),
       }));
     }
-    // this.mainWindow.on('close', e => {
-    //   e.preventDefault();
-    //   webContents.send('APP_WILL_CLOSE');
-    //   ipcMain.once('SERVICE:stop-all-done', () => {
-    //     this.mainWindow.destroy();
-    //   });
-    //   // stop all services before close
-    //   ipcMain.emit('SERVICE:req-stop-all');
-    // });
   }
   beforeQuit(event) {
-    // ipcMain.once('ARMOR:BEFORE_QUIT:REPLY', (e, state) => {
-    //   const currentService = get(state, ['page.project', 'service', 'instances'], {});
-    //   if (Object.keys(currentService).length > 0) {
-    //     event.preventDefault();
-    //     console.log('service 正在运行');
-    //   } else {
-    //   }
-    // });
-    // this.core.send('ARMOR:BEFORE_QUIT');
-
-    // dialog.showMessageBox({
-    //   type: 'info',
-    //   buttons: [],
-    //   message: 'Jarvis 准备关闭。。。',
-    // });
   }
   willQuit() {
-    // dialog.showMessageBox({
-    //   type: 'info',
-    //   buttons: [],
-    //   message: 'Jarvis 关闭中。。。',
-    // });
   }
   willActiviate() {
     // On macOS it's common to re-create a window in the app when the

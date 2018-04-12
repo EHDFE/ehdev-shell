@@ -21,8 +21,10 @@ ipcRenderer.on('CORE:BEFORE_CLOSE', () => {
   ipcRenderer.send('CORE:BEFORE_CLOSE:REPLY', store.getState());
 });
 
+let confirmRef;
 ipcRenderer.on('CORE:SERVICE_NOT_END', () => {
-  Modal.confirm({
+  if (confirmRef) return;
+  confirmRef = Modal.confirm({
     title: '警告',
     content: '服务尚未停止，您确定要关闭 Jarvis 吗？',
     iconType: 'warning',
@@ -31,8 +33,11 @@ ipcRenderer.on('CORE:SERVICE_NOT_END', () => {
     zIndex: 1031,
     onOk() {
       ipcRenderer.send('CORE:SERVICE_NOT_END:CLOSE');
+      confirmRef = null;
     },
-    onCancel() {}
+    onCancel() {
+      confirmRef = null;
+    }
   });
 });
 

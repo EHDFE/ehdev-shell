@@ -6,7 +6,7 @@ const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
 const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 const defaultsDeep = require('lodash/defaultsDeep');
 
-const ExtractTextPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'extract-text-webpack-plugin'));
+// const ExtractTextPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'extract-text-webpack-plugin'));
 const CleanWebpackPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'clean-webpack-plugin'));
 const UglifyJsPlugin = exports.UglifyJsPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'uglifyjs-webpack-plugin'));
 
@@ -108,9 +108,9 @@ exports.dllConfigParser = projectConfig => {
       new Webpack.HashedModuleIdsPlugin(),
       new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       new UglifyJsPlugin(getUglifyJsOptions(projectConfig)),
-      new ExtractTextPlugin({
-        filename: '[name].[contenthash:8].css',
-      }),
+      // new ExtractTextPlugin({
+      //   filename: '[name].[contenthash:8].css',
+      // }),
     ],
   };
   return {

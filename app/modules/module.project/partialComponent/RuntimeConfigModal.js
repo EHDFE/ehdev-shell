@@ -67,6 +67,18 @@ class RuntimeConfigModal extends PureComponent {
             <Switch />
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="noInfo"
+          help="只显示错误和警告信息"
+        >
+          {getFieldDecorator('noInfo', {
+            initialValue: true,
+            valuePropName: 'checked',
+          })(
+            <Switch />
+          )}
+        </FormItem>
       </Form>
     );
   }

@@ -1,4 +1,4 @@
-const { BrowserWindow, ipcMain } = require('electron');
+const { BrowserWindow, ipcMain, app } = require('electron');
 const get = require('lodash/get');
 const { serviceStore } = require('../../src/service/index');
 
@@ -19,7 +19,7 @@ const HANDLERS = new Map([
         .then(resList => {
           // give renderer some times to update state
           setTimeout(() => {
-            this.window.destroy();
+            app.quit();
           }, 500);
         }).catch(err => {
           if (typeof err === 'string') {

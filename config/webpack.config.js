@@ -1,11 +1,11 @@
 // refer to https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/config/webpack.config.dev.js
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 // const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
@@ -15,8 +15,6 @@ const port = process.env.PORT || 1212;
 module.exports = env => {
 
   const plugins = [];
-  let extractLibiaryStyle;
-  let extractAppStyle;
   const libirayStyleConfig = [
     {
       loader: 'css-loader',
@@ -51,8 +49,8 @@ module.exports = env => {
   ];
 
   if (env.prod) {
-    extractLibiaryStyle = new ExtractTextPlugin('lib.css');
-    extractAppStyle = new ExtractTextPlugin('app.css');
+    // extractLibiaryStyle = new ExtractTextPlugin('lib.css');
+    // extractAppStyle = new ExtractTextPlugin('app.css');
     plugins.push(
       // new webpack.DllReferencePlugin({
       //   context: path.resolve(__dirname, '../app'),
@@ -68,8 +66,14 @@ module.exports = env => {
       //   },
       //   sourceMap: true,
       // }),
-      extractLibiaryStyle,
-      extractAppStyle
+      // extractLibiaryStyle,
+      // extractAppStyle
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+      }),
+      new OptimizeCssAssetsPlugin({
+        canPrint: true
+      })
     );
   } else {
     libirayStyleConfig.unshift({
@@ -195,20 +199,20 @@ module.exports = env => {
               oneOf: [
                 {
                   include: /node_modules/,
-                  use: env.prod ? extractLibiaryStyle.extract({
-                    use: libirayStyleConfig
-                  }) : libirayStyleConfig,
+                  use: env.prod ? [
+                    MiniCssExtractPlugin.loader,
+                  ].concat(libirayStyleConfig) : libirayStyleConfig,
                 },
                 {
                   resourceQuery: /no-css-module/,
-                  use: env.prod ? extractLibiaryStyle.extract({
-                    use: libirayStyleConfig
-                  }) : libirayStyleConfig,
+                  use: env.prod ? [
+                    MiniCssExtractPlugin.loader,
+                  ].concat(libirayStyleConfig) : libirayStyleConfig,
                 },
                 {
-                  use: env.prod ? extractAppStyle.extract({
-                    use: appStyleConfig
-                  }) : appStyleConfig,
+                  use: env.prod ? [
+                    MiniCssExtractPlugin.loader,
+                  ].concat(appStyleConfig) : appStyleConfig,
                 },
               ],
             },

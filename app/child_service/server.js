@@ -25,6 +25,7 @@ const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 const RuntimeConfig = Object.assign({
   port: 3000,
   https: false,
+  noInfo: true,
 }, JSON.parse(RUNTIME_CONFIG));
 
 if (RuntimeConfig.https) {
@@ -71,6 +72,7 @@ const getDevServerConfig = PROJECT_CONFIG => {
       colors: true,
       errorDetails: true,
     },
+    noInfo: RuntimeConfig.noInfo,
     // open the browser automaticly
     open: true,
     useLocalIp: true,

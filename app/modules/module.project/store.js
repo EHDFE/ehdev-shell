@@ -25,6 +25,7 @@ const defaultState = {
     runtimeConfig: {
       port: 3000,
       https: false,
+      noInfo: true,
     },
   },
   service: {

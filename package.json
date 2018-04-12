@@ -106,7 +106,6 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "eslint --cache ./app",
     "lint-fix": "eslint --cache ./app --fix",
-    "build-prod": "webpack --mode production --env.prod --config ./config/webpack.config.js --progress",
     "pack": "electron-builder --dir",
     "dist-all": "electron-builder -mw",
     "dist-mac": "electron-builder -m",
@@ -129,11 +128,10 @@
     "files": [
       "dist",
       "main-build",
-      "helper",
       "child_service",
       "package.json",
-      "main.js",
-      "MAIN_CONFIG.js"
+      "bootstrap.js",
+      "suite"
     ],
     "asar": true,
     "asarUnpack": [

@@ -6,7 +6,7 @@ const isDEV = process.env.NODE_ENV === 'development';
 if (isDEV) {
   require('../../src/index');
 } else {
-  require('./engine');
+  require('../main-build/index');
 }
 
 const CONFIG = require('./CONFIG');
@@ -67,11 +67,13 @@ class Armor {
       const port = CONFIG.DEV_PORT;
       this.core.loadURL(`http://localhost:${port}`);
     } else {
-      this.core.loadURL(require('url').format({
+      const url = require('url');
+      const pagePath = url.format({
         protocol: 'file',
         slashes: true,
-        pathname: require('path').join(__dirname, 'dist/index.html'),
-      }));
+        pathname: require('path').join(__dirname, '../dist/index.html'),
+      });
+      this.core.loadURL(pagePath);
     }
   }
   beforeQuit(event) {

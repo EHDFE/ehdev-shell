@@ -1,6 +1,16 @@
 const { BrowserWindow, ipcMain, app } = require('electron');
 const get = require('lodash/get');
-const { serviceStore } = require('../../src/service/index');
+
+const isDEV = process.env.NODE_ENV === 'development';
+
+let apiService;
+if (isDEV) {
+  apiService = require('../../src/apiService');
+} else {
+  apiService = require('../main-build/apiService');
+}
+
+const { serviceStore } = apiService.service;
 
 const HANDLERS = new Map([
   [

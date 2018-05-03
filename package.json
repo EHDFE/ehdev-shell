@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@antv/g2": "^3.0.5",
-    "antd": "^3.4.3",
+    "antd": "^3.4.5",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "fuzzaldrin-plus": "^0.6.0",

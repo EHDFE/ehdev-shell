@@ -41,6 +41,7 @@ module.exports = {
 
   externals: {
     'node-notifier': 'node-notifier',
+    'node-pty': 'node-pty',
     // eslint: {
     //   commonjs2: 'eslint',
     // }

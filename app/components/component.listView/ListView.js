@@ -2,27 +2,26 @@
  * List Component
  * @author ryan.bian
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 // import classnames from 'classnames';
-import { Row, Col, Modal, notification } from 'antd';
+import { Col, Modal, Row, notification } from 'antd';
+import { Map } from 'immutable';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import MdContentCopy from 'react-icons/lib/md/content-copy';
+import MdDelete from 'react-icons/lib/md/delete';
 import MdFileUpload from 'react-icons/lib/md/file-upload';
 import MdRemoveRedEye from 'react-icons/lib/md/remove-red-eye';
-import MdDelete from 'react-icons/lib/md/delete';
-import MdContentCopy from 'react-icons/lib/md/content-copy';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import moment from 'moment';
-
-import FileCard from '../component.fileCard/';
-
 import CONFIG from '../../suite/CONFIG';
-
+import FileCard from '../component.fileCard/';
 import styles from './index.less';
+
 
 export default class ListView extends Component {
   static defaultProps = {
     viewMode: 'grid',
-    data: [],
+    data: Map({}),
     onUpload() {},
     onDelete() {},
   }
@@ -31,7 +30,7 @@ export default class ListView extends Component {
       'grid',
       'list',
     ]),
-    data: PropTypes.array,
+    data: PropTypes.instanceOf(Map),
     onUpload: PropTypes.func,
     onDelete: PropTypes.func,
   }
@@ -139,8 +138,8 @@ export default class ListView extends Component {
     return (
       <Row type="flex">
         {
-          data.map(d =>
-            <Col xs={12} sm={8} lg={6} xl={4} xll={3} key={d._id}>
+          data.map((d, id) =>
+            <Col xs={12} sm={8} lg={6} xl={4} xll={3} key={id}>
               <FileCard
                 url={d.url}
                 name={d.name}
@@ -148,7 +147,7 @@ export default class ListView extends Component {
                 mask={this.renderItemActions(d, true)}
               />
             </Col>
-          )
+          ).valueSeq()
         }
       </Row>
     );
@@ -157,8 +156,8 @@ export default class ListView extends Component {
     return (
       <div className={styles.ListView__list}>
         {
-          data.map(d =>
-            <div className={styles.ListView__listItem} key={d._id}>
+          data.map((d, id) =>
+            <div className={styles.ListView__listItem} key={id}>
               <div>
                 <p className={styles.ListView__listName}>{ d.name }</p>
                 <p className={styles.ListView__listTime}>{ moment(d.lastModified).format('YYYY-MM-DD HH:mm') }</p>
@@ -169,7 +168,7 @@ export default class ListView extends Component {
                 }
               </div>
             </div>
-          )
+          ).valueSeq()
         }
       </div>
     );

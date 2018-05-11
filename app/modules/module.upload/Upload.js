@@ -2,20 +2,19 @@
  * Upload Page
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { Col, Radio, Row } from 'antd';
+import { Map } from 'immutable';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
-import { Row, Col, Radio } from 'antd';
+import React, { Component } from 'react';
 import MdViewHeadline from 'react-icons/lib/md/view-headline';
 import MdViewModule from 'react-icons/lib/md/view-module';
-
-import { actions } from './store';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import ListView from '../../components/component.listView/';
 import Page from '../../components/component.page/';
 import UploadZone from '../../components/component.uploadZone/';
-import ListView from '../../components/component.listView/';
-
 import styles from './index.less';
+import { actions } from './store';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -23,7 +22,7 @@ const RadioButton = Radio.Button;
 class UploadModule extends Component {
   static propTypes = {
     listType: PropTypes.oneOf(['grid', 'list']),
-    fileList: PropTypes.array.isRequired,
+    fileList: PropTypes.instanceOf(Map).isRequired,
     fetchFileList: PropTypes.func,
     setListType: PropTypes.func,
     upload: PropTypes.func,
@@ -112,14 +111,20 @@ class UploadModule extends Component {
   }
 }
 
-const uploadPageSelector = state => state['page.upload'];
+const uploadPageSelector = state => state.get('page.upload');
 const listTypeSelector = createSelector(
   uploadPageSelector,
-  pageState => pageState.layout.listType,
+  pageState => pageState.getIn(['layout', 'listType']),
 );
 const fileListSelector = createSelector(
   uploadPageSelector,
-  pageState => Object.keys(pageState.files.fileMap).map(id => pageState.files.fileMap[id]),
+  pageState => pageState
+    .getIn(['files', 'fileMap'])
+    .sortBy(d => d.lastModified, (a, b) => {
+      if (a < b) return 1;
+      if (a > b) return -1;
+      if (a === b) return 0;
+    }),
 );
 
 const mapStateToProps = (state, ownProps) => createSelector(

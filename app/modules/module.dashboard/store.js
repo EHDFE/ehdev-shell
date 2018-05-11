@@ -2,22 +2,23 @@
  * Dashboard Store
  * @author ryan.bian
  */
-import { combineReducers } from 'redux';
-import { createActions, handleActions } from 'redux-actions';
+import { List, Map, fromJS } from 'immutable';
 import moment from 'moment';
-
-import DASHBOARD_API from '../../apis/dashboard';
+import { createActions, handleActions } from 'redux-actions';
+import { combineReducers } from 'redux-immutable';
 import { WEATHER_APPID } from '../../CONFIG';
+import DASHBOARD_API from '../../apis/dashboard';
 
-const defaultState = {
-  base: {
+
+const defaultState = Map({
+  base: Map({
     assetsCount: 0,
     projectsCount: 0,
-  },
-  projects: {
-    list: [],
-  },
-};
+  }),
+  projects: Map({
+    list: List([]),
+  }),
+});
 
 export const actions = createActions({
   BASE: {
@@ -60,34 +61,22 @@ export const actions = createActions({
 const baseReducer = handleActions({
   'BASE/GET_OVERALL': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      ...payload,
-    };
+    return state.merge(payload);
   },
   'BASE/GET_WEATHER': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      weather: payload,
-    };
+    return state.set('weather', payload);
   },
   'BASE/GET_DATE': (state, { payload }) => {
-    return {
-      ...state,
-      ...payload,
-    };
+    return state.merge(payload);
   },
-}, defaultState.base);
+}, defaultState.get('base'));
 
 const projectsReducer = handleActions({
   'PROJECTS/GET_LIST': (state, { payload }) => {
-    return {
-      ...state,
-      list: payload,
-    };
+    return state.set('list', fromJS(payload));
   }
-}, defaultState.projects);
+}, defaultState.get('projects'));
 
 export default combineReducers({
   base: baseReducer,

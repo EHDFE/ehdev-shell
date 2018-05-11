@@ -2,18 +2,11 @@
  * Config Importor
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { Button, Form, Icon, Modal, Radio, Select, Upload } from 'antd';
+import { Set } from 'immutable';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Button,
-  Form,
-  Select,
-  Radio,
-  Upload,
-  Modal,
-  Icon,
-} from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -22,11 +15,11 @@ const { Option } = Select;
 
 @Form.create()
 @connect(state => ({
-  remoteConfigs: state['page.configer'].remote.configIds,
+  remoteConfigs: state.getIn(['page.configer', 'remote', 'configIds']),
 }))
 class ImportForm extends Component {
   static propTypes = {
-    remoteConfigs: PropTypes.arrayOf(PropTypes.string),
+    remoteConfigs: PropTypes.instanceOf(Set),
   }
   render() {
     const { remoteConfigs } = this.props;

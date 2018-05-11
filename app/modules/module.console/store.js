@@ -3,40 +3,30 @@
  * @author hefan
  * TODO: set max lines for each config
  */
+import { Set, Map } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
-import moment from 'moment';
 
-const MAX_CONSOLE_ITEM_LIMIT = 10;
-const MAX_LOG_LENGTH = 10000;
-
-const defaultState = {
-  ids: [],
-  entities: {},
+const defaultState = Map({
+  ids: Set([]),
+  entities: Map({}),
   activeId: null,
   visible: false,
-};
+  width: 620,
+  height: 400,
+});
 
 /**
  * Console's action
  */
 export const actions = createActions({
-  CREATE_LOG: (pid, category, content, args, root) => {
-    return {
-      category,
-      content,
-      id: category === 'OTHER' ? 0 : pid,
-      updateTime: moment().valueOf(),
-      checked: false,
-      projectName: args.projectName,
-      root,
-    };
-  },
-  DELETE_LOG: id => {
-    return id;
-  },
-  ACTIVE_LOG: id => {
-    return id;
-  },
+  CREATE: id => ({
+    id,
+  }),
+  SET_ACTIVE: id => id,
+  RESIZE: (width, height) => ({
+    width,
+    height,
+  }),
   SET_VISIBLE: () => ({
     visible: true,
   }),
@@ -50,97 +40,24 @@ export const actions = createActions({
  */
 const consoleReducer = handleActions(
   {
-    CREATE_LOG: (state, { payload }) => {
-      const { id, content, category } = payload;
-      let entity, ids;
-      if (state.ids.includes(id)) {
-        let newContent = state.entities[id].content + content;
-        if (category === 'OTHER') {
-          if (newContent.length > MAX_LOG_LENGTH) {
-            newContent = newContent.substr(newContent.length - MAX_LOG_LENGTH);
-          }
-        }
-        entity = {
-          ...state.entities[id],
-          content: newContent,
-          updateTime: payload.updateTime,
-          checked: payload.checked,
-          projectName: payload.projectName,
-        };
-        ids = [...state.ids];
-      } else {
-        ids = [id, ...state.ids];
-        entity = payload;
-      }
-      const entities = {
-        ...state.entities,
-        [id]: entity,
-      };
-      if (ids.length > MAX_CONSOLE_ITEM_LIMIT + 1) {
-        const idx = ids.indexOf(0);
-        let remainIds;
-        if (idx === -1) {
-          remainIds = ids;
-        } else {
-          remainIds = ids.slice(0, idx).concat(ids.slice(idx + 1));
-        }
-        const deleteIds = remainIds.splice(MAX_CONSOLE_ITEM_LIMIT);
-        if (idx !== -1) {
-          remainIds.unshift(0);
-        }
-        deleteIds.forEach(id => {
-          delete entities[id];
-        });
-        ids = remainIds;
-      }
-      return {
-        ...state,
-        ids,
-        entities,
-        activeId: category === 'OTHER' ? state.activeId : id,
-      };
+    CREATE: state => {
+      return state;
     },
-    DELETE_LOG: (state, { payload }) => {
-      const newIds = state.ids.filter(id => id !== payload);
-      const newEntities = Object.assign({}, state.entities);
-      delete newEntities[payload];
-      return {
-        ids: newIds,
-        entities: newEntities,
-        activeId: newIds.length > 0 ? newIds[0] : null,
-        visible: state.visible,
-      };
+    SET_ACTIVE: (state, { payload }) => {
+      return state.set('activeId', payload);
     },
-    ACTIVE_LOG: (state, { payload }) => {
-      if (!state.ids.includes(payload)) return state;
-      return {
-        ...state,
-        entities: {
-          ...state.entities,
-          [payload]: Object.assign(state.entities[payload], {
-            checked: true,
-          }),
-        },
-        activeId: payload,
-      };
+    RESIZE: (state, { payload }) => {
+      const { width, height } = payload;
+      return state.set('width', width).set('height', height);
     },
     TOGGLE_VISIBLE: (state) => {
-      return {
-        ...state,
-        visible: !state.visible,
-      };
+      return state.set('visible', !state.get('visible'));
     },
     SET_VISIBLE: (state) => {
-      return {
-        ...state,
-        visible: state.visible,
-      };
+      return state.set('visible', true);
     },
     SET_INVISIBLE: (state) => {
-      return {
-        ...state,
-        visible: state.visible,
-      };
+      return state.set('visible', false);
     },
   },
   defaultState

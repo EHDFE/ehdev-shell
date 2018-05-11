@@ -1,13 +1,46 @@
 /**
  * Node commander executer
  */
-const { spawn } = require('child_process');
-const { serviceStore } = require('./index');
+// const { spawn } = require('child_process');
 const { webContents } = require('electron');
+const { serviceStore } = require('./index');
+const WebSocket = require('ws');
+const { platform } = require('os');
+const pty = require('node-pty');
 
-const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+const HOST = platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
+const PORT = 8484;
 
-module.exports = {
+class Commander {
+  constructor() {
+    this.ws = {};
+    this.socketServer = new WebSocket.Server({
+      host: HOST,
+      port: PORT,
+    });
+    this.socketServer.on('connection', (ws, req) => {
+      const id = req.url.replace(/^\//, '');
+      this.ws[id] = ws;
+      ws.on('close', () => {
+        delete this.ws[id];
+      });
+      ws.on('message', data => {
+        const resizeConfig = JSON.parse(data);
+        this.resize(resizeConfig.pid, resizeConfig.cols, resizeConfig.rows);
+      });
+    });
+  }
+  send(id, data) {
+    if (this.ws[id]) {
+      this.ws[id].send(data);
+    }
+  }
+  resize(pid, cols, rows) {
+    const currentProcess = serviceStore.get(pid);
+    if (currentProcess) {
+      currentProcess.resize(cols, rows);
+    }
+  }
   /**
    * run the command
    * @param {string} commands - the commond running in terminal
@@ -20,6 +53,8 @@ module.exports = {
    * @param {object} options.args - arguments to passthrough
    */
   run(commands, options) {
+    const { SHELL_CONTENT_ID } = process.env;
+    const webContent = webContents.fromId(+SHELL_CONTENT_ID);
     const config = Object.assign(
       {
         parseResult: 'json',
@@ -47,97 +82,48 @@ module.exports = {
     } else {
       runtimeArgs = args;
     }
-    const ps = spawn(command, runtimeArgs, spawnOptions);
+    const ps = pty.spawn(command, runtimeArgs, spawnOptions);
+    // const ps = pty.spawn(shell, runtimeArgs, spawnOptions);
     const { pid } = ps;
-    const webContentArray = webContents.getAllWebContents();
-    if (pid) {
-      serviceStore.set(pid, ps);
-    }
+    serviceStore.set(pid, ps);
 
     const ret = new Promise((resolve, reject) => {
-      let res;
-      if (config.parseResult) {
-        res = Buffer.from('');
-      }
-      ps.stdout.on('data', data => {
-        webContentArray.forEach(webContent => {
-          webContent && webContent.send(COMMAND_OUTPUT, {
-            dataBuffer: data,
-            pid,
-            action: 'log',
-            category: config.category,
-            args: config.args,
-            root: config.cwd,
-          });
-        });
+      let wholeText = '';
+      ps.on('data', data => {
         if (config.parseResult) {
-          res = Buffer.concat([res, data]);
+          wholeText += data;
+        } else {
+          this.send(config.cwd, data);
         }
       });
-      ps.stderr.on('data', data => {
-        webContentArray.forEach(webContent => {
-          webContent && webContent.send(COMMAND_OUTPUT, {
-            dataBuffer: data,
-            pid,
-            action: 'log',
-            category: config.category,
-            args: config.args,
-            root: config.cwd,
-          });
-        });
-        if (config.parseResult === 'string') {
-          res = Buffer.concat([res, data]);
-        }
-      });
-      ps.on('error', err => {
-        webContentArray.forEach(webContent => {
-          webContent && webContent.send(COMMAND_OUTPUT, {
-            data: err.toString(),
-            pid,
-            action: 'error',
-            category: config.category,
-            args: config.args,
-            root: config.cwd,
-          });
-        });
-        reject(err);
-        serviceStore.delete(pid);
-      });
-      ps.on('exit', (code, signal) => {
-        webContentArray.forEach(webContent => {
-          webContent && webContent.send(COMMAND_OUTPUT, {
-            data: {
-              code,
-              signal,
-            },
-            pid,
-            action: 'exit',
-            category: config.category,
-            args: config.args,
-            root: config.cwd,
-          });
-        });
+      ps.on('exit', code => {
         serviceStore.delete(pid);
         if (config.parseResult) {
-          const str = res.toString();
           if (config.parseResult === 'json') {
             try {
-              resolve(str === '' ? {} : JSON.parse(str));
+              resolve(!wholeText ? {} : JSON.parse(wholeText));
             } catch (e) {
               reject(e.toString());
             }
           } else {
-            resolve(str);
+            resolve(wholeText);
           }
+        } else {
+          webContent.send('SERVICE_STOPPED', {
+            pid,
+            rootPath: config.cwd,
+          });
         }
       });
     });
     if (config.parseResult) {
       return ret;
     } else {
-      return {
+      return Promise.resolve({
         pid,
-      };
+      });
     }
-  },
-};
+  }
+}
+
+module.exports = new Commander();

@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import DevTools from './DevTools';
 import WindowManager from './WindowManager';
 
-const render = (Component, store, persistor) => {
+const render = (Component, store) => {
   const contents = [
     <Component key="component" />,
     <WindowManager key="windowManager" />,
@@ -18,9 +17,9 @@ const render = (Component, store, persistor) => {
   }
   ReactDOM.render(
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <div>
         { contents }
-      </PersistGate>
+      </div>
     </Provider>,
     document.getElementById('root')
   );

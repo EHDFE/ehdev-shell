@@ -1,43 +1,29 @@
 /**
  * Configer Page Module
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Badge, Button, Icon, Modal, Popconfirm, Select, Table, Tooltip } from 'antd';
 import classnames from 'classnames';
+import { Map } from 'immutable';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import {
-  Button,
-  Table,
-  Popconfirm,
-  Badge,
-  Tooltip,
-  Modal,
-  Select,
-  Icon,
-} from 'antd';
 import semver from 'semver';
-
-import ConfigImportor from './ConfigImportor';
-import Page from '../../components/component.page/';
 import Markdown from '../../components/component.markdown/';
-
+import Page from '../../components/component.page/';
+import ConfigImportor from './ConfigImportor';
+import styles from './index.less';
 import { actions } from './store';
+
+
 const { Option } = Select;
 
-import styles from './index.less';
 
 class ConfigerModule extends Component {
   static propTypes = {
     pending: PropTypes.bool,
-    remoteConfigs: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      version: PropTypes.string.isRequired,
-    })),
-    localConfigs: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      version: PropTypes.string.isRequired,
-    })),
+    remoteConfigs: PropTypes.instanceOf(Map),
+    localConfigs: PropTypes.instanceOf(Map),
     getConfigs: PropTypes.func,
     getRemoteConfigs: PropTypes.func,
     addConfig: PropTypes.func,
@@ -82,14 +68,14 @@ class ConfigerModule extends Component {
   showReadme = e => {
     const { name } = e.target.dataset;
     const { localConfigs } = this.props;
-    const currentConfiger = localConfigs.find(d => d.name === name);
-    this.showMarkModal(currentConfiger.readme);
+    const readme = localConfigs.getIn([name, 'readme']);
+    this.showMarkModal(readme);
   }
   showHistory = e => {
     const { name } = e.target.dataset;
     const { localConfigs } = this.props;
-    const currentConfiger = localConfigs.find(d => d.name === name);
-    this.showMarkModal(currentConfiger.history);
+    const history = localConfigs.getIn([name, 'history']);
+    this.showMarkModal(history);
   }
   showMarkModal(content) {
     this.setState({
@@ -273,7 +259,7 @@ class ConfigerModule extends Component {
           }
         },
       ],
-      dataSource: localConfigs.map(d => Object.assign(d, {
+      dataSource: localConfigs.toList().toJS().map(d => Object.assign(d, {
         key: d.name,
       })),
       locale: {
@@ -308,21 +294,21 @@ class ConfigerModule extends Component {
   }
 }
 
-const pageSelector = state => state['page.configer'];
-const selectRemoteConfigs = createSelector(pageSelector, state => Object.values(state.remote.configMap));
+const pageSelector = state => state.get('page.configer');
+const selectRemoteConfigs = createSelector(pageSelector, state => state.getIn(['remote', 'configMap']));
 const selectLocalConfigs = createSelector(pageSelector, state => {
-  const localConfigs = Object.values(state.local.configMap);
-  const remoteConfigMap = state.remote.configMap;
-  localConfigs.forEach(d => {
-    const remoteConfig = remoteConfigMap[d.name];
-    if (remoteConfig && semver.gt(remoteConfig.version, d.version)) {
-      Object.assign(d, {
+  const remoteConfigMap = state.getIn(['remote', 'configMap']);
+  return state.getIn(['local', 'configMap']).map((v, k) => {
+    const remoteVersion = remoteConfigMap.getIn([k, 'version']);
+    if (remoteVersion && semver.gt(remoteVersion, v.get('version'))) {
+      return v.merge({
         upgradable: true,
-        latestVersion: remoteConfig.version,
+        latestVersion: remoteConfigMap,
       });
+    } else {
+      return v;
     }
   });
-  return localConfigs;
 });
 
 const mapStateToProps = state => ({
@@ -330,7 +316,7 @@ const mapStateToProps = state => ({
   localConfigs: selectLocalConfigs(state),
   pending: createSelector(
     pageSelector,
-    s => s.progress.pending,
+    s => s.getIn(['progress', 'pending']),
   )(state),
 });
 const mapDispatchToProps = dispatch => ({

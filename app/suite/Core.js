@@ -1,5 +1,4 @@
 const { BrowserWindow, ipcMain, app } = require('electron');
-const get = require('lodash/get');
 
 const isDEV = process.env.NODE_ENV === 'development';
 
@@ -15,8 +14,8 @@ const { serviceStore } = apiService.service;
 const HANDLERS = new Map([
   [
     'CORE:BEFORE_CLOSE:REPLY', function(e, state) {
-      const currentService = get(state, ['page.project', 'service', 'instances'], {});
-      if (Object.keys(currentService).length > 0) {
+      const serviceList = state.getIn(['page.project', 'service', 'instances']);
+      if (serviceList.size > 0) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
         this.window.destroy();
@@ -46,6 +45,7 @@ class Core {
   constructor(config) {
     this.window = new BrowserWindow(config);
     this.webContents = this.window.webContents;
+    process.env.SHELL_CONTENT_ID = this.webContents.id;
     this.webContents.on('did-finish-load', () => {
       this.show().focus();
     });

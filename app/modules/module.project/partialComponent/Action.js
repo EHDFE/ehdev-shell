@@ -1,18 +1,18 @@
-import { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { Dropdown, Menu } from 'antd';
+import { Map } from 'immutable';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import IconBuild from 'react-icons/lib/fa/codepen';
 import IconPlay from 'react-icons/lib/fa/play-circle-o';
 import IconStop from 'react-icons/lib/fa/stop-circle-o';
-import IconBuild from 'react-icons/lib/fa/codepen';
 import MdAutorenew from 'react-icons/lib/md/autorenew';
 import IconMoreVert from 'react-icons/lib/md/more-vert';
-
 import styles from '../index.less';
+
 
 export default class ProjectAction extends PureComponent {
   static defaultProps = {
-    runningServer: false,
-    runningBuilder: false,
+    currentService: Map(),
     runnable: false,
     dllEnable: false,
     getInitData() {},
@@ -23,14 +23,7 @@ export default class ProjectAction extends PureComponent {
     onClickRuntimeConfiger() {},
   }
   static propTypes = {
-    runningServer: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-    ]),
-    runningBuilder: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-    ]),
+    currentService: PropTypes.instanceOf(Map),
     runnable: PropTypes.bool,
     dllEnable: PropTypes.bool,
     getInitData: PropTypes.func,
@@ -60,13 +53,15 @@ export default class ProjectAction extends PureComponent {
     this.props.onClickRuntimeConfiger();
   }
   render() {
-    const { runningServer, runningBuilder, runnable, dllEnable } = this.props;
+    const { currentService, runnable, dllEnable } = this.props;
+    const isRunning = currentService.get('running');
+    const type = currentService.get('type');
     let actions;
     let buildButton = (
       <button
         className={styles.Project__ActionBarButton}
         key={'start-build'}
-        disabled={runningBuilder}
+        disabled={isRunning}
         onClick={this.handleStartBuilder}
       >
         <IconBuild size={22} />
@@ -97,7 +92,7 @@ export default class ProjectAction extends PureComponent {
                     <button
                       className={styles['Project__ActionBarButton--trigger']}
                       key={'start-dll-build'}
-                      disabled={runningBuilder}
+                      disabled={isRunning}
                       onClick={this.handleStartDllBuilder}
                     >
                       DLL构建
@@ -117,7 +112,7 @@ export default class ProjectAction extends PureComponent {
         >
           <button
             className={styles.Project__ActionBarButton}
-            disabled={runningServer}
+            disabled={isRunning}
             onClick={this.handleStartServer}
           >
             <IconPlay size={22} />
@@ -145,28 +140,28 @@ export default class ProjectAction extends PureComponent {
         </div>,
         buildButton,
       ];
-      if (runningServer) {
+      if (isRunning && type === 'server') {
         actions.push(
           <button
             className={styles.Project__ActionBarButton}
             key={'stop-server'}
             onClick={this.handleStopService}
             data-type={'server'}
-            data-pid={runningServer.pid}
+            data-pid={currentService.get('pid')}
           >
             <IconStop size={22} />
             停止服务
           </button>
         );
       }
-      if (runningBuilder) {
+      if (isRunning && type === 'builder') {
         actions.push(
           <button
             className={styles.Project__ActionBarButton}
             key={'stop-builder'}
             onClick={this.handleStopService}
             data-type={'builder'}
-            data-pid={runningBuilder.pid}
+            data-pid={currentService.get('pid')}
           >
             <IconStop size={22} />
             停止构建

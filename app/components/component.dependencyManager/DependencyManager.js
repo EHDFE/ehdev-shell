@@ -1,18 +1,19 @@
-import { PureComponent } from 'react';
+import { Button, Radio, Spin, Table, Tooltip, notification } from 'antd';
+import { Map } from 'immutable';
 import PropTypes from 'prop-types';
-import { Table, Radio, Button, Spin, notification, Tooltip } from 'antd';
-import AddDev from '../component.addDev/';
+import { PureComponent } from 'react';
 import projectAPI from '../../apis/project';
-
+import AddDev from '../component.addDev/';
 import styles from './index.less';
+
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
 class DependencyManager extends PureComponent {
   static propTypes = {
-    pkgInfo: PropTypes.object,
-    pkg: PropTypes.object,
+    pkgInfo: PropTypes.instanceOf(Map),
+    pkg: PropTypes.instanceOf(Map),
     rootPath: PropTypes.string,
     refresh: PropTypes.func,
   };
@@ -40,9 +41,10 @@ class DependencyManager extends PureComponent {
   updateState(tab) {
     this.setState((prevState, props) => {
       const { pkg, pkgInfo } = props;
+      const pkgObj = pkg.toJS();
       const data = [];
-      for (let i in pkg && pkg[tab]) {
-        const d = pkgInfo.versions[i];
+      for (let i in pkgObj && pkgObj[tab]) {
+        const d = pkgInfo.getIn(['versions', i]);
         data.push(
           Object.assign({ key: i, packageName: i }, d, {
             dangerUpdate:

@@ -2,62 +2,40 @@
  * Console Module
  * @author ryan.bian
  */
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { createSelector } from 'reselect';
-import { ipcRenderer } from 'electron';
+import { Button } from 'antd';
+// import { ipcRenderer } from 'electron';
 import classnames from 'classnames';
-import IconPlay from 'react-icons/lib/fa/play-circle-o';
-import IconBuild from 'react-icons/lib/fa/codepen';
-import IconTerminal from 'react-icons/lib/fa/terminal';
+import { Map, Set } from 'immutable';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import IconClose from 'react-icons/lib/fa/close';
-import { Badge, Button, Popover } from 'antd';
-
-import { actions } from './store';
-import { actions as projectActions } from '../module.project/store';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import Resizable from 're-resizable';
+import Terminal from '../../components/component.terminal/';
 import commandManager from '../../service/command';
-
+import { actions as projectActions } from '../module.project/store';
 import styles from './index.less';
-import Console from '../../components/component.console/';
+import { actions } from './store';
 
-const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
-const LogBuffer = {};
+// const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
 class ConsoleModule extends PureComponent {
   static propTypes = {
-    id: PropTypes.number,
-    logList: PropTypes.array,
-    content: PropTypes.string,
-    pids: PropTypes.array,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    currentTerminalId: PropTypes.string,
+    pids: PropTypes.instanceOf(Set),
+    instances: PropTypes.instanceOf(Map),
     visible: PropTypes.bool,
-    createLog: PropTypes.func,
-    deleteLog: PropTypes.func,
+    closeTerm: PropTypes.func,
     setActive: PropTypes.func,
     toggleVisible: PropTypes.func,
     setRootPath: PropTypes.func,
-  }
-
-  state = {
-    size: 'normal',
-    sizeControlVisible: false,
+    onResize: PropTypes.func,
   }
 
   componentDidMount() {
-    const decoder = new TextDecoder();
-    ipcRenderer.on(COMMAND_OUTPUT, (event, data) => {
-      if (data.action === 'log' || data.action === 'error') {
-        const { pid, dataBuffer, category, args, root } = data;
-        const log = decoder.decode(dataBuffer).replace(/\n/g, '\r\n');
-        LogBuffer[`${pid}_timer`] && clearTimeout(LogBuffer[`${pid}_timer`]);
-        Object.assign(LogBuffer, {
-          [pid]: LogBuffer[pid] ? LogBuffer[pid] + log : log,
-          [`${pid}_timer`]: setTimeout(() => {
-            this.dispatchLog(pid, category, args, root);
-          }, 100),
-        });
-      }
-    });
     this.removeAllListeners = commandManager.addListeners({
       'console:show': () => {
         if (!this.props.visible) {
@@ -72,53 +50,20 @@ class ConsoleModule extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.visible && this.props.visible) {
-      this.setState({
-        sizeControlVisible: false,
-      });
-    }
-  }
-
   componentWillUnmount() {
-    ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
+    // ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
     this.removeAllListeners();
   }
 
-  dispatchLog(pid, category, args, root) {
-    const log = LogBuffer[pid];
-    this.props.createLog(pid, category, log, args, root);
-    delete LogBuffer[pid];
-    delete LogBuffer[`${pid}_timer`];
+  handleResize = (e, direction, ref, delta) => {
+    const { width, height } = this.props;
+    this.props.onResize(
+      width + delta.width,
+      height + delta.height,
+    );
   }
 
-  handleToggleSize = () => {
-    const { size } = this.state;
-    this.setState({
-      size: size === 'normal' ? 'large' : 'normal',
-    });
-  }
-
-  handleMouseEnter = () => {
-    if (this.props.visible) {
-      this.hideTimer && clearTimeout(this.hideTimer);
-      this.setState({
-        sizeControlVisible: true,
-      });
-    }
-  }
-  handleMouseLeave = () => {
-    if (this.props.visible) {
-      this.hideTimer && clearTimeout(this.hideTimer);
-      this.hideTimer = setTimeout(() => {
-        this.setState({
-          sizeControlVisible: false,
-        });
-      }, 500);
-    }
-  }
-
-  handleActive(id, e) {
+  handleActive(rootPath, e) {
     const target = e.target;
     const tagName = target.tagName.toLowerCase();
     if (tagName === 'g' || tagName === 'path') {
@@ -127,11 +72,11 @@ class ConsoleModule extends PureComponent {
         svgNode = svgNode.parentElement;
       }
       if (svgNode.dataset.action === 'delete') {
-        this.props.deleteLog(id);
+        this.props.closeTerm(rootPath);
         return;
       }
     }
-    this.props.setActive(id);
+    this.props.setActive(rootPath);
   }
   handleToggleProject(root, e) {
     if (root) {
@@ -139,172 +84,135 @@ class ConsoleModule extends PureComponent {
     }
   }
   renderTabs() {
-    const { id, logList, pids } = this.props;
+    const { currentTerminalId, pids, instances } = this.props;
     return (
       <aside className={styles.ConsoleModule__Tabs}>
-        <ul className={styles.ConsoleModule__TabsList}>
-          {
-            logList.map(d => {
-              let icon;
-              if (d.category === 'SERVER') {
-                icon = <IconPlay size={18} />;
-              } else if (d.category === 'BUILD' || d.category === 'DLL_BUILD') {
-                icon = <IconBuild size={18} />;
-              }
-              return (
-                <li
-                  key={d.id}
-                  className={
-                    classnames(
-                      styles.ConsoleModule__TabsItem,
-                      {
-                        [styles['ConsoleModule__TabsItem--active']]: d.id === id,
-                        [styles['ConsoleModule__TabsItem--stoped']]: !pids.includes(d.id),
-                      },
-                    )
-                  }
-                >
-                  <Badge
-                    dot={!d.checked && pids.includes(d.id)}
-                  >
-                    <button
-                      className={
-                        classnames(
-                          styles.ConsoleModule__TabsButton,
-                          styles[`ConsoleModule__TabsButton--${d.category.toLowerCase()}`],
-                        )
-                      }
-                      onClick={this.handleActive.bind(this, d.id)}
-                      onDoubleClick={this.handleToggleProject.bind(this, d.root)}
-                    >
-                      {icon}
-                      <IconClose size={18} data-action="delete" />
-                      <div className={styles.ConsoleModule__TabsTitle}>
-                        <span className={styles['ConsoleModule__TabsTitle--content']}>
-                          {d.projectName || d.id}
-                        </span>
-                      </div>
-                    </button>
-                  </Badge>
-                </li>
-              );
-            })
-          }
-        </ul>
-        <div className={styles['ConsoleModule__Tabs--fixed']}>
-          <button
-            className={
-              classnames(
-                styles.ConsoleModule__TabsButton,
-                styles['ConsoleModule__TabsButton--other'],
-              )
-            }
-            onClick={() => {
-              this.props.setActive(0);
-            }}
-          >
-            <IconTerminal size={18} />
-          </button>
-        </div>
+        {
+          instances.map((d, rootPath) => {
+            const pid = d.get('pid');
+            return (
+              <button
+                key={rootPath}
+                className={
+                  classnames(
+                    styles.ConsoleModule__TabsButton,
+                    {
+                      [styles['ConsoleModule__TabsButton--active']]: rootPath === currentTerminalId,
+                      [styles['ConsoleModule__TabsButton--stoped']]: !pids.has(pid),
+                    },
+                  )
+                }
+                onClick={this.handleActive.bind(this, rootPath)}
+                onDoubleClick={this.handleToggleProject.bind(this, rootPath)}
+              >
+                <span className={styles.ConsoleModule__TabsClose}>
+                  <IconClose size={18} data-action="delete" />
+                </span>
+                <div className={styles.ConsoleModule__TabsTitle}>
+                  {d.get('projectName')}
+                </div>
+              </button>
+            );
+          }).valueSeq()
+        }
       </aside>
     );
   }
 
-  renderSizeControl() {
-    const { size } = this.state;
-    let icon;
-    if (size === 'normal') {
-      icon = 'arrows-alt';
-    } else {
-      icon = 'shrink';
-    }
+  renderTerminals() {
+    const { currentTerminalId, instances, width, height } = this.props;
     return (
-      <Button
-        type="dashed"
-        icon={icon}
-        onClick={this.handleToggleSize}
-        onMouseEnter={this.handleMouseEnter}
-      />
+      <section
+        className={styles.ConsoleModule__Terminals}
+      >
+        {
+          instances.map((d, rootPath) => (
+            <Terminal
+              width={width}
+              height={height}
+              key={rootPath}
+              messageId={rootPath}
+              pid={d.get('pid')}
+              active={rootPath === currentTerminalId}
+            />
+          )).valueSeq()
+        }
+      </section>
+
     );
   }
 
   render() {
-    const { id, visible, content, toggleVisible } = this.props;
-    const { size, sizeControlVisible } = this.state;
+    const { width, height, visible, toggleVisible } = this.props;
+    const resizableProps = {
+      size: {
+        width,
+        height,
+      },
+      minWidth: 400,
+      minHeight: 300,
+      enable: {
+        top: true,
+        right: false,
+        bottom: false,
+        left: true,
+        topRight: false,
+        bottomRight: false,
+        bottomLeft: false,
+        topLeft: true,
+      },
+      onResizeStop: this.handleResize,
+      className: classnames(styles['ConsoleModule__Wrap'], {
+        [styles['ConsoleModule__Wrap--show']]: visible,
+        [styles['ConsoleModule__Wrap--hide']]: !visible,
+      }),
+    };
     return (
       <div className={styles.ConsoleModule}>
-        <Popover
-          placement="left"
-          content={this.renderSizeControl()}
-          trigger="hover"
-          visible={sizeControlVisible}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-        >
-          <Button
-            type="primary"
-            icon="code"
-            shape="circle"
-            className={styles.ConsoleModule__FloatButton}
-            onClick={toggleVisible}
-          />
-        </Popover>
-        <div
-          className={
-            classnames(
-              styles['ConsoleModule__Wrap'],
-              {
-                [styles['ConsoleModule__Wrap--show']]: visible,
-                [styles['ConsoleModule__Wrap--hide']]: !visible,
-              }
-            )
-          }
-        >
+        <Button
+          type="primary"
+          icon="code"
+          shape="circle"
+          className={styles.ConsoleModule__FloatButton}
+          onClick={toggleVisible}
+        />
+        <Resizable {...resizableProps}>
           { this.renderTabs() }
-          <Console
-            className={styles.ConsoleModule__Content}
-            id={id}
-            value={content}
-            ref={con => (this.con = con)}
-            visible={visible}
-            size={size}
-          />
-        </div>
+          { this.renderTerminals() }
+        </Resizable>
       </div>
     );
   }
 }
 
-const consolePageSelector = state => state['page.console'];
+const consolePageSelector = state => state.get('page.console');
 const consoleSelector = createSelector(
   consolePageSelector,
   pageState => {
     return {
-      id: pageState.activeId,
-      logList: pageState.ids.map(id => pageState.entities[id])
-        .filter(d => d.category !== 'OTHER')
-        .sort((a, b) => (b.updateTime - a.updateTime)),
-      content: Number.isInteger(pageState.activeId) ? pageState.entities[pageState.activeId].content : null,
-      visible: pageState.visible,
+      currentTerminalId: pageState.get('activeId'),
+      visible: pageState.get('visible'),
+      width: pageState.get('width'),
+      height: pageState.get('height'),
     };
   }
 );
-const projectSelector = state => state['page.project'];
-const pidsSelector = createSelector(projectSelector, projectState => projectState.service.pids || []);
+const serviceSelector = state => state.getIn(['page.project', 'service']);
 
 const mapStateToProps = (state) => createSelector(
   consoleSelector,
-  pidsSelector,
-  (consoleState, pids) => ({
+  serviceSelector,
+  (consoleState, service) => ({
     ...consoleState,
-    pids,
+    pids: service.get('pids'),
+    instances: service.get('instances'),
   }),
 );
 
 const mapDispatchToProps = dispatch => ({
-  createLog: (pid, category, content, args, root) => dispatch(actions.createLog(pid, category, content, args, root)),
-  deleteLog: id => dispatch(actions.deleteLog(id)),
-  setActive: id => dispatch(actions.activeLog(id)),
+  closeTerm: rootPath => dispatch(projectActions.service.closeService(rootPath)),
+  setActive: id => dispatch(actions.setActive(id)),
+  onResize: (width, height) => dispatch(actions.resize(width, height)),
   toggleVisible: () => dispatch(actions.toggleVisible()),
   setRootPath: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
 });

@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createSelector } from 'reselect';
+// import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { Form, Upload, Icon, message, Input, Button, Row, Col } from 'antd';
 
@@ -79,8 +79,7 @@ class User extends Component {
 
   render() {
     const { user, form } = this.props;
-    const { avatar, name, github, bio, address } = user;
-    const imgUrl = this.state.imgUrl || avatar;
+    const imgUrl = user.get('avatar', this.state.imgUrl);
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -93,26 +92,26 @@ class User extends Component {
             <Col span={16}>
               <FormItem {...formItemLayout} label="你的昵称">
                 {getFieldDecorator('name', {
-                  initialValue: name,
+                  initialValue: user.get('name'),
                   rules: [{ required: true, message: '请输入你的昵称！' }],
                 })(<Input placeholder="请输入你的昵称" />)}
               </FormItem>
 
               <FormItem {...formItemLayout} label="你的github">
                 {getFieldDecorator('github', {
-                  initialValue: github,
+                  initialValue: user.get('github'),
                 })(<Input placeholder="请输入你的github地址" />)}
               </FormItem>
 
               <FormItem {...formItemLayout} label="你在哪里">
                 {getFieldDecorator('address', {
-                  initialValue: address,
+                  initialValue: user.get('address'),
                 })(<CityPicker placeholder='请选择所在城市'/>)}
               </FormItem>
 
               <FormItem {...formItemLayout} label="你想说的">
                 {getFieldDecorator('bio', {
-                  initialValue: bio,
+                  initialValue: user.get('bio'),
                 })(<Input.TextArea rows={4} placeholder="你想说什么都可以" />)}
               </FormItem>
 
@@ -126,7 +125,7 @@ class User extends Component {
             <Col span={8}>
               <FormItem help="点击上传新头像" style={{ textAlign: 'center' }}>
                 {getFieldDecorator('avatar', {
-                  initialValue: avatar,
+                  initialValue: user.get('avatar'),
                   valuePropName: 'file',
                   getValueFromEvent: this.normFile,
                 })(
@@ -163,16 +162,9 @@ class User extends Component {
 
 const UserModule = Form.create()(User);
 
-const PageUserSelector = state => state['page.user'];
-const userSelector = createSelector(
-  PageUserSelector,
-  pageState => pageState.user
-);
-
-const mapStateToProps = state =>
-  createSelector(userSelector, user => ({
-    user,
-  }));
+const mapStateToProps = state => ({
+  user: state.get('page.user'),
+});
 const mapDispatchToProps = dispatch => ({
   setUserInfo: user => dispatch(actions.user.set(user)),
 });

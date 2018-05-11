@@ -2,33 +2,34 @@
  * Dashboard Page
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import { Calendar } from 'antd';
+import classnames from 'classnames';
+import { List } from 'immutable';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import classnames from 'classnames';
-import { Calendar } from 'antd';
-
-import Card from './Card';
-import * as WeatherIcon from '../../components/component.weatherIcon';
-import { actions } from './store';
-import { actions as projectActions } from '../module.project/store';
 import { GREETING_WORDS } from '../../CONFIG';
-
+import * as WeatherIcon from '../../components/component.weatherIcon';
+import { actions as projectActions } from '../module.project/store';
+import Card from './Card';
 // import { Icon, Switch } from 'antd';
-
 import styles from './index.less';
+import { actions } from './store';
+
+
 
 class DashboardModule extends Component {
   static propTypes = {
     history: PropTypes.object,
+    projectsRank: PropTypes.object,
     userName: PropTypes.string,
-    assetsCount: PropTypes.number,
-    projectsCount: PropTypes.number,
-    weather: PropTypes.object,
-    projectsRank: PropTypes.array,
-    date: PropTypes.string,
-    weekday: PropTypes.number,
+    base: PropTypes.object,
+    // assetsCount: PropTypes.number,
+    // projectsCount: PropTypes.number,
+    // weather: PropTypes.object,
+    // date: PropTypes.string,
+    // weekday: PropTypes.number,
     getWeather: PropTypes.func,
     getDate: PropTypes.func,
     getProjectList: PropTypes.func,
@@ -36,7 +37,7 @@ class DashboardModule extends Component {
     setProjectRoot: PropTypes.func,
   };
   componentWillReceiveProps(nextProps) {
-    if (nextProps.date !== this.props.date) {
+    if (this.props.base.get('date') !== nextProps.base.get('date')) {
       this.props.getWeather();
     }
   }
@@ -54,8 +55,10 @@ class DashboardModule extends Component {
     history.push('/project');
   }
   renderInfoBar() {
-    const { userName, weekday, weather } = this.props;
+    const { userName, base } = this.props;
     let weatherBlock = [];
+    const weather = base.get('weather');
+    const weekday = base.get('weekday');
     if (weather) {
       if (Array.isArray(weather.weather)) {
         const Wcon = WeatherIcon[`Icon_${weather.weather[0].icon}`];
@@ -84,7 +87,7 @@ class DashboardModule extends Component {
     );
   }
   renderSummaryCards() {
-    const { assetsCount, projectsCount } = this.props;
+    const { base } = this.props;
     const cards = [
       <Card
         className={classnames(
@@ -100,7 +103,7 @@ class DashboardModule extends Component {
             styles.Dashboard__SummaryProjectCount
           )}
         >
-          {projectsCount}
+          {base.get('projectsCount')}
         </em>
       </Card>,
       <Card
@@ -117,7 +120,7 @@ class DashboardModule extends Component {
             styles.Dashboard__SummaryAssetsCount
           )}
         >
-          {assetsCount}
+          {base.get('assetsCount')}
         </em>
       </Card>,
     ];
@@ -128,21 +131,27 @@ class DashboardModule extends Component {
     return (
       <Card className={styles.Dashboard__ProjectsCard} title="常用工程">
         <ul className={styles.Dashboard__ProjectRankList}>
-          {projectsRank.map((o, i) => (
-            <li
-              data-index={i + 1}
-              className={styles.Dashboard__ProjectRankItem}
-              key={o._id}
-              title={o.projectPath}
-            >
-              <p>
-                <a
-                  href={o.projectPath}
-                  onClick={this.navigateToProject}
-                >{o.projectPath ? o.projectPath.split('/').pop() : ''}</a>
-              </p>
-            </li>
-          ))}
+          {
+            projectsRank
+              .sort((a, b) => b.get('count') - a.get('count'))
+              .take(6)
+              .toJS()
+              .map((o, i) => (
+                <li
+                  data-index={i + 1}
+                  className={styles.Dashboard__ProjectRankItem}
+                  key={o._id}
+                  title={o.projectPath}
+                >
+                  <p>
+                    <a
+                      href={o.projectPath}
+                      onClick={this.navigateToProject}
+                    >{o.projectPath ? o.projectPath.split('/').pop() : ''}</a>
+                  </p>
+                </li>
+              ))
+          }
         </ul>
       </Card>
     );
@@ -189,28 +198,29 @@ class DashboardModule extends Component {
   }
 }
 
-const dashboardPageSelector = state => state['page.dashboard'];
-const userPageSelector = state => state['page.user'];
-const baseSelector = createSelector(dashboardPageSelector, state => state.base);
+const dashboardPageSelector = state => state.get('page.dashboard');
+const userPageSelector = state => state.get('page.user');
+const baseSelector = createSelector(dashboardPageSelector, state => state.get('base'));
 const projectsSelector = createSelector(
   dashboardPageSelector,
-  state => state.projects
+  state => state.get('projects')
 );
-const projectsRankSelector = createSelector(projectsSelector, state => {
-  const list = Array.isArray(state.list) ? state.list : [];
-  return list.slice(0).sort((a, b) => b.count - a.count);
-});
-const userInfoSelector = createSelector(userPageSelector, state => state.user);
+// const projectsRankSelector = createSelector(projectsSelector, state => {
+  // const list = Array.isArray(state.list) ? state.list : [];
+  // return list.slice(0).sort((a, b) => b.count - a.count);
+// });
+// const userInfoSelector = createSelector(userPageSelector, state => state.get('us'));
 
 const mapStateToProps = state =>
   createSelector(
     baseSelector,
-    projectsRankSelector,
-    userInfoSelector,
-    (base, projectsRank, userInfo) => ({
-      ...base,
-      projectsRank: projectsRank.slice(0, 6),
-      userName: userInfo.name,
+    projectsSelector,
+    userPageSelector,
+    (base, projects, user) => ({
+      base,
+      projectsRank: projects.get('list', List([])),
+      // projectsRank: projectsRank.slice(0, 6),
+      userName: user.get('name'),
     })
   );
 const mapDispatchToProps = dispatch => ({
@@ -221,4 +231,7 @@ const mapDispatchToProps = dispatch => ({
   setProjectRoot: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardModule);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DashboardModule);

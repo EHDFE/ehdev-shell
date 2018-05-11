@@ -11,7 +11,7 @@ window.Raven.config('https://d2e7d99b1c414fe0ab0b02b67f17c1c8@sentry.io/247420')
 const persistConfig = {
   key: 'APP',
   storage: localforage,
-  debug: process.env.NODE_ENV === 'production',
+  debug: false,
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);

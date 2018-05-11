@@ -2,14 +2,13 @@
  * Qr Code generator module
  * @author ryan.bian
  */
-import { PureComponent } from 'react';
+import { Button, Form, Icon, Input } from 'antd';
 import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { Button, Icon, Form, Input } from 'antd';
-
+import styles from './index.less';
 import { actions } from './store';
 
-import styles from './index.less';
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -81,7 +80,7 @@ class QrCodeModule extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  url: state['page.qrcode'].url,
+  url: state.getIn(['page.qrcode', 'url']),
 });
 
 const mapDispatchToProps = (dispatch) => ({

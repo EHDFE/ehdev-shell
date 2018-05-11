@@ -2,26 +2,21 @@
  * Layout Module
  * @author ryan.bian
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Icon, Layout } from 'antd';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
-import { Layout, Icon } from 'antd';
-import moment from 'moment';
 import isEqual from 'lodash/isEqual';
-
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { createSelector } from 'reselect';
 import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
-
-import { actions } from './store';
-
-import ConsoleModule from '../module.console/';
-
-import SiderBar from '../../components/component.siderBar/';
 import LayoutComponent from '../../components/component.layout/';
-
+import SiderBar from '../../components/component.siderBar/';
+import ConsoleModule from '../module.console/';
 import styles from './index.less';
+import { actions } from './store';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -163,18 +158,18 @@ class LayoutModule extends Component {
   }
 }
 
-const wallpaperSelector = state => state['page.wallpaper'];
+const wallpaperSelector = state => state.get('page.wallpaper');
 
 const mapStateToProps = state => createSelector(
   wallpaperSelector,
   (info) => {
     return {
-      previewMode: info.previewMode,
-      localImageUrl: info.url,
-      title: info.title,
-      paras: [info.para1, info.para2],
-      provider: info.provider,
-      attribute: info.attribute,
+      previewMode: info.get('previewMode'),
+      localImageUrl: info.get('url'),
+      title: info.get('title'),
+      paras: [info.get('para1'), info.get('para2')],
+      provider: info.get('provider'),
+      attribute: info.get('attribute'),
     };
   }
 );

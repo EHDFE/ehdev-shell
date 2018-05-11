@@ -9,6 +9,9 @@
     "develop-tool",
     "electron"
   ],
+  "scripts": {
+    "postinstall": "../node_modules/.bin/electron-rebuild"
+  },
   "dependencies": {
     "add-asset-html-webpack-plugin": "^3.0.0-0",
     "chalk": "^2.3.2",
@@ -19,6 +22,7 @@
     "html-webpack-include-assets-plugin": "^1.0.4",
     "html-webpack-plugin": "^3.2.0",
     "node-notifier": "^5.2.1",
+    "node-pty": "^0.7.4",
     "stats-webpack-plugin": "^0.6.2",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "webpack": "~4.5.0",

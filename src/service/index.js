@@ -22,7 +22,7 @@ class ServiceStore {
     this.store.set(pid, ps);
   }
   get(pid) {
-    this.store.get(pid);
+    return this.store.get(pid);
   }
   has(pid) {
     return this.store.has(pid);

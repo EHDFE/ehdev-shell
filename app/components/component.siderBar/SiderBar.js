@@ -24,12 +24,14 @@ class SiderBar extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    user: PropTypes.object,
   }
 
   state = {
     collapsed: true,
     selectedKey: this.getSelectedKey(this.props),
   }
+
   componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.location, this.props.location)) {
       this.setState({
@@ -84,8 +86,7 @@ class SiderBar extends Component {
   }
   render() {
     const { collapsed, selectedKey } = this.state;
-    // const {user} = this.props
-    const { avatar } = this.props.user;
+    const { user } = this.props;
     return (
       <Sider
         className={styles.SiderBar}
@@ -100,7 +101,7 @@ class SiderBar extends Component {
           className={styles.SiderBar__avatar}
           onClick={this.backToHome}
         >
-          <Avatar src={avatar} icon="user" size={(collapsed && this.state.selectedKey) ? 'default' : 'large'} />
+          <Avatar src={user.get('avatar')} icon="user" size={(collapsed && this.state.selectedKey) ? 'default' : 'large'} />
         </button>
         <Menu
           mode="inline"
@@ -124,12 +125,8 @@ class SiderBar extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state['page.user'].user
+  user: state.get('page.user'),
 });
-
-SiderBar.propTypes = {
-  user: PropTypes.object,
-};
 
 export default connect(
   mapStateToProps,

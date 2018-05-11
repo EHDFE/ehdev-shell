@@ -3,20 +3,21 @@
  * @author ryan.bian
  */
 import crypto from 'crypto';
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 import { createActions, handleActions } from 'redux-actions';
+import { Map, Set } from 'immutable';
 
 import UPLOAD_API from '../../apis/upload';
 
-const defaultState = {
-  layout: {
+const defaultState = Map({
+  layout: Map({
     listType: 'grid',
-  },
-  files: {
-    fileMap: {},
-    fileIds: [],
-  },
-};
+  }),
+  files: Map({
+    fileMap: Map({}),
+    fileIds: Set([]),
+  }),
+});
 
 export const actions = createActions({
   // display layout action
@@ -67,10 +68,8 @@ export const actions = createActions({
 });
 
 const layoutReducer = handleActions({
-  'LAYOUT/SET_LIST_TYPE': (state, action) => ({
-    listType: action.payload,
-  })
-}, defaultState.layout);
+  'LAYOUT/SET_LIST_TYPE': (state, { payload }) => state.set('listType', payload)
+}, defaultState.get('layout'));
 
 const fileReducer = handleActions({
   'LIST/GET': (state, { payload, error }) => {
@@ -82,12 +81,11 @@ const fileReducer = handleActions({
       Object.assign(fileMap, {
         [file._id]: file,
       });
-      fileIds.unshift(file._id);
+      fileIds.push(file._id);
     });
-    return {
-      fileMap: Object.assign({}, state.fileMap, fileMap),
-      fileIds: fileIds.concat(state.fileIds),
-    };
+    return state
+      .mergeIn(['fileMap'], fileMap)
+      .updateIn(['fileIds'], list => Set(fileIds).concat(list));
   },
   'FILES/ADD': (state, { payload }) => {
     const { file } = payload;
@@ -101,27 +99,18 @@ const fileReducer = handleActions({
         temp: true,
       });
     }
-    if (state.fileIds.includes(file._id)) {
-      return state;
-    }
-    return {
-      fileMap: {
+    if (state.hasIn(['fileIds', file._id])) return state;
+    return state
+      .mergeIn(['fileMap'], {
         [file._id]: file,
-        ...state.fileMap,
-      },
-      // fileIds: state.fileIds.concat(file._id),
-      fileIds: [file._id].concat(state.fileIds),
-    };
+      })
+      .updateIn(['fileIds'], list => Set([file._id]).concat(list));
   },
   'FILES/DEL': (state, { payload, error }) => {
     if (error) return state;
     const { id } = payload;
-    const { fileMap, fileIds } = state;
-    delete fileMap[id];
-    return {
-      fileMap: Object.assign({}, fileMap),
-      fileIds: fileIds.filter(d => d !== id),
-    };
+    return state.deleteIn(['fileMap', id])
+      .deleteIn(['fileIds', id]);
   },
   'FILES/BATCH_ADD': (state, { payload }) => {
     return state;
@@ -131,21 +120,16 @@ const fileReducer = handleActions({
   },
   'FILES/UPLOAD': (state, { payload, error }) => {
     if (error) return state;
-    const idx = state.fileIds.indexOf(payload.oldId);
     const newId = payload.file._id;
-    // delete old file object
-    delete state.fileMap[payload.oldId];
-    const newFileIds = state.fileIds.slice(0);
-    newFileIds.splice(idx, 1, newId);
-    return {
-      fileMap: Object.assign({}, {
+    return state
+      .mergeIn(['fileMap'], {
         [newId]: payload.file,
-      }, state.fileMap),
-      // replace old id with newId
-      fileIds: newFileIds,
-    };
+      })
+      .deleteIn(['fileMap', payload.oldId])
+      .deleteIn(['fileIds', payload.oldId])
+      .updateIn(['fileIds'], list => list.add(newId));
   },
-}, defaultState.files);
+}, defaultState.get('files'));
 
 export default combineReducers({
   layout: layoutReducer,

@@ -1,4 +1,4 @@
-export default from './User';
+export { default } from './User';
 export {
   default as UserReducer,
   actions

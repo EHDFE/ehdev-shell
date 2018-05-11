@@ -1,4 +1,4 @@
-export default from './Project';
+export { default } from './Project';
 export {
   default as ProjectReducer,
   actions

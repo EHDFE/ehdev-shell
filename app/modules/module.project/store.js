@@ -3,38 +3,38 @@
  * Project Store
  * @author ryan.bian
  */
-import { combineReducers } from 'redux';
+// import { ipcRenderer } from 'electron';
+import { List, Map, Set, fromJS } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
-import { ipcRenderer } from 'electron';
-
+import { combineReducers } from 'redux-immutable';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 // import COMMON_API from '../../apis/common';
 import notificationManager from '../../service/notification';
 
-const defaultState = {
-  env: {
+const defaultState = Map({
+  env: Map({
     rootPath: undefined,
     pkg: undefined,
     config: undefined,
-    pkgInfo: {},
+    pkgInfo: Map({}),
     runnable: false,
     useESlint: false,
-    lintResult: [],
+    lintResult: List([]),
     prevRootPath: undefined,
-    runtimeConfig: {
+    runtimeConfig: Map({
       port: 3000,
       https: false,
       noInfo: true,
-    },
-  },
-  service: {
-    pids: [],
-    instances: {},
-  },
-};
+    }),
+  }),
+  service: Map({
+    pids: Set([]),
+    instances: Map({}),
+  }),
+});
 
-const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+// const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
 
 export const actions = createActions({
   ENV: {
@@ -55,15 +55,10 @@ export const actions = createActions({
     UPDATE_RUNTIME_CONFIG: config => config,
     GET_OUTDATED: async packageName => {
       const data = await PROJECT_API.pkg.outdated(packageName);
-      return {
-        packages: data
-      };
+      return data;
     },
     GET_PKGINFO: async rootPath => {
-      const data = await PROJECT_API.pkg.getAllVersions(rootPath);
-      return {
-        pkgInfo: data
-      };
+      return await PROJECT_API.pkg.getAllVersions(rootPath);
     },
     // GET_LINT_RESULT: async rootPath => {
     //   return await COMMON_API.getESlintResult(rootPath);
@@ -71,15 +66,8 @@ export const actions = createActions({
   },
   SERVICE: {
     START_SERVER: async (params, dispatch) => {
-      const { runtimeConfig } = params;
+      const { runtimeConfig, projectName } = params;
       const { pid, ip } = await SERVICE_API.server.start(params);
-      const startListener = function (dispatch, event, arg) {
-        if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
-          dispatch(actions.service.stopServer(arg.pid, true, params));
-          ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
-        }
-      }.bind(this, dispatch);
-      ipcRenderer.on(COMMAND_OUTPUT, startListener);
       notificationManager.send({
         title: '开发服务',
         message: '启动开发服务，点击打开页面！',
@@ -92,6 +80,7 @@ export const actions = createActions({
         pid,
         rootPath: params.root,
         type: 'server',
+        projectName,
       };
     },
     STOP_SERVER: async (pid, stopped, params) => {
@@ -102,7 +91,10 @@ export const actions = createActions({
             title: '开发服务',
             message: '服务已停止！'
           });
-          return { pid };
+          return {
+            pid: +pid,
+            ...params,
+          };
         } catch (e) {
           throw e;
         }
@@ -110,14 +102,8 @@ export const actions = createActions({
       return { pid };
     },
     START_BUILDER: async (params, dispatch) => {
+      const { projectName } = params;
       const { pid } = await SERVICE_API.builder.start(params);
-      const startListener = function (dispatch, event, arg) {
-        if ((arg.pid === pid) && (arg.action === 'exit' || arg.action === 'error')) {
-          dispatch(actions.service.stopBuilder(arg.pid, true, params));
-          ipcRenderer.removeListener(COMMAND_OUTPUT, startListener);
-        }
-      }.bind(this, dispatch);
-      ipcRenderer.on(COMMAND_OUTPUT, startListener);
       notificationManager.send({
         title: '构建项目',
         message: '构建中！'
@@ -126,6 +112,7 @@ export const actions = createActions({
         pid,
         rootPath: params.root,
         type: 'builder',
+        projectName,
       };
     },
     STOP_BUILDER: async (pid, stopped, params) => {
@@ -139,14 +126,21 @@ export const actions = createActions({
             },
           });
           return {
-            pid,
+            pid: +pid,
+            ...params,
           };
         } catch (e) {
           throw e;
         }
       }
       return { pid };
-    }
+    },
+    CLOSE_SERVICE: rootPath => rootPath,
+    UPDATE_STATUS: (isRunning, pid, rootPath) => ({
+      isRunning,
+      pid,
+      rootPath,
+    })
   },
 });
 
@@ -154,117 +148,99 @@ export const actions = createActions({
  * project's running environment
  */
 const envReducer = handleActions({
-  'ENV/SET_ROOT_PATH': (state, { payload }) => ({
-    ...state,
-    rootPath: payload,
-    prevRootPath: state.rootPath,
-    lintResult: [],
-    runtimeConfig: { ...defaultState.env.runtimeConfig },
-  }),
+  'ENV/SET_ROOT_PATH': (state, { payload }) => {
+    return state
+      .set('rootPath', payload)
+      .set('prevRootPath', state.get('rootPath'));
+  },
   'ENV/GET_ENV': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      ...payload,
-    };
+    return state.merge(fromJS(payload));
   },
-  'ENV/SET_ENV': (state, { payload, error }) => {
+  'ENV/SET_ENV': (state, { error }) => {
     if (error) return state;
-    return {
-      ...state,
-      ...payload,
-    };
+    return state;
   },
   'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
-    return {
-      ...state,
-      runtimeConfig: Object.assign({}, state.runtimeConfig, payload),
-    };
+    return state.mergeIn(['runtimeConfig'], fromJS(payload));
   },
   'ENV/GET_OUTDATED': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      ...payload,
-    };
+    return state.set('packages', fromJS(payload));
   },
   'ENV/GET_PKGINFO': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      ...payload,
-    };
+    return state.set('pkgInfo', fromJS(payload));
   },
   'ENV/GET_LINT_RESULT': (state, { payload, error }) => {
     if (error) return state;
-    return {
-      ...state,
-      lintResult: payload,
-    };
+    return state.mergeIn(['lintResult'], fromJS(payload));
   }
-}, defaultState.env);
+}, defaultState.get('env'));
 
 /**
  * project's runner reducer
  */
 const serviceReducer = handleActions({
+
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid, rootPath, type } = payload;
-    const pids = state.pids || [];
-    const instances = state.instances || {};
-    if (pids && pids.includes(pid)) return state;
-    return {
-      pids: pids.concat(pid),
-      instances: {
-        ...instances,
-        [pid]: {
-          pid,
-          type,
-          rootPath,
-        },
-      }
-    };
+    const { pid, rootPath, type, projectName } = payload;
+    if (state.hasIn(['pids', pid])) return state;
+    return state
+      .update('pids', set => set.add(pid))
+      .mergeIn(['instances', rootPath], Map({
+        pid,
+        type,
+        rootPath,
+        projectName,
+        running: true,
+      }));
   },
   'SERVICE/STOP_SERVER': (state, { payload, error }) => {
     if (error) return state;
-    const instances = Object.assign({}, state.instances);
-    const pids = state.pids || [];
-    delete instances[payload.pid];
-    return {
-      pids: pids.filter(id => id !== payload.pid),
-      instances,
-    };
+    const { pid, rootPath } = payload;
+    return state
+      .update('pids', set => set.remove(pid))
+      .updateIn(['instances', rootPath], map => map.withMutations(map => map.delete('pid').set('running', false)));
   },
   'SERVICE/START_BUILDER': (state, { payload, error }) => {
     if (error) return state;
-    const { pid, rootPath, type } = payload;
-    const pids = state.pids || [];
-    const instances = state.instances || {};
-    if (pids.includes(pid)) return state;
-    return {
-      pids: pids.concat(pid),
-      instances: {
-        ...instances,
-        [pid]: {
-          pid,
-          type,
-          rootPath,
-        },
-      }
-    };
+    const { pid, rootPath, type, projectName } = payload;
+    if (state.hasIn(['pids', pid])) return state;
+    return state
+      .update('pids', set => set.add(pid))
+      .mergeIn(['instances', rootPath], Map({
+        pid,
+        type,
+        rootPath,
+        projectName,
+        running: true,
+      }));
   },
   'SERVICE/STOP_BUILDER': (state, { payload, error }) => {
     if (error) return state;
-    const instances = Object.assign({}, state.instances);
-    const pids = state.pids || [];
-    delete instances[payload.pid];
-    return {
-      pids: pids.filter(id => id !== payload.pid),
-      instances,
-    };
+    const { pid, rootPath } = payload;
+    return state
+      .update('pids', set => set.remove(pid))
+      .updateIn(['instances', rootPath], map => map.withMutations(map => map.delete('pid').set('running', false)));
   },
-}, defaultState.service);
+  'SERVICE/CLOSE_SERVICE': (state, { payload }) => {
+    return state.deleteIn(['instances', payload]);
+  },
+  'SERVICE/UPDATE_STATUS': (state, { payload }) => {
+    const { isRunning, pid, rootPath } = payload;
+    let nextState;
+    if (!isRunning) {
+      nextState = state.update('pids', set => set.remove(pid));
+    }
+    return nextState
+      .updateIn(
+        ['instances', rootPath],
+        map => map.withMutations(map => map.set('running', isRunning))
+      );
+  },
+}, defaultState.get('service'));
 
 export default combineReducers({
   env: envReducer,

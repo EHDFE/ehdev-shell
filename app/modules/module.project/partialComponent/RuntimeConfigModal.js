@@ -1,9 +1,10 @@
 /**
  * Runtime Config Modal
  */
-import { PureComponent } from 'react';
+import { Form, Modal, Select, Switch } from 'antd';
+import { Map } from 'immutable';
 import PropTypes from 'prop-types';
-import { Modal, Form, Select, Switch } from 'antd';
+import { PureComponent } from 'react';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -18,10 +19,7 @@ class RuntimeConfigModal extends PureComponent {
     visible: PropTypes.bool,
     close: PropTypes.func,
     closeWithData: PropTypes.func,
-    formData: PropTypes.shape({
-      port: PropTypes.number,
-      https: PropTypes.bool,
-    }),
+    formData: PropTypes.instanceOf(Map),
   }
   handleConfirm = () => {
     const fieldsValues = this.props.form.getFieldsValue();
@@ -45,7 +43,7 @@ class RuntimeConfigModal extends PureComponent {
           extra="设置启动当前开发环境的端口号"
         >
           {getFieldDecorator('port', {
-            initialValue: formData.port,
+            initialValue: formData.get('port'),
           })(
             <Select>
               {
@@ -61,7 +59,7 @@ class RuntimeConfigModal extends PureComponent {
           label="启用HTTPS"
         >
           {getFieldDecorator('https', {
-            initialValue: formData.https,
+            initialValue: formData.get('https'),
             valuePropName: 'checked',
           })(
             <Switch />

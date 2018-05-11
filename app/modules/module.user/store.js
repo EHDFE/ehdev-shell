@@ -2,18 +2,16 @@
  * Setting Store
  * @author grootfish
  */
-import { combineReducers } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
+import { Map } from 'immutable';
 
-const defaultState = {
-  user: {
-    avatar: '',
-    name: '',
-    github: '',
-    bio: '',
-    address: '',
-  },
-};
+const defaultState = Map({
+  avatar: '',
+  name: '',
+  github: '',
+  bio: '',
+  address: '',
+});
 
 export const actions = createActions({
   USER: {
@@ -25,19 +23,16 @@ const userReducer = handleActions(
   {
     'USER/SET': (state, { payload = {} }) => {
       const { avatar, name, github, bio, address } = payload;
-      // window.localStorage.setItem('user', JSON.stringify(payload));
-      return {
+      return state.merge({
         avatar,
         name,
         github,
         bio,
         address,
-      };
+      });
     },
   },
-  defaultState.user
+  defaultState,
 );
 
-export default combineReducers({
-  user: userReducer,
-});
+export default userReducer;

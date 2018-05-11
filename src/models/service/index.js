@@ -21,7 +21,7 @@ const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
 exports.startServer = async (config) => {
   const { root, configerName, runtimeConfig } = config;
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = Commander.run(`node ${serverScriptPath}`, {
+  const { pid } = await Commander.run(`node ${serverScriptPath}`, {
     cwd: root,
     parseResult: false,
     env: {
@@ -32,7 +32,6 @@ exports.startServer = async (config) => {
       PATH: process.env.PATH,
       RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
     },
-    category: 'SERVER',
     args: {
       projectName: pkg.name,
     },
@@ -73,7 +72,7 @@ exports.startBuilder = async (config) => {
     command = `node ${builderScriptPath}`;
   }
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = Commander.run(command, {
+  const { pid } = await Commander.run(command, {
     cwd: root,
     parseResult: false,
     env: {
@@ -83,7 +82,6 @@ exports.startBuilder = async (config) => {
       NODE_ENV: 'production',
       PATH: process.env.PATH,
     },
-    category: isDll ? 'DLL_BUILD' : 'BUILD',
     args: {
       projectName: pkg.name,
     },

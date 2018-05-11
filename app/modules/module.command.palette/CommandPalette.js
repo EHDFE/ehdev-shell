@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { filter, wrap } from 'fuzzaldrin-plus';
 import { createSelector } from 'reselect';
+import { List } from 'immutable';
 
 import styles from './index.less';
 import EnvUtils from '../../utils/env';
@@ -27,18 +28,18 @@ const SEARCH_FILTER_CONFIG = {
 class CommandPalette extends PureComponent {
   static defaultProps = {
     setProjectRoot() {},
-    projectHistory: [],
+    projectHistory: List([]),
   }
   static propTypes = {
     setProjectRoot: PropTypes.func,
-    projectHistory: PropTypes.array,
+    projectHistory: PropTypes.instanceOf(List),
   }
   state = {
     active: false,
     focusIndex: 0,
     search: '>',
     mode: 'command',
-    data: [],
+    data: List([]),
   }
   componentDidMount() {
     this.getRegistedCommands();
@@ -54,7 +55,7 @@ class CommandPalette extends PureComponent {
   }
   getRegistedCommands() {
     this.setState({
-      data: commandManager.getCommands(),
+      data: List(commandManager.getCommands()),
     });
   }
   bindGlobalEvents() {
@@ -181,7 +182,7 @@ class CommandPalette extends PureComponent {
       data = this.props.projectHistory;
     }
     let nextIndex;
-    if (focusIndex === data.length - 1) {
+    if (focusIndex === data.size - 1) {
       nextIndex = 0;
     } else {
       nextIndex = focusIndex + 1;
@@ -197,7 +198,7 @@ class CommandPalette extends PureComponent {
       data = this.props.projectHistory;
     }
     if (focusIndex === 0) {
-      nextIndex = data.length - 1;
+      nextIndex = data.size - 1;
     } else {
       nextIndex = focusIndex - 1;
     }
@@ -227,10 +228,10 @@ class CommandPalette extends PureComponent {
     let matchResult, searchKeys, data;
     if (mode === 'command') {
       searchKeys = search.replace(/^>/, '');
-      data = Array.from(this.state.data);
+      data = this.state.data.toJS();
     } else if (mode === 'recents') {
       searchKeys = search;
-      data = Array.from(this.props.projectHistory);
+      data = this.props.projectHistory.toJS();
     }
     if (searchKeys.length > 0) {
       matchResult = filter(
@@ -308,18 +309,18 @@ class CommandPalette extends PureComponent {
   }
 }
 
-const recentSelector = state => state['page.dashboard'];
+const recentSelector = state => state.get('page.dashboard');
 const recentProjects = createSelector(
   recentSelector,
-  state => state.projects.list
-    .filter(d => d.projectPath)
+  state => state.getIn(['projects', 'list'])
+    .filter(d => d.get('projectPath'))
     .sort((p1, p2) => {
-      return p2.count - p1.count;
+      return p2.get('count') - p1.get('count');
     })
     .map(d => ({
-      name: d.projectPath,
-      id: d._id,
-      content: d.projectPath,
+      name: d.get('projectPath'),
+      id: d.get('_id'),
+      content: d.get('projectPath'),
     })),
 );
 

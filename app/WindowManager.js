@@ -1,11 +1,10 @@
-import { remote, ipcRenderer } from 'electron';
-import { connect } from 'react-redux';
+import { ipcRenderer, remote } from 'electron';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import WindowControl from './components/component.windowControl/';
 // import { notification } from 'antd';
-
 import { actions } from './modules/module.layout/store';
 
-import WindowControl from './components/component.windowControl/';
 
 const setWindowClose = () => {
   // const win = remote.getCurrentWindow();
@@ -55,7 +54,7 @@ WindowManager.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    previewMode: state['page.wallpaper'].previewMode,
+    previewMode: state.getIn(['page.wallpaper', 'previewMode']),
   };
 };
 

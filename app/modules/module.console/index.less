@@ -15,12 +15,13 @@
     transform: scale(1.25);
   }
   &__Wrap {
-    position: absolute;
+    position: absolute!important;
     right: 0;
     bottom: 0;
-    display: flex;
     transform-origin: right bottom;
     will-change: transform;
+    background-color: #1a1a1a;
+    border-radius: 0 5px 5px 5px;
 
     &--show {
       transform: scale(1, 1);
@@ -57,104 +58,60 @@
   }
 
   &__Tabs {
-    display: flex;
-    flex: 0 0 70px;
-    padding: 20px 0;
-    width: 70px;
-    flex-direction: column;
-    justify-content: space-between;
-    &List {
-      list-style: none;
-    }
-    &Item {
-      margin: 1px 0;
-      // transition: transform @ease-in-circ @animation-duration-base;
-      transform: translateX(-30px);
+    position: absolute;
+    left: -29px;
+    top: 0;
+    bottom: 0;
+
+    &Button {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 4px 24px;
+      background-color: #e0e0e0;
+      border: 0 none;
+      align-items: center;
+      border-radius: 8px 0 0 0;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+      cursor: pointer;
+      z-index: 1;
+      color: @text-color;
+      overflow: hidden;
+      outline: 0 none;
 
       &--active {
-      }
-      &--stoped {
-        .ConsoleModule__TabsButton {
-          background-color: #999;
-        }
-        &:hover {
-          .ConsoleModule__TabsTitle--content {
-            transform: translate(~"calc(-100% + 72px)");
-            animation: titleRunner ease-in-out 1s;
-          }
-          svg {
-            &:nth-child(1) {
-              display: none;
-            }
-            &:nth-child(2) {
-              display: block;
-            }
-          }
-        }
-      }
-
-      svg {
-        &:nth-child(2) {
-          display: none;
-        }
-      }
-
-    }
-    &Button {
-      display: flex;
-      padding: 4px;
-      width: 100px;
-      border-radius: 3px 0 0 3px;
-      align-items: center;
-      justify-content: space-between;
-      background: none;
-      border: 0 none;
-      cursor: pointer;
-      color: #fff;
-
-      > svg {
-        flex: 0 0 18px;
-      }
-      &:focus {
-        outline: 0 none;
-      }
-      &--server {
         background-color: @primary-color;
+        color: #fff;
+        z-index: 2;
+
+        .ConsoleModule__TabsClose {
+          height: 24px;
+        }
       }
-      &--build, &--dll_build {
-        background-color: @success-color;
-      }
-      &--other {
-        background-color: @warning-color;
+
+      &:not(:first-child) {
+        margin-top: -24px;
       }
     }
-    &Title {
-      margin-left: 2px;
-      flex: 1 0 72px;
+
+    &Close {
+      height: 0;
       overflow: hidden;
-      text-align: left;
-      &--content {
-        display: inline-block;
-        white-space: nowrap;
-      }
+      transition: all @ease-out 0.375s;
     }
 
-    &--fixed {
-      > button {
-        margin-left: 44px;
-        width: 26px;
-      }
+    &Title {
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
     }
   }
 
-  &__Content {
-    transform: translateZ(0);
+  &__Terminals {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
   }
-
-  // &__MenuBtn {
-  //   border: 0 none;
-  //   background: none;
-  //   cursor: pointer;;
-  //   outline: 0 none;
-  // }
 }

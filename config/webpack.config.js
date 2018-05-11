@@ -143,10 +143,10 @@ module.exports = env => {
     entry: {
       app: env.prod ?
         [
-          'babel-polyfill',
+          // '@babel/polyfill',
           './app/index',
         ] : [
-          'babel-polyfill',
+          // '@babel/polyfill',
           // 'react-hot-loader/patch',
           // `/webpack-dev-server/client?http://localhost:${port}`,
           // 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
@@ -171,25 +171,32 @@ module.exports = env => {
                 options: {
                   presets: [
                     [
-                      'env',
+                      '@babel/preset-env',
                       {
                         targets: {
                           chrome: 61,
                         },
-                        useBuiltIns: true,
+                        useBuiltIns: 'usage',
                         modules: false,
+                        babelrc: false,
+                        shippedProposals: true,
                         // refer to: https://github.com/gaearon/react-hot-loader/issues/313
                         // include: ['transform-es2015-classes'],
                       },
                     ],
-                    'stage-1',
-                    'react',
+                    '@babel/preset-react',
                   ],
                   plugins: env.prod ? [
-                    'transform-decorators-legacy',
+                    '@babel/plugin-syntax-dynamic-import',
+                    '@babel/plugin-syntax-export-default-from',
+                    ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+                    ['@babel/plugin-proposal-class-properties', { 'loose': true }],
                   ] : [
                     'react-hot-loader/babel',
-                    'transform-decorators-legacy',
+                    '@babel/plugin-syntax-dynamic-import',
+                    '@babel/plugin-syntax-export-default-from',
+                    ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+                    ['@babel/plugin-proposal-class-properties', { 'loose': true }],
                   ],
                 },
               },
@@ -232,7 +239,7 @@ module.exports = env => {
     resolve: {
       extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
     },
-    // devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
+    devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
     target: 'electron-renderer',
     plugins,
     node: {

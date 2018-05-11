@@ -2,29 +2,25 @@
  * @author ryan.bian
  */
 // import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { hot } from 'react-hot-loader';
-
-moment.locale('zh-cn');
-
+import { BrowserRouter, Route } from 'react-router-dom';
+import ErrorBoundary from './components/component.errorBoundary/';
 import './index.less?no-css-module';
-
+import CommandPalette from './modules/module.command.palette/';
+import ConfigerModule from './modules/module.configer/';
+import Controller from './modules/module.controller/';
 // Pages
 import DashboardModule from './modules/module.dashboard/';
-import ProjectModule from './modules/module.project/';
-import UploadModule from './modules/module.upload/';
-import ConfigerModule from './modules/module.configer/';
-import UserModule from './modules/module.user/';
 // import ImageModule from './modules/module.image/';
 import LayoutModule from './modules/module.layout/';
+import ProjectModule from './modules/module.project/';
 import QrCodeModule from './modules/module.qrcode/';
-import PomodoraModule from './modules/module.pomodora/';
-import Controller from './modules/module.controller/';
-import CommandPalette from './modules/module.command.palette/';
+import UploadModule from './modules/module.upload/';
+import UserModule from './modules/module.user/';
 
-import ErrorBoundary from './components/component.errorBoundary/';
+moment.locale('zh-cn');
 
 const App = () => (
   <ErrorBoundary>
@@ -38,7 +34,6 @@ const App = () => (
           <Route path="/configer" component={ConfigerModule}/>
           <Route path="/user" component={UserModule}/>
           <Route path="/qrcode" component={QrCodeModule} />
-          <Route path="/pomodora" component={PomodoraModule} />
           <CommandPalette />
         </LayoutModule>
       </BrowserRouter>

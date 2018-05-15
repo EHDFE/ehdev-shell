@@ -1,44 +1,4 @@
 @import "../../theme/index.less";
 
 .Layout {
-  &__Control {
-    display: flex;
-    width: 60px;
-    justify-content: space-between;
-  }
-  &__Btn {
-    font-size: 24px;
-    cursor: pointer;
-
-    &--disabled {
-      color: @btn-disable-color;
-      cursor: not-allowed;
-    }
-  }
-  &__Info {
-    position: fixed;
-    left: 112px;
-    bottom: 20px;
-    padding: 8px;
-    width: ~"calc(100vw - 144px)";
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    -webkit-app-region: no-drag;
-
-    &--hide {
-      display: none;
-    }
-
-    &Title {
-      color: #fff;
-    }
-
-    &Foot {
-      display: flex;
-      justify-content: space-between;
-    }
-    // &Meta {
-
-    // }
-  }
 }

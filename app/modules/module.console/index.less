@@ -7,6 +7,7 @@
   width: 0;
   height: 0;
   z-index: @zindex-popover;
+
   &__FloatButton {
     position: absolute;
     z-index: 1;
@@ -22,6 +23,7 @@
     will-change: transform;
     background-color: #1a1a1a;
     border-radius: 0 5px 5px 5px;
+    -webkit-app-region: no-drag;
 
     &--show {
       transform: scale(1, 1);
@@ -72,17 +74,19 @@
       border: 0 none;
       align-items: center;
       border-radius: 8px 0 0 0;
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 ~"calc(100% - 20px)");
       cursor: pointer;
       z-index: 1;
       color: @text-color;
       overflow: hidden;
       outline: 0 none;
+      filter: drop-shadow(1px 0 2px rgba(0, 0, 0, 0.6));
 
       &--active {
         background-color: @primary-color;
         color: #fff;
         z-index: 2;
+        filter: drop-shadow(3px 3px 3px #000);
 
         .ConsoleModule__TabsClose {
           height: 24px;

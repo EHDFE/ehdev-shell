@@ -32,11 +32,10 @@ const PROJECT_API = {
         throw e;
       }
     },
-    // TODO: success notification
-    async editConfig(configs) {
-      const { rootPath, ...config } = configs;
+    async saveConfig(configs) {
+      const { rootPath, content } = configs;
       try {
-        const res = remote.config.setConfig(rootPath, config);
+        const res = await remoteAPI.config.updateConfig(rootPath, content);
         return res;
       } catch (e) {
         throw e;

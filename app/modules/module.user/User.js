@@ -163,7 +163,7 @@ class User extends Component {
 const UserModule = Form.create()(User);
 
 const mapStateToProps = state => ({
-  user: state.get('page.user'),
+  user: state['page.user'],
 });
 const mapDispatchToProps = dispatch => ({
   setUserInfo: user => dispatch(actions.user.set(user)),

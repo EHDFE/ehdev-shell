@@ -81,27 +81,40 @@ class CommandPalette extends PureComponent {
     }
   }
   handleKeyboardEvents = e => {
+    const { active } = this.state;
     const keyCode = e.keyCode;
     let matchNode;
     switch (keyCode) {
     case 13:
       // enter
-      matchNode = this.dropdownNode.querySelector(`.${styles.CommandPalette__Item}[data-index="${[this.state.focusIndex]}"]`);
-      if (matchNode) {
-        this.handleConfirm(matchNode.dataset.content);
+      if (active) {
+        e.preventDefault();
+        matchNode = this.dropdownNode.querySelector(`.${styles.CommandPalette__Item}[data-index="${[this.state.focusIndex]}"]`);
+        if (matchNode) {
+          this.handleConfirm(matchNode.dataset.content);
+        }
       }
       break;
     case 27:
       // esc
-      this.hide();
+      if (active) {
+        e.preventDefault();
+        this.hide();
+      }
       break;
     case 40:
       // arrow down
-      this.moveDown();
+      if (active) {
+        e.preventDefault();
+        this.moveDown();
+      }
       break;
     case 38:
       // arrow up
-      this.moveUp();
+      if (active) {
+        e.preventDefault();
+        this.moveUp();
+      }
       break;
     case 80:
       // p
@@ -309,7 +322,7 @@ class CommandPalette extends PureComponent {
   }
 }
 
-const recentSelector = state => state.get('page.dashboard');
+const recentSelector = state => state['page.dashboard'];
 const recentProjects = createSelector(
   recentSelector,
   state => state.getIn(['projects', 'list'])

@@ -15,7 +15,7 @@ const { Option } = Select;
 
 @Form.create()
 @connect(state => ({
-  remoteConfigs: state.getIn(['page.configer', 'remote', 'configIds']),
+  remoteConfigs: state['page.configer'].getIn(['remote', 'configIds']),
 }))
 class ImportForm extends Component {
   static propTypes = {

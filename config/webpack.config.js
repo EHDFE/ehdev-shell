@@ -9,6 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const port = process.env.PORT || 1212;
 
@@ -114,6 +115,9 @@ module.exports = env => {
     }),
     new HtmlWebpackPlugin({
       template: './app/index.html',
+    }),
+    new MonacoWebpackPlugin({
+      features: ['accessibilityHelp', 'bracketMatching', 'caretOperations', 'clipboard', 'codelens', 'colorDetector', 'comment', 'contextmenu', 'coreCommands', 'cursorUndo', 'dnd', 'find', 'folding', 'format', 'gotoDeclarationCommands', 'gotoDeclarationMouse', 'gotoError', 'gotoLine', 'hover', 'inPlaceReplace', 'inspectTokens', 'iPadShowKeyboard', 'linesOperations', 'links', 'multicursor', 'parameterHints', 'quickCommand', 'quickOutline', 'referenceSearch', 'rename', 'smartSelect', 'snippets', 'suggest', 'toggleHighContrast', 'toggleTabFocusMode', 'transpose', 'wordHighlighter', 'wordOperations'],
     }),
   );
 

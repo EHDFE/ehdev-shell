@@ -125,7 +125,7 @@ class SiderBar extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.get('page.user'),
+  user: state['page.user'],
 });
 
 export default connect(

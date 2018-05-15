@@ -59,7 +59,7 @@ class Armor {
       minHeight: CONFIG.MIN_HEIGHT,
       show: isDEV,
       webPreferences: {
-        webSecurity: false,
+        // webSecurity: false,
       },
     });
     this.core = new Core(coreConfig);

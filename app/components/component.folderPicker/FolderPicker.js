@@ -16,13 +16,11 @@ import styles from './index.less';
 export default class FolderPicker extends Component {
   static defaultProps = {
     value: '',
-    prevValue: undefined,
     onChange() {},
     children: undefined,
   }
   static propTypes = {
     value: PropTypes.string,
-    prevValue: PropTypes.string,
     onChange: PropTypes.func,
     children: PropTypes.any,
   }
@@ -38,15 +36,12 @@ export default class FolderPicker extends Component {
       this.props.onChange(value);
     }
   }
-  handleChangePrev = e => {
-    this.props.onChange(this.props.prevValue);
-  }
   openFileExplorer = () => {
     const { value } = this.props;
     shell.showItemInFolder(value);
   }
   renderContent() {
-    const { value, prevValue, children } = this.props;
+    const { value, children } = this.props;
     const menuItems = [
       <CopyToClipboard
         text={value}
@@ -84,17 +79,6 @@ export default class FolderPicker extends Component {
         切换项目
       </button>,
     ];
-    if (prevValue) {
-      menuItems.push(
-        <button
-          className={styles.FolderPicker__PopoverButton}
-          onClick={this.handleChangePrev}
-          key="previous"
-        >
-          回到上一个目录
-        </button>
-      );
-    }
     return (
       <Popover
         placement={'bottomLeft'}

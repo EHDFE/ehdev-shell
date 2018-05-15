@@ -14,16 +14,16 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const COMMON_API = {
-  wallpaper: {
-    async getBingWallpaper(date) {
-      try {
-        const res = await remoteAPI.common.getBingWallpaper(date);
-        return res;
-      } catch (e) {
-        throw e;
-      }
-    }
-  },
+  // wallpaper: {
+  //   async getBingWallpaper(date) {
+  //     try {
+  //       const res = await remoteAPI.common.getBingWallpaper(date);
+  //       return res;
+  //     } catch (e) {
+  //       throw e;
+  //     }
+  //   }
+  // },
   async getQrCode(text) {
     try {
       const res = await remoteAPI.common.getQRCode(text);

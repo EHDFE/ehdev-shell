@@ -198,8 +198,8 @@ class DashboardModule extends Component {
   }
 }
 
-const dashboardPageSelector = state => state.get('page.dashboard');
-const userPageSelector = state => state.get('page.user');
+const dashboardPageSelector = state => state['page.dashboard'];
+const userPageSelector = state => state['page.user'];
 const baseSelector = createSelector(dashboardPageSelector, state => state.get('base'));
 const projectsSelector = createSelector(
   dashboardPageSelector,

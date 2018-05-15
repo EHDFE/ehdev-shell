@@ -3,19 +3,20 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { readJSON, writeJSON, glob } = require('../../utils/');
+const { readJSON, writeFile, readFile, glob } = require('../../utils/');
 const context = require('../../context');
 const scmProvider = require('../../provider/scm');
 
 exports.setRoot = async rootPath => {
   const ret = {};
+  const configPath = path.join(rootPath, 'abc.json');
   try {
-    const projectConfig = await readJSON(
-      path.join(rootPath, 'abc.json')
-    );
+    const projectConfig = await readJSON(configPath);
+    const configRaw = await readFile(configPath, 'utf-8');
     Object.assign(ret, {
       runnable: true,
       config: projectConfig,
+      configRaw,
     });
   } catch (e) {
     Object.assign(ret, {
@@ -76,10 +77,9 @@ exports.makeRecord = rootPath => {
   });
 };
 
-exports.setConfig = async (rootPath, config) => {
+exports.updateConfig = async (rootPath, newConfig) => {
   try {
-    let configStr = JSON.stringify(config, null, '\t');
-    await writeJSON(path.join(rootPath, 'abc.json'), configStr);
+    await writeFile(path.join(rootPath, 'abc.json'), newConfig);
     return '修改成功';
   } catch (e) {
     throw e;

@@ -3,6 +3,7 @@
 .Project {
   &__Layout {
     display: grid;
+    width: 100%;
     height: 100%;
     grid-template-rows: 36px ~"calc(100% - 36px)";
   }
@@ -79,59 +80,22 @@
   }
 
   &__TabContent {
+    width: 100%;
     height: ~"calc(100vh - 204px)";
     overflow: auto;
   }
-}
 
-.Setup {
-  &__Card {
-    // padding: 10px 10px 2px;
-    margin: 10px;
-    // background-color: @background-color-base;
-    border: 1px solid @border-color-split;
-    :global{
-      // .ant-card-head {
-      //   background: none;
-      // }
-      .ant-card-body{
-        padding: 0;
-      }
-      .ant-card-head-title{
-       padding: 10px 0;
-      }
-      .ant-form-item-label{
-        padding-left: 5px;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .ant-input,.ant-select-selection{
-        border:0;
-        border-radius: 2px;
-      }
-      .ant-form-item-control{
-        border-left:1px solid @border-color-split;
-      }
-      .ant-switch{
-        margin:4px 10px;
-      }
+  &__EditorWrapper {
+    width: 100%;
+    height: ~"calc(100% - 70px)";
+  }
+  &__EditorAction {
+    display: flex;
+    padding: 0 0 16px;
+    justify-content: flex-end;
+
+    button {
+      margin-left: 10px;
     }
-  }
-  &__FormItem {
-    margin-bottom: 0;
-    background-color: @background-color-base;
-  }
-  &__Bash {
-    padding: 30px 20px;
-    font-size: 14px;
-    border-radius: 4px;
-    background-color: @border-color-split;
-  }
-  &__Button {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    text-align: center;
   }
 }

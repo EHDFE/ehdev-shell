@@ -39,20 +39,25 @@ export default class TerminalComponent extends PureComponent {
     messageId: PropTypes.string,
     active: PropTypes.bool,
   }
+  get terminal() {
+    if (!this._terminal) {
+      return this.getTerminalInstance();
+    }
+    return this._terminal;
+  }
   componentDidMount() {
-    this.socket = new WebSocket(`ws://0.0.0.0:8484/${this.props.messageId}`);
+    this.socket = new WebSocket(`ws://0.0.0.0:8484/${encodeURIComponent(this.props.messageId)}`);
     this.socket.addEventListener('open', () => {
-      this.getTerminalInstance()
-        .then(terminal => {
-          terminal.attach(this.socket, false, true);
-        });
+      setTimeout(() => {
+        this.terminal.attach(this.socket, false, true);
+      }, 0);
     });
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.width !== this.props.width || nextProps.height !== this.props.height) {
       setTimeout(() => {
         this.terminal && this.terminal.fit();
-      }, 0);
+      }, 100);
     }
   }
   componentWillUnmount() {
@@ -61,32 +66,22 @@ export default class TerminalComponent extends PureComponent {
     this.terminal && this.terminal.destroy();
   }
   getTerminalInstance() {
-    if (!this.terminal) {
-      return new Promise(resolve => {
-        this.terminal = new Terminal({
-          // cursorBlink: false,
-          // scrollback: 3000,
-          enableBold: true,
-          fontSize: 14,
-          lineHeight: 1.2,
-          fontFamily: process.platform === 'darwin' ? DEFAULT_MAC_FONT_FAMILY : DEFAULT_WINDOWS_FONT_FAMILY,
-          // cancelEvents: true,
-          // disableStdin: true,
-        });
-        this.terminal.on('resize', size => {
-          this.emitResize(size);
-          // setTimeout(() => {
-          //   this.terminal.fit();
-          // }, 500);
-        });
-        this.terminal.open(this.root, false);
-        // this.terminal.winptyCompatInit();
-        this.terminal.webLinksInit();
-        this.terminal.fit();
-        resolve(this.terminal);
-      });
-    }
-    return Promise.resolve(this.terminal);
+    this._terminal = new Terminal({
+      enableBold: true,
+      fontSize: 14,
+      lineHeight: 1.2,
+      fontFamily: process.platform === 'darwin' ? DEFAULT_MAC_FONT_FAMILY : DEFAULT_WINDOWS_FONT_FAMILY,
+      // cancelEvents: true,
+      // disableStdin: true,
+    });
+    this._terminal.on('resize', size => {
+      this.emitResize(size);
+    });
+    this._terminal.open(this.root, false);
+    // this.terminal.winptyCompatInit();
+    this._terminal.webLinksInit();
+    this._terminal.fit();
+    return this._terminal;
   }
   emitResize(size) {
     const { pid } = this.props;

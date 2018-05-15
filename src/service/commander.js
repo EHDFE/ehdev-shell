@@ -19,7 +19,7 @@ class Commander {
       port: PORT,
     });
     this.socketServer.on('connection', (ws, req) => {
-      const id = req.url.replace(/^\//, '');
+      const id = decodeURIComponent(req.url.replace(/^\//, ''));
       this.ws[id] = ws;
       ws.on('close', () => {
         delete this.ws[id];
@@ -113,6 +113,7 @@ class Commander {
             pid,
             rootPath: config.cwd,
           });
+          webContent.send(`COMMAND_EXIT:${pid}`);
         }
       });
     });

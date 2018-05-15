@@ -18,6 +18,7 @@ const platform = os.platform();
 const mkdir = exports.mkdir = promisify(fs.mkdir);
 exports.stat = promisify(fs.stat);
 exports.readFile = promisify(fs.readFile);
+exports.writeFile = promisify(fs.writeFile);
 exports.glob = promisify(glob);
 
 
@@ -45,9 +46,7 @@ exports.responser = (content, successful = false) => {
  */
 exports.readJSON = file => new Promise((resolve, reject) => {
   fs.readFile(file, 'utf-8', (err, data) => {
-    if (err) {
-      return reject(err);
-    }
+    if (err) return reject(err);
     try {
       const dataObj = JSON.parse(data);
       resolve(dataObj);

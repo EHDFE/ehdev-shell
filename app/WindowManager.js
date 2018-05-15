@@ -1,10 +1,7 @@
 import { ipcRenderer, remote } from 'electron';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
 import WindowControl from './components/component.windowControl/';
 // import { notification } from 'antd';
-import { actions } from './modules/module.layout/store';
-
 
 const setWindowClose = () => {
   // const win = remote.getCurrentWindow();
@@ -37,29 +34,15 @@ ipcRenderer.on('update-download-progress', (e, msg) => {
   // });
 });
 
-const WindowManager = ({ previewMode, togglePreviewMode }) => (
+const WindowManager = () => (
   <WindowControl
-    visibility={previewMode ? 'hidden' : 'visible'}
     onRequestClose={setWindowClose}
     onRequestMinimize={setWindowMinimize}
     onRequestMaximize={setWindowMaximize}
-    onRequestToggleVisible={togglePreviewMode}
   />
 );
 
 WindowManager.propTypes = {
-  previewMode: PropTypes.bool,
-  togglePreviewMode: PropTypes.func,
 };
 
-const mapStateToProps = state => {
-  return {
-    previewMode: state.getIn(['page.wallpaper', 'previewMode']),
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  togglePreviewMode: () => dispatch(actions.togglePreviewMode()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(WindowManager);
+export default WindowManager;

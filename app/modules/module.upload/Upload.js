@@ -111,7 +111,7 @@ class UploadModule extends Component {
   }
 }
 
-const uploadPageSelector = state => state.get('page.upload');
+const uploadPageSelector = state => state['page.upload'];
 const listTypeSelector = createSelector(
   uploadPageSelector,
   pageState => pageState.getIn(['layout', 'listType']),

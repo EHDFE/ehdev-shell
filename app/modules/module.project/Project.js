@@ -3,7 +3,7 @@
  * @author ryan.bian
  */
 import { ipcRenderer } from 'electron';
-import { Card, Icon, Spin, Tabs } from 'antd';
+import { Icon, Spin, Tabs, Button } from 'antd';
 import { Map, Set } from 'immutable';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
@@ -12,13 +12,12 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import DependencyManager from '../../components/component.dependencyManager/';
 import FolderPicker from '../../components/component.folderPicker/';
-import Page from '../../components/component.page/';
 import styles from './index.less';
 import ProjectAction from './partialComponent/Action';
+import Editor from '../../components/component.editor/';
 // import EslintResult from '../../components/component.eslint.result/';
 import Profile from './partialComponent/Profile';
 import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
-import Setup from './partialComponent/Setup';
 import { actions } from './store';
 import { actions as consoleActions } from '../module.console/store';
 
@@ -32,25 +31,11 @@ class ProjectModule extends PureComponent {
   }
   static propTypes = {
     env: PropTypes.instanceOf(Map),
-    // rootPath: PropTypes.string,
-    // prevRootPath: PropTypes.string,
-    // pkg: PropTypes.object,
-    // runnable: PropTypes.bool,
-    // useESlint: PropTypes.bool,
-    // lintResult: PropTypes.array,
-    // config: PropTypes.object,
     pids: PropTypes.instanceOf(Set),
-    // scmInfo: PropTypes.shape({
-    //   isGitProject: PropTypes.bool,
-    //   isSvnProject: PropTypes.bool,
-    // }),
     currentService: PropTypes.instanceOf(Map),
-    // runtimeConfig: PropTypes.shape({
-    //   port: PropTypes.number,
-    // }).isRequired,
     getEnvData: PropTypes.func,
-    setEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
+    saveConfig: PropTypes.func,
     setActive: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
@@ -67,12 +52,17 @@ class ProjectModule extends PureComponent {
     defaultActiveKey: 'profile',
     loading: false,
     runtimeConfigerVisible: false,
+    width: 0,
   }
   componentDidMount() {
     this.getInitData();
     ipcRenderer.removeAllListeners('SERVICE_STOPPED');
     ipcRenderer.on('SERVICE_STOPPED', (event, { pid, rootPath }) => {
       this.updateServiceStatus(false, pid, rootPath);
+    });
+    window.addEventListener('resize', this.handleResize, false);
+    this.setState({
+      width: this.root.getBoundingClientRect().width,
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -81,6 +71,9 @@ class ProjectModule extends PureComponent {
       this.props.getEnvData(nextRootPath);
       this.props.getPkgInfo(nextRootPath);
     }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize, false);
   }
   getInitData = hasLoading => {
     if (hasLoading) {
@@ -103,6 +96,12 @@ class ProjectModule extends PureComponent {
       });
     }
     return Promise.resolve();
+  }
+  handleResize = () => {
+    const rect = this.root.getBoundingClientRect();
+    this.setState({
+      width: rect.width,
+    });
   }
   handleStartServer = () => {
     const { env } = this.props;
@@ -156,12 +155,6 @@ class ProjectModule extends PureComponent {
       });
     }
   }
-  handleUpdateConfig = config => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
-    const configs = { rootPath, ...config };
-    this.props.setEnvData(configs, rootPath);
-  }
   // handleUpdateEslint = () => {
   //   const { rootPath } = this.props;
   //   this.props.getESlintResult(rootPath);
@@ -185,6 +178,12 @@ class ProjectModule extends PureComponent {
       runtimeConfigerVisible: true,
     });
   }
+  saveEditor = () => {
+    const { env } = this.props;
+    const rootPath = env.get('rootPath');
+    const content = this.editor.getValue();
+    this.props.saveConfig(rootPath, content);
+  }
   renderProfile() {
     const { env } = this.props;
     const profileProps = {
@@ -198,20 +197,31 @@ class ProjectModule extends PureComponent {
     };
     return <Profile {...profileProps} />;
   }
-  renderSetup() {
+  renderConfig(width) {
     const { env } = this.props;
-    const config = env.get('config');
-    const setupProps = {};
-    if (config) {
-      Object.assign(setupProps,
-        {
-          config,
-          onSubmit: this.handleUpdateConfig,
-        },
-      );
-      return <Setup {...setupProps}></Setup>;
-    }
-    return <Card style={{ textAlign: 'center' }} bordered={false}>没有找到运行配置</Card>;
+    const configRaw = env.get('configRaw');
+    const style = {
+      width,
+    };
+    return [
+      <div
+        key="action"
+        className={styles.Project__EditorAction}
+      >
+        <Button size="small" type="primary" onClick={this.saveEditor}>保存</Button>
+      </div>,
+      <div
+        key="editor"
+        className={styles.Project__EditorWrapper}
+        style={style}
+      >
+        <Editor
+          ref={comp => this.editor = comp}
+          language="json"
+          content={configRaw}
+        />
+      </div>
+    ];
   }
   renderPackageVersions() {
     const  { env } = this.props;
@@ -249,7 +259,7 @@ class ProjectModule extends PureComponent {
   }
   render() {
     const { env, setRootPath } = this.props;
-    const { runtimeConfigerVisible } = this.state;
+    const { runtimeConfigerVisible, width } = this.state;
     const runtimeConfigerProps = {
       visible: runtimeConfigerVisible,
       close: this.hanleCloseRuntimeConfiger,
@@ -278,51 +288,51 @@ class ProjectModule extends PureComponent {
     //     null
     // }
     return (
-      <Page>
-        <div className={styles.Project__Layout}>
-          <div className={styles.Project__TopBar}>
-            <FolderPicker
-              onChange={value => {
-                setRootPath(value);
-              }}
-              prevValue={env.get('prevRootPath')}
-              value={env.get('rootPath')}
-            >
-              <h3 className={styles.Project__ProjectName}>
-                { env.getIn(['pkg', 'name'], '请选择项目') }
-                <Icon type="setting" className={styles.Project__ProjectNameIcon} />
-              </h3>
-            </FolderPicker>
-            { this.renderActionBar() }
-          </div>
-          <Spin className={styles.Project__ContentSpin} spinning={this.state.loading}>
-            <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
-              <TabPane tab="基础信息" key="profile">
-                <div className={styles.Project__TabContent}>
-                  { this.renderProfile() }
-                </div>
-              </TabPane>
-              { env.get('runnable') ? <TabPane tab="运行配置" key="config">
-                <div className={styles.Project__TabContent}>
-                  { this.renderSetup() }
-                </div>
-              </TabPane> : null }
-              <TabPane tab="依赖管理" key="versions">
-                <div className={styles.Project__TabContent}>
-                  { this.renderPackageVersions() }
-                </div>
-              </TabPane>
-            </Tabs>
-          </Spin>
-          <RuntimeConfigModal {...runtimeConfigerProps} />
+      <div
+        ref={node => this.root = node}
+        width={width}
+        className={styles.Project__Layout}
+      >
+        <div className={styles.Project__TopBar}>
+          <FolderPicker
+            onChange={value => {
+              setRootPath(value);
+            }}
+            value={env.get('rootPath')}
+          >
+            <h3 className={styles.Project__ProjectName}>
+              { env.getIn(['pkg', 'name'], '请选择项目') }
+              <Icon type="setting" className={styles.Project__ProjectNameIcon} />
+            </h3>
+          </FolderPicker>
+          { this.renderActionBar() }
         </div>
-      </Page>
+        <Spin className={styles.Project__ContentSpin} spinning={this.state.loading}>
+          <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+            <TabPane tab="基础信息" key="profile">
+              <div className={styles.Project__TabContent}>
+                { this.renderProfile() }
+              </div>
+            </TabPane>
+            { env.get('runnable') ? <TabPane tab="运行配置" key="config">
+              <div className={styles.Project__TabContent}>
+                { this.renderConfig(width) }
+              </div>
+            </TabPane> : null }
+            <TabPane tab="依赖管理" key="versions">
+              <div className={styles.Project__TabContent}>
+                { this.renderPackageVersions() }
+              </div>
+            </TabPane>
+          </Tabs>
+        </Spin>
+        <RuntimeConfigModal {...runtimeConfigerProps} />
+      </div>
     );
   }
 }
 
-
-const projectPageSelector = state => state.get('page.project');
+const projectPageSelector = state => state['page.project'];
 const envSelector = createSelector(
   projectPageSelector,
   pageState => pageState.get('env'),
@@ -350,7 +360,7 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
-  setEnvData: (config, rootPath) => dispatch(actions.env.setEnv(config, rootPath, dispatch)),
+  saveConfig: (rootPath, content) => dispatch(actions.env.saveConfig(rootPath, content)),
   setActive: id => dispatch(consoleActions.setActive(id)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: (...args) => dispatch(actions.service.stopServer(...args)),

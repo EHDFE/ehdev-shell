@@ -1,7 +1,7 @@
 /**
  * ApiService Class
  */
-const { setRoot, makeRecord, setConfig } = require('./models/project/env');
+const { setRoot, makeRecord, updateConfig } = require('./models/project/env');
 const npm = require('./models/project/npm');
 const service = require('./models/service/index');
 const configer = require('./models/configer/index');
@@ -17,7 +17,7 @@ const apiService = {
     makeRecord,
   },
   config: {
-    setConfig,
+    updateConfig,
   },
   npm,
   service,

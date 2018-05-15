@@ -68,7 +68,8 @@ const baseReducer = handleActions({
     return state.set('weather', payload);
   },
   'BASE/GET_DATE': (state, { payload }) => {
-    return state.merge(payload);
+    const { weekday, date } = payload;
+    return state.set('weekday', weekday).set('date', date);
   },
 }, defaultState.get('base'));
 

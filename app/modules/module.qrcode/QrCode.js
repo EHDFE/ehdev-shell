@@ -80,7 +80,7 @@ class QrCodeModule extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  url: state.getIn(['page.qrcode', 'url']),
+  url: state['page.qrcode'].get('url'),
 });
 
 const mapDispatchToProps = (dispatch) => ({

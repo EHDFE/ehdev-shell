@@ -2,7 +2,7 @@
  * Console Module
  * @author ryan.bian
  */
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 // import { ipcRenderer } from 'electron';
 import classnames from 'classnames';
 import { Map, Set } from 'immutable';
@@ -18,7 +18,7 @@ import { actions as projectActions } from '../module.project/store';
 import styles from './index.less';
 import { actions } from './store';
 
-// const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
+const confirm = Modal.confirm;
 
 class ConsoleModule extends PureComponent {
   static propTypes = {
@@ -33,6 +33,8 @@ class ConsoleModule extends PureComponent {
     toggleVisible: PropTypes.func,
     setRootPath: PropTypes.func,
     onResize: PropTypes.func,
+    stopServer: PropTypes.func,
+    stopBuilder: PropTypes.func,
   }
 
   componentDidMount() {
@@ -51,7 +53,6 @@ class ConsoleModule extends PureComponent {
   }
 
   componentWillUnmount() {
-    // ipcRenderer.removeAllListeners(COMMAND_OUTPUT);
     this.removeAllListeners();
   }
 
@@ -63,7 +64,7 @@ class ConsoleModule extends PureComponent {
     );
   }
 
-  handleActive(rootPath, e) {
+  handleActive(rootPath, instance, e) {
     const target = e.target;
     const tagName = target.tagName.toLowerCase();
     if (tagName === 'g' || tagName === 'path') {
@@ -72,11 +73,37 @@ class ConsoleModule extends PureComponent {
         svgNode = svgNode.parentElement;
       }
       if (svgNode.dataset.action === 'delete') {
+        if (instance.get('running')) {
+          return this.showCloseConfirm(instance);
+        }
         this.props.closeTerm(rootPath);
         return;
       }
     }
     this.props.setActive(rootPath);
+  }
+  showCloseConfirm(instance) {
+    const pid = instance.get('pid');
+    const rootPath = instance.get('rootPath');
+    const projectName = instance.get('projectName');
+    const type = instance.get('type');
+    confirm({
+      title: '项目正在运行',
+      content: '强制关闭，会停止运行中的服务',
+      onOk: () => {
+        if (type === 'server') {
+          this.props.stopServer(pid, false, {
+            rootPath,
+            projectName,
+          });
+        } else if (type === 'builder') {
+          this.props.stopBuilder(pid, false, {
+            rootPath,
+            projectName,
+          });
+        }
+      },
+    });
   }
   handleToggleProject(root, e) {
     if (root) {
@@ -102,7 +129,7 @@ class ConsoleModule extends PureComponent {
                     },
                   )
                 }
-                onClick={this.handleActive.bind(this, rootPath)}
+                onClick={this.handleActive.bind(this, rootPath, d)}
                 onDoubleClick={this.handleToggleProject.bind(this, rootPath)}
               >
                 <span className={styles.ConsoleModule__TabsClose}>
@@ -185,7 +212,7 @@ class ConsoleModule extends PureComponent {
   }
 }
 
-const consolePageSelector = state => state.get('page.console');
+const consolePageSelector = state => state['page.console'];
 const consoleSelector = createSelector(
   consolePageSelector,
   pageState => {
@@ -197,7 +224,7 @@ const consoleSelector = createSelector(
     };
   }
 );
-const serviceSelector = state => state.getIn(['page.project', 'service']);
+const serviceSelector = state => state['page.project'].get('service');
 
 const mapStateToProps = (state) => createSelector(
   consoleSelector,
@@ -215,6 +242,8 @@ const mapDispatchToProps = dispatch => ({
   onResize: (width, height) => dispatch(actions.resize(width, height)),
   toggleVisible: () => dispatch(actions.toggleVisible()),
   setRootPath: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
+  stopServer: (...args) => dispatch(projectActions.service.stopServer(...args)),
+  stopBuilder: (...args) => dispatch(projectActions.service.stopBuilder(...args)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConsoleModule);

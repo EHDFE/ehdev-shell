@@ -17,11 +17,11 @@ const defaultState = Map({
     rootPath: undefined,
     pkg: undefined,
     config: undefined,
+    configRaw: '',
     pkgInfo: Map({}),
     runnable: false,
     useESlint: false,
     lintResult: List([]),
-    prevRootPath: undefined,
     runtimeConfig: Map({
       port: 3000,
       https: false,
@@ -34,8 +34,6 @@ const defaultState = Map({
   }),
 });
 
-// const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
-
 export const actions = createActions({
   ENV: {
     SET_ROOT_PATH: rootPath => {
@@ -43,13 +41,18 @@ export const actions = createActions({
       return rootPath;
     },
     GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
-    SET_ENV: async (configs, rootPath, dispatch) => {
+    SAVE_CONFIG: async (rootPath, content) => {
       try {
-        await PROJECT_API.root.editConfig(configs);
-        dispatch(actions.env.getEnv(rootPath));
-        return {};
+        await PROJECT_API.root.saveConfig({
+          rootPath,
+          content,
+        });
+        return {
+          rootPath,
+          content,
+        };
       } catch (e) {
-        throw new Error(e);
+        throw Error(e);
       }
     },
     UPDATE_RUNTIME_CONFIG: config => config,
@@ -150,16 +153,16 @@ export const actions = createActions({
 const envReducer = handleActions({
   'ENV/SET_ROOT_PATH': (state, { payload }) => {
     return state
-      .set('rootPath', payload)
-      .set('prevRootPath', state.get('rootPath'));
+      .set('rootPath', payload);
   },
   'ENV/GET_ENV': (state, { payload, error }) => {
     if (error) return state;
     return state.merge(fromJS(payload));
   },
-  'ENV/SET_ENV': (state, { error }) => {
+  'ENV/SAVE_CONFIG': (state, { payload, error }) => {
     if (error) return state;
-    return state;
+    const { content } = payload;
+    return state.set('configRaw', content).set('config', JSON.parse(content));
   },
   'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
     return state.mergeIn(['runtimeConfig'], fromJS(payload));
@@ -182,7 +185,6 @@ const envReducer = handleActions({
  * project's runner reducer
  */
 const serviceReducer = handleActions({
-
   'SERVICE/START_SERVER': (state, { payload, error }) => {
     if (error) return state;
     const { pid, rootPath, type, projectName } = payload;
@@ -237,6 +239,7 @@ const serviceReducer = handleActions({
     return nextState
       .updateIn(
         ['instances', rootPath],
+        Map({}),
         map => map.withMutations(map => map.set('running', isRunning))
       );
   },

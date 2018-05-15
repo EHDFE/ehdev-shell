@@ -8,9 +8,6 @@ import { createActions, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import CONFIGER_API from '../../apis/configer';
 
-
-const COMMAND_OUTPUT = 'COMMAND_OUTPUT';
-
 const defaultState = Map({
   remote: Map({
     configMap: Map({}),
@@ -29,41 +26,44 @@ export const actions = createActions({
   GET_CONFIGS: async () => await CONFIGER_API.get(),
   GET_REMOTE_CONFIGS: async () => await CONFIGER_API.getConfigsFromNpm(),
   ADD: async (name, dispatch) => {
-    await CONFIGER_API.add(name);
-    const listener = (event, arg) => {
-      if (arg.action === 'exit' || arg.action === 'error') {
+    try {
+      const { installPid } = await CONFIGER_API.add(name);
+      dispatch(actions.setPending(true));
+      ipcRenderer.once(`COMMAND_EXIT:${installPid}`, () => {
         dispatch(actions.setPending(false));
         dispatch(actions.getConfigs());
-        ipcRenderer.removeListener(COMMAND_OUTPUT, listener);
-      }
-    };
-    ipcRenderer.on(COMMAND_OUTPUT, listener);
-    dispatch(actions.setPending(true));
+      });
+      return { pid: installPid };
+    } catch (e) {
+      throw Error(e);
+    }
   },
   UPLOAD: async () => await CONFIGER_API.upload(),
   REMOVE: async (name, dispatch) => {
-    await CONFIGER_API.remove(name);
-    const listener = (event, arg) => {
-      if (arg.action === 'exit' || arg.action === 'error') {
+    try {
+      const { removePid } = await CONFIGER_API.remove(name);
+      dispatch(actions.setPending(true));
+      ipcRenderer.once(`COMMAND_EXIT:${removePid}`, () => {
         dispatch(actions.setPending(false));
         dispatch(actions.getConfigs());
-        ipcRenderer.removeListener(COMMAND_OUTPUT, listener);
-      }
-    };
-    ipcRenderer.on(COMMAND_OUTPUT, listener);
-    dispatch(actions.setPending(true));
+      });
+      return { pid: removePid };
+    } catch (e) {
+      throw Error(e);
+    }
   },
   UPGRADE: async (name, version, dispatch) => {
-    await CONFIGER_API.upgrade(name, version);
-    const listener = (event, arg) => {
-      if (arg.action === 'exit' || arg.action === 'error') {
+    try {
+      const { upgradePid } = await CONFIGER_API.upgrade(name, version);
+      dispatch(actions.setPending(true));
+      ipcRenderer.once(`COMMAND_EXIT:${upgradePid}`, () => {
         dispatch(actions.setPending(false));
         dispatch(actions.getConfigs());
-        ipcRenderer.removeListener(COMMAND_OUTPUT, listener);
-      }
-    };
-    ipcRenderer.on(COMMAND_OUTPUT, listener);
-    dispatch(actions.setPending(true));
+      });
+      return { pid: upgradePid };
+    } catch (e) {
+      throw Error(e);
+    }
   },
   SET_PENDING: pending => pending,
   GET_PKG_VERSIONS: async name => {

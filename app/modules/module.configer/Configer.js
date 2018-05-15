@@ -18,7 +18,6 @@ import { actions } from './store';
 
 const { Option } = Select;
 
-
 class ConfigerModule extends Component {
   static propTypes = {
     pending: PropTypes.bool,
@@ -294,7 +293,7 @@ class ConfigerModule extends Component {
   }
 }
 
-const pageSelector = state => state.get('page.configer');
+const pageSelector = state => state['page.configer'];
 const selectRemoteConfigs = createSelector(pageSelector, state => state.getIn(['remote', 'configMap']));
 const selectLocalConfigs = createSelector(pageSelector, state => {
   const remoteConfigMap = state.getIn(['remote', 'configMap']);
@@ -303,7 +302,7 @@ const selectLocalConfigs = createSelector(pageSelector, state => {
     if (remoteVersion && semver.gt(remoteVersion, v.get('version'))) {
       return v.merge({
         upgradable: true,
-        latestVersion: remoteConfigMap,
+        latestVersion: remoteVersion,
       });
     } else {
       return v;

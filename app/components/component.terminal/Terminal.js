@@ -10,6 +10,7 @@ import * as fit from 'xterm/lib/addons/fit/fit';
 import * as search from 'xterm/lib/addons/search/search';
 import * as webLinks from 'xterm/lib/addons/webLinks/webLinks';
 import * as attach from 'xterm/lib/addons/attach/attach';
+import * as winptyCompat from 'xterm/lib/addons/winptyCompat/winptyCompat';
 // import * as attach from './addons/attach';
 import 'xterm/lib/xterm.css';
 import styles from './index.less';
@@ -21,6 +22,7 @@ Terminal.applyAddon(fit);
 Terminal.applyAddon(attach);
 Terminal.applyAddon(webLinks);
 Terminal.applyAddon(search);
+Terminal.applyAddon(winptyCompat);
 
 export default class TerminalComponent extends PureComponent {
   static defaultProps = {
@@ -48,16 +50,22 @@ export default class TerminalComponent extends PureComponent {
   componentDidMount() {
     this.socket = new WebSocket(`ws://0.0.0.0:8484/${encodeURIComponent(this.props.messageId)}`);
     this.socket.addEventListener('open', () => {
-      setTimeout(() => {
-        this.terminal.attach(this.socket, false, true);
-      }, 0);
+      this.terminal.attach(this.socket, false, true);
     });
   }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.width !== this.props.width || nextProps.height !== this.props.height) {
-      setTimeout(() => {
-        this.terminal && this.terminal.fit();
-      }, 100);
+  componentDidUpdate(prevProps) {
+    if (prevProps.width !== this.props.width || prevProps.height !== this.props.height) {
+      if (this.props.active) {
+        if (!this.terminal.opened) {
+          this.open(this.terminal);
+        } else {
+          this.terminal.fit();
+        }
+      }
+    } else if (this.props.active && !prevProps.active) {
+      if (!this.terminal.opened) {
+        this.open(this.terminal);
+      }
     }
   }
   componentWillUnmount() {
@@ -66,6 +74,7 @@ export default class TerminalComponent extends PureComponent {
     this.terminal && this.terminal.destroy();
   }
   getTerminalInstance() {
+    const { active } = this.props;
     this._terminal = new Terminal({
       enableBold: true,
       fontSize: 14,
@@ -77,11 +86,19 @@ export default class TerminalComponent extends PureComponent {
     this._terminal.on('resize', size => {
       this.emitResize(size);
     });
-    this._terminal.open(this.root, false);
-    // this.terminal.winptyCompatInit();
+    if (active) {
+      setTimeout(() => {
+        this.open(this._terminal);
+      }, 500);
+    }
+    this._terminal.winptyCompatInit();
     this._terminal.webLinksInit();
-    this._terminal.fit();
     return this._terminal;
+  }
+  open(terminal) {
+    terminal.open(this.root, false);
+    terminal.fit();
+    terminal.opened = true;
   }
   emitResize(size) {
     const { pid } = this.props;

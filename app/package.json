@@ -10,6 +10,7 @@
     "electron"
   ],
   "scripts": {
+    "preinstall": "sh ./npm_install.sh",
     "postinstall": "../node_modules/.bin/electron-rebuild"
   },
   "dependencies": {

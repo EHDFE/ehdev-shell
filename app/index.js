@@ -18,7 +18,9 @@ window.addEventListener('click', e => {
 }, false);
 
 ipcRenderer.on('CORE:BEFORE_CLOSE', () => {
-  ipcRenderer.send('CORE:BEFORE_CLOSE:REPLY', store.getState());
+  const state = store.getState();
+  const instances = state['page.project'].getIn(['service', 'instances']).toJS();
+  ipcRenderer.send('CORE:BEFORE_CLOSE:REPLY', instances);
 });
 
 let confirmRef;

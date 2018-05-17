@@ -147,7 +147,7 @@ class ConsoleModule extends PureComponent {
   }
 
   renderTerminals() {
-    const { currentTerminalId, instances, width, height } = this.props;
+    const { currentTerminalId, instances, width, height, visible } = this.props;
     return (
       <section
         className={styles.ConsoleModule__Terminals}
@@ -160,7 +160,7 @@ class ConsoleModule extends PureComponent {
               key={rootPath}
               messageId={rootPath}
               pid={d.get('pid')}
-              active={rootPath === currentTerminalId}
+              active={(rootPath === currentTerminalId) && visible}
             />
           )).valueSeq()
         }

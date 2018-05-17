@@ -3,7 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
@@ -16,22 +16,16 @@ const port = process.env.PORT || 1212;
 module.exports = env => {
 
   const plugins = [];
-  const libirayStyleConfig = [
+  const [
+    libirayStyleConfig,
+    appStyleConfig,
+  ] = [
     {
       loader: 'css-loader',
       options: {
         minimize: env.prod,
       },
     },
-    {
-      loader: 'less-loader',
-      options: {
-        noIeCompat: true,
-        javascriptEnabled: true
-      }
-    },
-  ];
-  const appStyleConfig = [
     {
       loader: 'css-loader',
       options: {
@@ -40,35 +34,19 @@ module.exports = env => {
         localIdentName: env.prod ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:3]',
       },
     },
-    {
-      loader: 'less-loader',
-      options: {
-        noIeCompat: true,
-        javascriptEnabled: true
-      }
+  ].map(config => [config].concat({
+    loader: 'less-loader',
+    options: {
+      noIeCompat: true,
+      javascriptEnabled: true
     }
-  ];
+  }));
 
   if (env.prod) {
-    // extractLibiaryStyle = new ExtractTextPlugin('lib.css');
-    // extractAppStyle = new ExtractTextPlugin('app.css');
     plugins.push(
-      // new webpack.DllReferencePlugin({
-      //   context: path.resolve(__dirname, '../app'),
-      //   manifest: require('../app/dll/manifest.prod.json'),
-      // }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      // new UglifyJSPlugin({
-      //   parallel: true,
-      //   uglifyOptions: {
-      //     ecma: 6,
-      //   },
-      //   sourceMap: true,
-      // }),
-      // extractLibiaryStyle,
-      // extractAppStyle
       new MiniCssExtractPlugin({
         filename: '[name].css',
       }),
@@ -123,9 +101,6 @@ module.exports = env => {
 
   if (env.dev) {
     plugins.push(
-      // new AddAssetHtmlWebpackPlugin([{
-      //   filepath: require.resolve('../app/dll/dll.dev.js'),
-      // }])
       new ErrorOverlayWebpackPlugin(),
       new HtmlWebpackIncludeAssetsPlugin({
         assets: 'dll/dll.dev.js',
@@ -160,7 +135,7 @@ module.exports = env => {
     },
     output: {
       path: path.resolve(__dirname, '../app/dist'),
-      filename: env.prod ? '[name].min.js' : '[name].js',
+      filename: '[name].js',
       publicPath: env.prod ? '../dist/' : '/',
     },
     module: {
@@ -250,6 +225,17 @@ module.exports = env => {
       __dirname: false,
       __filename: false
     },
+    optimization: {
+      // minimize: false,
+      minimizer: [
+        new UglifyJSPlugin({
+          parallel: true,
+          uglifyOptions: {
+            ecma: 6,
+          },
+        }),
+      ],
+    },
   };
 
   if (!env.prod) {
@@ -270,10 +256,10 @@ module.exports = env => {
           ignored: /node_modules/,
           poll: 100
         },
-        historyApiFallback: {
-          verbose: true,
-          disableDotRule: false,
-        },
+        // historyApiFallback: {
+        //   verbose: true,
+        //   disableDotRule: false,
+        // },
       },
     });
   }

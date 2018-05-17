@@ -48,3 +48,5 @@ export const GREETING_WORDS = new Map([
 ]);
 
 export const WEATHER_APPID = 'b8fbb9f6ccb49e615a21bae76f87738d';
+
+export const RAVEN_ID = 'https://d2e7d99b1c414fe0ab0b02b67f17c1c8@sentry.io/247420';

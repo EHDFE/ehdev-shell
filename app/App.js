@@ -5,7 +5,7 @@
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { hot } from 'react-hot-loader';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { HashRouter, Route } from 'react-router-dom';
 import ErrorBoundary from './components/component.errorBoundary/';
 import './index.less?no-css-module';
 import CommandPalette from './modules/module.command.palette/';
@@ -25,7 +25,7 @@ moment.locale('zh-cn');
 const App = () => (
   <ErrorBoundary>
     <Controller>
-      <BrowserRouter basename={window.location.pathname}>
+      <HashRouter basename={window.location.pathname}>
         <LayoutModule>
           <Route exact path="/" component={DashboardModule}/>
           <Route exact path="/dashboard" component={DashboardModule}/>
@@ -36,7 +36,7 @@ const App = () => (
           <Route path="/qrcode" component={QrCodeModule} />
           <CommandPalette />
         </LayoutModule>
-      </BrowserRouter>
+      </HashRouter>
     </Controller>
   </ErrorBoundary>
 );

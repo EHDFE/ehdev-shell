@@ -45,6 +45,9 @@ export default class TerminalComponent extends PureComponent {
     if (!this._terminal) {
       return this.getTerminalInstance();
     }
+    if (!this.opened && this.props.active) {
+      this.open(this._terminal, true);
+    }
     return this._terminal;
   }
   componentDidMount() {
@@ -56,16 +59,10 @@ export default class TerminalComponent extends PureComponent {
   componentDidUpdate(prevProps) {
     if (prevProps.width !== this.props.width || prevProps.height !== this.props.height) {
       if (this.props.active) {
-        if (!this.terminal.opened) {
-          this.open(this.terminal);
-        } else {
-          this.terminal.fit();
-        }
+        this.fit(this.terminal, true);
       }
     } else if (this.props.active && !prevProps.active) {
-      if (!this.terminal.opened) {
-        this.open(this.terminal);
-      }
+      this.fit(this.terminal, true);
     }
   }
   componentWillUnmount() {
@@ -95,10 +92,18 @@ export default class TerminalComponent extends PureComponent {
     this._terminal.webLinksInit();
     return this._terminal;
   }
-  open(terminal) {
+  open(terminal, needMeasure) {
     terminal.open(this.root, false);
-    terminal.fit();
-    terminal.opened = true;
+    this.fit(terminal, needMeasure);
+    this.opened = true;
+  }
+  fit(terminal, needMeasure) {
+    if (this.props.active) {
+      setTimeout(() => {
+        needMeasure && terminal.charMeasure.measure(terminal.options);
+        terminal.fit();
+      }, 50);
+    }
   }
   emitResize(size) {
     const { pid } = this.props;

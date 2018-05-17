@@ -13,9 +13,8 @@ const { serviceStore } = apiService.service;
 
 const HANDLERS = new Map([
   [
-    'CORE:BEFORE_CLOSE:REPLY', function(e, state) {
-      const serviceList = state.getIn(['page.project', 'service', 'instances']);
-      if (serviceList.size > 0) {
+    'CORE:BEFORE_CLOSE:REPLY', function(e, instances) {
+      if (Object.keys(instances).length > 0) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
         this.window.destroy();

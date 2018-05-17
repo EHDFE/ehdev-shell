@@ -64,11 +64,13 @@
     left: -29px;
     top: 0;
     bottom: 0;
+    display: flex;
+    flex-direction: column;
 
     &Button {
       position: relative;
       display: flex;
-      flex-direction: column;
+      flex-direction: column-reverse;
       padding: 6px 4px 24px;
       background-color: #e0e0e0;
       border: 0 none;
@@ -81,9 +83,11 @@
       overflow: hidden;
       outline: 0 none;
       filter: drop-shadow(1px 0 2px rgba(0, 0, 0, 0.6));
+      white-space: nowrap;
 
       &--active {
-        background-color: @primary-color;
+        padding-top: 0;
+        background-color: @primary-6;
         color: #fff;
         z-index: 2;
         filter: drop-shadow(3px 3px 3px #000);
@@ -93,20 +97,33 @@
         }
       }
 
+      &--running {
+        background-color: @primary-1;
+        color: @primary-7;
+      }
+
+      &--activeRunning {
+        background-color: @primary-6;
+        color: #fff;
+      }
+
       &:not(:first-child) {
         margin-top: -24px;
       }
     }
 
     &Close {
+      flex-shrink: 0;
       height: 0;
       overflow: hidden;
       transition: all @ease-out 0.375s;
     }
 
     &Title {
+      flex: 1 1 auto;
       writing-mode: vertical-lr;
       transform: rotate(180deg);
+      overflow: hidden;
     }
   }
 

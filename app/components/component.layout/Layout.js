@@ -6,11 +6,13 @@ import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Layout, Icon } from 'antd';
+import { platform } from 'os';
 // import StackBlur from 'stackblur-canvas';
 // import tinycolor from 'tinycolor2';
 // import throttle from 'lodash/throttle';
 // import pick from 'lodash/pick';
 // import isEqual from 'lodash/isEqual';
+const PLATFORM = platform();
 
 import styles from './index.less';
 
@@ -76,7 +78,7 @@ export default class LayoutComponent extends PureComponent {
       minHeight: `calc(100vh - ${padding * 2}px)`,
     };
     return (
-      <Layout>
+      <Layout className={PLATFORM}>
         <div
           className={styles.Layout}
           style={layoutStyle}

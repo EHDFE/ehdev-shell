@@ -11,7 +11,10 @@ import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
 import ConsoleModule from '../module.console/';
+import { platform } from 'os';
 // import styles from './index.less';
+
+const PLATFORM = platform();
 
 class LayoutModule extends Component {
   static propTypes = {
@@ -56,7 +59,7 @@ class LayoutModule extends Component {
       });
     }
     return (
-      <Layout style={{ height: '100vh' }}>
+      <Layout className={PLATFORM} style={{ height: '100vh' }}>
         <SiderBar />
         <LayoutComponent key="layout" {...layoutProps}>
           {children}

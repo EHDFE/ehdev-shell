@@ -58,9 +58,6 @@ class Armor {
       minWidth: CONFIG.MIN_WIDTH,
       minHeight: CONFIG.MIN_HEIGHT,
       show: isDEV,
-      webPreferences: {
-        // webSecurity: false,
-      },
     });
     this.core = new Core(coreConfig);
     if (isDEV) {

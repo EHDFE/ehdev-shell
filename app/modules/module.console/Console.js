@@ -3,7 +3,6 @@
  * @author ryan.bian
  */
 import { Button, Modal } from 'antd';
-// import { ipcRenderer } from 'electron';
 import classnames from 'classnames';
 import { Map, Set } from 'immutable';
 import PropTypes from 'prop-types';
@@ -124,20 +123,21 @@ class ConsoleModule extends PureComponent {
                   classnames(
                     styles.ConsoleModule__TabsButton,
                     {
+                      [styles['ConsoleModule__TabsButton--activeRunning']]: (rootPath === currentTerminalId) && pids.has(pid),
                       [styles['ConsoleModule__TabsButton--active']]: rootPath === currentTerminalId,
-                      [styles['ConsoleModule__TabsButton--stoped']]: !pids.has(pid),
+                      [styles['ConsoleModule__TabsButton--running']]: pids.has(pid),
                     },
                   )
                 }
                 onClick={this.handleActive.bind(this, rootPath, d)}
                 onDoubleClick={this.handleToggleProject.bind(this, rootPath)}
               >
-                <span className={styles.ConsoleModule__TabsClose}>
-                  <IconClose size={18} data-action="delete" />
-                </span>
                 <div className={styles.ConsoleModule__TabsTitle}>
                   {d.get('projectName')}
                 </div>
+                <span className={styles.ConsoleModule__TabsClose}>
+                  <IconClose size={18} data-action="delete" />
+                </span>
               </button>
             );
           }).valueSeq()

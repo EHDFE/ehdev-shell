@@ -10,6 +10,11 @@ const CONFIG = {
     // Enables scroll bounce (rubber banding) effect on macOS
     scrollBounce: true,
     frame: false,
+    vibrancy: 'medium-light',
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      webSecurity: false,
+    },
   },
 };
 

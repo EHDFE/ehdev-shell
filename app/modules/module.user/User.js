@@ -79,7 +79,7 @@ class User extends Component {
 
   render() {
     const { user, form } = this.props;
-    const imgUrl = user.get('avatar', this.state.imgUrl);
+    const imgUrl = user.get('avatar') || this.state.imgUrl;
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -117,7 +117,7 @@ class User extends Component {
 
               <FormItem wrapperCol={{ span: 12, offset: 7 }}>
                 <Button type="primary" htmlType="submit">
-                    更新个人信息
+                  更新个人信息
                 </Button>
               </FormItem>
 

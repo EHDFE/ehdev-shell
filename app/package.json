@@ -10,7 +10,8 @@
     "electron"
   ],
   "scripts": {
-    "postinstall": "../node_modules/.bin/electron-rebuild"
+    "electron-rebuild": "node ../config/ElectronRebuild.js",
+    "postinstall": "npm run electron-rebuild"
   },
   "dependencies": {
     "add-asset-html-webpack-plugin": "^3.0.0-0",

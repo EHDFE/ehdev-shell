@@ -1,11 +1,16 @@
-platform:
-  - x64
+environment:
+  matrix:
+    - nodejs_version: 10
 
 cache:
-  - node_modules
+  - node_modules -> package.json
+  - app/node_modules -> app/package.json
+
+matrix:
+  fast_finish: true
 
 install:
-  - ps: Install-Product node 10 x64
+  - ps: Install-Product node $env:nodejs_version x64
   - npm install
 
 build_script:

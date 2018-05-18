@@ -11,6 +11,7 @@ matrix:
 
 install:
   - ps: Install-Product node $env:nodejs_version x64
+  - npm -g install npm@latest
   - npm install
 
 build_script:

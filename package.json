@@ -125,7 +125,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build": "concurrently \"npm run build-main \" \"npm run build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --mode development --env.dev --config ./config/webpack.config.dll.js --progress --verbose",
-    "build-main": "cross-env NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.main.prod.js --progress --verbose",
+    "build-main": "cross-env NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.main.prod.js --progress",
     "build-renderer": "cross-env NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.js --progress",
     "build-renderer-analyzer": "cross-env OPEN_ANALYZER=true NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.js --progress",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --env.dev --mode development --config ./config/webpack.config.js"
@@ -164,6 +164,7 @@
         "deb",
         "AppImage"
       ],
+      "executableName": "Jarvis",
       "publish": "github"
     }
   },

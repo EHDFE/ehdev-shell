@@ -9,6 +9,10 @@
     "develop-tool",
     "electron"
   ],
+  "author": {
+    "email": "macisi528@gmail.com",
+    "name": "ryan.bian"
+  },
   "scripts": {
     "electron-rebuild": "node ../config/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
@@ -29,7 +33,6 @@
     "webpack": "~4.8.0",
     "webpack-dev-server": "^3.1.3"
   },
-  "author": "ryan.bian",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/EHDFE/ehdev-shell/issues"

@@ -1,3 +1,6 @@
+const { platform } = require('os');
+const isWin = platform() === 'win32';
+
 const CONFIG = {
   WIDTH: 900,
   HEIGHT: 600,
@@ -11,7 +14,7 @@ const CONFIG = {
     scrollBounce: true,
     frame: false,
     vibrancy: 'medium-light',
-    titleBarStyle: 'hidden',
+    titleBarStyle: isWin ? 'default' : 'hidden',
     webPreferences: {
       webSecurity: false,
     },

@@ -29,6 +29,9 @@ class Commander {
         this.resize(resizeConfig.pid, resizeConfig.cols, resizeConfig.rows);
       });
     });
+    this.socketServer.on('error', err => {
+      console.error(err);
+    })
   }
   send(id, data) {
     if (this.ws[id]) {

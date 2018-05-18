@@ -4,13 +4,20 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import DevTools from './DevTools';
-// import WindowManager from './WindowManager';
+import { platform } from 'os';
+import WindowManager from './WindowManager';
+
+const isOSX = platform() === 'darwin';
 
 const render = (Component, store, persistor) => {
   const contents = [
     <Component key="component" />,
-    // <WindowManager key="windowManager" />,
   ];
+  if (!isOSX) {
+    contents.push(
+      <WindowManager key="windowManager" />,
+    );
+  }
   if (process.env.NODE_ENV === 'production') {
     contents.push(
       <DevTools key="devTool" />

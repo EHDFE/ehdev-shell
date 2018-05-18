@@ -71,7 +71,7 @@
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
-    "electron": "^2.0.0",
+    "electron": "^2.0.1",
     "electron-builder": "~20.13.3",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",
@@ -121,6 +121,8 @@
     "dist-all": "electron-builder -mw",
     "dist-mac": "electron-builder -m",
     "dist-win": "electron-builder -w",
+    "dist-linux": "electron-builder -l",
+    "postinstall": "electron-builder install-app-deps",
     "build": "concurrently \"npm run build-main \" \"npm run build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --mode development --env.dev --config ./config/webpack.config.dll.js --progress --verbose",
     "build-main": "cross-env NODE_ENV=production webpack --mode production --env.prod --config ./config/webpack.config.main.prod.js --progress --verbose",
@@ -154,6 +156,14 @@
     },
     "win": {
       "target": "nsis",
+      "publish": "github"
+    },
+    "linux": {
+      "category": "Development",
+      "target": [
+        "deb",
+        "AppImage"
+      ],
       "publish": "github"
     }
   },

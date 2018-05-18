@@ -20,5 +20,9 @@ build_script:
 
 test: off
 
+branches:
+  only:
+    - /^v\d+(\.\d+)+$/
+
 
 

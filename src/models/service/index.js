@@ -17,11 +17,15 @@ const context = require('../../context');
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');
 const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
+const { platform } = require('os');
+
+const isWin = platform() === 'win32';
+const nodeExecuteName = isWin ? 'node.exe' : 'node';
 
 exports.startServer = async (config) => {
   const { root, configerName, runtimeConfig } = config;
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = await Commander.run(`node ${serverScriptPath}`, {
+  const { pid } = await Commander.run(`${nodeExecuteName} ${serverScriptPath}`, {
     cwd: root,
     parseResult: false,
     env: {
@@ -67,9 +71,9 @@ exports.startBuilder = async (config) => {
   const { root, configerName, isDll } = config;
   let command;
   if (isDll) {
-    command = `node ${dllBuilderScriptPath}`;
+    command = `${nodeExecuteName} ${dllBuilderScriptPath}`;
   } else {
-    command = `node ${builderScriptPath}`;
+    command = `${nodeExecuteName} ${builderScriptPath}`;
   }
   const pkg = await readJSON(`${root}/package.json`);
   const { pid } = await Commander.run(command, {

@@ -11,6 +11,8 @@ const dashboard = require('./models/dashboard/index');
 
 const providers = require('./provider');
 
+const { serviceStore } = require('./service/index');
+
 const apiService = {
   root: {
     setRoot,
@@ -30,6 +32,7 @@ const apiService = {
   },
   dashboard,
   providers,
+  serviceStore,
 };
 
 module.exports = apiService;

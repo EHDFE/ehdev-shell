@@ -51,7 +51,7 @@ export default class TerminalComponent extends PureComponent {
     return this._terminal;
   }
   componentDidMount() {
-    this.socket = new WebSocket(`ws://0.0.0.0:8484/${encodeURIComponent(this.props.messageId)}`);
+    this.socket = new WebSocket(`ws://localhost:8484/${encodeURIComponent(this.props.messageId)}`);
     this.socket.addEventListener('open', () => {
       this.terminal.attach(this.socket, false, true);
     });

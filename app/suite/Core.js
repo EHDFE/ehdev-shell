@@ -2,19 +2,10 @@ const { BrowserWindow, ipcMain, app } = require('electron');
 
 const isDEV = process.env.NODE_ENV === 'development';
 
-let apiService;
-if (isDEV) {
-  apiService = require('../../src/apiService');
-} else {
-  apiService = require('../main-build/apiService');
-}
-
-const { serviceStore } = apiService.service;
-
 const HANDLERS = new Map([
   [
     'CORE:BEFORE_CLOSE:REPLY', function(e, instances) {
-      if (Object.keys(instances).length > 0) {
+      if (Object.keys(instances).map(p => instances[p]).filter(d => d.running).length > 0) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
         this.window.destroy();
@@ -23,7 +14,7 @@ const HANDLERS = new Map([
   ],
   [
     'CORE:SERVICE_NOT_END:CLOSE', function(e) {
-      serviceStore.stopAllService()
+      this.serviceStore.stopAllService()
         .then(resList => {
           // give renderer some times to update state
           setTimeout(() => {
@@ -55,6 +46,15 @@ class Core {
     this.window.on('closed', () =>{
       this.destroy();
     });
+
+    let apiService;
+    if (isDEV) {
+      apiService = require('../../src/apiService');
+    } else {
+      apiService = require('../main-build/apiService');
+    }
+
+    this.serviceStore = apiService.serviceStore;
 
     this.registHandlers();
   }

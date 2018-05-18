@@ -91,11 +91,12 @@ module.exports = env => {
     new webpack.ProvidePlugin({
       React: 'react',
     }),
+    new MonacoWebpackPlugin({
+      languages: ['json'],
+      features: ['bracketMatching', 'caretOperations', 'clipboard', 'codelens', 'comment', 'contextmenu', 'coreCommands', 'cursorUndo', 'dnd', 'find', 'folding', 'format', 'gotoDeclarationCommands', 'gotoDeclarationMouse', 'gotoError', 'gotoLine', 'hover', 'inPlaceReplace', 'inspectTokens', 'iPadShowKeyboard', 'linesOperations', 'links', 'multicursor', 'parameterHints', 'quickCommand', 'quickOutline', 'referenceSearch', 'rename', 'smartSelect', 'snippets', 'suggest', 'toggleHighContrast', 'toggleTabFocusMode', 'transpose', 'wordHighlighter', 'wordOperations'],
+    }),
     new HtmlWebpackPlugin({
       template: './app/index.html',
-    }),
-    new MonacoWebpackPlugin({
-      features: ['accessibilityHelp', 'bracketMatching', 'caretOperations', 'clipboard', 'codelens', 'colorDetector', 'comment', 'contextmenu', 'coreCommands', 'cursorUndo', 'dnd', 'find', 'folding', 'format', 'gotoDeclarationCommands', 'gotoDeclarationMouse', 'gotoError', 'gotoLine', 'hover', 'inPlaceReplace', 'inspectTokens', 'iPadShowKeyboard', 'linesOperations', 'links', 'multicursor', 'parameterHints', 'quickCommand', 'quickOutline', 'referenceSearch', 'rename', 'smartSelect', 'snippets', 'suggest', 'toggleHighContrast', 'toggleTabFocusMode', 'transpose', 'wordHighlighter', 'wordOperations'],
     }),
   );
 
@@ -223,10 +224,10 @@ module.exports = env => {
     plugins,
     node: {
       __dirname: false,
-      __filename: false
+      __filename: false,
     },
     optimization: {
-      // minimize: false,
+      // minimize: true,
       minimizer: [
         new UglifyJSPlugin({
           parallel: true,

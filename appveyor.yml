@@ -1,0 +1,18 @@
+platform:
+  - x64
+
+cache:
+  - node_modules
+
+install:
+  - ps: Install-Product 10 x64
+  - npm install
+
+build_script:
+  - npm run build
+  - npm run dist-win
+
+test: off
+
+
+

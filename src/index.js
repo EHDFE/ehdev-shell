@@ -15,11 +15,13 @@ const { app, dialog, webContents } = require('electron');
 const Raven = require('raven');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
+const pkg = require('../app/package.json');
 
-Raven.config(
-  process.env.NODE_ENV === 'production' &&
-  'https://d2e7d99b1c414fe0ab0b02b67f17c1c8:d24b5c31a1a24020a73333fef1c306ab@sentry.io/247420'
-).install();
+if (process.env.NODE_ENV === 'production') {
+  Raven.config('https://d2e7d99b1c414fe0ab0b02b67f17c1c8:d24b5c31a1a24020a73333fef1c306ab@sentry.io/247420', {
+    release: pkg.version,
+  }).install();
+}
 
 // Autoupdater
 autoUpdater.logger = log;

@@ -6,6 +6,7 @@ import { Modal } from 'antd';
 import App from './App';
 import render from './run';
 import configureStore from './configureStore';
+import reporter from './utils/reporter';
 
 const { store, persistor } = configureStore();
 
@@ -51,4 +52,7 @@ ipcRenderer.on('CORE:CLOSE_SERVICE_FAILED', (e, msg) => {
   });
 });
 
-render(App, store, persistor);
+reporter(store, () => {
+  render(App, store, persistor);
+});
+

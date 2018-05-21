@@ -37,13 +37,9 @@ function beforeUpload(file) {
 }
 
 class User extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imgUrl: '',
-    };
+  state = {
+    imgUrl: '',
   }
-
   uploadAvatar = info => {
     if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, imgUrl => {

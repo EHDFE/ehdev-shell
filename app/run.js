@@ -4,16 +4,14 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import DevTools from './DevTools';
-import { platform } from 'os';
 import WindowManager from './WindowManager';
-
-const isOSX = platform() === 'darwin';
+import EnvUtils from './utils/env';
 
 const render = (Component, store, persistor) => {
   const contents = [
     <Component key="component" />,
   ];
-  if (!isOSX) {
+  if (!EnvUtils.isMac) {
     contents.push(
       <WindowManager key="windowManager" />,
     );

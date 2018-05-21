@@ -227,7 +227,7 @@ class ProjectModule extends PureComponent {
     const  { env } = this.props;
     const props = {
       pkgInfo: env.get('pkgInfo'),
-      pkg: env.get('pkg'),
+      pkg: env.get('pkg', Map()),
       rootPath: env.get('rootPath'),
       refresh: this.getInitData,
     };

@@ -58,7 +58,7 @@
     "@babel/plugin-proposal-class-properties": "^7.0.0-beta.46",
     "@babel/plugin-proposal-decorators": "^7.0.0-beta.46",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.46",
-    "@babel/plugin-syntax-export-default-from": "^7.0.0-beta.46",
+    "@babel/plugin-syntax-export-default-from": "^7.0.0-beta.47",
     "@babel/polyfill": "^7.0.0-beta.46",
     "@babel/preset-env": "^7.0.0-beta.46",
     "@babel/preset-react": "^7.0.0-beta.46",

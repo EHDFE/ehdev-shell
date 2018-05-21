@@ -28,7 +28,7 @@ export const GLOBAL_NAV_CONFIG = [
   {
     to: '/qrcode',
     icon: 'qrcode',
-    text: '二维码生成器'
+    text: '二维码'
   },
   {
     to: '/user',

@@ -28,6 +28,14 @@ class RuntimeConfigModal extends PureComponent {
   handleQuit = () => {
     this.props.close();
   }
+  // bugfix: prevent selected value from being setting to the initialValue.
+  handleSelectChange = value => {
+    setTimeout(() => {
+      this.props.form.setFieldsValue({
+        port: value
+      });
+    }, 0);
+  }
   renderForm() {
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -45,7 +53,7 @@ class RuntimeConfigModal extends PureComponent {
           {getFieldDecorator('port', {
             initialValue: formData.get('port'),
           })(
-            <Select>
+            <Select onChange={this.handleSelectChange}>
               {
                 AVAILABLE_PORTS_LIST.map(p => (
                   <Option key={p} value={p}>{p}</Option>

@@ -75,7 +75,7 @@ class User extends Component {
 
   render() {
     const { user, form } = this.props;
-    const imgUrl = user.get('avatar') || this.state.imgUrl;
+    const imgUrl = this.state.imgUrl || user.get('avatar');
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: { span: 6 },

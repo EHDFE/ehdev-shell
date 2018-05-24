@@ -36,8 +36,8 @@ const defaultState = Map({
 
 export const actions = createActions({
   ENV: {
-    SET_ROOT_PATH: rootPath => {
-      PROJECT_API.root.makeRecord(rootPath);
+    SET_ROOT_PATH: async rootPath => {
+      await PROJECT_API.root.makeRecord(rootPath);
       return rootPath;
     },
     GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
@@ -151,7 +151,8 @@ export const actions = createActions({
  * project's running environment
  */
 const envReducer = handleActions({
-  'ENV/SET_ROOT_PATH': (state, { payload }) => {
+  'ENV/SET_ROOT_PATH': (state, { payload, error }) => {
+    if (error) return state;
     return state
       .set('rootPath', payload);
   },

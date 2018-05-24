@@ -40,13 +40,13 @@ exports.startServer = async (config) => {
       projectName: pkg.name,
     },
   });
-  context.getDataBase('project').update(
+  context.getDataBase('workspace').update(
     {
-      projectPath: root,
+      name: pkg.name,
     },
     {
       $inc: {
-        serverStartCount: 1,
+        serverCount: 1,
       },
     },
     { upsert: true }
@@ -90,13 +90,13 @@ exports.startBuilder = async (config) => {
       projectName: pkg.name,
     },
   });
-  context.getDataBase('project').update(
+  context.getDataBase('workspace').update(
     {
-      projectPath: root,
+      name: pkg.name,
     },
     {
       $inc: {
-        serverBuildCount: 1,
+        buildCount: 1,
       },
     },
     { upsert: true }

@@ -2,7 +2,7 @@
  * Dashboard Page
  * @author ryan.bian
  */
-import { Calendar } from 'antd';
+// import { Calendar } from 'antd';
 import classnames from 'classnames';
 import { List } from 'immutable';
 import PropTypes from 'prop-types';
@@ -16,13 +16,12 @@ import Card from './Card';
 // import { Icon, Switch } from 'antd';
 import styles from './index.less';
 import { actions } from './store';
-
-
+import AnalysisCard from './AnalysisCard';
 
 class DashboardModule extends Component {
   static propTypes = {
     history: PropTypes.object,
-    projectsRank: PropTypes.object,
+    statistic: PropTypes.object,
     userName: PropTypes.string,
     base: PropTypes.object,
     // assetsCount: PropTypes.number,
@@ -76,7 +75,7 @@ class DashboardModule extends Component {
       <Card className={styles.Dashboard__Info}>
         <div>
           {userName ? (
-            <p className={styles.Dashboard__InfoName}>Hi {userName}</p>
+            <p className={styles.Dashboard__InfoName}>Hello {userName}</p>
           ) : null}
           <h2 className={styles['Dashboard__InfoGreeting']}>
             {GREETING_WORDS.get(weekday)}
@@ -87,7 +86,7 @@ class DashboardModule extends Component {
     );
   }
   renderSummaryCards() {
-    const { base } = this.props;
+    const { base, statistic } = this.props;
     const cards = [
       <Card
         className={classnames(
@@ -123,46 +122,35 @@ class DashboardModule extends Component {
           {base.get('assetsCount')}
         </em>
       </Card>,
+      <Card
+        className={classnames(
+          styles.Dashboard__Summary,
+          styles.Dashboard__SummaryBuild,
+        )}
+        key={'build'}
+      >
+        <h4 className={styles.Dashboard__SummaryTitle}>构建次数</h4>
+        <em
+          className={classnames(
+            styles.Dashboard__SummaryCount,
+            styles.Dashboard__SummaryBuildCount
+          )}
+        >
+          {statistic.reduce((p, d) => {
+            return p + d.get('buildCount', 0);
+          }, 0)}
+        </em>
+      </Card>
     ];
     return cards;
   }
-  renderRecentsProjects() {
-    const { projectsRank } = this.props;
-    return (
-      <Card className={styles.Dashboard__ProjectsCard} title="常用工程">
-        <ul className={styles.Dashboard__ProjectRankList}>
-          {
-            projectsRank
-              .sort((a, b) => b.get('count') - a.get('count'))
-              .take(6)
-              .toJS()
-              .map((o, i) => (
-                <li
-                  data-index={i + 1}
-                  className={styles.Dashboard__ProjectRankItem}
-                  key={o._id}
-                  title={o.projectPath}
-                >
-                  <p>
-                    <a
-                      href={o.projectPath}
-                      onClick={this.navigateToProject}
-                    >{o.projectPath ? o.projectPath.split('/').pop() : ''}</a>
-                  </p>
-                </li>
-              ))
-          }
-        </ul>
-      </Card>
-    );
-  }
-  renderCalendar() {
-    return (
-      <Card className={styles.Dashboard__CalendarCard}>
-        <Calendar fullscreen={false} />
-      </Card>
-    );
-  }
+  // renderCalendar() {
+  //   return (
+  //     <Card className={styles.Dashboard__CalendarCard}>
+  //       <Calendar fullscreen={false} />
+  //     </Card>
+  //   );
+  // }
   renderServerRunningDurationRank() {
     return (
       <Card>
@@ -184,16 +172,20 @@ class DashboardModule extends Component {
       </Card>
     );
   }
+  renderAnalysisCard() {
+    const { statistic } = this.props;
+    return <AnalysisCard data={statistic} />;
+  }
   render() {
     return (
       <div className={styles.Dashboard__Container}>
         {this.renderInfoBar()}
         {this.renderSummaryCards()}
-        {this.renderRecentsProjects()}
-        {this.renderCalendar()}
-        {this.renderLastBuildStats()}
+        {this.renderAnalysisCard()}
       </div>
     );
+    // {this.renderCalendar()}
+    // {this.renderLastBuildStats()}
     // { this.renderBuildTimesRank() }
   }
 }
@@ -205,11 +197,6 @@ const projectsSelector = createSelector(
   dashboardPageSelector,
   state => state.get('projects')
 );
-// const projectsRankSelector = createSelector(projectsSelector, state => {
-  // const list = Array.isArray(state.list) ? state.list : [];
-  // return list.slice(0).sort((a, b) => b.count - a.count);
-// });
-// const userInfoSelector = createSelector(userPageSelector, state => state.get('us'));
 
 const mapStateToProps = state =>
   createSelector(
@@ -218,8 +205,7 @@ const mapStateToProps = state =>
     userPageSelector,
     (base, projects, user) => ({
       base,
-      projectsRank: projects.get('list', List([])),
-      // projectsRank: projectsRank.slice(0, 6),
+      statistic: projects.get('statistic', List([])),
       userName: user.get('name'),
     })
   );

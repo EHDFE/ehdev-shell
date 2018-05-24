@@ -52,16 +52,28 @@ exports.setRoot = async rootPath => {
   return ret;
 };
 
-exports.makeRecord = rootPath => {
+exports.makeRecord = async projectPath => {
   // insert project to db
+  let pkg;
+  try {
+    pkg = await readJSON(
+      path.join(projectPath, 'package.json')
+    );
+  } catch (e) {
+    throw Error(e);
+  }
   return new Promise((resolve, reject) => {
-    context.getDataBase('project').update(
+    context.getDataBase('workspace').update(
       {
-        projectPath: rootPath,
+        projectPath,
       },
       {
         $inc: {
           count: 1,
+        },
+        $set: {
+          name: pkg.name,
+          lastTime: Date.now(),
         },
       },
       { upsert: true },

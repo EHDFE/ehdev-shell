@@ -30,8 +30,8 @@ class Commander {
       });
     });
     this.socketServer.on('error', err => {
-      console.error(err);
-    })
+      // console.error(err);
+    });
   }
   send(id, data) {
     if (this.ws[id]) {

@@ -6,7 +6,7 @@ const context = require('../../context');
 
 exports.getProjectList = () =>
   new Promise((resolve, reject) => {
-    context.getDataBase('project').find({}, (err, docs) => {
+    context.getDataBase('workspace').find({}, (err, docs) => {
       if (err) {
         reject(err);
       } else {
@@ -27,7 +27,7 @@ const getAssetsCount = () => new Promise((resolve, reject) => {
   });
 });
 const getProjectsCount = () => new Promise((resolve, reject) => {
-  context.getDataBase('project').count({}, (err, count) => {
+  context.getDataBase('workspace').count({}, (err, count) => {
     if (err) {
       reject(err);
     } else {

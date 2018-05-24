@@ -325,16 +325,16 @@ class CommandPalette extends PureComponent {
 const recentSelector = state => state['page.dashboard'];
 const recentProjects = createSelector(
   recentSelector,
-  state => state.getIn(['projects', 'list'])
-    .filter(d => d.get('projectPath'))
-    .sort((p1, p2) => {
-      return p2.get('count') - p1.get('count');
+  state => state.getIn(['projects', 'statistic'], List())
+    .sort((a, b) => {
+      return a.get('lastTime') > b.get('lastTime') ? 1 : -1;
     })
     .map(d => ({
       name: d.get('projectPath'),
+      lastTime: d.get('lastTime'),
       id: d.get('_id'),
       content: d.get('projectPath'),
-    })),
+    }))
 );
 
 const mapStateToProps = state => ({

@@ -39,7 +39,7 @@ export default class FileCard extends Component {
     import(`pretty-file-icons/svg/${iconName}.svg`)
       .then(iconUrl => {
         this.setState({
-          iconUrl,
+          iconUrl: iconUrl.default,
         });
       });
   }

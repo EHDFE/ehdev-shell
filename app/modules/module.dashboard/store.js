@@ -16,7 +16,7 @@ const defaultState = Map({
     projectsCount: 0,
   }),
   projects: Map({
-    list: List([]),
+    statistic: List([]),
   }),
 });
 
@@ -75,7 +75,7 @@ const baseReducer = handleActions({
 
 const projectsReducer = handleActions({
   'PROJECTS/GET_LIST': (state, { payload }) => {
-    return state.set('list', fromJS(payload));
+    return state.set('statistic', fromJS(payload));
   }
 }, defaultState.get('projects'));
 

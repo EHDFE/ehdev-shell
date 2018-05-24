@@ -26,10 +26,11 @@ export default class FileCard extends Component {
   state = {
     iconUrl: undefined,
   }
-  componentWillMount() {
-    this.getFileIcon(this.props.name);
+  constructor(props) {
+    super(props);
+    this.getFileIcon(props.name);
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.name !== this.props.name) {
       this.getFileIcon(nextProps.name);
     }

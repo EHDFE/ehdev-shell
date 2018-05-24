@@ -114,8 +114,8 @@
   ],
   "scripts": {
     "prestart": "npm run build",
-    "start": "cross-env NODE_ENV=production electron .",
-    "debug": "cross-env NODE_ENV=development electron --inspect=5858 .",
+    "start": "cross-env NODE_ENV=production electron ./app/",
+    "debug": "cross-env NODE_ENV=development electron --inspect=5858 ./app/",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "eslint --cache ./app",
     "lint-fix": "eslint --cache ./app --fix",

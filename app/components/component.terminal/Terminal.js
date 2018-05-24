@@ -14,6 +14,7 @@ import * as winptyCompat from 'xterm/lib/addons/winptyCompat/winptyCompat';
 // import * as attach from './addons/attach';
 import 'xterm/lib/xterm.css';
 import styles from './index.less';
+import EnvUtils from '../../utils/env';
 
 const DEFAULT_WINDOWS_FONT_FAMILY = 'Consolas, \'Courier New\', monospace';
 const DEFAULT_MAC_FONT_FAMILY = 'Menlo, Monaco, \'Courier New\', monospace';
@@ -23,6 +24,8 @@ Terminal.applyAddon(attach);
 Terminal.applyAddon(webLinks);
 Terminal.applyAddon(search);
 Terminal.applyAddon(winptyCompat);
+
+const HOST = EnvUtils.isWinows ? '127.0.0.1' : '0.0.0.0';
 
 export default class TerminalComponent extends PureComponent {
   static defaultProps = {
@@ -51,7 +54,7 @@ export default class TerminalComponent extends PureComponent {
     return this._terminal;
   }
   componentDidMount() {
-    this.socket = new WebSocket(`ws://localhost:8484/${encodeURIComponent(this.props.messageId)}`);
+    this.socket = new WebSocket(`ws://${HOST}:8484/${encodeURIComponent(this.props.messageId)}`);
     this.socket.addEventListener('open', () => {
       this.terminal.attach(this.socket, false, true);
     });

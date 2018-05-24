@@ -65,7 +65,7 @@ class ProjectModule extends PureComponent {
       width: this.root.getBoundingClientRect().width,
     });
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const nextRootPath = nextProps.env.get('rootPath');
     if (nextRootPath !== this.props.env.get('rootPath')) {
       this.props.getEnvData(nextRootPath);

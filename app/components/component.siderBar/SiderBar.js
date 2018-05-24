@@ -32,7 +32,7 @@ class SiderBar extends Component {
     selectedKey: this.getSelectedKey(this.props),
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.location, this.props.location)) {
       this.setState({
         selectedKey: this.getSelectedKey(nextProps),

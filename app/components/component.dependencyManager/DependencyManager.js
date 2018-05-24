@@ -29,7 +29,7 @@ class DependencyManager extends PureComponent {
   componentDidMount() {
     this.updateState(this.state.tab);
   }
-  componentWillReceiveProps() {
+  UNSAFE_componentWillReceiveProps() {
     this.updateState(this.state.tab);
   }
 

@@ -37,9 +37,10 @@ class ConfigerModule extends Component {
     markVisible: false,
     versionEditorStatus: {},
   }
-  componentWillMount() {
-    this.props.getConfigs();
-    this.props.getRemoteConfigs();
+  constructor(props) {
+    super(props);
+    props.getConfigs();
+    props.getRemoteConfigs();
   }
   handleDelete(name) {
     this.props.removeConfig(name);

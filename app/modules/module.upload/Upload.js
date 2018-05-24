@@ -29,8 +29,9 @@ class UploadModule extends Component {
     addFile: PropTypes.func,
     delFile: PropTypes.func,
   }
-  componentWillMount() {
-    const { fetchFileList } = this.props;
+  constructor(props) {
+    super(props);
+    const { fetchFileList } = props;
     fetchFileList();
   }
   handleChangeListType = e => {

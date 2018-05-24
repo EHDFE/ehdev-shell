@@ -35,7 +35,7 @@ class DashboardModule extends Component {
     getOverall: PropTypes.func,
     setProjectRoot: PropTypes.func,
   };
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.base.get('date') !== nextProps.base.get('date')) {
       this.props.getWeather();
     }

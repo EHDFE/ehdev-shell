@@ -5,13 +5,9 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Tag, Icon, message } from 'antd';
-import G2 from '@antv/g2';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import styles from './index.less';
-
-// 关闭 G2 的体验改进计划打点请求
-G2.track(false);
 
 const columns = [{
   title: 'Line',
@@ -69,7 +65,7 @@ class EslintResult extends Component {
     // this.updateChart(this.props.data);
     // console.log('componentDidMount');
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       data: this.updateData(nextProps.data, nextProps.rootPath),
     });

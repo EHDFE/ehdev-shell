@@ -24,7 +24,7 @@ class LayoutModule extends Component {
   state = {
     nav: this.getLayoutNav(this.props.location),
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.location, this.props.location)) {
       this.setState({
         nav: this.getLayoutNav(nextProps.location),

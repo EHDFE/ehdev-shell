@@ -4,6 +4,7 @@
  */
 const path = require('path');
 const { app } = require('electron');
+const { platform } = require('os');
 
 let APP_PATH;
 if (process.env.NODE_ENV === 'production') {
@@ -21,3 +22,5 @@ const ConfigerFolderPath = exports.ConfigerFolderPath = path.join(UserDataPath, 
 exports.ConfigerFolderPackagePath = path.join(ConfigerFolderPath, 'package.json');
 
 exports.SHELL_NODE_MODULES_PATH = path.join(APP_PATH, 'node_modules');
+
+exports.isWindows = platform() === 'win32';

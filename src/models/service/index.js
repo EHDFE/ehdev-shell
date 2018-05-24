@@ -3,7 +3,6 @@
  * @author ryan.bian
  */
 const path = require('path');
-// const { app } = require('electron');
 const { serviceStore } = require('../../service/index');
 const Commander = require('../../service/commander');
 const {
@@ -17,10 +16,8 @@ const context = require('../../context');
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');
 const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
-const { platform } = require('os');
 
-const isWin = platform() === 'win32';
-const nodeExecuteName = isWin ? 'node.exe' : 'node';
+const nodeExecuteName = 'node';
 
 exports.startServer = async (config) => {
   const { root, configerName, runtimeConfig } = config;
@@ -28,6 +25,7 @@ exports.startServer = async (config) => {
   const { pid } = await Commander.run(`${nodeExecuteName} ${serverScriptPath}`, {
     cwd: root,
     parseResult: false,
+    outputToTermnal: true,
     env: {
       SHELL_NODE_MODULES_PATH,
       CONFIGER_FOLDER_PATH: ConfigerFolderPath,
@@ -79,6 +77,7 @@ exports.startBuilder = async (config) => {
   const { pid } = await Commander.run(command, {
     cwd: root,
     parseResult: false,
+    outputToTermnal: true,
     env: {
       SHELL_NODE_MODULES_PATH,
       CONFIGER_FOLDER_PATH: ConfigerFolderPath,

@@ -21,7 +21,8 @@ export default class UploadZone extends Component {
   state = {
     dragIsOver: false,
   }
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     window.addEventListener('paste', this.handlePaste, false);
   }
   componentWillUnmount() {

@@ -12,6 +12,7 @@ const https = require('https');
 const path = require('path');
 const QRCode = require('qrcode');
 const glob = require('glob');
+const isString = require('lodash/isString');
 
 const platform = os.platform();
 
@@ -203,3 +204,59 @@ exports.getLocalIP = () => {
     .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
     .filter(x => x)[0].address;
 };
+
+exports.findExecutable = (command, cwd, options) => {
+  // If we have an absolute path then we take it.
+  if (path.isAbsolute(command)) {
+    return command;
+  }
+  let dir = path.dirname(command);
+  if (dir !== '.') {
+    // We have a directory and the directory is relative (see above). Make the path absolute
+    // to the current working directory.
+    return path.join(cwd, command);
+  }
+  let paths;
+  // The options can override the PATH. So consider that PATH if present.
+  if (options && options.env) {
+    // Path can be named in many different ways and for the execution it doesn't matter
+    for (let key of Object.keys(options.env)) {
+      if (key.toLowerCase() === 'path') {
+        if (isString(options.env[key])) {
+          paths = options.env[key].split(path.delimiter);
+        }
+        break;
+      }
+    }
+  }
+  if (paths === void 0 && isString(process.env.PATH)) {
+    paths = process.env.PATH.split(path.delimiter);
+  }
+  // No PATH environment. Make path absolute to the cwd.
+  if (paths === void 0 || paths.length === 0) {
+    return path.join(cwd, command);
+  }
+  // We have a simple file name. We get the path variable from the env
+  // and try to find the executable on the path.
+  for (let pathEntry of paths) {
+    // The path entry is absolute.
+    let fullPath;
+    if (path.isAbsolute(pathEntry)) {
+      fullPath = path.join(pathEntry, command);
+    } else {
+      fullPath = path.join(cwd, pathEntry, command);
+    }
+    // if (fs.existsSync(fullPath)) {
+    //   return fullPath;
+    // }
+    let withExtension = fullPath + '.cmd';
+    if (fs.existsSync(withExtension)) {
+      return withExtension;
+    }
+    withExtension = fullPath + '.exe';
+    if (fs.existsSync(withExtension)) {
+      return withExtension;
+    }
+  }
+  return path.join(cwd, command);
+}

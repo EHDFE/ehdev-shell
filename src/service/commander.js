@@ -6,9 +6,13 @@ const { webContents } = require('electron');
 const { serviceStore } = require('./index');
 const WebSocket = require('ws');
 const { platform } = require('os');
+const { promisify } = require('util');
 const pty = require('node-pty');
+const { findExecutable } = require('../utils/');
+const { isWindows } = require('../utils/env');
+const { execFile } = require('child_process');
 
-const HOST = platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
+const HOST = isWindows ? '127.0.0.1' : '0.0.0.0';
 const PORT = 8484;
 
 class Commander {
@@ -54,8 +58,9 @@ class Commander {
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
    * @param {string} options.category - pass to client for ui usage
    * @param {object} options.args - arguments to passthrough
+   * @param {boolean} options.outputToTermnal
    */
-  run(commands, options) {
+  async run(commands, options) {
     const { SHELL_CONTENT_ID } = process.env;
     const webContent = webContents.fromId(+SHELL_CONTENT_ID);
     const config = Object.assign(
@@ -66,8 +71,9 @@ class Commander {
         useCnpm: true,
         category: 'OTHER',
         args: {},
+        outputToTermnal: false,
       },
-      options
+      options,
     );
     const [command, ...args] = commands.split(/\s+/);
     const spawnOptions = {
@@ -85,47 +91,69 @@ class Commander {
     } else {
       runtimeArgs = args;
     }
-    const ps = pty.spawn(command, runtimeArgs, spawnOptions);
-    // const ps = pty.spawn(shell, runtimeArgs, spawnOptions);
-    const { pid } = ps;
-    serviceStore.set(pid, ps);
+    if (!config.outputToTermnal) {
+      // use execFile
+      if (config.parseResult) {
+        return new Promise((resolve, reject) => {
+          execFile(command, runtimeArgs, {
+            cwd: spawnOptions.cwd,
+            env: spawnOptions.env,
+            shell: true,
+          }, (err, stdout, stderr) => {
+            if (err) {
+              return reject(err);
+            }
+            let data;
+            try {
+              data = JSON.parse(stdout);
+            } catch (e) {
+              data = {};
+            }
+            resolve(data);
+          });
+        });
+      } else {
+        const ps = execFile(command, runtimeArgs, {
+          cwd: spawnOptions.cwd,
+          env: spawnOptions.env,
+          shell: true,
+        });
+        ps.on('exit', () => {
+          webContent.send(`COMMAND_EXIT:${ps.pid}`);
+        });
+        return {
+          pid: ps.pid,
+        };
+      }
+    } else {
+      // use winPty
+      let executableCommand;
+      if (isWindows) {
+        executableCommand = findExecutable(command, config.cwd, {
+          env: spawnOptions.env,
+        });
+      } else {
+        executableCommand = command;
+      }
+      const ps = pty.spawn(executableCommand, runtimeArgs, spawnOptions);
+      // const ps = pty.spawn(shell, runtimeArgs, spawnOptions);
+      const { pid } = ps;
+      serviceStore.set(pid, ps);
 
-    const ret = new Promise((resolve, reject) => {
       let wholeText = '';
       ps.on('data', data => {
-        if (config.parseResult) {
-          wholeText += data;
-        } else {
-          this.send(config.cwd, data);
-        }
+        this.send(config.cwd, data);
       });
       ps.on('exit', code => {
         serviceStore.delete(pid);
-        if (config.parseResult) {
-          if (config.parseResult === 'json') {
-            try {
-              resolve(!wholeText ? {} : JSON.parse(wholeText));
-            } catch (e) {
-              reject(e.toString());
-            }
-          } else {
-            resolve(wholeText);
-          }
-        } else {
-          webContent.send('SERVICE_STOPPED', {
-            pid,
-            rootPath: config.cwd,
-          });
-          webContent.send(`COMMAND_EXIT:${pid}`);
-        }
+        webContent.send('SERVICE_STOPPED', {
+          pid,
+          rootPath: config.cwd,
+        });
+        webContent.send(`COMMAND_EXIT:${pid}`);
       });
-    });
-    if (config.parseResult) {
-      return ret;
-    } else {
-      return Promise.resolve({
-        pid,
-      });
+
+      return { pid };
     }
   }
 }

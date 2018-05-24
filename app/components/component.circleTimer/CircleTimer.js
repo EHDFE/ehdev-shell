@@ -34,7 +34,7 @@ class CircleTimer extends PureComponent {
     };
     this.updateDuration(props);
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!nextProps.duration && this.props.duration) {
       if (this.countTimer) {
         clearTimeout(this.countTimer);

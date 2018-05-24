@@ -26,7 +26,7 @@ class AddDev extends Component {
     inputDisabled: true,
     previewCommander: '',
   };
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.visible && !this.props.visible) {
       this.setState({
         inputDisabled: true,

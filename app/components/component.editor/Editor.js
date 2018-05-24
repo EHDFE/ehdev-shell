@@ -24,7 +24,7 @@ class Editor extends PureComponent {
     });
     this.model = this.editor.getModel();
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.content !== this.props.content) {
       this.model.setValue(nextProps.content);
     }

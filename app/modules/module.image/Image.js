@@ -36,10 +36,6 @@ class ImageModule extends Component {
     gUpList: PropTypes.func,
     doGenerate: PropTypes.func,
   }
-  componentWillMount() {
-    // const { fetchFileList } = this.props;
-    // fetchFileList();
-  }
   handleChangeListType = e => {
     this.props.setListType(e.target.value);
   };

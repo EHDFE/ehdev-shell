@@ -78,7 +78,7 @@
     "electron-react-devtools": "^0.5.3",
     "electron-rebuild": "^1.7.3",
     "electron-updater": "^2.21.8",
-    "error-overlay-webpack-plugin": "^0.1.4",
+    "error-overlay-webpack-plugin": "^0.1.5",
     "eslint": "^4.19.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",

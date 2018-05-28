@@ -79,6 +79,9 @@ class MenuController {
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
   }
+  destroy() {
+    
+  }
 }
 
 module.exports = MenuController;

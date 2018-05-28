@@ -5,7 +5,7 @@ let iconPath;
 if (platform === 'darwin') {
   iconPath = require.resolve('../assets/tray.png');
 } else if (platform === 'win32') {
-  iconPath = require.resolve('../assets/tray.ico');
+  iconPath = require.resolve('../assets/origin.white.png');
 }
 
 class TrayController {
@@ -20,6 +20,9 @@ class TrayController {
     this.tray.on('click', () => {
       this.core.toggle();
     });
+  }
+  destroy() {
+    this.tray.destroy();
   }
 }
 

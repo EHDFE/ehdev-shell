@@ -74,6 +74,9 @@ class Armor {
     }
   }
   beforeQuit(event) {
+    this.equipments.forEach(instance => {
+      instance.destroy();
+    });
   }
   willQuit() {
   }

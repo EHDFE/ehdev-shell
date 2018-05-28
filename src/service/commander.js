@@ -95,14 +95,14 @@ class Commander {
       // use execFile
       if (config.parseResult) {
         return new Promise((resolve, reject) => {
-          execFile(command, runtimeArgs, {
+          const ps = execFile(command, runtimeArgs, {
             cwd: spawnOptions.cwd,
             env: spawnOptions.env,
             shell: true,
           }, (err, stdout, stderr) => {
-            if (err) {
-              return reject(err);
-            }
+            // if (err) {
+            //   return reject(err);
+            // }
             let data;
             try {
               data = JSON.parse(stdout);
@@ -111,6 +111,10 @@ class Commander {
             }
             resolve(data);
           });
+          serviceStore.set(ps.pid, ps);
+          ps.on('exit', () => {
+            serviceStore.delete(ps.pid);
+          });
         });
       } else {
         const ps = execFile(command, runtimeArgs, {
@@ -118,8 +122,10 @@ class Commander {
           env: spawnOptions.env,
           shell: true,
         });
+        serviceStore.set(ps.pid, ps);
         ps.on('exit', () => {
           webContent.send(`COMMAND_EXIT:${ps.pid}`);
+          serviceStore.delete(ps.pid);
         });
         return {
           pid: ps.pid,

@@ -45,7 +45,7 @@ const chartOptions = {
 };
 
 class AnalysisCard extends PureComponent {
-  propTypes = {
+  static propTypes = {
     data: PropTypes.instanceOf(List).isRequired,
   }
   componentDidMount() {
@@ -78,7 +78,7 @@ class AnalysisCard extends PureComponent {
     this.updateDataView(this.props);
     window.addEventListener('resize', this.handleResize, false);
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!nextProps.data.equals(this.props.data)) {
       this.updateDataView(nextProps);
     }

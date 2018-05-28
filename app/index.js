@@ -29,7 +29,7 @@ ipcRenderer.on('CORE:SERVICE_NOT_END', () => {
   if (confirmRef) return;
   confirmRef = Modal.confirm({
     title: '警告',
-    content: '服务尚未停止，您确定要关闭 Jarvis 吗？',
+    content: '后台进程运行中，您确定要关闭 Jarvis 吗？',
     iconType: 'warning',
     okText: '确认关闭',
     cancelText: '取消',

@@ -11,8 +11,8 @@ class ServiceStore {
     const killPending = [];
     for (const [pid, ps] of this.store.entries()) {
       killPending.push(
-        killPid(ps, pid).then(() => {
-          this.store.delete(pid);
+        this.kill(pid).then(() => {
+          this.delete(pid);
         })
       );
     }
@@ -27,13 +27,13 @@ class ServiceStore {
   has(pid) {
     return this.store.has(pid);
   }
-  delete(pid) {
+  kill(pid) {
     const ps = this.store.get(pid);
-    if (ps) {
-      killPid(ps, pid).then(() => {
-        this.store.delete(pid);
-      });
-    }
+    if (ps) return killPid(ps, pid);
+    return Promise.resolve();
+  }
+  delete(pid) {
+    this.store.delete(pid);
   }
 }
 

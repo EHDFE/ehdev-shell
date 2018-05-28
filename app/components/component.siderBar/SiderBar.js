@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Layout, Menu, Icon, Avatar } from 'antd/es/';
+import { Layout, Menu, Icon, Avatar } from 'antd';
 
 import styles from './index.less';
 

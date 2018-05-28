@@ -5,7 +5,7 @@ const isDEV = process.env.NODE_ENV === 'development';
 const HANDLERS = new Map([
   [
     'CORE:BEFORE_CLOSE:REPLY', function(e, instances) {
-      if (Object.keys(instances).map(p => instances[p]).filter(d => d.running).length > 0) {
+      if (Object.keys(instances).map(p => instances[p]).filter(d => d.running).length > 0 || this.serviceStore.store.size > 0) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
         this.window.destroy();

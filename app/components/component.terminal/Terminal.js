@@ -71,7 +71,7 @@ export default class TerminalComponent extends PureComponent {
   componentWillUnmount() {
     this.terminal.detach(this.socket);
     this.socket.close();
-    this.terminal && this.terminal.destroy();
+    this.terminal && this.terminal.dispose();
   }
   getTerminalInstance() {
     const { active } = this.props;

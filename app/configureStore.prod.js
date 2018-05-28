@@ -1,3 +1,4 @@
+import Raven from 'raven-js';
 import { applyMiddleware, createStore } from 'redux';
 import promiseMiddleware from 'redux-promise';
 import createRavenMiddleware from 'raven-for-redux';
@@ -15,7 +16,7 @@ const persistConfig = {
 
 const enhancer = applyMiddleware(
   promiseMiddleware,
-  createRavenMiddleware(window.Raven),
+  createRavenMiddleware(Raven),
 );
 
 const persistedReducer = persistReducer(persistConfig, reducer);

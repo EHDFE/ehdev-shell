@@ -230,7 +230,7 @@ module.exports = env => {
       __filename: false,
     },
     optimization: {
-      // minimize: true,
+      minimize: true,
       minimizer: [
         new UglifyJSPlugin({
           parallel: true,

@@ -4,8 +4,11 @@ import { Map, List } from 'immutable';
 import echarts from 'echarts';
 import throttle from 'lodash/throttle';
 import Card from './Card';
+import themeConfig from '../../chart.theme.json';
 
 import styles from './index.less';
+
+echarts.registerTheme('clair', themeConfig.theme);
 
 const DIMENSION_MAP = {
   count: '打开次数',
@@ -18,14 +21,15 @@ const chartOptions = {
     trigger: 'axis',
     showContent: false
   },
-  xAxis: { gridIndex: 0, minInterval: 1 },
-  yAxis: { type: 'category', axisLabel: { inside: false }, inverse: true },
-  grid: { left: '10%', right: '50%' },
+  xAxis: { gridIndex: 0, minInterval: 1, name: '次数' },
+  yAxis: { type: 'category', axisLabel: { inside: false }, inverse: true, name: '项目', nameLocation: 'start', nameGap: 5 },
+  grid: { top: 20, left: '10%', right: '50%' },
   series: [
     {
       type: 'bar',
       smooth: true,
       seriesLayoutBy: 'row',
+      barMaxWidth: 30,
       encode: {
         x: 'count',
         y: 'project',
@@ -34,7 +38,7 @@ const chartOptions = {
     {
       type: 'pie',
       id: 'pie',
-      radius: '50%',
+      radius: '40%',
       center: ['75%', '50%'],
     },
   ],
@@ -45,7 +49,7 @@ class AnalysisCard extends PureComponent {
     data: PropTypes.instanceOf(List).isRequired,
   }
   componentDidMount() {
-    this.chart = echarts.init(this.chartNode);
+    this.chart = echarts.init(this.chartNode, 'clair');
     this.chart.setOption(chartOptions);
     let currentDimension;
     this.chart.on('updateAxisPointer', e => {
@@ -104,8 +108,6 @@ class AnalysisCard extends PureComponent {
         source[2].push(mergedResult.get('serverCount'));
         source[3].push(mergedResult.get('buildCount'));
       });
-    // const plotSource = source.slice(0, 10).map(v => [v.name, v.count, v.serverCount, v.buildCount]);
-    // console.log(source);
     this.chart.setOption({
       dataset: {
         source: source
@@ -124,9 +126,6 @@ class AnalysisCard extends PureComponent {
       },
     });
   }
-  renderSwitch() {
-
-  }
   renderChart() {
     return (
       <div
@@ -139,7 +138,6 @@ class AnalysisCard extends PureComponent {
     return (
       <Card className={styles.AnalysisCard}>
         <h3>统计</h3>
-        { this.renderSwitch() }
         { this.renderChart() }
       </Card>
     );

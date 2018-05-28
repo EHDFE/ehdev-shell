@@ -2,8 +2,8 @@
  * Layout Module
  * @author ryan.bian
  */
-import { Layout } from 'antd';
-import isEqual from 'lodash/isEqual';
+import { shell } from 'electron';
+import { Layout, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
@@ -12,7 +12,9 @@ import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
 import ConsoleModule from '../module.console/';
 import { platform } from 'os';
-// import styles from './index.less';
+import pkg from '../../package.json';
+import styles from './index.less';
+import AppIconPath from '../../../resources/icons/128x128.png';
 
 const PLATFORM = platform();
 
@@ -22,22 +24,62 @@ class LayoutModule extends Component {
     location: PropTypes.object.isRequired,
   }
   state = {
-    nav: this.getLayoutNav(this.props.location),
+    nav: LayoutModule.getLayoutNav(this.props.location),
+    infoModalVisible: false,
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!isEqual(nextProps.location, this.props.location)) {
-      this.setState({
-        nav: this.getLayoutNav(nextProps.location),
-      });
-    }
+  static getDerivedStateFromProps(props, state) {
+    return {
+      nav: LayoutModule.getLayoutNav(props.location),
+    };
   }
-  getLayoutNav(location) {
+  static getLayoutNav(location) {
     const { pathname } = location;
     const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
     if (matched) {
       return matched;
     }
     return null;
+  }
+  showAppInfo = () => {
+    this.setState({
+      infoModalVisible: true,
+    });
+  }
+  handleOpenExternal(e) {
+    e.preventDefault();
+    shell.openExternal(e.currentTarget.getAttribute('href'));
+  }
+  renderInfo() {
+    const modalProps = {
+      visible: this.state.infoModalVisible,
+      footer: null,
+      onCancel: () => {
+        this.setState({
+          infoModalVisible: false,
+        });
+      },
+    };
+    return (
+      <Modal {...modalProps}>
+        <section className={styles.Layout__InfoContent}>
+          <picture>
+            <img src={AppIconPath} alt="Jarvis" width="64" height="64" />
+          </picture>
+          <h2>Jarvis</h2>
+          <p>版本：{pkg.version} ({process.env.BUILD_TIME})</p>
+          <p>
+            Release Notes：
+            <a href={`https://github.com/EHDFE/ehdev-shell/releases/tag/v${pkg.version}`} onClick={this.handleOpenExternal}>
+              {`v${pkg.version}`}
+            </a>
+          </p>
+          <p>
+            File Bug：
+            <a href="https://github.com/EHDFE/ehdev-shell/issues" onClick={this.handleOpenExternal}>issues</a>
+          </p>
+        </section>
+      </Modal>
+    );
   }
   render() {
     const { location, children } = this.props;
@@ -60,11 +102,12 @@ class LayoutModule extends Component {
     }
     return (
       <Layout className={PLATFORM} style={{ height: '100vh' }}>
-        <SiderBar />
+        <SiderBar showInfo={this.showAppInfo} />
         <LayoutComponent key="layout" {...layoutProps}>
           {children}
         </LayoutComponent>
         <ConsoleModule />
+        { this.renderInfo() }
       </Layout>
     );
   }

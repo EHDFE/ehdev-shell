@@ -10,6 +10,7 @@ const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plug
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const moment = require('moment');
 
 const port = process.env.PORT || 1212;
 
@@ -46,6 +47,7 @@ module.exports = env => {
     plugins.push(
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
+        'process.env.BUILD_TIME': JSON.stringify(moment().format()),
       }),
       new MiniCssExtractPlugin({
         filename: '[name].css',
@@ -69,6 +71,7 @@ module.exports = env => {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('development'),
+        'process.env.BUILD_TIME': JSON.stringify(moment().format()),
       }),
       // warns you when multiple versions of the same package exist in a build.
       new DuplicatePackageCheckerPlugin({

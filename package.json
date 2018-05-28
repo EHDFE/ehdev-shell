@@ -9,7 +9,7 @@
     "electron"
   ],
   "dependencies": {
-    "antd": "^3.5.1",
+    "antd": "^3.5.4",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "echarts": "^4.1.0",

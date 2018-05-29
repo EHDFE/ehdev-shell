@@ -11,10 +11,13 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const moment = require('moment');
+const Stylish = require('webpack-stylish');
 
 const port = process.env.PORT || 1212;
 
-module.exports = env => {
+module.exports = () => {
+
+  const IS_DEV = process.env.NODE_ENV;
 
   const plugins = [];
   const [
@@ -24,15 +27,15 @@ module.exports = env => {
     {
       loader: 'css-loader',
       options: {
-        minimize: env.prod,
+        minimize: !IS_DEV,
       },
     },
     {
       loader: 'css-loader',
       options: {
         modules: true,
-        minimize: env.prod,
-        localIdentName: env.prod ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:3]',
+        minimize: !IS_DEV,
+        localIdentName: !IS_DEV ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:3]',
       },
     },
   ].map(config => [config].concat({
@@ -43,7 +46,7 @@ module.exports = env => {
     }
   }));
 
-  if (env.prod) {
+  if (!IS_DEV) {
     plugins.push(
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
@@ -68,7 +71,7 @@ module.exports = env => {
         context: path.resolve(__dirname, '../app'),
         manifest: require('../app/dll/manifest.dev.json'),
       }),
-      new webpack.HotModuleReplacementPlugin(),
+      // new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('development'),
         'process.env.BUILD_TIME': JSON.stringify(moment().format()),
@@ -103,11 +106,11 @@ module.exports = env => {
     }),
   );
 
-  if (env.dev) {
+  if (IS_DEV) {
     plugins.push(
       new ErrorOverlayWebpackPlugin(),
       new HtmlWebpackIncludeAssetsPlugin({
-        assets: 'dll/dll.dev.js',
+        assets: 'dll.dev.js',
         append: false,
         publicPath: '/',
       })
@@ -122,25 +125,18 @@ module.exports = env => {
   }
 
   const ret = {
+    mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
     context: path.resolve(__dirname, '..'),
     entry: {
-      app: env.prod ?
-        [
-          // '@babel/polyfill',
-          './app/index',
-        ] : [
-          // '@babel/polyfill',
-          // 'react-hot-loader/patch',
-          // `/webpack-dev-server/client?http://localhost:${port}`,
-          // 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
-          // '/webpack/hot/only-dev-server',
-          './app/index',
-        ],
+      app: [
+        // '@babel/polyfill',
+        './app/index',
+      ],
     },
     output: {
       path: path.resolve(__dirname, '../app/dist'),
       filename: '[name].js',
-      publicPath: env.prod ? '../dist/' : '/',
+      publicPath: IS_DEV ? '/' : '../dist/',
     },
     module: {
       rules: [
@@ -169,13 +165,13 @@ module.exports = env => {
                     ],
                     '@babel/preset-react',
                   ],
-                  plugins: env.prod ? [
+                  plugins: IS_DEV ? [
+                    'react-hot-loader/babel',
                     '@babel/plugin-syntax-dynamic-import',
                     '@babel/plugin-syntax-export-default-from',
                     ['@babel/plugin-proposal-decorators', { 'legacy': true }],
                     ['@babel/plugin-proposal-class-properties', { 'loose': true }],
                   ] : [
-                    'react-hot-loader/babel',
                     '@babel/plugin-syntax-dynamic-import',
                     '@babel/plugin-syntax-export-default-from',
                     ['@babel/plugin-proposal-decorators', { 'legacy': true }],
@@ -189,18 +185,18 @@ module.exports = env => {
               oneOf: [
                 {
                   include: /node_modules/,
-                  use: env.prod ? [
+                  use: !IS_DEV ? [
                     MiniCssExtractPlugin.loader,
                   ].concat(libirayStyleConfig) : libirayStyleConfig,
                 },
                 {
                   resourceQuery: /no-css-module/,
-                  use: env.prod ? [
+                  use: !IS_DEV ? [
                     MiniCssExtractPlugin.loader,
                   ].concat(libirayStyleConfig) : libirayStyleConfig,
                 },
                 {
-                  use: env.prod ? [
+                  use: !IS_DEV ? [
                     MiniCssExtractPlugin.loader,
                   ].concat(appStyleConfig) : appStyleConfig,
                 },
@@ -222,7 +218,7 @@ module.exports = env => {
     resolve: {
       extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
     },
-    devtool: env.prod ? 'source-map' : 'cheap-module-source-map',
+    devtool: IS_DEV ? 'cheap-module-source-map' : 'source-map',
     target: 'electron-renderer',
     plugins,
     node: {
@@ -242,24 +238,33 @@ module.exports = env => {
     },
   };
 
-  if (!env.prod) {
+  if (IS_DEV) {
     Object.assign(ret, {
-      devServer: {
+      serve: {
         port,
-        publicPath: '/',
-        compress: true,
-        noInfo: false,
-        inline: true,
-        lazy: false,
-        // hot: true,
-        hotOnly: true,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        contentBase: path.join(__dirname, '../app'),
-        watchOptions: {
-          aggregateTimeout: 300,
-          ignored: /node_modules/,
-          poll: 100
+        dev: {
+          publicPath: '/',
+          watchOptions: {
+            aggregateTimeout: 300,
+            ignored: /node_modules/,
+            poll: 100
+          },
         },
+        hot: {
+          allEntries: true,
+          autoConfigure: true,
+          hot: true,
+        },
+        content: [
+          path.join(__dirname, '../app/dll'),
+        ],
+        // compress: true,
+        // noInfo: false,
+        // inline: true,
+        // lazy: false,
+        // hot: true,
+        // hotOnly: true,
+        // headers: { 'Access-Control-Allow-Origin': '*' },
         // historyApiFallback: {
         //   verbose: true,
         //   disableDotRule: false,

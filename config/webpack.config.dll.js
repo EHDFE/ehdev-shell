@@ -2,13 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = env => {
+module.exports = () => {
+  const IS_DEV = process.env.NODE_ENV === 'development';
+
   const plugins = [
     new webpack.DllPlugin({
       context: path.join(__dirname, '../app'),
       path: path.join(
         __dirname,
-        env.prod ? '../app/dll/manifest.prod.json' : '../app/dll/manifest.dev.json'
+        !IS_DEV ? '../app/dll/manifest.prod.json' : '../app/dll/manifest.dev.json'
       ),
       name: '[name]',
     }),
@@ -20,10 +22,10 @@ module.exports = env => {
       });
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': env.prod ? JSON.stringify('production') : JSON.stringify('development'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
   ];
-  if (env.prod) {
+  if (!IS_DEV) {
     plugins.push(
       new UglifyJSPlugin({
         parallel: true,
@@ -57,7 +59,7 @@ module.exports = env => {
     },
     output: {
       path: path.join(__dirname, '../app/dll/'),
-      filename: env.prod ? '[name].prod.js' : '[name].dev.js',
+      filename: !IS_DEV ? '[name].prod.js' : '[name].dev.js',
       library: '[name]',
     },
     plugins,

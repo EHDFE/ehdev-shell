@@ -20,6 +20,7 @@ const PLATFORM = platform();
 
 class LayoutModule extends Component {
   static propTypes = {
+    history: PropTypes.object,
     children: PropTypes.any,
     location: PropTypes.object.isRequired,
   }
@@ -48,6 +49,9 @@ class LayoutModule extends Component {
   handleOpenExternal(e) {
     e.preventDefault();
     shell.openExternal(e.currentTarget.getAttribute('href'));
+  }
+  handleNavigation = key => {
+    this.props.history.replace(key);
   }
   renderInfo() {
     const modalProps = {
@@ -102,7 +106,11 @@ class LayoutModule extends Component {
     }
     return (
       <Layout className={PLATFORM} style={{ height: '100vh' }}>
-        <SiderBar showInfo={this.showAppInfo} />
+        <SiderBar
+          current={nav ? nav.to : '/'}
+          showInfo={this.showAppInfo}
+          setNav={this.handleNavigation}
+        />
         <LayoutComponent key="layout" {...layoutProps}>
           {children}
         </LayoutComponent>

@@ -5,8 +5,6 @@
 const { webContents } = require('electron');
 const { serviceStore } = require('./index');
 const WebSocket = require('ws');
-const { platform } = require('os');
-const { promisify } = require('util');
 const pty = require('node-pty');
 const { findExecutable } = require('../utils/');
 const { isWindows } = require('../utils/env');

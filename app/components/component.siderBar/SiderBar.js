@@ -3,7 +3,6 @@
  * @author ryan.bian
  */
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -16,32 +15,16 @@ import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 const { Sider } = Layout;
 const { Item } = Menu;
 
-@withRouter
 class SiderBar extends Component {
   static __ANT_LAYOUT_SIDER = true
   static propTypes = {
-    history: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
+    current: PropTypes.string,
     user: PropTypes.object,
     showInfo: PropTypes.func,
-  }
-  static getSelectedKey(props) {
-    const { location } = props;
-    const { pathname } = location;
-    const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
-    if (matched) {
-      return matched.to;
-    }
-    return null;
-  }
-  static getDerivedStateFromProps(props, state) {
-    return {
-      selectedKey: SiderBar.getSelectedKey(props)
-    };
+    setNav: PropTypes.func,
   }
   state = {
     collapsed: true,
-    selectedKey: SiderBar.getSelectedKey(this.props),
   }
   onCollapse = (collapsed) => {
     this.setState({
@@ -49,16 +32,10 @@ class SiderBar extends Component {
     });
   }
   onSelectMenu = ({ item, key }) => {
-    this.props.history.replace(key);
-    this.setState({
-      selectedKey: key,
-    });
+    this.props.setNav(key);
   }
   backToHome = () => {
-    this.props.history.replace('/');
-    this.setState({
-      selectedKey: null,
-    });
+    this.props.setNav('/');
   }
   handleInfoClick = () => {
     this.props.showInfo();
@@ -83,8 +60,8 @@ class SiderBar extends Component {
     );
   }
   render() {
-    const { collapsed, selectedKey } = this.state;
-    const { user } = this.props;
+    const { collapsed } = this.state;
+    const { user, current } = this.props;
     return (
       <Sider
         className={styles.SiderBar}
@@ -99,12 +76,12 @@ class SiderBar extends Component {
           className={styles.SiderBar__avatar}
           onClick={this.backToHome}
         >
-          <Avatar src={user.get('avatar')} icon="user" size={(collapsed && this.state.selectedKey) ? 'default' : 'large'} />
+          <Avatar src={user.get('avatar')} icon="user" size={collapsed ? 'default' : 'large'} />
         </button>
         <div className={styles.SiderBar__Content}>
           <Menu
             mode="inline"
-            selectedKeys={[selectedKey]}
+            selectedKeys={[current]}
             onSelect={this.onSelectMenu}
             theme={'dark'}
             className={styles.SiderBar__Menu}

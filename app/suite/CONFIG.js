@@ -1,5 +1,5 @@
 const { platform } = require('os');
-const isMac = platform() === 'osx';
+const isMac = platform() === 'darwin';
 
 const CONFIG = {
   WIDTH: 900,

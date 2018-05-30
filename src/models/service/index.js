@@ -60,7 +60,9 @@ exports.stop = async (pid) => {
   if (!serviceStore.has(pid)) {
     return `process:${pid} is not running.`;
   } else {
-    serviceStore.delete(pid);
+    serviceStore.kill(pid).then(() => {
+      serviceStore.delete(pid);
+    });
     return null;
   }
 };

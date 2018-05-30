@@ -15,6 +15,7 @@ const CONFIG = {
     frame: false,
     vibrancy: 'medium-light',
     titleBarStyle: isWin ? 'default' : 'hidden',
+    transparent: true,
     webPreferences: {
       webSecurity: false,
     },

@@ -2,7 +2,7 @@
  * Node commander executer
  */
 // const { spawn } = require('child_process');
-const { webContents } = require('electron');
+const { webContents, app } = require('electron');
 const { serviceStore } = require('./index');
 const WebSocket = require('ws');
 const pty = require('node-pty');
@@ -34,6 +34,9 @@ class Commander {
     this.socketServer.on('error', err => {
       // console.error(err);
     });
+    app.on('will-quit', () => {
+      this.socketServer.close();
+    });
   }
   send(id, data) {
     if (this.ws[id]) {
@@ -54,7 +57,6 @@ class Commander {
    * @param {object} options.env - the execution environment variables
    * @param {string} options.cwd - the execution path of the command
    * @param {boolean} options.useCnpm - use cnpm's mirror as registry
-   * @param {string} options.category - pass to client for ui usage
    * @param {object} options.args - arguments to passthrough
    * @param {boolean} options.outputToTermnal
    */
@@ -67,7 +69,6 @@ class Commander {
         env: {},
         cwd: process.cwd(),
         useCnpm: true,
-        category: 'OTHER',
         args: {},
         outputToTermnal: false,
       },
@@ -144,7 +145,6 @@ class Commander {
       const { pid } = ps;
       serviceStore.set(pid, ps);
 
-      let wholeText = '';
       ps.on('data', data => {
         this.send(config.cwd, data);
       });

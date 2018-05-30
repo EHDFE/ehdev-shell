@@ -1,5 +1,5 @@
 const { platform } = require('os');
-const isWin = platform() === 'win32';
+const isMac = platform() === 'osx';
 
 const CONFIG = {
   WIDTH: 900,
@@ -14,8 +14,8 @@ const CONFIG = {
     scrollBounce: true,
     frame: false,
     vibrancy: 'medium-light',
-    titleBarStyle: isWin ? 'default' : 'hidden',
-    transparent: true,
+    titleBarStyle: isMac ? 'hidden' : 'default',
+    transparent: isMac,
     webPreferences: {
       webSecurity: false,
     },

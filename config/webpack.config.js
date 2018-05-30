@@ -2,7 +2,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -11,13 +10,12 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const moment = require('moment');
-const Stylish = require('webpack-stylish');
 
 const port = process.env.PORT || 1212;
 
 module.exports = () => {
 
-  const IS_DEV = process.env.NODE_ENV;
+  const IS_DEV = process.env.NODE_ENV === 'development';
 
   const plugins = [];
   const [
@@ -55,9 +53,6 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
       }),
-      new OptimizeCssAssetsPlugin({
-        canPrint: true
-      })
     );
   } else {
     libirayStyleConfig.unshift({
@@ -226,7 +221,7 @@ module.exports = () => {
       __filename: false,
     },
     optimization: {
-      // minimize: true,
+      // minimize: false,
       minimizer: [
         new UglifyJSPlugin({
           parallel: true,
@@ -258,17 +253,6 @@ module.exports = () => {
         content: [
           path.join(__dirname, '../app/dll'),
         ],
-        // compress: true,
-        // noInfo: false,
-        // inline: true,
-        // lazy: false,
-        // hot: true,
-        // hotOnly: true,
-        // headers: { 'Access-Control-Allow-Origin': '*' },
-        // historyApiFallback: {
-        //   verbose: true,
-        //   disableDotRule: false,
-        // },
       },
     });
   }

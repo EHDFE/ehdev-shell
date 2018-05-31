@@ -43,6 +43,9 @@ class Armor {
     app.on('before-quit', this.beforeQuit.bind(this));
     app.on('will-quit', this.willQuit.bind(this));
     app.on('activate', this.willActiviate.bind(this));
+    app.on('window-all-closed', () => {
+      app.quit();
+    });
   }
   willLoadCore() {
     if (this.core) return Promise.reject(this.core);

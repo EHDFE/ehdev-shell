@@ -21,7 +21,7 @@
     "moment": "^2.22.0",
     "moment-duration-format": "^2.2.1",
     "monaco-editor": "^0.13.0",
-    "mousetrap": "^1.6.1",
+    "mousetrap": "^1.6.2",
     "nedb": "^1.8.0",
     "node-notifier": "^5.2.1",
     "pretty-file-icons": "^2.2.1",

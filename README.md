@@ -25,15 +25,13 @@ Javis aims to provide an easy to use gui tool for developers.
 ## Dev Environment Setup
 
 1. Install dependence: `ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ npm i`.
-2. Precompile the dll bundle: `npm run dll-dev`.
+2. Precompile the dll bundle: `npm run build-dll`.
 3. Start the app: `npm run debug` or use vscode's debugger
   ![](https://image.tf56.com/dfs/group1/M00/39/4E/CiFBClnkCzqABJhqAAGYIokpzjs880.png)
 
 ## Test the production package locally
 
-1. Precompile the dll build for production: `npm run dll-prod`.
-2. Compile the app bundle: `npm run build-prod`.
-2. `npm run pack`.
+2. npm start.
 
 ## Publish
 

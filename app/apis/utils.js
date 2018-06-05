@@ -2,6 +2,7 @@
  * @author ryan.bian
  */
 import { message, notification  } from 'antd';
+import { remote } from 'electron';
 
 /**
  * handle fetch's response
@@ -41,3 +42,12 @@ export const handleResponse = async (response, config = {
  * @param {Object} params
  */
 export const serialize = params => new URLSearchParams(Object.entries(params));
+
+
+let remoteAPI;
+if (process.env.NODE_ENV === 'production') {
+  remoteAPI = remote.require('./main-build/apiService');
+} else {
+  remoteAPI = remote.require('../src/apiService');
+}
+export { remoteAPI };

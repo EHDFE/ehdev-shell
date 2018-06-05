@@ -13,10 +13,12 @@ export default class UploadZone extends Component {
     // 允许的上传类型
     accept: 'image/',
     onChange() {},
+    multiple: true,
   }
   static propTypes = {
     accept: PropTypes.string,
     onChange: PropTypes.func,
+    multiple: PropTypes.bool,
   }
   state = {
     dragIsOver: false,
@@ -67,7 +69,7 @@ export default class UploadZone extends Component {
     this.props.onChange(files);
   }
   render() {
-    const { accept } = this.props;
+    const { accept, multiple } = this.props;
     const { dragIsOver } = this.state;
     return (
       <div
@@ -83,7 +85,7 @@ export default class UploadZone extends Component {
           type="file"
           id="fileInput"
           accept={accept}
-          multiple
+          multiple={multiple}
           onChange={this.handleChangeFiles}
           style={{
             display: 'none',

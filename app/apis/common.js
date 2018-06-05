@@ -1,17 +1,7 @@
 /**
  * common apis
  */
-// import { handleResponse } from './utils';
-
-// const API_PATH = '/api/common';
-import { remote } from 'electron';
-
-let remoteAPI;
-if (process.env.NODE_ENV === 'production') {
-  remoteAPI = remote.require('./main-build/apiService');
-} else {
-  remoteAPI = remote.require('../src/apiService');
-}
+import { remoteAPI } from './utils';
 
 const COMMON_API = {
   // wallpaper: {

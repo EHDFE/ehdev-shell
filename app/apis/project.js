@@ -2,17 +2,7 @@
  * project apis
  * @author ryan.bian
  */
-// import { handleResponse } from './utils';
-import { remote } from 'electron';
-
-let remoteAPI;
-if (process.env.NODE_ENV === 'production') {
-  remoteAPI = remote.require('./main-build/apiService');
-} else {
-  remoteAPI = remote.require('../src/apiService');
-}
-
-// const PROJECT_PATH = '/api/project';
+import { remoteAPI } from './utils';
 
 const PROJECT_API = {
   root: {

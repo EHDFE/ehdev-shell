@@ -19,6 +19,7 @@ import ProjectModule from './modules/module.project/';
 import QrCodeModule from './modules/module.qrcode/';
 import UploadModule from './modules/module.upload/';
 import UserModule from './modules/module.user/';
+import ImageProcessModule from './modules/module.image.process';
 
 moment.locale('zh-cn');
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/configer" component={ConfigerModule}/>
           <Route path="/user" component={UserModule}/>
           <Route path="/qrcode" component={QrCodeModule} />
+          <Route path="/images" component={ImageProcessModule} />
           <CommandPalette />
         </LayoutModule>
       </HashRouter>

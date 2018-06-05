@@ -1,0 +1,51 @@
+.ImageProcess {
+  &__Preview {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  &__ImageName {
+    text-align: center;
+    word-wrap: break-word;
+    font-weight: 400;
+    font-size: 13px;
+  }
+  &__PreviewWrap {
+    position: relative;
+    flex: 1 0;
+    border: 1px solid #f0f0f0;
+
+  }
+  &__PreviewLabel {
+    position: absolute;
+    top: 0;
+    &--original {
+      left: 0.5em;
+    }
+    &--processed {
+      right: 0.5em;
+    }
+  }
+  &__PreviewImage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+
+    &--original {
+    }
+    &--processed {
+    }
+  }
+  &__PreviewIndicator {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

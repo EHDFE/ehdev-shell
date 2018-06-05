@@ -11,6 +11,7 @@ import { default as ProjectReducer } from './modules/module.project/store';
 import { default as QrcodeReducer } from './modules/module.qrcode/store';
 import { default as UploadReducer } from './modules/module.upload/store';
 import { default as UserReducer } from './modules/module.user/store';
+import { default as ImageProcessReducer } from './modules/module.image.process/store';
 
 
 const reducer = combineReducers({
@@ -22,6 +23,7 @@ const reducer = combineReducers({
   'page.user': UserReducer,
   // 'page.image': ImageReducer,
   'page.qrcode': QrcodeReducer,
+  'page.image.process': ImageProcessReducer,
 });
 
 export default reducer;

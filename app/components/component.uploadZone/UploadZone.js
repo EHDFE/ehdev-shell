@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import MdCloudUpload from 'react-icons/lib/md/cloud-upload';
+import { notification } from 'antd';
 
 import styles from './index.less';
 
@@ -48,25 +49,36 @@ export default class UploadZone extends Component {
   handleDrop = e => {
     e.preventDefault();
     const { files } = e.dataTransfer;
-    const { accept } = this.props;
     this.setState({
       dragIsOver: false,
     });
-    if (files.length === 0 || !files[0].type.startsWith(accept)) return;
+    if (!this.validate(files)) return;
     this.onAddFiles(e.dataTransfer.files);
   }
   handleChangeFiles = ({ nativeEvent }) => {
+    if (!this.validate(nativeEvent.target.files)) return;
     this.onAddFiles(nativeEvent.target.files);
   }
   handlePaste = ({ clipboardData }) => {
-    if (clipboardData && clipboardData.files && clipboardData.files.length > 0) {
-      const { accept } = this.props;
-      if (!clipboardData.files[0].type.startsWith(accept)) return;
+    if (clipboardData && clipboardData.files) {
+      if (!this.validate(clipboardData.files)) return;
       this.onAddFiles(clipboardData.files);
     }
   }
   onAddFiles(files) {
     this.props.onChange(files);
+  }
+  validate(files) {
+    const { accept } = this.props;
+    if (files.length === 0) return false;
+    const isFileTypeValid = !Array.from(files).some(file => !file.type.startsWith(accept));
+    if (!isFileTypeValid) {
+      notification.error({
+        message: '不支持的文件类型',
+      });
+      return false;
+    }
+    return true;
   }
   render() {
     const { accept, multiple } = this.props;

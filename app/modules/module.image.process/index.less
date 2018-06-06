@@ -18,7 +18,7 @@
   }
   &__PreviewLabel {
     position: absolute;
-    top: 0;
+    top: 4px;
     &--original {
       left: 0.5em;
     }
@@ -47,5 +47,28 @@
     width: 2px;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
+  }
+  &__PreviewAction {
+    display: flex;
+    justify-content: center;
+    button {
+      flex: 1;
+      &:nth-child(2) {
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+.ProcessItem__Label {
+  display: inline-flex;
+  width: ~"calc(100% - 15px)";
+  justify-content: flex-end;
+  align-items: baseline;
+  s {
+    margin-right: 0.5em;
+    white-space: normal;
+    line-height: 1.5;
+    text-decoration: none;
   }
 }

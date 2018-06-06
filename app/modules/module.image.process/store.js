@@ -30,15 +30,16 @@ const imageProcessReducer = handleActions({
   },
   MINIFY: (state, { payload, error }) => {
     if (error || payload.length === 0) return state;
+    const buffer = payload[0].data;
     const fileTypeResult = fileType(payload[0].data);
-    const base64 = payload[0].data.toString('base64');
-    return state
-      .setIn(
-        ['processedImage', 'url'], `data:${fileTypeResult.mime};base64,${base64}`
-      )
-      .setIn(
-        ['processedImage', 'size'], payload[0].data.byteLength,
-      );
+    const base64 = buffer.toString('base64');
+    return state.set('processedImage', Map({
+      url: `data:${fileTypeResult.mime};base64,${base64}`,
+      size: payload[0].data.byteLength,
+      type: fileTypeResult.mime,
+      ext: fileTypeResult.ext,
+      base64,
+    }));
   },
   MINIFY_BUFFER: state => state,
 }, defaultState);

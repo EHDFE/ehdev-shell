@@ -4,12 +4,13 @@ import fileType from 'file-type';
 import IMAGE_MIN_API from '../../apis/imagemin';
 
 const defaultState = Map({
-  originalImage: null,
-  processedImage: null,
+  originalImage: Map({}),
+  processedImage: Map({}),
 });
 
 export const actions = createActions({
   ADD: file => file,
+  REMOVE: () => ({}),
   MINIFY: async (input, plugin, options) => {
     return IMAGE_MIN_API.process(input, plugin, options);
   },
@@ -20,25 +21,33 @@ export const actions = createActions({
 
 const imageProcessReducer = handleActions({
   ADD: (state, { payload }) => {
-    return state.set('originalImage', Map({
-      name: payload.name,
-      path: payload.path,
-      url: `file://${payload.path}`,
-      size: payload.size,
-      type: payload.type,
-    }));
+    return state
+      .set('originalImage', Map({
+        name: payload.name,
+        path: payload.path,
+        url: `file://${payload.path}`,
+        size: payload.size,
+        type: payload.type,
+      }))
+      .update('processedImage', map => map.clear());
+  },
+  REMOVE: (state) => {
+    return state
+      .update('originalImage', map => map.clear())
+      .update('processedImage', map => map.clear());
   },
   MINIFY: (state, { payload, error }) => {
     if (error || payload.length === 0) return state;
     const buffer = payload[0].data;
-    const fileTypeResult = fileType(payload[0].data);
-    const base64 = buffer.toString('base64');
+    const fileTypeResult = fileType(buffer);
+    const blob = new Blob([buffer], { type: fileTypeResult.mime });
+    const blobUrl = URL.createObjectURL(blob);
     return state.set('processedImage', Map({
-      url: `data:${fileTypeResult.mime};base64,${base64}`,
       size: payload[0].data.byteLength,
       type: fileTypeResult.mime,
       ext: fileTypeResult.ext,
-      base64,
+      buffer,
+      url: blobUrl,
     }));
   },
   MINIFY_BUFFER: state => state,

@@ -12,6 +12,7 @@ const persistConfig = {
   key: 'App',
   storage: createElectronStorage(),
   transforms: [immutableTransform()],
+  blacklist: ['page.image.process'],
 };
 
 const logger = createLogger({

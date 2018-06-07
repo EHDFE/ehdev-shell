@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { Row, Col, Button, Tabs, notification } from 'antd';
+import { Row, Col, Button, Tabs, notification, Icon } from 'antd';
 import classnames from 'classnames';
 import filesize from 'filesize';
 import UploadZone from '../../components/component.uploadZone/';
@@ -11,45 +11,24 @@ import Pngquant from './processors/Pngquant';
 import Gifsicle from './processors/Gifsicle';
 import Mozjpeg from './processors/Mozjpeg';
 import Webp from './processors/Webp';
-import Gif2webp from './processors/Gif2webp';
+// import Gif2webp from './processors/Gif2webp';
 import { actions } from './store';
 
 import styles from './index.less';
 
 const TabPane = Tabs.TabPane;
 
-function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-  let byteCharacters = atob(b64Data);
-  let byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    let slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    let byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    let byteArray = new Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-}
-
-
 const PROCESSOR_MAP = new window.Map([
-  ['image/gif', [Gifsicle, Gif2webp]],
-  ['image/jpeg', [Mozjpeg]],
-  ['image/png', [Pngquant]],
+  ['image/gif', [Gifsicle]],
+  ['image/jpeg', [Mozjpeg, Webp]],
+  ['image/png', [Pngquant, Webp]],
   ['image/webp', [Webp]],
 ]);
 
 class ImageProcess extends PureComponent {
   static propTypes = {
     addFile: PropTypes.func,
+    removeFile: PropTypes.func,
     minify: PropTypes.func,
     minifyBuffer: PropTypes.func,
     originalImage: PropTypes.instanceOf(Map),
@@ -57,7 +36,7 @@ class ImageProcess extends PureComponent {
   };
   static getDerivedStateFromProps(props, state) {
     if (props.originalImage.equals(state.originalImage)) return;
-    const availableProcessors = PROCESSOR_MAP.get(props.originalImage.get('type'), []);
+    const availableProcessors = PROCESSOR_MAP.get(props.originalImage.get('type')) || [];
     return {
       originalImage: props.originalImage,
       currentProcessor: availableProcessors.length > 0 ? availableProcessors[0].processorName : null,
@@ -72,12 +51,6 @@ class ImageProcess extends PureComponent {
     processing: false,
   }
   processorRef = {}
-  componentDidMount() {
-    const rect = this.previewFigure.getBoundingClientRect();
-    this.setState({
-      indicatorLeft: rect.width / 2,
-    });
-  }
   handleChangeImage = files => {
     for (const file of files) {
       if (file.type.startsWith('image/')) {
@@ -100,7 +73,6 @@ class ImageProcess extends PureComponent {
     const { currentProcessor } = this.state;
     const options = this.processorRef[currentProcessor].getFieldsValue();
     const { originalImage } = this.props;
-    // console.log(options);
     try {
       this.setState({
         processing: true,
@@ -148,22 +120,29 @@ class ImageProcess extends PureComponent {
   }
   handleSaveFile = () => {
     const { originalImage, processedImage } = this.props;
+    const url = processedImage.get('url');
     const node = document.createElement('a');
     const originalFileName = originalImage.get('name');
     const downloadFileName = `${originalFileName.replace(/\.[^.]*$/, '')}.optimized.${processedImage.get('ext')}`;
-    const blob = b64toBlob(
-      processedImage.get('base64'),
-      processedImage.get('type'),
-    );
-    const blobUrl = URL.createObjectURL(blob);
-    node.setAttribute('href', blobUrl);
+    node.setAttribute('href', url);
     node.setAttribute('download', downloadFileName);
     node.click();
+  }
+  handleRemoveImage = () => {
+    this.props.removeFile();
   }
   renderPreview() {
     const { indicatorLeft, processing } = this.state;
     const { originalImage, processedImage } = this.props;
-    const processedImageUrl = processedImage.get('url');
+    const url = processedImage.get('url');
+    const hasPreview = !!url;
+    const originalImageStyle = {
+    };
+    if (hasPreview) {
+      Object.assign(originalImageStyle, {
+        clipPath: `inset(0 calc(100% - ${indicatorLeft}px) 0 0)`,
+      });
+    }
     return (
       <div className={styles.ImageProcess__Preview}>
         <figure
@@ -177,38 +156,55 @@ class ImageProcess extends PureComponent {
             className={classnames(
               styles.ImageProcess__PreviewImage,
               styles['ImageProcess__PreviewImage--processed'],
+              {
+                [styles['ImageProcess__PreviewImage--hide']]: !hasPreview,
+              }
             )}
-            src={processedImageUrl}
+            src={url}
             alt=""
           />
           <img
-            style={{ clipPath: `inset(0 calc(100% - ${indicatorLeft}px) 0 0)` }}
+            style={originalImageStyle}
             className={classnames(
               styles.ImageProcess__PreviewImage,
               styles['ImageProcess__PreviewImage--original'],
             )}
             src={originalImage.get('url')}
             alt=""
-            data-size={originalImage.get('size')}
           />
           <span
             style={{ left: `${indicatorLeft}px` }}
             className={
-              classnames(styles.ImageProcess__PreviewIndicator)
+              classnames(
+                styles.ImageProcess__PreviewIndicator,
+                {
+                  [styles['ImageProcess__PreviewIndicator--hide']]: !hasPreview,
+                }
+              )
             }
           />
           <span className={classnames(
             styles.ImageProcess__PreviewLabel,
             styles['ImageProcess__PreviewLabel--original'],
           )}>
-            压缩前: {filesize(originalImage.get('size'), { base: 10 })}
+            压缩前: {filesize(originalImage.get('size', 0), { base: 10 })}
           </span>
           <span className={classnames(
             styles.ImageProcess__PreviewLabel,
             styles['ImageProcess__PreviewLabel--processed'],
+            {
+              [styles['ImageProcess__PreviewLabel--hide']]: !hasPreview,
+            },
           )}>
-            压缩后: {filesize(processedImage.get('size'), { base: 10 })}
+            压缩后: {filesize(processedImage.get('size', 0), { base: 10 })}
           </span>
+          <button
+            className={styles.ImageProcess__RemovePreviewBtn}
+            type="button"
+            onClick={this.handleRemoveImage}
+          >
+            <Icon type="delete" />
+          </button>
         </figure>
         <h3 className={styles.ImageProcess__ImageName}>
           {originalImage.get('name')}
@@ -220,10 +216,11 @@ class ImageProcess extends PureComponent {
             loading={processing}
           >优化</Button>
           {
-            processedImageUrl && (
+            url && (
               <Button
                 icon="download"
                 type="outline"
+                loading={processing}
                 onClick={this.handleSaveFile}
               >下载</Button>
             )
@@ -239,6 +236,7 @@ class ImageProcess extends PureComponent {
         <Tabs
           activeKey={currentProcessor}
           onChange={this.handleChangeProcessor}
+          className={styles.Processor__Tabs}
         >
           { availableProcessors.map(Processor => (
             <TabPane
@@ -252,21 +250,40 @@ class ImageProcess extends PureComponent {
       </Fragment>
     );
   }
-  render() {
+  renderUploadZone() {
     return (
-      <section>
-        <Row type="flex" gutter={12}>
-          <Col md={10} lg={8} xxl={4}>
-            { this.renderPreview() }
-          </Col>
-          <Col md={14} lg={16} xxl={20}>
-            { this.renderProcessorPane() }
-          </Col>
-        </Row>
+      <div>
         <UploadZone
           onChange={this.handleChangeImage}
           multiple={false}
         />
+      </div>
+    );
+  }
+  render() {
+    const { originalImage } = this.props;
+    let content;
+    if (originalImage.size > 0) {
+      content = [
+        <Col key="preview" xs={24} md={10} lg={10} xxl={8}>
+          { this.renderPreview() }
+        </Col>,
+        <Col key="editor" xs={24} md={14} lg={14} xxl={16}>
+          { this.renderProcessorPane() }
+        </Col>,
+      ];
+    } else {
+      content = (
+        <Col xs={24}>
+          { this.renderUploadZone() }
+        </Col>
+      );
+    }
+    return (
+      <section className={styles.ImageProcess}>
+        <Row type="flex" gutter={12} className={styles.ImageProcess__Row}>
+          { content }
+        </Row>
       </section>
     );
   }
@@ -283,6 +300,7 @@ const mapStateToProps = (state) => createSelector(
 
 const mapDispatchToProps = dispatch => ({
   addFile: file => dispatch(actions.add(file)),
+  removeFile: () => dispatch(actions.remove()),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
   minifyBuffer: buffer => dispatch(actions.minifyBuffer(buffer)),
 });

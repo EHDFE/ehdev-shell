@@ -84,9 +84,9 @@ const argParser = (processor, opts, input, output) => {
     if (opts.floyd && typeof opts.floyd === 'number') {
       args.push(`--floyd=${opts.floyd}`);
     }
-    if (opts.floyd && typeof opts.floyd === 'boolean') {
-      args.push('--floyd');
-    }
+    // if (opts.floyd && typeof opts.floyd === 'boolean') {
+    //   args.push('--floyd');
+    // }
     if (opts.nofs) {
       args.push('--nofs');
     }

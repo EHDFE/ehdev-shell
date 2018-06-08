@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
-@processorHoc
+@processorHoc()
 export default class Gifsicle extends PureComponent {
   static processorName = 'gifsicle'
   static propTypes = {

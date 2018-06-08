@@ -6,7 +6,7 @@ import ProcessItem from '../ProcessItem';
 
 const Option = Select.Option;
 
-@processorHoc
+@processorHoc()
 export default class Gif2webp extends PureComponent {
   static processorName = 'gif2webp'
   static propTypes = {

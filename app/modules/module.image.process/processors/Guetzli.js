@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
-@processorHoc
+@processorHoc('Guetzli 生成的图片比由 libjpeg 生成的质量接近的图片体积要小 20-30%')
 export default class Guetzli extends PureComponent {
   static processorName = 'guetzli'
   static propTypes = {

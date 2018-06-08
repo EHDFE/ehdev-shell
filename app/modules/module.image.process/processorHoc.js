@@ -1,5 +1,5 @@
 import { PureComponent } from 'react';
-import { Form } from 'antd';
+import { Form, Alert } from 'antd';
 import PropTypes from 'prop-types';
 
 export const formItemLayout = {
@@ -30,7 +30,7 @@ export const markGenerator = (from, to) => ({
   }
 });
 
-const processorHoc = Processor => {
+const processorHoc = desc => Processor => {
   @Form.create()
   class ProcessorWrapper extends PureComponent {
     static processorName = Processor.processorName
@@ -41,6 +41,7 @@ const processorHoc = Processor => {
       const { form } = this.props;
       return (
         <Form>
+          {desc && <Alert message={desc} type="info" />}
           <Processor form={form} />
         </Form>
       );

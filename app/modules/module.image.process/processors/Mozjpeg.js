@@ -6,7 +6,7 @@ import ProcessItem from '../ProcessItem';
 
 const Option = Select.Option;
 
-@processorHoc
+@processorHoc()
 export default class Mozjpeg extends PureComponent {
   static processorName = 'mozjpeg'
   static propTypes = {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import processorHoc, { markGenerator } from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
-@processorHoc
+@processorHoc('pngquant 通过把 png 转换成包含透明通道的8位图片来缩小文件体积（通常来说比24/32位图片要小60%～80%）')
 export default class Pngquant extends PureComponent {
   static processorName = 'pngquant'
   static propTypes = {
@@ -69,17 +69,17 @@ export default class Pngquant extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'speed'}
-          tooltip={'Speed/quality trade-off from 1 (brute-force) to 10 (fastest). Speed 10 has 5% lower quality, but is 8 times faster than the default.'}
+          tooltip={'Speed/quality trade-off from 1 (slowest, highest quality, smallest files) to 11 (fastest, less consistent quality, light comperssion).'}
         >
           {getFieldDecorator('speed', {
             initialValue: this.state.speed,
           })(
             <Slider
-              max={10}
+              max={11}
               min={1}
               marks={markGenerator(
-                { label: 'brute-force', value: 1 },
-                { label: 'fastest', value: 10 },
+                { label: 'slowest', value: 1 },
+                { label: 'fastest', value: 11 },
               )}
             />
           )}

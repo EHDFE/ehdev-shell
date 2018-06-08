@@ -53,6 +53,7 @@
     "remarkable": "^1.7.1",
     "reselect": "^3.0.1",
     "semver": "^5.5.0",
+    "tempfile": "^2.0.0",
     "tinycolor2": "^1.4.1",
     "ws": "^5.2.0",
     "xterm": "^3.4.1"

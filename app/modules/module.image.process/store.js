@@ -37,13 +37,13 @@ const imageProcessReducer = handleActions({
       .update('processedImage', map => map.clear());
   },
   MINIFY: (state, { payload, error }) => {
-    if (error || payload.length === 0) return state;
-    const buffer = payload[0].data;
+    if (error) return state;
+    const buffer = payload;
     const fileTypeResult = fileType(buffer);
     const blob = new Blob([buffer], { type: fileTypeResult.mime });
     const blobUrl = URL.createObjectURL(blob);
     return state.set('processedImage', Map({
-      size: payload[0].data.byteLength,
+      size: payload.byteLength,
       type: fileTypeResult.mime,
       ext: fileTypeResult.ext,
       buffer,

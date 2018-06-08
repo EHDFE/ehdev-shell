@@ -42,6 +42,12 @@ module.exports = {
   externals: {
     'node-notifier': 'node-notifier',
     'node-pty': 'node-pty',
+    'pngquant-bin': 'pngquant-bin',
+    'mozjpeg': 'mozjpeg',
+    'gifsicle': 'gifsicle',
+    'cwebp-bin': 'cwebp-bin',
+    'guetzli': 'guetzli',
+    'tempfile': 'tempfile',
     // eslint: {
     //   commonjs2: 'eslint',
     // }

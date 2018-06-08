@@ -11,7 +11,7 @@ import Pngquant from './processors/Pngquant';
 import Gifsicle from './processors/Gifsicle';
 import Mozjpeg from './processors/Mozjpeg';
 import Webp from './processors/Webp';
-// import Gif2webp from './processors/Gif2webp';
+import Guetzli from './processors/Guetzli';
 import { actions } from './store';
 
 import styles from './index.less';
@@ -20,8 +20,8 @@ const TabPane = Tabs.TabPane;
 
 const PROCESSOR_MAP = new window.Map([
   ['image/gif', [Gifsicle]],
-  ['image/jpeg', [Mozjpeg, Webp]],
-  ['image/png', [Pngquant, Webp]],
+  ['image/jpeg', [Mozjpeg, Guetzli, Webp]],
+  ['image/png', [Pngquant, Guetzli, Webp]],
   ['image/webp', [Webp]],
 ]);
 
@@ -78,9 +78,7 @@ class ImageProcess extends PureComponent {
         processing: true,
       });
       await this.props.minify(
-        [
-          originalImage.get('path'),
-        ],
+        originalImage.get('path'),
         currentProcessor,
         options
       );

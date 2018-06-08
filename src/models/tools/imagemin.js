@@ -1,27 +1,20 @@
-const imagemin = require('imagemin');
-const pngquant = require('imagemin-pngquant');
-const mozjpeg = require('imagemin-mozjpeg');
-const gifsicle = require('imagemin-gifsicle');
-const webp = require('imagemin-webp');
-const gif2webp = require('imagemin-gif2webp');
+const { runProcessor } = require('./utils');
 
-const COMPRESSOR_LIST = {
-  pngquant,
-  mozjpeg,
-  gifsicle,
-  webp,
-  gif2webp,
+exports.process = async (input, compressor, config) => {
+  let result;
+  try {
+    result = await runProcessor(
+      input,
+      compressor,
+      config,
+    );
+  } catch (e) {
+    throw e;
+  }
+  return result;
 };
 
-exports.process = (input, compressor, config) => {
-  return imagemin(input, {
-    plugins: [
-      COMPRESSOR_LIST[compressor](config)
-    ],
-  });
-};
-
-exports.processBuffer = buffer => {
-  const imageData = buffer.replace(/^data:image\/\w+;base64,/, '');
-  return imagemin.buffer(Buffer.from(imageData, 'base64'));
-};
+// exports.processBuffer = buffer => {
+//   const imageData = buffer.replace(/^data:image\/\w+;base64,/, '');
+//   return imagemin.buffer(Buffer.from(imageData, 'base64'));
+// };

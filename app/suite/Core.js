@@ -8,7 +8,9 @@ const HANDLERS = new Map([
       if (Object.keys(instances).map(p => instances[p]).filter(d => d.running).length > 0 || this.serviceStore.store.size > 0) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
-        this.window.destroy();
+        BrowserWindow.getAllWindows().forEach(win => {
+          win.destroy();
+        });
       }
     }
   ],

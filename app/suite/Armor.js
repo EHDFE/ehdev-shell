@@ -16,6 +16,16 @@ const TrayController = require('./equipment/Tray');
 
 class Armor {
   constructor() {
+    const isSecondInstance = app.makeSingleInstance(() => {
+      if (this.core.window) {
+        if (this.core.window.isMinimized()) this.core.window.restore();
+        this.core.window.focus();
+      }
+    });
+    if (isSecondInstance) {
+      app.quit();
+      return;
+    }
     this.willLoadCore()
       .then(() => {
         app.on('ready', () => {
@@ -33,6 +43,9 @@ class Armor {
     app.on('before-quit', this.beforeQuit.bind(this));
     app.on('will-quit', this.willQuit.bind(this));
     app.on('activate', this.willActiviate.bind(this));
+    app.on('window-all-closed', () => {
+      app.quit();
+    });
   }
   willLoadCore() {
     if (this.core) return Promise.reject(this.core);
@@ -79,6 +92,9 @@ class Armor {
     });
   }
   willQuit() {
+    setTimeout(() => {
+      app.exit();
+    }, 500);
   }
   willActiviate() {
     // On macOS it's common to re-create a window in the app when the

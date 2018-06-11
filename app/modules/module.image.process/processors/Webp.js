@@ -30,25 +30,23 @@ export default class Webp extends PureComponent {
     return (
       <Fragment>
         <ProcessItem
-          label={'preset'}
-          tooltip={'Preset setting.'}
+          label={'预置'}
         >
           {getFieldDecorator('preset', {
             initialValue: this.state.preset,
           })(
             <Select>
-              <Option value={'default'}>default</Option>
-              <Option value={'photo'}>photo</Option>
-              <Option value={'picture'}>picture</Option>
-              <Option value={'drawing'}>drawing</Option>
-              <Option value={'icon'}>icon</Option>
-              <Option value={'text'}>text</Option>
+              <Option value={'default'}>默认</Option>
+              <Option value={'photo'}>照片</Option>
+              <Option value={'picture'}>图片</Option>
+              <Option value={'drawing'}>绘画</Option>
+              <Option value={'icon'}>图标</Option>
+              <Option value={'text'}>文本</Option>
             </Select>
           )}
         </ProcessItem>
         <ProcessItem
-          label={'quality'}
-          tooltip={'Set quality factor between 0 and 100.'}
+          label={'品质'}
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
@@ -60,8 +58,8 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'alphaQuality'}
-          tooltip={'Set transparency-compression quality between 0 and 100.'}
+          label={'alpha 品质'}
+          tooltip={'设置透明压缩品质'}
         >
           {getFieldDecorator('alphaQuality', {
             initialValue: this.state.alphaQuality,
@@ -73,9 +71,8 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'method'}
-          tooltip={'Specify the compression method to use, between 0 (fastest) and 6 (slowest).'}
-          extra={'This parameter controls the trade off between encoding speed and the compressed file size and quality.'}
+          label={'压缩方式'}
+          extra={'编码速度和压缩品质/文件体积权衡，0(速度最快) 到 6(最慢但是品质更好)'}
         >
           {getFieldDecorator('method', {
             initialValue: this.state.method,
@@ -84,15 +81,14 @@ export default class Webp extends PureComponent {
               max={6}
               min={0}
               marks={markGenerator(
-                { value: 0, label: 'fastest' },
-                { value: 6, label: 'slowest' },
+                { value: 0, label: '块' },
+                { value: 6, label: '慢' },
               )}
             />
           )}
         </ProcessItem>
         <ProcessItem
-          label={'size'}
-          tooltip={'Set target size in bytes.'}
+          label={'目标文件体积'}
         >
           {getFieldDecorator('size', {
             initialValue: this.state.size,
@@ -100,11 +96,11 @@ export default class Webp extends PureComponent {
             <InputNumber
               min={1}
             />
-          )}
+          )} bytes
         </ProcessItem>
         <ProcessItem
           label={'sns'}
-          tooltip={'Set the amplitude of spatial noise shaping between 0 and 100.'}
+          tooltip={'时域噪声整型'}
         >
           {getFieldDecorator('sns', {
             initialValue: this.state.sns,
@@ -116,8 +112,8 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'filter'}
-          tooltip={'Set deblocking filter strength between 0 (off) and 100.'}
+          label={'滤波'}
+          tooltip={'去块滤波强度'}
         >
           {getFieldDecorator('filter', {
             initialValue: this.state.filter,
@@ -129,8 +125,8 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'autoFilter'}
-          tooltip={'Adjust filter strength automatically.'}
+          label={'自动滤波'}
+          tooltip={'自适应滤波强度'}
         >
           {getFieldDecorator('autoFilter', {
             valuePropName: 'checked',
@@ -140,8 +136,7 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'sharpness'}
-          tooltip={'Set filter sharpness between 0 (sharpest) and 7 (least sharp).'}
+          label={'锐度'}
         >
           {getFieldDecorator('sharpness', {
             initialValue: this.state.sharpness,
@@ -150,15 +145,15 @@ export default class Webp extends PureComponent {
               max={7}
               min={0}
               marks={markGenerator(
-                { value: 0, label: 'sharpest' },
-                { value: 7, label: 'least shart' }
+                { value: 0, label: '高' },
+                { value: 7, label: '低' }
               )}
             />
           )}
         </ProcessItem>
         <ProcessItem
-          label={'lossless'}
-          tooltip={'Encode images losslessly.'}
+          label={'无损'}
+          tooltip={'开启无损编码'}
         >
           {getFieldDecorator('lossless', {
             valuePropName: 'checked',
@@ -168,8 +163,8 @@ export default class Webp extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'nearLossless'}
-          tooltip={'Encode losslessly with an additional lossy pre-processing step, with a quality factor between 0 and 100.'}
+          label={'近无损压缩'}
+          extra={'使用额外的有损预处理步骤进行无损编码，质量因子在0（最大预处理）和100（与无损相同）之间。'}
         >
           {getFieldDecorator('nearLossless', {
             initialValue: this.state.nearLossless,
@@ -178,8 +173,8 @@ export default class Webp extends PureComponent {
               max={100}
               min={0}
               marks={markGenerator(
-                { value: 0, label: 'maximum pre-processing' },
-                { value: 100, label: 'lossless' }
+                { value: 0, label: '最大预处理' },
+                { value: 100, label: '无损' }
               )}
             />
           )}

@@ -6,33 +6,38 @@ const mozjpeg = require('mozjpeg');
 const gifsicle = require('gifsicle');
 const webp = require('cwebp-bin');
 const guetzli = require('guetzli');
+const zopfli = require('zopflipng-bin');
 const tempfile = require('tempfile');
+const SVGO = require('svgo');
 
 const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
 
-const PROCESSOR_LIST = {
-  pngquant,
-  mozjpeg,
-  gifsicle,
-  webp,
-  guetzli,
-  // gif2webp,
-};
+const PROCESSOR_LIST = new Map([
+  ['pngquant', pngquant],
+  ['mozjpeg', mozjpeg],
+  ['gifsicle', gifsicle],
+  ['webp', webp],
+  ['guetzli', guetzli],
+  ['zopfli', zopfli],
+]);
 
 const PROCESSORS_WHICH_WRITE_TO_FS = new Set([
   'guetzli',
   'webp',
+  'zopfli',
 ]);
 
 const PROCESSORS_WHICH_ACCPET_FILEPATH = new Set([
   'guetzli',
   'webp',
+  'zopfli',
 ]);
 
 exports.runProcessor = async (input, processor, config, tempOutput) => {
   const useFilePath = PROCESSORS_WHICH_ACCPET_FILEPATH.has(processor);
   const outputWriteToFs = PROCESSORS_WHICH_WRITE_TO_FS.has(processor);
+  const isSVGO = processor === 'svgo';
   const isStream = Buffer.isBuffer(input);
   let imageInput, outputPath;
   try {
@@ -47,6 +52,14 @@ exports.runProcessor = async (input, processor, config, tempOutput) => {
   if (outputWriteToFs) {
     outputPath = tempfile();
   }
+
+  if (isSVGO) {
+    const svgo = new SVGO(config);
+    return svgo
+      .optimize(imageInput)
+      .then(res => Buffer.from(res.data));
+  }
+
   const args = argParser(
     processor,
     config,
@@ -55,7 +68,7 @@ exports.runProcessor = async (input, processor, config, tempOutput) => {
   );
 
   return new Promise((resolve, reject) => {
-    const cp = execFile(PROCESSOR_LIST[processor], args, {
+    const cp = execFile(PROCESSOR_LIST.get(processor), args, {
       encoding: null,
       maxBuffer: Infinity,
     }, (err, stdout) => {
@@ -64,6 +77,9 @@ exports.runProcessor = async (input, processor, config, tempOutput) => {
         readFile(outputPath)
           .then(buffer => {
             resolve(buffer);
+            unlink(outputPath);
+          }).catch(err => {
+            reject(err);
             unlink(outputPath);
           });
       } else {
@@ -84,9 +100,6 @@ const argParser = (processor, opts, input, output) => {
     if (opts.floyd && typeof opts.floyd === 'number') {
       args.push(`--floyd=${opts.floyd}`);
     }
-    // if (opts.floyd && typeof opts.floyd === 'boolean') {
-    //   args.push('--floyd');
-    // }
     if (opts.nofs) {
       args.push('--nofs');
     }
@@ -208,6 +221,24 @@ const argParser = (processor, opts, input, output) => {
     }
     args.push(input, output);
     break;
+  case 'zopfli':
+    args.push('-y');
+    if (opts['8bit']) {
+      args.push('--lossy_8bit');
+    }
+    if (opts.transparent) {
+      args.push('--lossy_transparent');
+    }
+    // if (opts.iterations) {
+    //   args.push(`--iterations=${opts.iterations}`);
+    // }
+    // if (opts.iterationsLarge) {
+    //   args.push(`--iterations_large=${opts.iterationsLarge}`);
+    // }
+    if (opts.more) {
+      args.push('-m');
+    }
+    args.push(input, output);
   }
 
   return args;

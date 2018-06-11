@@ -29,9 +29,13 @@ export default class ProcessItem extends PureComponent {
         label: (
           <span className={styles.ProcessItem__Label}>
             <s>{label}</s>
-            <Tooltip title={tooltip}>
-              <Icon type="question-circle-o" />
-            </Tooltip>
+            {
+              tooltip && (
+                <Tooltip title={tooltip}>
+                  <Icon type="question-circle-o" />
+                </Tooltip>
+              )
+            }
           </span>
         ),
       });

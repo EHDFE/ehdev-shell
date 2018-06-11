@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
-@processorHoc('Guetzli 生成的图片比由 libjpeg 生成的质量接近的图片体积要小 20-30%')
+@processorHoc('Guetzli 是一款高品质高压缩比的 JPEG 编码器，其生成的图片比接近质量的由 libjpeg 生成的图片体积小 20-30%')
 export default class Guetzli extends PureComponent {
   static processorName = 'guetzli'
   static propTypes = {
@@ -20,9 +20,9 @@ export default class Guetzli extends PureComponent {
     return (
       <Fragment>
         <ProcessItem
-          label={'quality'}
-          tooltip={'Set quality in units equivalent to libjpeg quality. As per guetzli function and purpose, it is not recommended to go below 84.'}
-          extra={'Please note that JPEG images do not support alpha channel (transparency). If the input is a PNG with an alpha channel, it will be overlaid on black background before encoding.'}
+          label={'品质'}
+          tooltip={'等效于 libjpeg 的品质'}
+          extra={'不建议低于 84'}
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
@@ -34,8 +34,7 @@ export default class Guetzli extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'memlimit'}
-          tooltip={'Memory limit in MB. Guetzli will fail if unable to stay under the limit.'}
+          label={'内存使用限制'}
         >
           {getFieldDecorator('memlimit', {
             initialValue: this.state.memlimit,
@@ -44,8 +43,7 @@ export default class Guetzli extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'nomemlimit'}
-          tooltip={'Do not limit memory usage.'}
+          label={'不限制内存使用'}
         >
           {getFieldDecorator('nomemlimit', {
             valuePropName: 'checked',

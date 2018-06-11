@@ -6,6 +6,12 @@ import ProcessItem from '../ProcessItem';
 
 const Option = Select.Option;
 
+const dcScanExplain = new Map([
+  [0, '0 个网格'],
+  [1, '1 个网格'],
+  [2, '2 个网格'],
+]);
+
 @processorHoc()
 export default class Mozjpeg extends PureComponent {
   static processorName = 'mozjpeg'
@@ -34,8 +40,7 @@ export default class Mozjpeg extends PureComponent {
     return (
       <Fragment>
         <ProcessItem
-          label={'quality'}
-          tooltip={'Compression quality, in range 0 (worst) to 100 (perfect).'}
+          label={'品质'}
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
@@ -44,15 +49,19 @@ export default class Mozjpeg extends PureComponent {
               max={100}
               min={0}
               marks={markGenerator(
-                { value: 0, label: 'worst' },
-                { value: 100, label: 'perfect' },
+                { value: 0, label: '低' },
+                { value: 100, label: '高' },
               )}
             />
           )}
         </ProcessItem>
         <ProcessItem
-          label={'progressive'}
-          tooltip={'`false` creates baseline JPEG file'}
+          label={'渐进式'}
+          extra={[
+            <div key={'true'}>true: 渐进式图片(先显示一个轮廓，后渐渐清晰)</div>,
+            <div key={'false'}>false 基线图片，逐行扫描（图片从上到下，逐行显示）</div>,
+            <div key={'recomend'}>推荐开启</div>,
+          ]}
         >
           {getFieldDecorator('progressive', {
             valuePropName: 'checked',
@@ -63,7 +72,7 @@ export default class Mozjpeg extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'targa'}
-          tooltip={'Input file is Targa format (usually not needed).'}
+          extra={'输入图片是 Targa 格式，一般不需要开启'}
         >
           {getFieldDecorator('targa', {
             valuePropName: 'checked',
@@ -73,8 +82,11 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'revert'}
-          tooltip={'Revert to standard defaults instead of mozjpeg defaults.'}
+          label={'标准模式'}
+          extra={[
+            <div key="true">true: 使用标准模式</div>,
+            <div key="false">false: 使用mozjpeg defaults模式</div>,
+          ]}
         >
           {getFieldDecorator('revert', {
             valuePropName: 'checked',
@@ -85,7 +97,11 @@ export default class Mozjpeg extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'fastCrush'}
-          tooltip={'Disable progressive scan optimization.'}
+          tooltip={'禁用逐行扫描优化'}
+          extra={[
+            <div key={'true'}>true: 使用逐行扫描优化（progressive为false时有效）</div>,
+            <div key={'false'}>false: 禁用逐行扫描优化（在渐进式图片有效）</div>,
+          ]}
         >
           {getFieldDecorator('fastCrush', {
             valuePropName: 'checked',
@@ -95,8 +111,9 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'dcScanOpt'}
-          tooltip={'Set DC scan optimization mode.'}
+          label={'DC 扫描'}
+          tooltip={'设置 DC 扫描优化模式'}
+          extra={'类似模糊效果，数字越大越模糊'}
         >
           {getFieldDecorator('dcScanOpt', {
             initialValue: this.state.dcScanOpt,
@@ -104,12 +121,13 @@ export default class Mozjpeg extends PureComponent {
             <Slider
               max={2}
               min={0}
+              tipFormatter={value => dcScanExplain.get(value)}
             />
           )}
         </ProcessItem>
         <ProcessItem
-          label={'trellis'}
-          tooltip={'Trellis optimization.'}
+          label={'网格'}
+          tooltip={'网格优化'}
         >
           {getFieldDecorator('trellis', {
             valuePropName: 'checked',
@@ -119,8 +137,8 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'trellisDC'}
-          tooltip={'Trellis optimization of DC coefficients.'}
+          label={'DC 网格'}
+          tooltip={'DC系数的网格优化'}
         >
           {getFieldDecorator('trellisDC', {
             valuePropName: 'checked',
@@ -131,7 +149,7 @@ export default class Mozjpeg extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'tune'}
-          tooltip={'Set Trellis optimization method.'}
+          tooltip={'设置网格优化方法'}
         >
           {getFieldDecorator('tune', { initialValue: this.state.tune })(
             <Select>
@@ -154,8 +172,8 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'arithmetic'}
-          tooltip={'Use arithmetic coding.'}
+          label={'算术编码'}
+          tooltip={'使用算术编码'}
         >
           {getFieldDecorator('arithmetic', {
             valuePropName: 'checked',
@@ -166,7 +184,7 @@ export default class Mozjpeg extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'dct'}
-          tooltip={'Set DCT method.'}
+          tooltip={'设置 DCT 方法.'}
         >
           {getFieldDecorator('dct', { initialValue: this.state.dct })(
             <Select>
@@ -178,7 +196,7 @@ export default class Mozjpeg extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'quantBaseline'}
-          tooltip={'Use 8-bit quantization table entries for baseline JPEG compatibility.'}
+          tooltip={'使用8位量化表兼容 baseline JPEG'}
         >
           {getFieldDecorator('quantBaseline', {
             valuePropName: 'checked',
@@ -188,8 +206,8 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'quantTable'}
-          tooltip={'Use predefined quantization table.'}
+          label={'量化表'}
+          tooltip={'使用预定义的量化表'}
         >
           {getFieldDecorator('quantTable', { initialValue: this.state.quantTable })(
             <Select>
@@ -203,8 +221,8 @@ export default class Mozjpeg extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'smooth'}
-          tooltip={'Set the strength of smooth dithered input.'}
+          label={'平滑度'}
+          tooltip={'设置平滑度'}
         >
           {getFieldDecorator('smooth', {
             initialValue: this.state.smooth,

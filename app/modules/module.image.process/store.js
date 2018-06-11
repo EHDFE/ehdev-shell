@@ -1,6 +1,7 @@
 import { Map } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
 import fileType from 'file-type';
+import isSvg from 'is-svg';
 import IMAGE_MIN_API from '../../apis/imagemin';
 
 const defaultState = Map({
@@ -40,12 +41,20 @@ const imageProcessReducer = handleActions({
     if (error) return state;
     const buffer = payload;
     const fileTypeResult = fileType(buffer);
-    const blob = new Blob([buffer], { type: fileTypeResult.mime });
+    let type, ext;
+    if (!fileTypeResult && isSvg(buffer)) {
+      type = 'image/svg+xml';
+      ext = 'svg';
+    } else {
+      type = fileTypeResult.mime;
+      ext = fileTypeResult.ext;
+    }
+    const blob = new Blob([buffer], { type });
     const blobUrl = URL.createObjectURL(blob);
     return state.set('processedImage', Map({
       size: payload.byteLength,
-      type: fileTypeResult.mime,
-      ext: fileTypeResult.ext,
+      type,
+      ext,
       buffer,
       url: blobUrl,
     }));

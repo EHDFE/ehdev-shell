@@ -12,6 +12,8 @@ import Gifsicle from './processors/Gifsicle';
 import Mozjpeg from './processors/Mozjpeg';
 import Webp from './processors/Webp';
 import Guetzli from './processors/Guetzli';
+import Zopfli from './processors/Zopfli';
+import Svgo from './processors/Svgo';
 import { actions } from './store';
 
 import styles from './index.less';
@@ -21,8 +23,9 @@ const TabPane = Tabs.TabPane;
 const PROCESSOR_MAP = new window.Map([
   ['image/gif', [Gifsicle]],
   ['image/jpeg', [Mozjpeg, Guetzli, Webp]],
-  ['image/png', [Pngquant, Guetzli, Webp]],
+  ['image/png', [Pngquant, Zopfli, Guetzli, Webp]],
   ['image/webp', [Webp]],
+  ['image/svg+xml', [Svgo]],
 ]);
 
 class ImageProcess extends PureComponent {

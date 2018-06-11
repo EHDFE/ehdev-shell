@@ -22,7 +22,7 @@ export default class Pngquant extends PureComponent {
       <Fragment>
         <ProcessItem
           label={'floyd'}
-          tooltip={'Controls level of dithering'}
+          tooltip={'控制抖动的级别'}
         >
           {getFieldDecorator('floyd', {
             initialValue: this.state.floyd,
@@ -40,7 +40,7 @@ export default class Pngquant extends PureComponent {
         </ProcessItem>
         <ProcessItem
           label={'nofs'}
-          tooltip={'Disable Floyd-Steinberg dithering.'}
+          tooltip={'禁用 Floyd-Steinberg 抖动'}
         >
           {getFieldDecorator('nofs', {
             valuePropName: 'checked',
@@ -50,9 +50,8 @@ export default class Pngquant extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'quality'}
-          tooltip={'Instructs pngquant to use the least amount of colors required to meet or exceed the max quality.If conversion results in quality below the min quality the image won\'t be saved.'}
-          extra={'Min and max are numbers in range 0 (worst) to 100 (perfect), similar to JPEG.'}
+          label={'品质'}
+          extra={'0 到 100 之间，同 JPEG'}
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
@@ -68,8 +67,8 @@ export default class Pngquant extends PureComponent {
           )}
         </ProcessItem>
         <ProcessItem
-          label={'speed'}
-          tooltip={'Speed/quality trade-off from 1 (slowest, highest quality, smallest files) to 11 (fastest, less consistent quality, light comperssion).'}
+          label={'速度'}
+          extra={'速度/质量的权衡，1 (最佳质量) 到 10 (最快速度) 之间。速度 10 对比默认值 (速度 3)，以 5% 的效果损失换来 8 倍的速度提升。'}
         >
           {getFieldDecorator('speed', {
             initialValue: this.state.speed,

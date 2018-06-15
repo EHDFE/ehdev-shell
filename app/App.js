@@ -5,7 +5,7 @@
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { hot } from 'react-hot-loader';
-import { HashRouter, Route } from 'react-router-dom';
+import { Router } from '@reach/router';
 import ErrorBoundary from './components/component.errorBoundary/';
 import './index.less?no-css-module';
 import CommandPalette from './modules/module.command.palette/';
@@ -26,19 +26,18 @@ moment.locale('zh-cn');
 const App = () => (
   <ErrorBoundary>
     <Controller>
-      <HashRouter basename={window.location.pathname}>
-        <LayoutModule>
-          <Route exact path="/" component={DashboardModule}/>
-          <Route exact path="/dashboard" component={DashboardModule}/>
-          <Route path="/project" component={ProjectModule}/>
-          <Route path="/upload" component={UploadModule}/>
-          <Route path="/configer" component={ConfigerModule}/>
-          <Route path="/user" component={UserModule}/>
-          <Route path="/qrcode" component={QrCodeModule} />
-          <Route path="/images" component={ImageProcessModule} />
-          <CommandPalette />
+      <Router>
+        <LayoutModule path="/">
+          <DashboardModule default />
+          <UploadModule path="upload" />
+          <ProjectModule path="project" />
+          <ConfigerModule path="configer" />
+          <QrCodeModule path="qrcode" />
+          <ImageProcessModule path="images" />
+          <UserModule path="user" />
         </LayoutModule>
-      </HashRouter>
+      </Router>
+      <CommandPalette />
     </Controller>
   </ErrorBoundary>
 );

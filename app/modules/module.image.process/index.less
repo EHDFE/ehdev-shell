@@ -1,7 +1,51 @@
 .ImageProcess {
   height: 100%;
   &__Row {
+    display: flex;
     height: 100%;
+  }
+  &__FilePickerZone {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex: 1;
+  }
+  &__FilePickerText {
+    margin: 20px 0;
+  }
+  &__FilePickerButton {
+    margin: 0 auto;
+    width: 200px;
+  }
+  &__PreviewView {
+    padding: 10px;
+    flex: 1 0 auto;
+    background: rgb(245, 245, 245);
+    box-shadow: inset 0 0 4px 0px rgba(0, 0, 0, 0.4);
+  }
+  &__EditorView {
+    display: flex;
+    margin-left: 20px;
+
+    width: 300px;
+    height: 100%;
+    flex-direction: column;
+
+    :global(.ant-form-extra) {
+      font-size: 12px;
+    }
+    :global(.ant-form-item-label) {
+      width: 100%;
+      > label {
+        &::after {
+          display: none;
+        }
+      }
+    }
+    :global(.ant-form-item) {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
   }
   &__Preview {
     display: flex;
@@ -17,6 +61,7 @@
   &__PreviewWrap {
     position: relative;
     flex: 1 0;
+    background-color: #fff;
     border: 1px solid #f0f0f0;
   }
   &__PreviewLabel {
@@ -86,29 +131,27 @@
       }
     }
   }
+  &__ProcessorTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  &__EditorWrap {
+    height: ~"calc(100% - 33px)";
+  }
 }
 
 .ProcessItem__Label {
-  display: inline-flex;
-  width: ~"calc(100% - 15px)";
-  justify-content: flex-end;
+  display: flex;
+  justify-content: space-between;
   align-items: baseline;
   s {
-    margin-right: 0.5em;
     white-space: normal;
     line-height: 1.5;
     text-decoration: none;
   }
-}
-
-.Processor__Tabs {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-
-  :global(.ant-form) {
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+  &Tooltip {
+    font-size: 12px;
   }
 }

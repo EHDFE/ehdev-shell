@@ -1,7 +1,7 @@
 /**
  * Upload Zone Component
  */
-import React, { Component } from 'react';
+import { Component } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import MdCloudUpload from 'react-icons/lib/md/cloud-upload';
@@ -24,8 +24,7 @@ export default class UploadZone extends Component {
   state = {
     dragIsOver: false,
   }
-  constructor(props) {
-    super(props);
+  componentDidMount() {
     window.addEventListener('paste', this.handlePaste, false);
   }
   componentWillUnmount() {

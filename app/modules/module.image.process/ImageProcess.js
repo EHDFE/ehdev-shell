@@ -3,22 +3,22 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { Row, Col, Button, Tabs, notification, Icon } from 'antd';
+import { Button, notification, Icon, Menu, Dropdown } from 'antd';
 import classnames from 'classnames';
 import filesize from 'filesize';
 import UploadZone from '../../components/component.uploadZone/';
-import Pngquant from './processors/Pngquant';
-import Gifsicle from './processors/Gifsicle';
-import Mozjpeg from './processors/Mozjpeg';
-import Webp from './processors/Webp';
-import Guetzli from './processors/Guetzli';
-import Zopfli from './processors/Zopfli';
-import Svgo from './processors/Svgo';
 import { actions } from './store';
-
+import {
+  Pngquant,
+  Gifsicle,
+  Mozjpeg,
+  Webp,
+  Guetzli,
+  Zopfli,
+  Svgo,
+  // Upng,
+} from './processorExport';
 import styles from './index.less';
-
-const TabPane = Tabs.TabPane;
 
 const PROCESSOR_MAP = new window.Map([
   ['image/gif', [Gifsicle]],
@@ -34,14 +34,17 @@ class ImageProcess extends PureComponent {
     removeFile: PropTypes.func,
     minify: PropTypes.func,
     minifyBuffer: PropTypes.func,
-    originalImage: PropTypes.instanceOf(Map),
-    processedImage: PropTypes.instanceOf(Map),
+    images: PropTypes.instanceOf(Map),
   };
   static getDerivedStateFromProps(props, state) {
-    if (props.originalImage.equals(state.originalImage)) return;
-    const availableProcessors = PROCESSOR_MAP.get(props.originalImage.get('type')) || [];
+    if (props.images.equals(state.images)) return null;
+    const currentImage = state.currentImage && props.images.has(state.currentImage) ?
+      state.currentImage : props.images.keySeq().first();
+    const currentOriginalImage = props.images.getIn([currentImage, 'originalImage'], Map());
+    const availableProcessors = PROCESSOR_MAP.get(currentOriginalImage.get('type')) || [];
     return {
-      originalImage: props.originalImage,
+      images: props.images,
+      currentImage,
       currentProcessor: availableProcessors.length > 0 ? availableProcessors[0].processorName : null,
       availableProcessors,
     };
@@ -50,10 +53,14 @@ class ImageProcess extends PureComponent {
     indicatorLeft: 0,
     currentProcessor: null,
     availableProcessors: [],
-    originalImage: new Map(),
+    currentImage: null,
+    images: new Map(),
     processing: false,
   }
   processorRef = {}
+  componentDidUpdate() {
+
+  }
   handleChangeImage = files => {
     for (const file of files) {
       if (file.type.startsWith('image/')) {
@@ -73,17 +80,16 @@ class ImageProcess extends PureComponent {
     }
   }
   handleProcess = async () => {
-    const { currentProcessor } = this.state;
+    const { currentProcessor, currentImage } = this.state;
     const options = this.processorRef[currentProcessor].getFieldsValue();
-    const { originalImage } = this.props;
     try {
       this.setState({
         processing: true,
       });
       await this.props.minify(
-        originalImage.get('path'),
+        currentImage,
         currentProcessor,
-        options
+        options,
       );
       notification.success({
         message: '处理成功',
@@ -114,13 +120,16 @@ class ImageProcess extends PureComponent {
       indicatorLeft: e.clientX - rect.left,
     });
   }
-  handleChangeProcessor = activeKey => {
+  handleChangeProcessor = ({ key }) => {
     this.setState({
-      currentProcessor: activeKey,
+      currentProcessor: key,
     });
   }
   handleSaveFile = () => {
-    const { originalImage, processedImage } = this.props;
+    const { images } = this.props;
+    const { currentImage } = this.state;
+    const originalImage = images.getIn([currentImage, 'originalImage']);
+    const processedImage = images.getIn([currentImage, 'processedImage']);
     const url = processedImage.get('url');
     const node = document.createElement('a');
     const originalFileName = originalImage.get('name');
@@ -130,11 +139,15 @@ class ImageProcess extends PureComponent {
     node.click();
   }
   handleRemoveImage = () => {
-    this.props.removeFile();
+    const { currentImage } = this.state;
+    this.props.removeFile(currentImage);
   }
   renderPreview() {
     const { indicatorLeft, processing } = this.state;
-    const { originalImage, processedImage } = this.props;
+    const { images } = this.props;
+    const { currentImage } = this.state;
+    const originalImage = images.getIn([currentImage, 'originalImage']);
+    const processedImage = images.getIn([currentImage, 'processedImage']);
     const url = processedImage.get('url');
     const hasPreview = !!url;
     const originalImageStyle = {
@@ -231,60 +244,82 @@ class ImageProcess extends PureComponent {
     );
   }
   renderProcessorPane() {
+    const { images } = this.props;
+    const { currentImage } = this.state;
+    const originalImage = images.getIn([currentImage, 'originalImage']);
     const { currentProcessor, availableProcessors } = this.state;
+    const menuProps = {
+      onClick: this.handleChangeProcessor,
+    };
+    const processMenu = (
+      <Menu {...menuProps}>
+        {
+          availableProcessors.map(Processor => (
+            <Menu.Item key={Processor.processorName}>
+              {Processor.processorName}
+            </Menu.Item>
+          ))
+        }
+      </Menu>
+    );
+    const Processor = availableProcessors.find(
+      P => P.processorName === currentProcessor
+    );
     return (
       <Fragment>
-        <Tabs
-          activeKey={currentProcessor}
-          onChange={this.handleChangeProcessor}
-          className={styles.Processor__Tabs}
+        <Dropdown
+          overlay={processMenu}
         >
-          { availableProcessors.map(Processor => (
-            <TabPane
-              key={Processor.processorName}
-              tab={Processor.processorName}
-            >
-              <Processor ref={instance => this.processorRef[Processor.processorName] = instance} />
-            </TabPane>
-          )) }
-        </Tabs>
+          <div className={styles.ImageProcess__ProcessorTitle}>
+            <h3>{currentProcessor}</h3>
+            <Icon type="ellipsis" />
+          </div>
+        </Dropdown>
+        <Processor
+          className={styles.ImageProcess__EditorWrap}
+          ref={instance => this.processorRef[currentProcessor] = instance}
+          data={originalImage}
+        />
       </Fragment>
     );
   }
   renderUploadZone() {
     return (
-      <div>
+      <div className={styles.ImageProcess__FilePickerZone}>
         <UploadZone
           onChange={this.handleChangeImage}
-          multiple={false}
+          multiple
         />
+        <div className={styles.ImageProcess__FilePickerText}>
+          或者
+        </div>
+        <Button
+          size="large"
+          className={styles.ImageProcess__FilePickerButton}
+        >批量导入</Button>
       </div>
     );
   }
   render() {
-    const { originalImage } = this.props;
+    const { images } = this.props;
     let content;
-    if (originalImage.size > 0) {
+    if (images.size > 0) {
       content = [
-        <Col key="preview" xs={24} md={10} lg={10} xxl={8}>
+        <div className={styles.ImageProcess__PreviewView} key="preview">
           { this.renderPreview() }
-        </Col>,
-        <Col key="editor" xs={24} md={14} lg={14} xxl={16}>
+        </div>,
+        <div className={styles.ImageProcess__EditorView} key="editor">
           { this.renderProcessorPane() }
-        </Col>,
+        </div>,
       ];
     } else {
-      content = (
-        <Col xs={24}>
-          { this.renderUploadZone() }
-        </Col>
-      );
+      content = this.renderUploadZone();
     }
     return (
       <section className={styles.ImageProcess}>
-        <Row type="flex" gutter={12} className={styles.ImageProcess__Row}>
+        <div className={styles.ImageProcess__Row}>
           { content }
-        </Row>
+        </div>
       </section>
     );
   }
@@ -294,14 +329,13 @@ const pageSelector = state => state['page.image.process'];
 const mapStateToProps = (state) => createSelector(
   pageSelector,
   pageState => ({
-    originalImage: pageState.get('originalImage', Map()),
-    processedImage: pageState.get('processedImage', Map()),
+    images: pageState.get('images', Map()),
   }),
 );
 
 const mapDispatchToProps = dispatch => ({
-  addFile: file => dispatch(actions.add(file)),
-  removeFile: () => dispatch(actions.remove()),
+  addFile: files => dispatch(actions.add(files)),
+  removeFile: filePath => dispatch(actions.remove(filePath)),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
   minifyBuffer: buffer => dispatch(actions.minifyBuffer(buffer)),
 });

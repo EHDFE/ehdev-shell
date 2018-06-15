@@ -5,13 +5,12 @@
 import { Col, Radio, Row } from 'antd';
 import { Map } from 'immutable';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import MdViewHeadline from 'react-icons/lib/md/view-headline';
 import MdViewModule from 'react-icons/lib/md/view-module';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import ListView from '../../components/component.listView/';
-import Page from '../../components/component.page/';
 import UploadZone from '../../components/component.uploadZone/';
 import styles from './index.less';
 import { actions } from './store';
@@ -19,7 +18,7 @@ import { actions } from './store';
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-class UploadModule extends Component {
+class UploadModule extends PureComponent {
   static propTypes = {
     listType: PropTypes.oneOf(['grid', 'list']),
     fileList: PropTypes.instanceOf(Map).isRequired,
@@ -78,10 +77,13 @@ class UploadModule extends Component {
   render() {
     const { listType } = this.props;
     return (
-      <Page>
+      <div>
         <Row>
           <Col span={24}>
-            <UploadZone onChange={this.handleFilesChange} />
+            <UploadZone
+              onChange={this.handleFilesChange}
+              accept={''}
+            />
           </Col>
         </Row>
         <Row>
@@ -107,7 +109,7 @@ class UploadModule extends Component {
           </Col>
         </Row>
         { this.renderListView() }
-      </Page>
+      </div>
     );
   }
 }
@@ -139,7 +141,7 @@ const mapStateToProps = (state, ownProps) => createSelector(
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   setListType: type => dispatch(actions.layout.setListType(type)),
-  fetchFileList: params => dispatch(actions.list.get(params)),
+  fetchFileList: () => dispatch(actions.list.get()),
   addFile: file => dispatch(actions.files.add(file)),
   delFile: id => dispatch(actions.files.del(id)),
   batchAddFile: file => dispatch(actions.files.batchAdd(file)),

@@ -17,7 +17,6 @@ import CONFIG from '../../suite/CONFIG';
 import FileCard from '../component.fileCard/';
 import styles from './index.less';
 
-
 export default class ListView extends Component {
   static defaultProps = {
     viewMode: 'grid',
@@ -139,7 +138,7 @@ export default class ListView extends Component {
       <Row type="flex">
         {
           data.map((d, id) =>
-            <Col xs={12} sm={8} lg={6} xl={4} xll={3} key={id}>
+            <Col xs={12} sm={8} lg={6} xl={4} xxl={3} key={id}>
               <FileCard
                 url={d.url}
                 name={d.name}
@@ -147,7 +146,7 @@ export default class ListView extends Component {
                 mask={this.renderItemActions(d, true)}
               />
             </Col>
-          ).valueSeq()
+          ).valueSeq().toArray()
         }
       </Row>
     );
@@ -168,7 +167,7 @@ export default class ListView extends Component {
                 }
               </div>
             </div>
-          ).valueSeq()
+          ).valueSeq().toArray()
         }
       </div>
     );
@@ -201,7 +200,9 @@ export default class ListView extends Component {
     return (
       <div>
         {
-          viewMode === 'grid' ? this.renderGridView(data) : this.renderListView(data)
+          viewMode === 'grid' ?
+            this.renderGridView(data) :
+            this.renderListView(data)
         }
         {
           this.renderImagePreview()

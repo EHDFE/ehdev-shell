@@ -6,32 +6,32 @@
 // 全局菜单配置
 export const GLOBAL_NAV_CONFIG = [
   {
-    to: '/project',
+    to: 'project',
     icon: 'code',
     text: '工程',
   },
   {
-    to: '/upload',
+    to: 'upload',
     icon: 'cloud-upload',
     text: '上传',
   },
   {
-    to: '/configer',
+    to: 'configer',
     icon: 'api',
     text: '引擎库',
   },
   {
-    to: '/images',
+    to: 'images',
     icon: 'picture',
     text: '图片处理'
   },
   {
-    to: '/qrcode',
+    to: 'qrcode',
     icon: 'qrcode',
     text: '二维码'
   },
   {
-    to: '/user',
+    to: 'user',
     icon: 'user',
     text: '个人中心',
   },

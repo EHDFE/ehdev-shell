@@ -49,8 +49,6 @@ module.exports = () => {
         'moment',
         'antd',
         'classnames',
-        'react-router',
-        'react-router-dom',
         'remarkable',
         'reselect',
         'prop-types',

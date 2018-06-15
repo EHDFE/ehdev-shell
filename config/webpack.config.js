@@ -10,6 +10,8 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const moment = require('moment');
+const history = require('connect-history-api-fallback');
+const convert = require('koa-connect');
 
 const port = process.env.PORT || 1212;
 
@@ -253,6 +255,10 @@ module.exports = () => {
         content: [
           path.join(__dirname, '../app/dll'),
         ],
+        add(app, middleware, options) {
+          const historyOptions = {};
+          app.use(convert(history(historyOptions)));
+        }
       },
     });
   }

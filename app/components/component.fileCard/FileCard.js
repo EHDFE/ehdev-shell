@@ -2,9 +2,8 @@
  * File Card Component
  * @author ryan.bian
  */
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
-// import classnames from 'classnames';
 import { Tooltip } from 'antd';
 import { getIcon } from 'pretty-file-icons';
 
@@ -23,25 +22,15 @@ export default class FileCard extends Component {
     type: PropTypes.string.isRequired,
     mask: PropTypes.array,
   }
-  state = {
-    iconUrl: undefined,
-  }
-  constructor(props) {
-    super(props);
-    this.getFileIcon(props.name);
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.name !== this.props.name) {
-      this.getFileIcon(nextProps.name);
-    }
-  }
-  getFileIcon(name) {
+  coverImage = createRef()
+  componentDidMount() {
+    const { name, type } = this.props;
+    if (type.startsWith('image/')) return;
     const iconName = getIcon(name);
     import(`pretty-file-icons/svg/${iconName}.svg`)
-      .then(iconUrl => {
-        this.setState({
-          iconUrl: iconUrl.default,
-        });
+      .then(res => {
+        const iconUrl = res.default;
+        this.coverImage.current.setAttribute('src', iconUrl);
       });
   }
   /**
@@ -61,7 +50,7 @@ export default class FileCard extends Component {
   renderFileIcon() {
     return (
       <figure className={styles.FileCard__fileIcon}>
-        <img src={this.state.iconUrl} alt={this.props.name} />
+        <img ref={this.coverImage} alt={this.props.name} />
       </figure>
     );
   }
@@ -71,6 +60,7 @@ export default class FileCard extends Component {
       type,
       mask,
     } = this.props;
+
     return (
       <div className={styles.FileCard__block}>
         {

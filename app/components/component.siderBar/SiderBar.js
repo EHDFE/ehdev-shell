@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { Layout, Menu, Icon, Avatar } from 'antd';
 
 import styles from './index.less';
@@ -19,9 +18,9 @@ class SiderBar extends Component {
   static __ANT_LAYOUT_SIDER = true
   static propTypes = {
     current: PropTypes.string,
+    navigate: PropTypes.func,
     user: PropTypes.object,
     showInfo: PropTypes.func,
-    setNav: PropTypes.func,
   }
   state = {
     collapsed: true,
@@ -31,11 +30,11 @@ class SiderBar extends Component {
       collapsed,
     });
   }
-  onSelectMenu = ({ item, key }) => {
-    this.props.setNav(key);
+  onSelectMenu = ({ key }) => {
+    this.props.navigate(`/${key}`);
   }
   backToHome = () => {
-    this.props.setNav('/');
+    this.props.navigate('/');
   }
   handleInfoClick = () => {
     this.props.showInfo();

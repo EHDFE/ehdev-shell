@@ -1,7 +1,6 @@
 import { PureComponent } from 'react';
-import { Form, Tooltip, Icon } from 'antd';
+import { Form } from 'antd';
 import PropTypes from 'prop-types';
-import { formItemLayout } from './processorHoc';
 
 import styles from './index.less';
 
@@ -16,37 +15,25 @@ export default class ProcessItem extends PureComponent {
   static propTypes = {
     label: PropTypes.string.isRequired,
     tooltip: PropTypes.string,
-    extra: PropTypes.string,
+    extra: PropTypes.any,
     children: PropTypes.any,
   }
   render () {
     const { label, tooltip, extra, children } = this.props;
     const props = {
       extra,
+      colon: false,
     };
-    if (tooltip) {
-      Object.assign(props, {
-        label: (
-          <span className={styles.ProcessItem__Label}>
-            <s>{label}</s>
-            {
-              tooltip && (
-                <Tooltip title={tooltip}>
-                  <Icon type="question-circle-o" />
-                </Tooltip>
-              )
-            }
-          </span>
-        ),
-      });
-    } else {
-      Object.assign(props, {
-        label,
-      });
-    }
+    Object.assign(props, {
+      label: (
+        <span className={styles.ProcessItem__Label}>
+          <s>{label}</s>
+          { tooltip && <i className={styles.ProcessItem__LabelTooltip}>{tooltip}</i> }
+        </span>
+      ),
+    });
     return (
       <FormItem
-        {...formItemLayout}
         {...props}
       >
         { children }

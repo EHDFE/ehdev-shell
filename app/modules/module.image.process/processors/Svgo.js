@@ -41,10 +41,10 @@ const SVGO_OPTIONS = new Map([
   ['convertShapeToPath', '转换一些基本图形为路径'],
   ['sortAttrs', '按可读性给节点的属性排序'],
   ['removeDimensions', '如果存在 viewBox，删除 width/height 属性'],
-  ['removeAttrs', '按规则删除属性'], // params
-  ['removeElementsByAttr', '按照 ID 或者 className 删除节点'], // params
-  ['addClassesToSVGElement', '给外层 svg 标签添加 classnames'],  // params
-  ['addAttributesToSVGElement', '给外层 svg 标签添加属性'], // params
+  // ['removeAttrs', '按规则删除属性'], // params
+  // ['removeElementsByAttr', '按照 ID 或者 className 删除节点'], // params
+  // ['addClassesToSVGElement', '给外层 svg 标签添加 classnames'],  // params
+  // ['addAttributesToSVGElement', '给外层 svg 标签添加属性'], // params
   ['removeStyleElement', '删除 <style> 节点'],
   ['removeScriptElement', '删除 <script> 节点'],
 ]);
@@ -92,10 +92,10 @@ export default class Svgo extends PureComponent {
     convertShapeToPath: true,
     sortAttrs: false,
     removeDimensions: false,
-    removeAttrs: false,
-    removeElementsByAttr: false,
-    addClassesToSVGElement: false,
-    addAttributesToSVGElement: false,
+    // removeAttrs: false,
+    // removeElementsByAttr: false,
+    // addClassesToSVGElement: false,
+    // addAttributesToSVGElement: false,
     removeStyleElement: false,
     removeScriptElement: false,
   }
@@ -108,6 +108,7 @@ export default class Svgo extends PureComponent {
           key={key}
           label={key}
           extra={value}
+          align={'vertical'}
         >
           {getFieldDecorator(key, {
             valuePropName: 'checked',

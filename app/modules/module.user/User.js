@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { Form, Upload, Icon, message, Input, Button, Row, Col } from 'antd';
 
@@ -171,4 +170,7 @@ User.propTypes = {
   setUserInfo: PropTypes.func,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserModule);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(UserModule);

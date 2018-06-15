@@ -5,8 +5,7 @@
 import { shell } from 'electron';
 import { Layout, Modal } from 'antd';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Component } from 'react';
 import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
@@ -20,25 +19,16 @@ const PLATFORM = platform();
 
 class LayoutModule extends Component {
   static propTypes = {
-    history: PropTypes.object,
     children: PropTypes.any,
     location: PropTypes.object.isRequired,
+    navigate: PropTypes.func,
   }
   state = {
-    nav: LayoutModule.getLayoutNav(this.props.location),
     infoModalVisible: false,
   }
-  static getDerivedStateFromProps(props, state) {
-    return {
-      nav: LayoutModule.getLayoutNav(props.location),
-    };
-  }
-  static getLayoutNav(location) {
-    const { pathname } = location;
-    const matched = GLOBAL_NAV_CONFIG.find(d => d.to === pathname);
-    if (matched) {
-      return matched;
-    }
+  static getPageInfo(pathname) {
+    const matched = GLOBAL_NAV_CONFIG.find(d => `/${d.to}` === pathname);
+    if (matched) return matched;
     return null;
   }
   showAppInfo = () => {
@@ -49,9 +39,6 @@ class LayoutModule extends Component {
   handleOpenExternal(e) {
     e.preventDefault();
     shell.openExternal(e.currentTarget.getAttribute('href'));
-  }
-  handleNavigation = key => {
-    this.props.history.replace(key);
   }
   renderInfo() {
     const modalProps = {
@@ -86,20 +73,18 @@ class LayoutModule extends Component {
     );
   }
   render() {
-    const { location, children } = this.props;
-    const { nav } = this.state;
-    const { pathname } = location;
+    const { navigate, location, children } = this.props;
     const layoutProps = {
       padding: 0,
       hasContent: true,
     };
-    if (nav && nav.text) {
+    const pageInfo = LayoutModule.getPageInfo(location.pathname);
+    if (pageInfo) {
       Object.assign(layoutProps, {
-        title: nav.text,
-        icon: nav.icon,
+        title: pageInfo.text,
+        icon: pageInfo.icon,
       });
-    }
-    if (pathname === '/' || pathname === '/dashboard') {
+    } else {
       Object.assign(layoutProps, {
         hasContent: false,
       });
@@ -107,9 +92,9 @@ class LayoutModule extends Component {
     return (
       <Layout className={PLATFORM} style={{ height: '100vh' }}>
         <SiderBar
-          current={nav ? nav.to : '/'}
+          current={pageInfo ? pageInfo.to : null}
           showInfo={this.showAppInfo}
-          setNav={this.handleNavigation}
+          navigate={navigate}
         />
         <LayoutComponent key="layout" {...layoutProps}>
           {children}
@@ -122,4 +107,4 @@ class LayoutModule extends Component {
 }
 
 
-export default withRouter(LayoutModule);
+export default LayoutModule;

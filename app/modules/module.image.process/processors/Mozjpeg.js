@@ -12,29 +12,35 @@ const dcScanExplain = new Map([
   [2, '2 个网格'],
 ]);
 
+export const defaultConfig = {
+  quality: 80,
+  progressive: true,
+  targa: false,
+  revert: false,
+  fastCrush: false,
+  dcScanOpt: 1,
+  trellis: true,
+  trellisDC: true,
+  tune: 'hvs-psnr',
+  overshoot: true,
+  arithmetic: false,
+  dct: 'int',
+  quantBaseline: false,
+  quantTable: undefined,
+  smooth: undefined,
+};
+
 @processorHoc()
 export default class Mozjpeg extends PureComponent {
   static processorName = 'mozjpeg'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    quality: 80,
-    progressive: true,
-    targa: false,
-    revert: false,
-    fastCrush: false,
-    dcScanOpt: 1,
-    trellis: true,
-    trellisDC: true,
-    tune: 'hvs-psnr',
-    overshoot: true,
-    arithmetic: false,
-    dct: 'int',
-    quantBaseline: false,
-    quantTable: undefined,
-    smooth: undefined,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

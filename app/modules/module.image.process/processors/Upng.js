@@ -5,12 +5,19 @@ import { Map } from 'immutable';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+};
+
 @processorHoc()
 export default class Upng extends PureComponent {
   static processorName = 'upng'
   static propTypes = {
     form: PropTypes.object,
     data: PropTypes.instanceOf(Map),
+    config: PropTypes.object,
+  }
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
   handleDimensionChange(prop, ratio, value) {
     const fieldsValue = this.props.form.getFieldsValue();

@@ -1,94 +1,88 @@
+import path from 'path';
 import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
 import { Button, notification, Icon, Menu, Dropdown } from 'antd';
-import classnames from 'classnames';
-import filesize from 'filesize';
+import { remote } from 'electron';
+import moment from 'moment';
 import UploadZone from '../../components/component.uploadZone/';
-import { actions } from './store';
-import {
-  Pngquant,
-  Gifsicle,
-  Mozjpeg,
-  Webp,
-  Guetzli,
-  Zopfli,
-  Svgo,
-  // Upng,
-} from './processorExport';
+import PreviewComponent from './Preview';
+import ProcessModal from './ProcessModal';
+import { getProcessorComponent, getDefaultProcessorConfig } from './processorExport';
+import { actions, IN_PROGRESS, PROCESSED } from './store';
+import fm from '../../service/fileManager/';
 import styles from './index.less';
 
-const PROCESSOR_MAP = new window.Map([
-  ['image/gif', [Gifsicle]],
-  ['image/jpeg', [Mozjpeg, Guetzli, Webp]],
-  ['image/png', [Pngquant, Zopfli, Guetzli, Webp]],
-  ['image/webp', [Webp]],
-  ['image/svg+xml', [Svgo]],
-]);
+const { dialog } = remote;
+const ACCEPT_FILE_TYPE = 'image/';
 
 class ImageProcess extends PureComponent {
   static propTypes = {
     addFile: PropTypes.func,
     removeFile: PropTypes.func,
     minify: PropTypes.func,
-    minifyBuffer: PropTypes.func,
+    beforeMinify: PropTypes.func,
+    changeProcessor: PropTypes.func,
+    updateProcessorConfig: PropTypes.func,
+    processors: PropTypes.instanceOf(Map),
     images: PropTypes.instanceOf(Map),
+    imageList: PropTypes.arrayOf(PropTypes.string),
   };
   static getDerivedStateFromProps(props, state) {
     if (props.images.equals(state.images)) return null;
-    const currentImage = state.currentImage && props.images.has(state.currentImage) ?
-      state.currentImage : props.images.keySeq().first();
-    const currentOriginalImage = props.images.getIn([currentImage, 'originalImage'], Map());
-    const availableProcessors = PROCESSOR_MAP.get(currentOriginalImage.get('type')) || [];
+    const currentImage = state.currentImage && props.imageList.includes(state.currentImage) ?
+      state.currentImage : props.imageList[0];
     return {
       images: props.images,
       currentImage,
-      currentProcessor: availableProcessors.length > 0 ? availableProcessors[0].processorName : null,
-      availableProcessors,
     };
   }
   state = {
-    indicatorLeft: 0,
-    currentProcessor: null,
-    availableProcessors: [],
     currentImage: null,
     images: new Map(),
-    processing: false,
+    batchProcessModalVisible: false,
   }
   processorRef = {}
-  componentDidUpdate() {
-
-  }
   handleChangeImage = files => {
     for (const file of files) {
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith(ACCEPT_FILE_TYPE)) {
         this.props.addFile(file);
-        // if (file.path) {
-        //   this.props.minify([
-        //     file.path,
-        //   ]);
-        // } else {
-        //   const reader = new FileReader();
-        //   reader.onload = event => {
-        //     this.props.minifyBuffer(event.target.result);
-        //   };
-        //   reader.readAsDataURL(file);
-        // }
       }
     }
   }
+  handleMultipleImport = () => {
+    dialog.showOpenDialog({
+      filters: [{
+        name: 'Images',
+        extensions: ['png', 'jpg', 'gif', 'webp'],
+      }],
+      properties: [
+        'openFile',
+        'openDirectory',
+        'multiSelections',
+      ],
+    }, filePaths => {
+      if (filePaths) {
+        fm.resolveFiles(filePaths)
+          .then(files => {
+            this.props.addFile(
+              files.filter(d => d.type.startsWith(ACCEPT_FILE_TYPE))
+            );
+          });
+      }
+    });
+  }
   handleProcess = async () => {
-    const { currentProcessor, currentImage } = this.state;
-    const options = this.processorRef[currentProcessor].getFieldsValue();
+    const { currentImage } = this.state;
+    const processor = this.props.processors.getIn([currentImage, 'processor']);
+    const options = this.processorRef[processor].getFieldsValue();
     try {
-      this.setState({
-        processing: true,
-      });
+      this.props.beforeMinify([currentImage]);
       await this.props.minify(
         currentImage,
-        currentProcessor,
+        processor,
         options,
       );
       notification.success({
@@ -100,185 +94,151 @@ class ImageProcess extends PureComponent {
         description: e.message,
       });
     }
-    this.setState({
-      processing: false,
-    });
-  }
-  showIndicator = () => {
-    this.setState({
-      indicatorVisible: true,
-    });
-  }
-  hideIndicator = () => {
-    this.setState({
-      indicatorVisible: false,
-    });
-  }
-  moveIndicator = e => {
-    const rect = this.previewFigure.getBoundingClientRect();
-    this.setState({
-      indicatorLeft: e.clientX - rect.left,
-    });
   }
   handleChangeProcessor = ({ key }) => {
+    const { currentImage } = this.state;
+    this.props.changeProcessor(currentImage, key);
+  }
+  handleRemoveImage = current => {
+    this.props.removeFile(current);
+  }
+  handleNext = () => {
+    const { imageList } = this.props;
+    const index = imageList.indexOf(this.state.currentImage);
+    let currentImage;
+    if (index < imageList.length - 1) {
+      currentImage = imageList[index + 1];
+    } else {
+      currentImage = imageList[0];
+    }
     this.setState({
-      currentProcessor: key,
+      currentImage,
     });
   }
-  handleSaveFile = () => {
-    const { images } = this.props;
-    const { currentImage } = this.state;
-    const originalImage = images.getIn([currentImage, 'originalImage']);
-    const processedImage = images.getIn([currentImage, 'processedImage']);
-    const url = processedImage.get('url');
-    const node = document.createElement('a');
-    const originalFileName = originalImage.get('name');
-    const downloadFileName = `${originalFileName.replace(/\.[^.]*$/, '')}.optimized.${processedImage.get('ext')}`;
-    node.setAttribute('href', url);
-    node.setAttribute('download', downloadFileName);
-    node.click();
-  }
-  handleRemoveImage = () => {
-    const { currentImage } = this.state;
-    this.props.removeFile(currentImage);
-  }
-  renderPreview() {
-    const { indicatorLeft, processing } = this.state;
-    const { images } = this.props;
-    const { currentImage } = this.state;
-    const originalImage = images.getIn([currentImage, 'originalImage']);
-    const processedImage = images.getIn([currentImage, 'processedImage']);
-    const url = processedImage.get('url');
-    const hasPreview = !!url;
-    const originalImageStyle = {
-    };
-    if (hasPreview) {
-      Object.assign(originalImageStyle, {
-        clipPath: `inset(0 calc(100% - ${indicatorLeft}px) 0 0)`,
-      });
+  handlePrev = () => {
+    const { imageList } = this.props;
+    const index = imageList.indexOf(this.state.currentImage);
+    let currentImage;
+    if (index === 0) {
+      currentImage = imageList[imageList.length - 1];
+    } else {
+      currentImage = imageList[index - 1];
     }
-    return (
-      <div className={styles.ImageProcess__Preview}>
-        <figure
-          ref={node => this.previewFigure = node}
-          className={styles.ImageProcess__PreviewWrap}
-          onMouseEnter={this.showIndicator}
-          onMouseLeave={this.hideIndicator}
-          onMouseMove={this.moveIndicator}
-        >
-          <img
-            className={classnames(
-              styles.ImageProcess__PreviewImage,
-              styles['ImageProcess__PreviewImage--processed'],
-              {
-                [styles['ImageProcess__PreviewImage--hide']]: !hasPreview,
-              }
-            )}
-            src={url}
-            alt=""
-          />
-          <img
-            style={originalImageStyle}
-            className={classnames(
-              styles.ImageProcess__PreviewImage,
-              styles['ImageProcess__PreviewImage--original'],
-            )}
-            src={originalImage.get('url')}
-            alt=""
-          />
-          <span
-            style={{ left: `${indicatorLeft}px` }}
-            className={
-              classnames(
-                styles.ImageProcess__PreviewIndicator,
-                {
-                  [styles['ImageProcess__PreviewIndicator--hide']]: !hasPreview,
-                }
-              )
-            }
-          />
-          <span className={classnames(
-            styles.ImageProcess__PreviewLabel,
-            styles['ImageProcess__PreviewLabel--original'],
-          )}>
-            压缩前: {filesize(originalImage.get('size', 0), { base: 10 })}
-          </span>
-          <span className={classnames(
-            styles.ImageProcess__PreviewLabel,
-            styles['ImageProcess__PreviewLabel--processed'],
-            {
-              [styles['ImageProcess__PreviewLabel--hide']]: !hasPreview,
-            },
-          )}>
-            压缩后: {filesize(processedImage.get('size', 0), { base: 10 })}
-          </span>
-          <button
-            className={styles.ImageProcess__RemovePreviewBtn}
-            type="button"
-            onClick={this.handleRemoveImage}
-          >
-            <Icon type="delete" />
-          </button>
-        </figure>
-        <h3 className={styles.ImageProcess__ImageName}>
-          {originalImage.get('name')}
-        </h3>
-        <div className={styles.ImageProcess__PreviewAction}>
-          <Button
-            onClick={this.handleProcess}
-            type="primary"
-            loading={processing}
-          >优化</Button>
-          {
-            url && (
-              <Button
-                icon="download"
-                type="outline"
-                loading={processing}
-                onClick={this.handleSaveFile}
-              >下载</Button>
-            )
+    this.setState({
+      currentImage,
+    });
+  }
+  handleBatchProcess = async () => {
+    const { images, processors, minify, beforeMinify } = this.props;
+    beforeMinify(Array.from(images.keys()));
+    const imageIrerator = images.keys();
+    for (const id of imageIrerator) {
+      const processor = processors.getIn([id, 'processor']);
+      const config = processors.getIn([id, 'config']);
+      const defaultConfig = getDefaultProcessorConfig(processor);
+      // console.log(id, processor, config, defaultConfig);
+      try {
+        await minify(
+          id,
+          processor,
+          Object.assign({}, defaultConfig, config),
+        );
+      } catch (e) {
+        notification.error({
+          message: '操作失败',
+          description: e.message,
+        });
+      }
+    }
+    return true;
+  }
+  handleBatchDownload = async () => {
+    dialog.showOpenDialog({
+      properties: [
+        'openDirectory',
+        'createDirectory',
+      ],
+    }, filePaths => {
+      if (Array.isArray(filePaths) && filePaths.length > 0) {
+        // save to filePath
+        const { images } = this.props;
+        const dir = filePaths[0];
+        const files = images
+          .filter(map => map.get('status') === PROCESSED)
+          .toList()
+          .map(m => m.get('processedImage'))
+          .values();
+        const suffix = moment().format('YYYY_MM_DD_HH_mm_ss');
+        for (const file of files) {
+          const savePath = path.join(dir, `${file.get('fileName')}.${suffix}.${file.get('ext')}`);
+          try {
+            fm.saveFile(
+              savePath,
+              file.get('buffer')
+            );
+          } catch (e) {
+            notification.error({
+              message: `下载失败: ${savePath}`,
+              description: e.message,
+            });
           }
-        </div>
-      </div>
-    );
+        }
+        notification.success({
+          message: '批量下载完成',
+        });
+      }
+    });
+  }
+  handleCloseProcessModal = () => {
+    this.setState({
+      batchProcessModalVisible: false,
+    });
+  }
+  handleOpenProcessModal = () => {
+    this.setState({
+      batchProcessModalVisible: true,
+    });
   }
   renderProcessorPane() {
-    const { images } = this.props;
+    const { images, processors, updateProcessorConfig } = this.props;
     const { currentImage } = this.state;
     const originalImage = images.getIn([currentImage, 'originalImage']);
-    const { currentProcessor, availableProcessors } = this.state;
+    const processor = processors.getIn([currentImage, 'processor']);
+    const availableProcessors = processors.getIn([currentImage, 'availableProcessors']);
+    const config = processors.getIn([currentImage, 'config']);
     const menuProps = {
       onClick: this.handleChangeProcessor,
     };
     const processMenu = (
       <Menu {...menuProps}>
         {
-          availableProcessors.map(Processor => (
-            <Menu.Item key={Processor.processorName}>
-              {Processor.processorName}
+          availableProcessors.map(processor => (
+            <Menu.Item key={processor}>
+              {processor}
             </Menu.Item>
           ))
         }
       </Menu>
     );
-    const Processor = availableProcessors.find(
-      P => P.processorName === currentProcessor
-    );
+    const Processor = getProcessorComponent(processor);
     return (
       <Fragment>
         <Dropdown
           overlay={processMenu}
         >
           <div className={styles.ImageProcess__ProcessorTitle}>
-            <h3>{currentProcessor}</h3>
+            <h3>{processor}</h3>
             <Icon type="ellipsis" />
           </div>
         </Dropdown>
         <Processor
           className={styles.ImageProcess__EditorWrap}
-          ref={instance => this.processorRef[currentProcessor] = instance}
+          ref={instance => this.processorRef[processor] = instance}
           data={originalImage}
+          config={config}
+          onChange={data => {
+            updateProcessorConfig(currentImage, data);
+          }}
         />
       </Fragment>
     );
@@ -288,7 +248,7 @@ class ImageProcess extends PureComponent {
       <div className={styles.ImageProcess__FilePickerZone}>
         <UploadZone
           onChange={this.handleChangeImage}
-          multiple
+          multiple={false}
         />
         <div className={styles.ImageProcess__FilePickerText}>
           或者
@@ -296,21 +256,43 @@ class ImageProcess extends PureComponent {
         <Button
           size="large"
           className={styles.ImageProcess__FilePickerButton}
+          onClick={this.handleMultipleImport}
         >批量导入</Button>
       </div>
     );
   }
   render() {
-    const { images } = this.props;
+    const { images, processors } = this.props;
+    const { currentImage, batchProcessModalVisible } = this.state;
+    const inProgress = images.getIn([currentImage, 'status']) === IN_PROGRESS;
     let content;
     if (images.size > 0) {
       content = [
         <div className={styles.ImageProcess__PreviewView} key="preview">
-          { this.renderPreview() }
+          <PreviewComponent
+            data={images}
+            processing={inProgress}
+            current={currentImage}
+            onRemove={this.handleRemoveImage}
+            onStart={this.handleProcess}
+            onNext={this.handleNext}
+            onPrev={this.handlePrev}
+            onOpenBatchProcess={this.handleOpenProcessModal}
+          />
         </div>,
         <div className={styles.ImageProcess__EditorView} key="editor">
           { this.renderProcessorPane() }
         </div>,
+        <ProcessModal
+          key="modal"
+          visible={batchProcessModalVisible}
+          data={images}
+          processors={processors}
+          onClose={this.handleCloseProcessModal}
+          onDownload={this.handleBatchDownload}
+          onBatchProcess={this.handleBatchProcess}
+          onChangeProcessor={this.props.changeProcessor}
+        />
       ];
     } else {
       content = this.renderUploadZone();
@@ -328,16 +310,24 @@ class ImageProcess extends PureComponent {
 const pageSelector = state => state['page.image.process'];
 const mapStateToProps = (state) => createSelector(
   pageSelector,
-  pageState => ({
-    images: pageState.get('images', Map()),
-  }),
+  pageState => {
+    const images = pageState.get('images', Map());
+    const processors = pageState.get('processors', Map());
+    return {
+      images,
+      imageList: Object.keys(images.toObject()),
+      processors,
+    };
+  },
 );
 
 const mapDispatchToProps = dispatch => ({
   addFile: files => dispatch(actions.add(files)),
   removeFile: filePath => dispatch(actions.remove(filePath)),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
-  minifyBuffer: buffer => dispatch(actions.minifyBuffer(buffer)),
+  beforeMinify: ids => dispatch(actions.beforeMinify(ids)),
+  changeProcessor: (id, processor) => dispatch(actions.changeProcessor(id, processor)),
+  updateProcessorConfig: (id, config) => dispatch(actions.updateProcessorConfig(id, config)),
 });
 
 export default connect(

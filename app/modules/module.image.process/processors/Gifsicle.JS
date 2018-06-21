@@ -4,17 +4,23 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+  interlaced: false,
+  optimizationLevel: 1,
+  colors: undefined,
+};
+
 @processorHoc()
 export default class Gifsicle extends PureComponent {
   static processorName = 'gifsicle'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    interlaced: false,
-    optimizationLevel: 1,
-    colors: undefined,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

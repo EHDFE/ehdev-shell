@@ -3,7 +3,6 @@ import { Form, Alert } from 'antd';
 import PropTypes from 'prop-types';
 import ScrollArea from 'react-scrollbar';
 
-
 export const markGenerator = (from, to) => ({
   [from.value]: {
     style: {
@@ -20,15 +19,26 @@ export const markGenerator = (from, to) => ({
 });
 
 const processorHoc = desc => Processor => {
-  @Form.create()
+  @Form.create({
+    onFieldsChange(props, fields) {
+      const newConfig = {};
+      Object.keys(fields).forEach(key => {
+        Object.assign(newConfig, {
+          [key]: fields[key].value,
+        });
+      });
+      props.onChange(newConfig);
+    },
+  })
   class ProcessorWrapper extends PureComponent {
     static processorName = Processor.processorName
     static propTypes = {
       form: PropTypes.object,
       className: PropTypes.string,
+      config: PropTypes.object,
     }
     render() {
-      const { form, className, ...otherProps } = this.props;
+      const { form, config, className, ...otherProps } = this.props;
       return (
         <ScrollArea
           className={className}
@@ -38,7 +48,11 @@ const processorHoc = desc => Processor => {
         >
           <Form>
             {desc && <Alert message={desc} type="info" />}
-            <Processor form={form} {...otherProps} />
+            <Processor
+              form={form}
+              config={config}
+              {...otherProps}
+            />
           </Form>
         </ScrollArea>
       );

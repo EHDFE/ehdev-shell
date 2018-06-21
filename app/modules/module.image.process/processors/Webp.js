@@ -6,25 +6,31 @@ import ProcessItem from '../ProcessItem';
 
 const Option = Select.Option;
 
+export const defaultConfig = {
+  preset: 'default',
+  quality: 75,
+  alphaQuality: 100,
+  method: 4,
+  size: undefined,
+  sns: 80,
+  filter: undefined,
+  autoFilter: false,
+  sharpness: 0,
+  lossless: false,
+  nearLossless: 100,
+};
+
 @processorHoc()
 export default class Webp extends PureComponent {
   static processorName = 'webp'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    preset: 'default',
-    quality: 75,
-    alphaQuality: 100,
-    method: 4,
-    size: undefined,
-    sns: 80,
-    filter: undefined,
-    autoFilter: false,
-    sharpness: 0,
-    lossless: false,
-    nearLossless: 100,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

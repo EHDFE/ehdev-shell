@@ -150,7 +150,7 @@ module.exports = () => {
                       '@babel/preset-env',
                       {
                         targets: {
-                          chrome: 61,
+                          chrome: 66,
                         },
                         useBuiltIns: 'usage',
                         modules: false,

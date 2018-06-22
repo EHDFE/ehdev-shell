@@ -14,17 +14,19 @@ const Core = require('./Core');
 const MenuController = require('./equipment/Menu');
 const TrayController = require('./equipment/Tray');
 
+const gotTheLock = app.requestSingleInstanceLock();
+
 class Armor {
   constructor() {
-    const isSecondInstance = app.makeSingleInstance(() => {
+    app.on('second-instance', (commandLine, workingDirectory) => {
       if (this.core.window) {
         if (this.core.window.isMinimized()) this.core.window.restore();
         this.core.window.focus();
       }
     });
-    if (isSecondInstance) {
-      app.quit();
-      return;
+
+    if (!gotTheLock) {
+      return app.quit();
     }
     this.willLoadCore()
       .then(() => {

@@ -81,7 +81,7 @@
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.11",
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
-    "electron": "^2.0.2",
+    "electron": "^3.0.0-beta.1",
     "electron-builder": "~20.15.1",
     "electron-context-menu": "^0.9.1",
     "electron-log": "^2.2.14",

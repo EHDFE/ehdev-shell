@@ -140,7 +140,6 @@ export default class Preview extends PureComponent {
             <Icon type="right-circle-o" />
           </button>
         </div>
-        { this.renderButtons(url) }
       </Fragment>
     );
   }
@@ -160,6 +159,12 @@ export default class Preview extends PureComponent {
     }
     return (
       <div className={styles.ImageProcess__Preview}>
+        {
+          this.renderController(
+            originalImage.get('name'),
+            url
+          )
+        }
         <figure
           ref={node => this.previewFigure = node}
           className={styles.ImageProcess__PreviewWrap}
@@ -221,12 +226,7 @@ export default class Preview extends PureComponent {
             <Icon type="delete" />
           </button>
         </figure>
-        {
-          this.renderController(
-            originalImage.get('name'),
-            url
-          )
-        }
+        { this.renderButtons(url) }
       </div>
     );
   }

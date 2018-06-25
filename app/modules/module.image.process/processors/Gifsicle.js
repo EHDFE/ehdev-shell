@@ -8,6 +8,8 @@ export const defaultConfig = {
   interlaced: false,
   optimizationLevel: 1,
   colors: undefined,
+  loop: false,
+  lossy: 80,
 };
 
 @processorHoc()
@@ -26,6 +28,16 @@ export default class Gifsicle extends PureComponent {
     return (
       <Fragment>
         <ProcessItem
+          label={'循环播放'}
+        >
+          {getFieldDecorator('loop', {
+            valuePropName: 'checked',
+            initialValue: this.state.loop,
+          })(
+            <Switch />
+          )}
+        </ProcessItem>
+        <ProcessItem
           label={'交错'}
           tooltip={'渐进渲染的 gif 图片'}
         >
@@ -34,6 +46,20 @@ export default class Gifsicle extends PureComponent {
             initialValue: this.state.interlaced,
           })(
             <Switch />
+          )}
+        </ProcessItem>
+        <ProcessItem
+          label={'lossy'}
+          extra={'压缩率'}
+        >
+          {getFieldDecorator('lossy', {
+            initialValue: this.state.lossy,
+          })(
+            <Slider
+              max={200}
+              min={30}
+              step={1}
+            />
           )}
         </ProcessItem>
         <ProcessItem

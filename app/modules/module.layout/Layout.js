@@ -20,7 +20,7 @@ const PLATFORM = platform();
 class LayoutModule extends Component {
   static propTypes = {
     children: PropTypes.any,
-    location: PropTypes.object.isRequired,
+    location: PropTypes.object,
     navigate: PropTypes.func,
   }
   state = {

@@ -154,8 +154,8 @@ module.exports = () => {
                         },
                         useBuiltIns: 'usage',
                         modules: false,
-                        babelrc: false,
                         shippedProposals: true,
+                        debug: false,
                         // refer to: https://github.com/gaearon/react-hot-loader/issues/313
                         // include: ['transform-es2015-classes'],
                       },

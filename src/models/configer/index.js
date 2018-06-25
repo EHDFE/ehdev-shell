@@ -3,9 +3,13 @@
  * @author ryan.bian
  */
 const path = require('path');
+const fs = require('fs');
 const Commander = require('../../service/commander');
-const { hasDir, hasFile, mkdir, readJSON, readFile } = require('../../utils/');
+const { hasDir, hasFile, readJSON } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
+
+const fsPromises = fs.promises;
+const { readFile, mkdir } = fsPromises;
 
 const initFolder = () => {
   hasFile(ConfigerFolderPackagePath).then(file => {

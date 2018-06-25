@@ -1,9 +1,31 @@
 const { execFile } = require('child_process');
-const { promisify } = require('util');
+const { platform, arch } = require('os');
 const fs = require('fs');
+const path = require('path');
+const { app } = require('electron');
 
-const readFile = promisify(fs.readFile);
-const unlink = promisify(fs.unlink);
+const fsPromises = fs.promises;
+const { readFile, unlink } = fsPromises;
+
+const appPath = app.getAppPath();
+
+exports.getBinaryPath = (binary) => {
+  let binaryPath = [appPath, 'vendor', binary];
+  switch (platform()) {
+  case 'darwin':
+    binaryPath.push('macos');
+    break;
+  case 'win32':
+    binaryPath.push('win');
+    binaryPath.push(arch());
+    break;
+  default:
+    binaryPath.push('linux');
+    break;
+  }
+  binaryPath.push(binary);
+  return path.resolve(...binaryPath);
+};
 
 exports.execProcessor = (processor, args, inputBuffer, outputPath) => {
   return new Promise((resolve, reject) => {

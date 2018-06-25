@@ -1,7 +1,9 @@
-import { PureComponent } from 'react';
+import { PureComponent, createContext } from 'react';
 import { Form, Alert } from 'antd';
 import PropTypes from 'prop-types';
 import ScrollArea from 'react-scrollbar';
+
+export const ProcessorContext = createContext('vertical');
 
 export const markGenerator = (from, to) => ({
   [from.value]: {
@@ -36,25 +38,28 @@ const processorHoc = desc => Processor => {
       form: PropTypes.object,
       className: PropTypes.string,
       config: PropTypes.object,
+      layout: PropTypes.string,
     }
     render() {
-      const { form, config, className, ...otherProps } = this.props;
+      const { form, config, className, layout, ...otherProps } = this.props;
       return (
-        <ScrollArea
-          className={className}
-          speed={0.8}
-          horizontal={false}
-          smoothScrolling
-        >
-          <Form>
-            {desc && <Alert message={desc} type="info" />}
-            <Processor
-              form={form}
-              config={config}
-              {...otherProps}
-            />
-          </Form>
-        </ScrollArea>
+        <ProcessorContext.Provider value={layout}>
+          <ScrollArea
+            className={className}
+            speed={0.8}
+            horizontal={false}
+            smoothScrolling
+          >
+            <Form>
+              {desc && <Alert message={desc} type="info" />}
+              <Processor
+                form={form}
+                config={config}
+                {...otherProps}
+              />
+            </Form>
+          </ScrollArea>
+        </ProcessorContext.Provider>
       );
     }
   }

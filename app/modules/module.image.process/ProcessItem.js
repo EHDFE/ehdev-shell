@@ -1,10 +1,23 @@
 import { PureComponent } from 'react';
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
+import { ProcessorContext } from './processorHoc';
 
 import styles from './index.less';
 
 const FormItem = Form.Item;
+
+const formItemLayout = {
+  horizontal: {
+    labelCol: {
+      sm: 6,
+    },
+    wrapperCol: {
+      sm: 18,
+    },
+  },
+  vertical: {},
+};
 
 export default class ProcessItem extends PureComponent {
   static defaultProps = {
@@ -33,11 +46,19 @@ export default class ProcessItem extends PureComponent {
       ),
     });
     return (
-      <FormItem
-        {...props}
-      >
-        { children }
-      </FormItem>
+      <ProcessorContext.Consumer>
+        {
+          layout => (
+            <FormItem
+              className={styles[`ProcessItem--${layout}`]}
+              {...props}
+              {...formItemLayout[layout]}
+            >
+              { children }
+            </FormItem>
+          )
+        }
+      </ProcessorContext.Consumer>
     );
   }
 }

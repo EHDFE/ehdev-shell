@@ -1,8 +1,10 @@
-const { promisify } = require('util');
 const fs = require('fs');
-const gifsicle = require('gifsicle');
-const { execProcessor } = require('../utils');
-const readFile = promisify(fs.readFile);
+const { execProcessor, getBinaryPath } = require('../utils');
+
+const fsPromises = fs.promises;
+const { readFile } = fsPromises;
+
+const gifsicle = getBinaryPath('gifsicle');
 
 module.exports = async (input, opts) => {
   let inputBuffer;
@@ -12,7 +14,7 @@ module.exports = async (input, opts) => {
     inputBuffer = await readFile(input);
   }
 
-  const args = ['--no-warnings', '--no-app-extensions'];
+  const args = ['--no-warnings'];
 
   if (opts.interlaced) {
     args.push('--interlace');
@@ -22,6 +24,14 @@ module.exports = async (input, opts) => {
   }
   if (opts.colors) {
     args.push(`--colors=${opts.colors}`);
+  }
+  if (opts.lossy) {
+    args.push(`--lossy=${opts.lossy}`);
+  }
+  if (opts.loop) {
+    args.push('--loopcount=0');
+  } else {
+    args.push('--no-loopcount');
   }
 
   return execProcessor(gifsicle, args, inputBuffer);

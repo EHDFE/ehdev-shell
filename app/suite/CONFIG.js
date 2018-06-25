@@ -12,7 +12,7 @@ const CONFIG = {
   BROWSER_CONFIG: {
     // Enables scroll bounce (rubber banding) effect on macOS
     center: true,
-    scrollBounce: true,
+    scrollBounce: false,
     frame: false,
     vibrancy: 'medium-light',
     titleBarStyle: isMac ? 'hidden' : 'default',

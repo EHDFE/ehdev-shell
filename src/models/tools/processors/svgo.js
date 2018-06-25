@@ -1,7 +1,8 @@
-const { promisify } = require('util');
 const fs = require('fs');
 const SVGO = require('svgo');
-const readFile = promisify(fs.readFile);
+
+const fsPromises = fs.promises;
+const { readFile } = fsPromises;
 
 module.exports = async (input, opts) => {
   let inputBuffer;

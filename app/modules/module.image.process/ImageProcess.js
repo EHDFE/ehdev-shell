@@ -11,7 +11,7 @@ import UploadZone from '../../components/component.uploadZone/';
 import PreviewComponent from './Preview';
 import ProcessModal from './ProcessModal';
 import { getProcessorComponent, getDefaultProcessorConfig } from './processorExport';
-import { actions, IN_PROGRESS, PROCESSED } from './store';
+import { actions, IN_PROGRESS, PROCESSED, UNPROCESSED } from './store';
 import fm from '../../service/fileManager/';
 import styles from './index.less';
 
@@ -26,6 +26,7 @@ class ImageProcess extends PureComponent {
     beforeMinify: PropTypes.func,
     changeProcessor: PropTypes.func,
     updateProcessorConfig: PropTypes.func,
+    setStatus: PropTypes.func,
     processors: PropTypes.instanceOf(Map),
     images: PropTypes.instanceOf(Map),
     imageList: PropTypes.arrayOf(PropTypes.string),
@@ -44,7 +45,6 @@ class ImageProcess extends PureComponent {
     images: new Map(),
     batchProcessModalVisible: false,
   }
-  processorRef = {}
   handleChangeImage = files => {
     for (const file of files) {
       if (file.type.startsWith(ACCEPT_FILE_TYPE)) {
@@ -75,12 +75,15 @@ class ImageProcess extends PureComponent {
     });
   }
   handleProcess = async () => {
+    const { processors, setStatus, beforeMinify, minify } = this.props;
     const { currentImage } = this.state;
-    const processor = this.props.processors.getIn([currentImage, 'processor']);
-    const options = this.processorRef[processor].getFieldsValue();
+    const processor = processors.getIn([currentImage, 'processor']);
+    const config = processors.getIn([currentImage, 'config']);
+    const defaultConfig = getDefaultProcessorConfig(processor);
+    const options = Object.assign({}, defaultConfig, config);
     try {
-      this.props.beforeMinify([currentImage]);
-      await this.props.minify(
+      beforeMinify([currentImage]);
+      await minify(
         currentImage,
         processor,
         options,
@@ -93,6 +96,7 @@ class ImageProcess extends PureComponent {
         message: '操作失败',
         description: e.message,
       });
+      setStatus(currentImage, UNPROCESSED);
     }
   }
   handleChangeProcessor = ({ key }) => {
@@ -129,7 +133,7 @@ class ImageProcess extends PureComponent {
     });
   }
   handleBatchProcess = async () => {
-    const { images, processors, minify, beforeMinify } = this.props;
+    const { images, processors, minify, beforeMinify, setStatus } = this.props;
     beforeMinify(Array.from(images.keys()));
     const imageIrerator = images.keys();
     for (const id of imageIrerator) {
@@ -148,6 +152,7 @@ class ImageProcess extends PureComponent {
           message: '操作失败',
           description: e.message,
         });
+        setStatus(id, UNPROCESSED);
       }
     }
     return true;
@@ -233,7 +238,6 @@ class ImageProcess extends PureComponent {
         </Dropdown>
         <Processor
           className={styles.ImageProcess__EditorWrap}
-          ref={instance => this.processorRef[processor] = instance}
           data={originalImage}
           config={config}
           onChange={data => {
@@ -262,7 +266,7 @@ class ImageProcess extends PureComponent {
     );
   }
   render() {
-    const { images, processors } = this.props;
+    const { images } = this.props;
     const { currentImage, batchProcessModalVisible } = this.state;
     const inProgress = images.getIn([currentImage, 'status']) === IN_PROGRESS;
     let content;
@@ -287,11 +291,9 @@ class ImageProcess extends PureComponent {
           key="modal"
           visible={batchProcessModalVisible}
           data={images}
-          processors={processors}
           onClose={this.handleCloseProcessModal}
           onDownload={this.handleBatchDownload}
           onBatchProcess={this.handleBatchProcess}
-          onChangeProcessor={this.props.changeProcessor}
         />
       ];
     } else {
@@ -325,6 +327,7 @@ const mapDispatchToProps = dispatch => ({
   addFile: files => dispatch(actions.add(files)),
   removeFile: filePath => dispatch(actions.remove(filePath)),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
+  setStatus: (id, status) => dispatch(actions.setStatus(id, status)),
   beforeMinify: ids => dispatch(actions.beforeMinify(ids)),
   changeProcessor: (id, processor) => dispatch(actions.changeProcessor(id, processor)),
   updateProcessorConfig: (id, config) => dispatch(actions.updateProcessorConfig(id, config)),

@@ -33,11 +33,13 @@
     &--name {
       flex: 1;
       margin-bottom: 0;
+      height: 24px;
       text-align: center;
       word-wrap: break-word;
       font-weight: 400;
       font-size: 13px;
       text-align: center;
+      line-height: 21px;
     }
     &--button {
       background: none;
@@ -173,17 +175,37 @@
   }
 }
 
-.ProcessItem__Label {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  s {
-    white-space: normal;
-    line-height: 1.5;
-    text-decoration: none;
+.ProcessItem {
+  &--horizontal {
+    .ProcessItem__Label {
+      padding-top: 8px;
+      flex-direction: column;
+      i {
+        white-space: normal;
+        text-align: left;
+      }
+    }
+    :global(.ant-form-item-label) {
+      line-height: 2;
+      label {
+        &:after {
+          display: none;
+        }
+      }
+    }
   }
-  &Tooltip {
-    font-size: 12px;
+  &__Label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    s {
+      white-space: normal;
+      line-height: 1.5;
+      text-decoration: none;
+    }
+    &Tooltip {
+      font-size: 12px;
+    }
   }
 }
 
@@ -196,6 +218,12 @@
     display: flex;
     margin-bottom: 10px;
     align-items: center;
+    flex-wrap: wrap;
+
+    &--inedit {
+      border: 1px dashed rgba(24, 144, 255, 0.5);
+    }
+
     &--image {
       flex: 0 0 64px;
       margin-right: 10px;
@@ -223,6 +251,13 @@
       justify-content: space-between;
       font-size: 12px;
       color: #999;
+    }
+
+    &--editor {
+      padding: 20px;
+      width: 100%;
+      background-color: #fefefe;
+      box-sizing: border-box;
     }
   }
 

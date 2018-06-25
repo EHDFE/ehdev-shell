@@ -31,6 +31,10 @@ export const actions = createActions({
       filePath: input,
     };
   },
+  SET_STATUS: (id, status) => ({
+    id,
+    status,
+  }),
   CHANGE_PROCESSOR: (id, processor) => ({
     id,
     processor,
@@ -137,6 +141,10 @@ const imageProcessReducer = handleActions({
       })).set('status', PROCESSED)
     );
   },
+  SET_STATUS(state, { payload }) {
+    const { id, status } = payload;
+    return state.setIn(['images', id, 'status'], status);
+  }
 }, defaultState);
 
 export default imageProcessReducer;

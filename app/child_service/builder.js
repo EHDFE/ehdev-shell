@@ -81,7 +81,9 @@ getProdConfig(projectConfig)
         }
         if (stats.hasErrors()) {
           // eslint-disable-next-line no-console
-          console.log(stats.toJson().errors[0].split('\n').slice(0, 2).join('\n'));
+          console.log(stats.toString({
+            colors: true,
+          }));
           noticeLog('BUILD', 'FAILED', 'error');
           return;
         }

@@ -215,7 +215,7 @@ module.exports = () => {
     resolve: {
       extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
     },
-    devtool: IS_DEV ? 'cheap-module-source-map' : 'source-map',
+    devtool: IS_DEV ? 'cheap-module-source-map' : 'none',
     target: 'electron-renderer',
     plugins,
     node: {

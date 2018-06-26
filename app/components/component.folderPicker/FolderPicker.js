@@ -3,15 +3,18 @@
  * @description pick folder
  * @author ryan.bian
  */
-import React, { Component } from 'react';
+import electron from 'electron';
+import { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Popover, notification } from 'antd';
+import { Popover, notification, Icon } from 'antd';
 import RepoIcon from 'react-icons/lib/go/repo';
 import PlusIcon from 'react-icons/lib/go/plus';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { shell } from 'electron';
 
 import styles from './index.less';
+
+const { dialog } = electron.remote;
 
 export default class FolderPicker extends Component {
   static defaultProps = {
@@ -24,18 +27,17 @@ export default class FolderPicker extends Component {
     onChange: PropTypes.func,
     children: PropTypes.any,
   }
-  componentDidMount() {
-    this.fileInput.setAttribute('webkitdirectory', true);
-  }
   handleClick = () => {
-    this.fileInput.click();
+    dialog.showOpenDialog({
+      properties: [
+        'openDirectory',
+      ],
+    }, (filePaths) => {
+      if (Array.isArray(filePaths)) {
+        this.props.onChange(filePaths[0]);
+      }
+    });
   };
-  handleChange = e => {
-    if (e.target.files.length) {
-      const value = e.target.files[0].path;
-      this.props.onChange(value);
-    }
-  }
   openFileExplorer = () => {
     const { value } = this.props;
     shell.showItemInFolder(value);
@@ -65,12 +67,6 @@ export default class FolderPicker extends Component {
       >
         打开目录
       </button>,
-      // <button
-      //   className={styles.FolderPicker__PopoverButton}
-      //   key="editor"
-      // >
-      //   打开编辑器
-      // </button>,
       <button
         className={styles.FolderPicker__PopoverButton}
         onClick={this.handleClick}
@@ -106,14 +102,20 @@ export default class FolderPicker extends Component {
             >
               <PlusIcon size={26} />
             </button>
-          ) : this.renderContent()
+          ) : (
+            <Fragment>
+              {this.renderContent()}
+              <button
+                className={styles.FolderPicker__Icon}
+                onClick={this.handleClick}
+              >
+                <Icon
+                  type="reload"
+                />
+              </button>
+            </Fragment>
+          )
         }
-        <input
-          ref={node => (this.fileInput = node)}
-          type="file"
-          style={{ display: 'none' }}
-          onChange={this.handleChange}
-        />
       </div>
     );
   }

@@ -12,6 +12,7 @@ const {
 } = require('../../utils/env');
 const { readJSON, getLocalIP } = require('../../utils');
 const context = require('../../context');
+const notification = require('../../provider/notification/');
 
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');
@@ -37,7 +38,14 @@ exports.startServer = async (config) => {
     args: {
       projectName: pkg.name,
     },
+  }, () => {
+    notification({
+      title: '服务已停止',
+    }).show();
   });
+  notification({
+    title: '启动开发服务',
+  }).show();
   context.getDataBase('workspace').update(
     {
       name: pkg.name,
@@ -91,7 +99,14 @@ exports.startBuilder = async (config) => {
     args: {
       projectName: pkg.name,
     },
+  }, () => {
+    notification({
+      title: '构建已停止',
+    }).show();
   });
+  notification({
+    title: '开始构建',
+  }).show();
   context.getDataBase('workspace').update(
     {
       name: pkg.name,

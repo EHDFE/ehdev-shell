@@ -64,7 +64,7 @@ exports.makeRecord = async projectPath => {
       path.join(projectPath, 'package.json')
     );
   } catch (e) {
-    throw Error(e);
+    throw e;
   }
   return new Promise((resolve, reject) => {
     context.getDataBase('workspace').update(

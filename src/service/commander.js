@@ -60,7 +60,7 @@ class Commander {
    * @param {object} options.args - arguments to passthrough
    * @param {boolean} options.outputToTermnal
    */
-  async run(commands, options) {
+  async run(commands, options, onExit = () => {}) {
     const { SHELL_CONTENT_ID } = process.env;
     const webContent = webContents.fromId(+SHELL_CONTENT_ID);
     const config = Object.assign(
@@ -110,6 +110,7 @@ class Commander {
           serviceStore.set(ps.pid, ps);
           ps.on('exit', () => {
             serviceStore.delete(ps.pid);
+            onExit();
           });
         });
       } else {
@@ -122,6 +123,7 @@ class Commander {
         ps.on('exit', () => {
           webContent.send(`COMMAND_EXIT:${ps.pid}`);
           serviceStore.delete(ps.pid);
+          onExit();
         });
         return {
           pid: ps.pid,
@@ -151,6 +153,7 @@ class Commander {
           rootPath: config.cwd,
         });
         webContent.send(`COMMAND_EXIT:${pid}`);
+        onExit();
       });
 
       return { pid };

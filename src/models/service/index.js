@@ -68,9 +68,9 @@ exports.stop = async (pid) => {
 };
 
 exports.startBuilder = async (config) => {
-  const { root, configerName, isDll } = config;
+  const { root, configerName, runtimeConfig } = config;
   let command;
-  if (isDll) {
+  if (runtimeConfig.isDll) {
     command = `${nodeExecuteName} ${dllBuilderScriptPath}`;
   } else {
     command = `${nodeExecuteName} ${builderScriptPath}`;
@@ -86,6 +86,7 @@ exports.startBuilder = async (config) => {
       CONFIGER_NAME: configerName,
       NODE_ENV: 'production',
       PATH: process.env.PATH,
+      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
     },
     args: {
       projectName: pkg.name,

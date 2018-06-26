@@ -124,6 +124,7 @@ class ProjectModule extends PureComponent {
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
+      runtimeConfig: env.get('runtimeConfig').toJS(),
     });
     this.props.setActive(rootPath);
   }
@@ -135,7 +136,9 @@ class ProjectModule extends PureComponent {
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
-      isDll: true,
+      runtimeConfig: Object.assign({
+        isDll: true,
+      }, env.get('runtimeConfig').toJS()),
     });
     this.props.setActive(rootPath);
   }

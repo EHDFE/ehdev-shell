@@ -3,13 +3,11 @@
  * Project Store
  * @author ryan.bian
  */
-// import { ipcRenderer } from 'electron';
 import { List, Map, Set, fromJS } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
-// import COMMON_API from '../../apis/common';
 import notificationManager from '../../service/notification';
 
 const defaultState = Map({
@@ -26,6 +24,7 @@ const defaultState = Map({
       port: 3000,
       https: false,
       noInfo: true,
+      analyzer: false,
     }),
   }),
   service: Map({

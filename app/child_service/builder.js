@@ -11,13 +11,15 @@ const {
   dllConfigParser,
   PROJECT_ROOT,
   noticeLog,
-  // UglifyJsPlugin,
-  // getUglifyJsOptions,
+  getLocalIP,
 } = require('./config');
 
-const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
+const { SHELL_NODE_MODULES_PATH } = process.env;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
 const StatsPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'stats-webpack-plugin'));
+const BundleAnalyzerPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack-bundle-analyzer')).BundleAnalyzerPlugin;
+
+const RUNTIME_CONFIG = JSON.parse(process.env.RUNTIME_CONFIG);
 
 getProdConfig(projectConfig)
   .then(webpackConfig => {
@@ -40,8 +42,19 @@ getProdConfig(projectConfig)
           );
         }
       }
+      if (RUNTIME_CONFIG.analyzer) {
+        const ip = getLocalIP();
+        webpackConfig.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'server',
+            anaylzerHost: ip,
+            anaylzerPort: '8888',
+            openAnalyzer: true,
+            logLevel: 'silent',
+          }),
+        );
+      }
       webpackConfig.plugins.push(
-        // new UglifyJsPlugin(getUglifyJsOptions(projectConfig)),
         new StatsPlugin(
           '../stats.json',
           'verbose'

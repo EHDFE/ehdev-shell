@@ -99,9 +99,6 @@ class Commander {
             env: spawnOptions.env,
             shell: true,
           }, (err, stdout, stderr) => {
-            // if (err) {
-            //   return reject(err);
-            // }
             let data;
             try {
               data = JSON.parse(stdout);
@@ -141,7 +138,6 @@ class Commander {
         executableCommand = command;
       }
       const ps = pty.spawn(executableCommand, runtimeArgs, spawnOptions);
-      // const ps = pty.spawn(shell, runtimeArgs, spawnOptions);
       const { pid } = ps;
       serviceStore.set(pid, ps);
 

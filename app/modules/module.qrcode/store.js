@@ -6,7 +6,6 @@ import { Map } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
 import COMMON_API from '../../apis/common';
 
-
 const defaultState = Map({});
 
 export const actions = createActions({

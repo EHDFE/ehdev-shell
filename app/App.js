@@ -19,7 +19,8 @@ import ProjectModule from './modules/module.project/';
 import QrCodeModule from './modules/module.qrcode/';
 import UploadModule from './modules/module.upload/';
 import UserModule from './modules/module.user/';
-import ImageProcessModule from './modules/module.image.process';
+import ImageProcessModule from './modules/module.image.process/';
+import SettingModule from './modules/module.setting/';
 
 moment.locale('zh-cn');
 
@@ -35,6 +36,7 @@ const App = () => (
           <QrCodeModule path="qrcode" />
           <ImageProcessModule path="images" />
           <UserModule path="user" />
+          <SettingModule path="setting" />
         </LayoutModule>
       </Router>
       <CommandPalette />

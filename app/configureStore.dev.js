@@ -53,7 +53,6 @@ const persistedReducer = persistReducer(persistConfig, reducer);
 export default () => {
   const store = createStore(persistedReducer, enhancer);
   const persistor = persistStore(store);
-
   if (module.hot) {
     module.hot.accept(async () => {
       const nextRootReducer = await import('./reducer');

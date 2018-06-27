@@ -6,7 +6,13 @@
     "ehdev",
     "jarvis",
     "development-tool",
-    "electron"
+    "electron",
+    "imagemin",
+    "svg",
+    "jpg",
+    "png",
+    "gif",
+    "webp"
   ],
   "dependencies": {
     "@reach/router": "^1.1.1",

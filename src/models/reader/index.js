@@ -1,6 +1,5 @@
 // const http = require('http');
 const https = require('https');
-// const fastXmlParser = require('fast-xml-parser');
 const context = require('../../context');
 
 // const parserOptions = {

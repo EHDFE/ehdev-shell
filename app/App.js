@@ -5,7 +5,12 @@
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { hot } from 'react-hot-loader';
-import { Router } from '@reach/router';
+import {
+  LocationProvider,
+  Router,
+  createMemorySource,
+  createHistory,
+} from '@reach/router';
 import ErrorBoundary from './components/component.errorBoundary/';
 import './index.less?no-css-module';
 import CommandPalette from './modules/module.command.palette/';
@@ -25,22 +30,32 @@ import SettingModule from './modules/module.setting/';
 
 moment.locale('zh-cn');
 
+let history;
+if (process.env.NODE_ENV === 'development') {
+  history = createHistory(window);
+} else {
+  const source = createMemorySource('/');
+  history = createHistory(source);
+}
+
 const App = () => (
   <ErrorBoundary>
     <Controller>
-      <Router>
-        <LayoutModule path="/">
-          <DashboardModule default />
-          <UploadModule path="upload" />
-          <ProjectModule path="project" />
-          <ConfigerModule path="configer" />
-          <QrCodeModule path="qrcode" />
-          <ImageProcessModule path="images" />
-          <UserModule path="user" />
-          <SettingModule path="setting" />
-        </LayoutModule>
-      </Router>
-      <CommandPalette />
+      <LocationProvider history={history}>
+        <Router>
+          <LayoutModule path="/">
+            <DashboardModule default />
+            <UploadModule path="upload" />
+            <ProjectModule path="project" />
+            <ConfigerModule path="configer" />
+            <QrCodeModule path="qrcode" />
+            <ImageProcessModule path="images" />
+            <UserModule path="user" />
+            <SettingModule path="setting" />
+          </LayoutModule>
+        </Router>
+        <CommandPalette />
+      </LocationProvider>
     </Controller>
   </ErrorBoundary>
 );

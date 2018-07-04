@@ -41,6 +41,13 @@ export const GLOBAL_NAV_CONFIG = [
     description: '生成二维码',
   },
   {
+    to: 'reader',
+    icon: 'book',
+    text: '阅读器',
+    configurable: true,
+    description: 'RSS 阅读器',
+  },
+  {
     to: 'user',
     icon: 'user',
     text: '个人中心',

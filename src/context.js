@@ -3,49 +3,43 @@
  * @author ryan.bian
  */
 const path = require('path');
-const fs = require('fs');
 const { app } = require('electron');
 const DataStore = require('nedb');
 
 const USERDATA_PATH = app.getPath('userData');
-fs.stat(path.join(USERDATA_PATH, 'project.db'), (e, stats) => {
-  if (e) return;
-  if (stats.isFile()) {
-    fs.unlink(path.join(USERDATA_PATH, 'project.db'));
-  }
-});
 
-const DB_LIST = [
+const ALLOWED_DB = new Set([
   'upload',
   'workspace',
-  // 'project',
-  // 'pomodora',
-];
-
-const DB = {};
-DB_LIST.forEach(name => {
-  Object.assign(DB, {
-    [name]: new DataStore({
-      filename: path.join(USERDATA_PATH, `${name}.db`),
-      autoload: true,
-    })
-  });
-});
+  'feeds',
+]);
 
 class Context {
-  constructor(db) {
-    this.db = db;
-    this.store = {};
+  constructor() {
+    this.db = new Map();
+    this.store = new Map();
+  }
+  _addDB(name) {
+    if (ALLOWED_DB.has(name)) {
+      const newDb = new DataStore({
+        filename: path.join(USERDATA_PATH, `${name}.db`),
+        autoload: true,
+      });
+      this.db.set(name, newDb);
+    }
   }
   setEnv(key, value) {
-    this.store[key] = value;
+    this.store.set(key, value);
   }
   getEnv(key) {
-    return this.store[key];
+    return this.store.get(key);
   }
   getDataBase(name) {
-    return this.db[name];
+    if (!this.db.has(name)) {
+      this._addDB(name);
+    }
+    return this.db.get(name);
   }
 }
 
-module.exports = new Context(DB);
+module.exports = new Context();

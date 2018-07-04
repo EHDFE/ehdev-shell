@@ -18,6 +18,7 @@ import LayoutModule from './modules/module.layout/';
 import ProjectModule from './modules/module.project/';
 import QrCodeModule from './modules/module.qrcode/';
 import UploadModule from './modules/module.upload/';
+import ReaderModule from './modules/module.reader/';
 import UserModule from './modules/module.user/';
 import ImageProcessModule from './modules/module.image.process/';
 import SettingModule from './modules/module.setting/';
@@ -34,6 +35,7 @@ const App = () => (
           <ProjectModule path="project" />
           <ConfigerModule path="configer" />
           <QrCodeModule path="qrcode" />
+          <ReaderModule path="reader" />
           <ImageProcessModule path="images" />
           <UserModule path="user" />
           <SettingModule path="setting" />

@@ -12,6 +12,7 @@ import { default as UploadReducer } from './modules/module.upload/store';
 import { default as UserReducer } from './modules/module.user/store';
 import { default as ImageProcessReducer } from './modules/module.image.process/store';
 import { default as SettingReducer } from './modules/module.setting/store';
+import { default as ReaderReducer } from './modules/module.reader/store';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   'page.upload': UploadReducer,
   'page.configer': ConfigerReducer,
   'page.console': ConsoleReducer,
+  'page.reader': ReaderReducer,
   'page.user': UserReducer,
   'page.setting': SettingReducer,
   'page.qrcode': QrcodeReducer,

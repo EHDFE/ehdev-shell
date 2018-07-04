@@ -12,7 +12,10 @@ const persistConfig = {
   key: 'App',
   storage: createElectronStorage(),
   transforms: [immutableTransform()],
-  blacklist: ['page.image.process'],
+  blacklist: [
+    'page.image.process',
+    'page.reader',
+  ],
 };
 
 const enhancer = applyMiddleware(

@@ -13,7 +13,7 @@
 ## Introduction
 Javis aims to provide an easy to use gui tool for developers.
 
-![](https://image.tf56.com/dfs/group1/M00/48/2F/CiFBClppjveAYHWGAAXQpTSLQNI235.png)
+![image](https://user-images.githubusercontent.com/1787187/42255258-6950a76c-7f7d-11e8-987c-527e52a7ab67.png)
 
 ## Features
 

@@ -1,8 +1,8 @@
 const fs = require('fs');
 const { execProcessor, getBinaryPath } = require('../utils');
 
-const fsPromises = fs.promises;
-const { readFile } = fsPromises;
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
 
 const gifsicle = getBinaryPath('gifsicle');
 

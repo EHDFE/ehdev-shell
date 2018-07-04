@@ -4,12 +4,13 @@
  */
 const path = require('path');
 const fs = require('fs');
+const { promisify } = require('util');
 const Commander = require('../../service/commander');
 const { hasDir, hasFile, readJSON } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 
-const fsPromises = fs.promises;
-const { readFile, mkdir } = fsPromises;
+const readFile = promisify(fs.readFile);
+const mkdir = promisify(fs.mkdir);
 
 const initFolder = () => {
   hasFile(ConfigerFolderPackagePath).then(file => {

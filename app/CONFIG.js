@@ -29,9 +29,9 @@ export const GLOBAL_NAV_CONFIG = [
   {
     to: 'images',
     icon: 'picture',
-    text: '图片处理',
+    text: '图像处理',
     configurable: true,
-    description: '图片的压缩处理，支持主流的图片格式',
+    description: '图像的压缩处理，支持主流的图片格式',
   },
   {
     to: 'qrcode',
@@ -40,13 +40,13 @@ export const GLOBAL_NAV_CONFIG = [
     configurable: true,
     description: '生成二维码',
   },
-  {
-    to: 'reader',
-    icon: 'book',
-    text: '阅读器',
-    configurable: true,
-    description: 'RSS 阅读器',
-  },
+  // {
+  //   to: 'reader',
+  //   icon: 'book',
+  //   text: '阅读器',
+  //   configurable: true,
+  //   description: 'RSS 阅读器',
+  // },
   {
     to: 'user',
     icon: 'user',

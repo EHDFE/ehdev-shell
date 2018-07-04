@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const { app } = require('electron');
 
-const fsPromises = fs.promises;
-const { readFile, unlink } = fsPromises;
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
 
 const appPath = app.getAppPath();
 
@@ -38,10 +38,10 @@ exports.execProcessor = (processor, args, inputBuffer, outputPath) => {
         readFile(outputPath)
           .then(buffer => {
             resolve(buffer);
-            unlink(outputPath);
+            fs.unlink(outputPath);
           }).catch(err => {
             reject(err);
-            unlink(outputPath);
+            fs.unlink(outputPath);
           });
       } else {
         resolve(stdout);

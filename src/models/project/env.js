@@ -4,12 +4,13 @@
  */
 const path = require('path');
 const fs = require('fs');
+const { promisify } = require('util');
 const { readJSON, glob } = require('../../utils/');
 const context = require('../../context');
 const scmProvider = require('../../provider/scm');
 
-const fsPromises = fs.promises;
-const { readFile, writeFile } = fsPromises;
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 
 exports.setRoot = async rootPath => {
   const ret = {};

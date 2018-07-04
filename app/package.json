@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "An electron based developing tool for feds.",
   "main": "./bootstrap.js",
   "keywords": [
@@ -31,7 +31,7 @@
     "pngquant-bin": "^4.0.0",
     "stats-webpack-plugin": "^0.6.2",
     "uglifyjs-webpack-plugin": "^1.2.6",
-    "webpack": "^4.12.0",
+    "webpack": "^4.14.0",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-dev-server": "^3.1.4",
     "zopflipng-bin": "^4.1.0"

@@ -13,11 +13,13 @@ const path = require('path');
 const QRCode = require('qrcode');
 const glob = require('glob');
 const isString = require('lodash/isString');
-const fsPromises = fs.promises;
 
 const platform = os.platform();
 
-const { readFile, writeFile, stat, mkdir } = fsPromises;
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+const stat = promisify(fs.stat);
+const mkdir = promisify(fs.mkdir);
 
 exports.glob = promisify(glob);
 

@@ -1,7 +1,8 @@
-const { promisify } = require('util');
 const fs = require('fs');
 const mozjpeg = require('mozjpeg');
 const { execProcessor } = require('../utils');
+
+const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
 
 module.exports = async (input, opts) => {

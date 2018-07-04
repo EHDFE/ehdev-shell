@@ -4,21 +4,39 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+  interlaced: false,
+  optimizationLevel: 1,
+  colors: undefined,
+  loop: false,
+  lossy: 80,
+};
+
 @processorHoc()
 export default class Gifsicle extends PureComponent {
   static processorName = 'gifsicle'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    interlaced: false,
-    optimizationLevel: 1,
-    colors: undefined,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Fragment>
+        <ProcessItem
+          label={'循环播放'}
+        >
+          {getFieldDecorator('loop', {
+            valuePropName: 'checked',
+            initialValue: this.state.loop,
+          })(
+            <Switch />
+          )}
+        </ProcessItem>
         <ProcessItem
           label={'交错'}
           tooltip={'渐进渲染的 gif 图片'}
@@ -28,6 +46,20 @@ export default class Gifsicle extends PureComponent {
             initialValue: this.state.interlaced,
           })(
             <Switch />
+          )}
+        </ProcessItem>
+        <ProcessItem
+          label={'lossy'}
+          extra={'压缩率'}
+        >
+          {getFieldDecorator('lossy', {
+            initialValue: this.state.lossy,
+          })(
+            <Slider
+              max={200}
+              min={30}
+              step={1}
+            />
           )}
         </ProcessItem>
         <ProcessItem

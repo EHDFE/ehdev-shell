@@ -20,7 +20,7 @@ const PROCESSOR_LIST = new Map([
 
 exports.process = async (input, processorName, config, extraData) => {
   let result;
-  const processor = PROCESSOR_LIST.get(processorName);
+  const processor = PROCESSOR_LIST.get(processorName.toLowerCase());
   try {
     result = await processor(input, config, extraData);
   } catch (e) {

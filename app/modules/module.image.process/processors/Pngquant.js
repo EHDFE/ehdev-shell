@@ -4,18 +4,24 @@ import PropTypes from 'prop-types';
 import processorHoc, { markGenerator } from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+  floyd: 0.5,
+  nofs: false,
+  quality: 80,
+  speed: 3,
+};
+
 @processorHoc('pngquant 通过把 png 转换成包含透明通道的8位图片来缩小文件体积（通常来说比24/32位图片要小60%～80%）')
 export default class Pngquant extends PureComponent {
   static processorName = 'pngquant'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    floyd: 0.5,
-    nofs: false,
-    quality: 80,
-    speed: 3,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

@@ -7,20 +7,10 @@ import { remoteAPI } from './utils';
 const PROJECT_API = {
   root: {
     async post(rootPath) {
-      try {
-        const res = await remoteAPI.root.setRoot(rootPath);
-        return res;
-      } catch (e) {
-        throw e;
-      }
+      return await remoteAPI.root.setRoot(rootPath);
     },
     async makeRecord(rootPath) {
-      try {
-        const res = await remoteAPI.root.makeRecord(rootPath);
-        return res;
-      } catch (e) {
-        throw e;
-      }
+      return await remoteAPI.root.makeRecord(rootPath);
     },
     async saveConfig(configs) {
       const { rootPath, content } = configs;

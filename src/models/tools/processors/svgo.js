@@ -1,6 +1,7 @@
-const { promisify } = require('util');
 const fs = require('fs');
 const SVGO = require('svgo');
+
+const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
 
 module.exports = async (input, opts) => {

@@ -9,6 +9,7 @@ const common = require('./models/common/index');
 const uploadList = require('./models/upload/list');
 const dashboard = require('./models/dashboard/index');
 const imagemin = require('./models/tools/imagemin');
+const reader = require('./models/reader/');
 
 const providers = require('./provider');
 
@@ -35,6 +36,7 @@ const apiService = {
   providers,
   imagemin,
   serviceStore,
+  reader,
 };
 
 module.exports = apiService;

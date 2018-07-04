@@ -3,14 +3,12 @@
  * Project Store
  * @author ryan.bian
  */
-// import { ipcRenderer } from 'electron';
 import { List, Map, Set, fromJS } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
+import { notification } from 'antd';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
-// import COMMON_API from '../../apis/common';
-import notificationManager from '../../service/notification';
 
 const defaultState = Map({
   env: Map({
@@ -26,6 +24,7 @@ const defaultState = Map({
       port: 3000,
       https: false,
       noInfo: true,
+      analyzer: false,
     }),
   }),
   service: Map({
@@ -37,7 +36,14 @@ const defaultState = Map({
 export const actions = createActions({
   ENV: {
     SET_ROOT_PATH: async rootPath => {
-      await PROJECT_API.root.makeRecord(rootPath);
+      try {
+        await PROJECT_API.root.makeRecord(rootPath);
+      } catch (e) {
+        notification.error({
+          message: 'Error',
+          description: e.toString(),
+        });
+      }
       return rootPath;
     },
     GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
@@ -69,16 +75,8 @@ export const actions = createActions({
   },
   SERVICE: {
     START_SERVER: async (params, dispatch) => {
-      const { runtimeConfig, projectName } = params;
-      const { pid, ip } = await SERVICE_API.server.start(params);
-      notificationManager.send({
-        title: '开发服务',
-        message: '启动开发服务，点击打开页面！',
-        onClick() {
-          const protocol = runtimeConfig.https ? 'https://' : 'http://';
-          notificationManager.openBrowser(`${protocol}${ip}:${runtimeConfig.port}`);
-        },
-      });
+      const { projectName } = params;
+      const { pid } = await SERVICE_API.server.start(params);
       return {
         pid,
         rootPath: params.root,
@@ -90,10 +88,6 @@ export const actions = createActions({
       if (!stopped) {
         try {
           await SERVICE_API.server.stop(+pid);
-          notificationManager.send({
-            title: '开发服务',
-            message: '服务已停止！'
-          });
           return {
             pid: +pid,
             ...params,
@@ -107,10 +101,6 @@ export const actions = createActions({
     START_BUILDER: async (params, dispatch) => {
       const { projectName } = params;
       const { pid } = await SERVICE_API.builder.start(params);
-      notificationManager.send({
-        title: '构建项目',
-        message: '构建中！'
-      });
       return {
         pid,
         rootPath: params.root,
@@ -122,12 +112,6 @@ export const actions = createActions({
       if (!stopped) {
         try {
           await SERVICE_API.builder.stop(+pid);
-          notificationManager.send({
-            title: '构建项目',
-            message: '构建已停止！',
-            onClick() {
-            },
-          });
           return {
             pid: +pid,
             ...params,

@@ -52,60 +52,24 @@ export default class ProjectAction extends PureComponent {
   onClickRuntimeConfiger = () => {
     this.props.onClickRuntimeConfiger();
   }
-  render() {
-    const { currentService, runnable, dllEnable } = this.props;
-    const isRunning = currentService.get('running');
-    const type = currentService.get('type');
-    let actions;
-    let buildButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'start-build'}
-        disabled={isRunning}
-        onClick={this.handleStartBuilder}
-      >
-        <IconBuild size={22} />
-        构建
-      </button>
-    );
-    let refreshButton = (
-      <button
-        className={styles.Project__ActionBarButton}
-        key={'update'}
-        onClick={()=>{this.getInitData('refresh');}}
-      >
-        <MdAutorenew size={22} />
-          刷新
-      </button>
-    );
-    if (runnable) {
-      if (dllEnable) {
-        buildButton = (
-          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
-            { buildButton }
-            <Dropdown
-              trigger={['click']}
-              placement="bottomRight"
-              overlay={
-                <Menu>
-                  <Menu.Item>
-                    <button
-                      className={styles['Project__ActionBarButton--trigger']}
-                      key={'start-dll-build'}
-                      disabled={isRunning}
-                      onClick={this.handleStartDllBuilder}
-                    >
-                      DLL构建
-                    </button>
-                  </Menu.Item>
-                </Menu>
-              }>
-              <IconMoreVert className={styles['Project__ActionBarMore']} />
-            </Dropdown>
-          </div>
-        );
-      }
-      actions = [
+  renderServerButton(isRunning, isServer) {
+    const { currentService } = this.props;
+    let btn;
+    if (isRunning && isServer) {
+      btn = (
+        <button
+          className={styles.Project__ActionBarButton}
+          key={'stop-server'}
+          onClick={this.handleStopService}
+          data-type={'server'}
+          data-pid={currentService.get('pid')}
+        >
+          <IconStop size={22} />
+          停止服务
+        </button>
+      );
+    } else {
+      btn = (
         <div
           key="start-server"
           className={styles['Project__ActionBarGrid']}
@@ -137,37 +101,89 @@ export default class ProjectAction extends PureComponent {
           >
             <IconMoreVert className={styles['Project__ActionBarMore']} />
           </Dropdown>
-        </div>,
-        buildButton,
+        </div>
+      );
+    }
+
+    return btn;
+  }
+  renderBuildButton(isRunning, isBuilder) {
+    const { currentService, dllEnable } = this.props;
+    let btn;
+    if (isRunning && isBuilder) {
+      btn = (
+        <button
+          className={styles.Project__ActionBarButton}
+          key={'stop-builder'}
+          onClick={this.handleStopService}
+          data-type={'builder'}
+          data-pid={currentService.get('pid')}
+        >
+          <IconStop size={22} />
+          停止构建
+        </button>
+      );
+    } else {
+      btn = (
+        <button
+          className={styles.Project__ActionBarButton}
+          key={'start-build'}
+          disabled={isRunning}
+          onClick={this.handleStartBuilder}
+        >
+          <IconBuild size={22} />
+          构建
+        </button>
+      );
+      if (dllEnable) {
+        btn = (
+          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
+            { btn }
+            <Dropdown
+              trigger={['click']}
+              placement="bottomRight"
+              overlay={
+                <Menu>
+                  <Menu.Item>
+                    <button
+                      className={styles['Project__ActionBarButton--trigger']}
+                      key={'start-dll-build'}
+                      disabled={isRunning}
+                      onClick={this.handleStartDllBuilder}
+                    >
+                      DLL构建
+                    </button>
+                  </Menu.Item>
+                </Menu>
+              }>
+              <IconMoreVert className={styles['Project__ActionBarMore']} />
+            </Dropdown>
+          </div>
+        );
+      }
+    }
+    return btn;
+  }
+  render() {
+    const { currentService, runnable } = this.props;
+    const isRunning = currentService.get('running');
+    const type = currentService.get('type');
+    let actions;
+    let refreshButton = (
+      <button
+        className={styles.Project__ActionBarButton}
+        key={'update'}
+        onClick={()=>{this.getInitData('refresh');}}
+      >
+        <MdAutorenew size={22} />
+          刷新
+      </button>
+    );
+    if (runnable) {
+      actions = [
+        this.renderServerButton(isRunning, type === 'server'),
+        this.renderBuildButton(isRunning, type === 'builder'),
       ];
-      if (isRunning && type === 'server') {
-        actions.push(
-          <button
-            className={styles.Project__ActionBarButton}
-            key={'stop-server'}
-            onClick={this.handleStopService}
-            data-type={'server'}
-            data-pid={currentService.get('pid')}
-          >
-            <IconStop size={22} />
-            停止服务
-          </button>
-        );
-      }
-      if (isRunning && type === 'builder') {
-        actions.push(
-          <button
-            className={styles.Project__ActionBarButton}
-            key={'stop-builder'}
-            onClick={this.handleStopService}
-            data-type={'builder'}
-            data-pid={currentService.get('pid')}
-          >
-            <IconStop size={22} />
-            停止构建
-          </button>
-        );
-      }
       actions.push(refreshButton);
     } else {
       actions = [

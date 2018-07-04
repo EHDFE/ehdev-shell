@@ -28,11 +28,6 @@ class UploadModule extends PureComponent {
     addFile: PropTypes.func,
     delFile: PropTypes.func,
   }
-  constructor(props) {
-    super(props);
-    const { fetchFileList } = props;
-    fetchFileList();
-  }
   handleChangeListType = e => {
     this.props.setListType(e.target.value);
   }
@@ -139,15 +134,23 @@ const mapStateToProps = (state, ownProps) => createSelector(
   })
 )(state);
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  setListType: type => dispatch(actions.layout.setListType(type)),
-  fetchFileList: () => dispatch(actions.list.get()),
-  addFile: file => dispatch(actions.files.add(file)),
-  delFile: id => dispatch(actions.files.del(id)),
-  batchAddFile: file => dispatch(actions.files.batchAdd(file)),
-  batchDelFile: ids => dispatch(actions.files.batchDel(ids)),
-  upload: (id, file) => dispatch(actions.files.upload(id, file)),
-});
+let dispatched = false;
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  if (!dispatched) {
+    dispatch(actions.list.get());
+    dispatched = true;
+  }
+  return {
+    setListType: type => dispatch(actions.layout.setListType(type)),
+    fetchFileList: () => dispatch(actions.list.get()),
+    addFile: file => dispatch(actions.files.add(file)),
+    delFile: id => dispatch(actions.files.del(id)),
+    batchAddFile: file => dispatch(actions.files.batchAdd(file)),
+    batchDelFile: ids => dispatch(actions.files.batchDel(ids)),
+    upload: (id, file) => dispatch(actions.files.upload(id, file)),
+  };
+};
 
 export default connect(
   mapStateToProps,

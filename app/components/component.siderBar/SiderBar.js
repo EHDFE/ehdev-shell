@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Layout, Menu, Icon, Avatar } from 'antd';
+import { Set } from 'immutable';
 
 import styles from './index.less';
 
@@ -21,6 +22,7 @@ class SiderBar extends Component {
     navigate: PropTypes.func,
     user: PropTypes.object,
     showInfo: PropTypes.func,
+    enabledModules: PropTypes.instanceOf(Set),
   }
   state = {
     collapsed: true,
@@ -60,7 +62,8 @@ class SiderBar extends Component {
   }
   render() {
     const { collapsed } = this.state;
-    const { user, current } = this.props;
+    const { user, current, enabledModules } = this.props;
+    const ENABLED_NAVS = GLOBAL_NAV_CONFIG.filter(d => enabledModules.has(d.to) || !d.configurable);
     return (
       <Sider
         className={styles.SiderBar}
@@ -86,7 +89,7 @@ class SiderBar extends Component {
             className={styles.SiderBar__Menu}
           >
             {
-              GLOBAL_NAV_CONFIG.map(d => (
+              ENABLED_NAVS.map(d => (
                 <Item key={d.to}>
                   <Icon type={d.icon} />
                   <span>{d.text}</span>
@@ -108,6 +111,7 @@ class SiderBar extends Component {
 
 const mapStateToProps = state => ({
   user: state['page.user'],
+  enabledModules: state['page.setting'].get('enabledModules', Set()),
 });
 
 export default connect(

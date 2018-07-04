@@ -44,7 +44,6 @@ const columns = [{
   render: text => (
     <a
       href={`https://eslint.org/docs/rules/${text}`}
-      target="_blank"
     >{text}</a>
   ),
 }];

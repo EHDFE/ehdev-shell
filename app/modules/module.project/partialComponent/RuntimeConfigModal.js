@@ -85,6 +85,18 @@ class RuntimeConfigModal extends PureComponent {
             <Switch />
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="分析"
+          help="打开依赖分析"
+        >
+          {getFieldDecorator('analyzer', {
+            initialValue: false,
+            valuePropName: 'checked',
+          })(
+            <Switch />
+          )}
+        </FormItem>
       </Form>
     );
   }
@@ -95,6 +107,7 @@ class RuntimeConfigModal extends PureComponent {
       visible,
       onOk: this.handleConfirm,
       onCancel: this.handleQuit,
+      zIndex: 1031,
     };
     return (
       <Modal {...modalProps}>

@@ -12,6 +12,7 @@ const {
 } = require('../../utils/env');
 const { readJSON, getLocalIP } = require('../../utils');
 const context = require('../../context');
+const notification = require('../../provider/notification/');
 
 const serverScriptPath = path.join(APP_PATH, './child_service/server');
 const builderScriptPath = path.join(APP_PATH, './child_service/builder');
@@ -37,7 +38,14 @@ exports.startServer = async (config) => {
     args: {
       projectName: pkg.name,
     },
+  }, () => {
+    notification({
+      title: '服务已停止',
+    }).show();
   });
+  notification({
+    title: '启动开发服务',
+  }).show();
   context.getDataBase('workspace').update(
     {
       name: pkg.name,
@@ -68,9 +76,9 @@ exports.stop = async (pid) => {
 };
 
 exports.startBuilder = async (config) => {
-  const { root, configerName, isDll } = config;
+  const { root, configerName, runtimeConfig } = config;
   let command;
-  if (isDll) {
+  if (runtimeConfig.isDll) {
     command = `${nodeExecuteName} ${dllBuilderScriptPath}`;
   } else {
     command = `${nodeExecuteName} ${builderScriptPath}`;
@@ -86,11 +94,19 @@ exports.startBuilder = async (config) => {
       CONFIGER_NAME: configerName,
       NODE_ENV: 'production',
       PATH: process.env.PATH,
+      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
     },
     args: {
       projectName: pkg.name,
     },
+  }, () => {
+    notification({
+      title: '构建已停止',
+    }).show();
   });
+  notification({
+    title: '开始构建',
+  }).show();
   context.getDataBase('workspace').update(
     {
       name: pkg.name,

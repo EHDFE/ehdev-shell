@@ -3,7 +3,7 @@
  * @author ryan.bian
  */
 import { ipcRenderer } from 'electron';
-import { Icon, Spin, Tabs, Button } from 'antd';
+import { Spin, Tabs, Button } from 'antd';
 import { Map, Set } from 'immutable';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
@@ -15,7 +15,6 @@ import FolderPicker from '../../components/component.folderPicker/';
 import styles from './index.less';
 import ProjectAction from './partialComponent/Action';
 import Editor from '../../components/component.editor/';
-// import EslintResult from '../../components/component.eslint.result/';
 import Profile from './partialComponent/Profile';
 import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
 import { actions } from './store';
@@ -32,6 +31,7 @@ class ProjectModule extends PureComponent {
   static propTypes = {
     env: PropTypes.instanceOf(Map),
     pids: PropTypes.instanceOf(Set),
+    rootPath: PropTypes.string,
     currentService: PropTypes.instanceOf(Map),
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
@@ -65,11 +65,10 @@ class ProjectModule extends PureComponent {
       width: this.root.getBoundingClientRect().width,
     });
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const nextRootPath = nextProps.env.get('rootPath');
-    if (nextRootPath !== this.props.env.get('rootPath')) {
-      this.props.getEnvData(nextRootPath);
-      this.props.getPkgInfo(nextRootPath);
+  componentDidUpdate(prevProps) {
+    if (prevProps.rootPath !== this.props.rootPath) {
+      this.props.getEnvData(this.props.rootPath);
+      this.props.getPkgInfo(this.props.rootPath);
     }
   }
   componentWillUnmount() {
@@ -81,8 +80,7 @@ class ProjectModule extends PureComponent {
         loading: true
       });
     }
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { rootPath } = this.props;
     if (rootPath) {
       return Promise.all([
         this.props.getEnvData(rootPath),
@@ -104,8 +102,7 @@ class ProjectModule extends PureComponent {
     });
   }
   handleStartServer = () => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { env, rootPath } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
     this.props.startServer({
       root: rootPath,
@@ -117,31 +114,31 @@ class ProjectModule extends PureComponent {
     this.props.setActive(rootPath);
   }
   handleStartBuilder = () => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { env, rootPath } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
     this.props.startBuilder({
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
+      runtimeConfig: env.get('runtimeConfig').toJS(),
     });
     this.props.setActive(rootPath);
   }
   handleStartDllBuilder = () => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { env, rootPath } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
     this.props.startBuilder({
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
-      isDll: true,
+      runtimeConfig: Object.assign({
+        isDll: true,
+      }, env.get('runtimeConfig').toJS()),
     });
     this.props.setActive(rootPath);
   }
   handleStopService = (type, pid) => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { env, rootPath } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
     if (type === 'server') {
       this.props.stopServer(pid, false, {
@@ -179,15 +176,14 @@ class ProjectModule extends PureComponent {
     });
   }
   saveEditor = () => {
-    const { env } = this.props;
-    const rootPath = env.get('rootPath');
+    const { rootPath } = this.props;
     const content = this.editor.getValue();
     this.props.saveConfig(rootPath, content);
   }
   renderProfile() {
-    const { env } = this.props;
+    const { env, rootPath } = this.props;
     const profileProps = {
-      rootPath: env.get('rootPath'),
+      rootPath,
       isGitProject: env.getIn(['scmInfo', 'isGitProject']),
       isSvnProject: env.getIn(['scmInfo', 'isSvnProject']),
       name: env.getIn(['pkg', 'name']),
@@ -224,11 +220,11 @@ class ProjectModule extends PureComponent {
     ];
   }
   renderPackageVersions() {
-    const  { env } = this.props;
+    const  { env, rootPath } = this.props;
     const props = {
       pkgInfo: env.get('pkgInfo'),
       pkg: env.get('pkg', Map()),
-      rootPath: env.get('rootPath'),
+      rootPath,
       refresh: this.getInitData,
     };
     return <DependencyManager {...props} />;
@@ -302,7 +298,6 @@ class ProjectModule extends PureComponent {
           >
             <h3 className={styles.Project__ProjectName}>
               { env.getIn(['pkg', 'name'], '请选择项目') }
-              <Icon type="setting" className={styles.Project__ProjectNameIcon} />
             </h3>
           </FolderPicker>
           { this.renderActionBar() }
@@ -353,6 +348,7 @@ const mapStateToProps = (state) => createSelector(
     return {
       env,
       pids: service.pids,
+      rootPath,
       currentService: service.instances.get(rootPath),
     };
   },

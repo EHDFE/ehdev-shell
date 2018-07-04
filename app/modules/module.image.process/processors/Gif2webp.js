@@ -6,24 +6,30 @@ import ProcessItem from '../ProcessItem';
 
 const Option = Select.Option;
 
+export const defaultConfig = {
+  lossy: false,
+  mixed: false,
+  quality: 75,
+  method: 4,
+  minimize: false,
+  kmin: undefined,
+  kmax: undefined,
+  filter: undefined,
+  metadata: 'xmp',
+  multiThreading: false,
+};
+
 @processorHoc()
 export default class Gif2webp extends PureComponent {
   static processorName = 'gif2webp'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    lossy: false,
-    mixed: false,
-    quality: 75,
-    method: 4,
-    minimize: false,
-    kmin: undefined,
-    kmax: undefined,
-    filter: undefined,
-    metadata: 'xmp',
-    multiThreading: false,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

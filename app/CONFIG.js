@@ -8,32 +8,56 @@ export const GLOBAL_NAV_CONFIG = [
   {
     to: 'project',
     icon: 'code',
-    text: '工程',
+    text: '项目',
+    configurable: true,
+    description: '基于 webpack 提供前端工程的开发 Server 和打包服务',
   },
   {
     to: 'upload',
     icon: 'cloud-upload',
     text: '上传',
+    configurable: true,
+    description: '上传静态资源到 CDN',
   },
   {
     to: 'configer',
     icon: 'api',
     text: '引擎库',
+    configurable: true,
+    description: '管理项目的运行依赖的引擎，结合项目使用',
   },
   {
     to: 'images',
     icon: 'picture',
-    text: '图片处理'
+    text: '图像处理',
+    configurable: true,
+    description: '图像的压缩处理，支持主流的图片格式',
   },
   {
     to: 'qrcode',
     icon: 'qrcode',
-    text: '二维码'
+    text: '二维码',
+    configurable: true,
+    description: '生成二维码',
   },
+  // {
+  //   to: 'reader',
+  //   icon: 'book',
+  //   text: '阅读器',
+  //   configurable: true,
+  //   description: 'RSS 阅读器',
+  // },
   {
     to: 'user',
     icon: 'user',
     text: '个人中心',
+    configurable: false,
+  },
+  {
+    to: 'setting',
+    icon: 'setting',
+    text: '设置',
+    configurable: false,
   },
 ];
 

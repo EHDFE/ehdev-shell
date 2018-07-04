@@ -16,10 +16,11 @@ const isString = require('lodash/isString');
 
 const platform = os.platform();
 
-const mkdir = exports.mkdir = promisify(fs.mkdir);
-exports.stat = promisify(fs.stat);
-exports.readFile = promisify(fs.readFile);
-exports.writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+const stat = promisify(fs.stat);
+const mkdir = promisify(fs.mkdir);
+
 exports.glob = promisify(glob);
 
 
@@ -45,59 +46,58 @@ exports.responser = (content, successful = false) => {
  * read a JSON format file
  * @param {string} file - file path
  */
-exports.readJSON = file => new Promise((resolve, reject) => {
-  fs.readFile(file, 'utf-8', (err, data) => {
-    if (err) return reject(err);
-    try {
-      const dataObj = JSON.parse(data);
-      resolve(dataObj);
-    } catch (e) {
-      reject(e);
-    }
-  });
-});
+exports.readJSON = async file => {
+  try {
+    const data = await readFile(file, 'utf-8');
+    return JSON.parse(data);
+  } catch (e) {
+    throw e;
+  }
+};
 
 /**
  * write a JSON format file
  * @param {string} file - file path
  * @param {string} json - input json
  */
-exports.writeJSON = (file, json) => new Promise((resolve, reject) => {
-  fs.writeFile(file, json, 'utf-8', err=>{
-    if (err) {
-      return reject(err);
-    }
-    resolve(err);
-  });
-});
+exports.writeJSON = async (file, json) => {
+  try {
+    writeFile(file, json, 'utf-8');
+    return true;
+  } catch (e) {
+    throw e;
+  }
+};
 
 /**
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path
  */
-const hasDir = exports.hasDir = path => new Promise((resolve, reject) => {
-  fs.stat(path, (err, stats) => {
-    if (!err && stats.isDirectory()) {
-      resolve(true);
-    } else {
-      resolve(false);
-    }
-  });
-});
+const hasDir = exports.hasDir = async path => {
+  let isDirectory;
+  try {
+    const stats = await stat(path);
+    isDirectory = stats.isDirectory();
+  } catch (e) {
+    isDirectory = false;
+  }
+  return isDirectory;
+};
 
 /**
  * indicate whether a given path is a file
  * @param {string} string - file path
  */
-exports.hasFile = path => new Promise((resolve, reject) => {
-  fs.stat(path, (err, stats) => {
-    if (!err && stats.isFile()) {
-      resolve(true);
-    } else {
-      resolve(false);
-    }
-  });
-});
+exports.hasFile = async path => {
+  let isFile;
+  try {
+    const stats = await stat(path);
+    isFile = stats.isFile();
+  } catch (e) {
+    isFile = false;
+  }
+  return isFile;
+};
 
 /**
  * http.request
@@ -259,4 +259,4 @@ exports.findExecutable = (command, cwd, options) => {
     }
   }
   return path.join(cwd, command);
-}
+};

@@ -4,17 +4,23 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+  quality: 95,
+  memlimit: 6000,
+  nomemlimit: undefined,
+};
+
 @processorHoc('Guetzli 是一款高品质高压缩比的 JPEG 编码器，其生成的图片比接近质量的由 libjpeg 生成的图片体积小 20-30%')
 export default class Guetzli extends PureComponent {
   static processorName = 'guetzli'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    quality: 95,
-    memlimit: 6000,
-    nomemlimit: undefined,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

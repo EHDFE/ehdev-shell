@@ -3,9 +3,14 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { readJSON, writeFile, readFile, glob } = require('../../utils/');
+const fs = require('fs');
+const { promisify } = require('util');
+const { readJSON, glob } = require('../../utils/');
 const context = require('../../context');
 const scmProvider = require('../../provider/scm');
+
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 
 exports.setRoot = async rootPath => {
   const ret = {};
@@ -60,7 +65,7 @@ exports.makeRecord = async projectPath => {
       path.join(projectPath, 'package.json')
     );
   } catch (e) {
-    throw Error(e);
+    throw e;
   }
   return new Promise((resolve, reject) => {
     context.getDataBase('workspace').update(

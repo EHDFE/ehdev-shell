@@ -47,6 +47,7 @@ module.exports = {
     'gifsicle': 'gifsicle',
     'cwebp-bin': 'cwebp-bin',
     'guetzli': 'guetzli',
+    'zopflipng-bin': 'zopflipng-bin',
     'tempfile': 'tempfile',
     // eslint: {
     //   commonjs2: 'eslint',
@@ -62,4 +63,5 @@ module.exports = {
     __dirname: false,
     __filename: false,
   },
+  devtool: 'none',
 };

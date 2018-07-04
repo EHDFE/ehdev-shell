@@ -154,8 +154,8 @@ module.exports = () => {
                         },
                         useBuiltIns: 'usage',
                         modules: false,
-                        babelrc: false,
                         shippedProposals: true,
+                        debug: false,
                         // refer to: https://github.com/gaearon/react-hot-loader/issues/313
                         // include: ['transform-es2015-classes'],
                       },
@@ -215,7 +215,7 @@ module.exports = () => {
     resolve: {
       extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
     },
-    devtool: IS_DEV ? 'cheap-module-source-map' : 'source-map',
+    devtool: IS_DEV ? 'cheap-module-source-map' : 'none',
     target: 'electron-renderer',
     plugins,
     node: {

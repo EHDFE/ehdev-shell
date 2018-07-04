@@ -14,8 +14,8 @@ const {
   noticeLog,
   getLocalIP,
   ConfigerFolderPath,
+  getHttpsConfig,
 } = require('./config');
-const { getHttpsConfig } = require('./util');
 
 const { SHELL_NODE_MODULES_PATH, RUNTIME_CONFIG } = process.env;
 const AddAssetHtmlPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'add-asset-html-webpack-plugin'));
@@ -77,7 +77,6 @@ const getDevServerConfig = PROJECT_CONFIG => {
     open: true,
     useLocalIp: true,
     headers: {
-      // TODO: make it configable in Jarvis
       'Access-Control-Allow-Origin': '*',
     },
   };

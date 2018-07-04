@@ -4,19 +4,25 @@ import PropTypes from 'prop-types';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
+export const defaultConfig = {
+  '8bit': false,
+  transparent: false,
+  // iterations: 15,
+  // iterationsLarge: 5,
+  more: false,
+};
+
 @processorHoc()
 export default class Zopfli extends PureComponent {
   static processorName = 'zopfli'
   static propTypes = {
     form: PropTypes.object,
+    config: PropTypes.object,
   }
-  state = {
-    '8bit': false,
-    transparent: false,
-    // iterations: 15,
-    // iterationsLarge: 5,
-    more: false,
+  static getDerivedStateFromProps(props, state) {
+    return Object.assign(state, props.config);
   }
+  state = defaultConfig
   render() {
     // <ProcessItem
     //   label={'迭代次数'}

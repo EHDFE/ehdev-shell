@@ -1,3 +1,5 @@
+@import '../../theme/index.less';
+
 .ImageProcess {
   height: 100%;
   &__Row {
@@ -22,6 +24,43 @@
     flex: 1 0 auto;
     background: rgb(245, 245, 245);
     box-shadow: inset 0 0 4px 0px rgba(0, 0, 0, 0.4);
+  }
+  &__PreviewCtrl {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &--name {
+      flex: 1;
+      margin-bottom: 0;
+      height: 24px;
+      text-align: center;
+      word-wrap: break-word;
+      font-weight: 400;
+      font-size: 13px;
+      text-align: center;
+      line-height: 21px;
+    }
+    &--button {
+      background: none;
+      border: 0 none;
+      cursor: pointer;
+      &:hover {
+        color: @primary-color;
+      }
+      &:focus {
+        outline: 0 none;
+      }
+    }
+    &--backward {
+
+    }
+    &--forward {
+
+    }
+    &--hide {
+      display: none;
+    }
   }
   &__EditorView {
     display: flex;
@@ -51,12 +90,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-  &__ImageName {
-    text-align: center;
-    word-wrap: break-word;
-    font-weight: 400;
-    font-size: 13px;
   }
   &__PreviewWrap {
     position: relative;
@@ -124,7 +157,7 @@
   &__PreviewAction {
     display: flex;
     justify-content: center;
-    button {
+    > button {
       flex: 1;
       &:nth-child(2) {
         margin-left: 10px;
@@ -142,16 +175,95 @@
   }
 }
 
-.ProcessItem__Label {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  s {
-    white-space: normal;
-    line-height: 1.5;
-    text-decoration: none;
+.ProcessItem {
+  &--horizontal {
+    .ProcessItem__Label {
+      padding-top: 8px;
+      flex-direction: column;
+      i {
+        white-space: normal;
+        text-align: left;
+      }
+    }
+    :global(.ant-form-item-label) {
+      line-height: 2;
+      label {
+        &:after {
+          display: none;
+        }
+      }
+    }
   }
-  &Tooltip {
-    font-size: 12px;
+  &__Label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    s {
+      white-space: normal;
+      line-height: 1.5;
+      text-decoration: none;
+    }
+    &Tooltip {
+      font-size: 12px;
+    }
+  }
+}
+
+.ProcessModal {
+  &__List {
+
+  }
+
+  &__ListItem {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    &--inedit {
+      border: 1px dashed rgba(24, 144, 255, 0.5);
+    }
+
+    &--image {
+      flex: 0 0 64px;
+      margin-right: 10px;
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      background-color: #f5f5f5;
+    }
+    &--desc {
+      width: calc(100% - 74px);
+    }
+    &--name, &--meta {
+      margin: 0;
+    }
+    &--name {
+      margin-bottom: 4px;
+      color: #333;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &--meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #999;
+    }
+
+    &--editor {
+      padding: 20px;
+      width: 100%;
+      background-color: #fefefe;
+      box-sizing: border-box;
+    }
+  }
+
+  &__Ctrl {
+    display: flex;
+    margin-top: 20px;
+    justify-content: flex-end;
   }
 }

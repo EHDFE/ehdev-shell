@@ -8,6 +8,10 @@ const readdir = promisify(fs.readdir);
 const writeFile = promisify(fs.writeFile);
 
 export default class FileManager {
+  async isDirectory(path) {
+    const stats = await stat(path);
+    return stats.isDirectory();
+  }
   async resolveFiles(pathList) {
     const files = [];
     for (const path of pathList) {

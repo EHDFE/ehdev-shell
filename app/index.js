@@ -10,6 +10,13 @@ import reporter from './utils/reporter';
 
 const { store, persistor } = configureStore();
 
+document.addEventListener('dragover', e => {
+  e.preventDefault();
+});
+document.addEventListener('drop', e => {
+  e.preventDefault();
+});
+
 window.addEventListener('click', e => {
   if (e.target.tagName.toLowerCase() === 'a' &&
     e.target.getAttribute('target') === '_blank') {

@@ -42,20 +42,25 @@ const App = () => (
   <ErrorBoundary>
     <Controller>
       <LocationProvider history={history}>
-        <Router>
-          <LayoutModule path="/">
-            <DashboardModule default />
-            <UploadModule path="upload" />
-            <ProjectModule path="project" />
-            <ConfigerModule path="configer" />
-            <QrCodeModule path="qrcode" />
-            <ImageProcessModule path="images" />
-            <UserModule path="user" />
-            <SettingModule path="setting" />
+        { ({ navigate, location }) => (
+          <LayoutModule
+            navigate={navigate}
+            location={location}
+          >
+            <Router basepath="/" location={location}>
+              <DashboardModule path="/" default />
+              <UploadModule path="/upload" />
+              <ProjectModule path="/project" />
+              <ConfigerModule path="/configer" />
+              <QrCodeModule path="/qrcode" />
+              <ImageProcessModule path="/images" />
+              <UserModule path="/user" />
+              <SettingModule path="/setting" />
+            </Router>
           </LayoutModule>
-        </Router>
-        <CommandPalette />
+        )}
       </LocationProvider>
+      <CommandPalette />
     </Controller>
   </ErrorBoundary>
 );

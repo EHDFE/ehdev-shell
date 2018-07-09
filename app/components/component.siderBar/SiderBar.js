@@ -19,9 +19,9 @@ class SiderBar extends Component {
   static __ANT_LAYOUT_SIDER = true
   static propTypes = {
     current: PropTypes.string,
-    navigate: PropTypes.func,
     user: PropTypes.object,
     showInfo: PropTypes.func,
+    navigate: PropTypes.func,
     enabledModules: PropTypes.instanceOf(Set),
   }
   state = {

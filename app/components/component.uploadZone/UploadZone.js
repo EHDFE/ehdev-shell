@@ -6,20 +6,41 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import MdCloudUpload from 'react-icons/lib/md/cloud-upload';
 import { notification } from 'antd';
+import { remote } from 'electron';
+import fm from '../../service/fileManager/';
 
 import styles from './index.less';
 
+const { dialog } = remote;
+
+const ACCEPT_FILE_TYPES = new Map([
+  ['image', ['png', 'gif', 'webp', 'jpg', 'bmp', 'svg']],
+  ['video', ['mkv', 'avi', 'flv', 'mp4', 'webm', 'svg']],
+  ['all', ['*']],
+]);
+
 export default class UploadZone extends Component {
   static defaultProps = {
+    height: 140,
     // 允许的上传类型
-    accept: 'image/',
+    accept: 'image',
     onChange() {},
     multiple: true,
   }
   static propTypes = {
-    accept: PropTypes.string,
+    height: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    accept: PropTypes.oneOf([...ACCEPT_FILE_TYPES.keys()]),
     onChange: PropTypes.func,
     multiple: PropTypes.bool,
+  }
+  static getAcceptExts(accept) {
+    if (ACCEPT_FILE_TYPES.has(accept)) {
+      return ACCEPT_FILE_TYPES.get(accept);
+    }
+    return ACCEPT_FILE_TYPES.get('all');
   }
   state = {
     dragIsOver: false,
@@ -29,6 +50,36 @@ export default class UploadZone extends Component {
   }
   componentWillUnmount() {
     window.removeEventListener('paste', this.handlePaste, false);
+  }
+  handleClickUpload = () => {
+    const { accept, multiple } = this.props;
+    const properties = [
+      'openFile',
+    ];
+    const extensions = UploadZone.getAcceptExts(accept);
+    const filter = { name: accept, extensions };
+    if (multiple) {
+      properties.push(
+        'openDirectory',
+        'multiSelections',
+      );
+    }
+    dialog.showOpenDialog({
+      filters: [
+        filter,
+      ],
+      properties,
+    }, filePaths => {
+      if (filePaths) {
+        fm.resolveFiles(filePaths)
+          .then(files => {
+            const validFiles = this.validate(files);
+            if (validFiles.length > 0) {
+              this.onAddFiles(validFiles);
+            }
+          });
+      }
+    });
   }
   handleDragEnter = e => {
     e.preventDefault();
@@ -41,22 +92,32 @@ export default class UploadZone extends Component {
   }
   handleDragLeave = e => {
     e.preventDefault();
+    if (this.root.contains(e.relatedTarget)) return;
     this.setState({
       dragIsOver: false,
     });
   }
-  handleDrop = e => {
+  handleDrop = async e => {
     e.preventDefault();
     const { files } = e.dataTransfer;
     this.setState({
       dragIsOver: false,
     });
-    if (!this.validate(files)) return;
-    this.onAddFiles(e.dataTransfer.files);
-  }
-  handleChangeFiles = ({ nativeEvent }) => {
-    if (!this.validate(nativeEvent.target.files)) return;
-    this.onAddFiles(nativeEvent.target.files);
+    const directories = [];
+    const fileList = [];
+    for (const file of files) {
+      if (fm.isDirectory(file.path)) {
+        directories.push(file.path);
+      } else {
+        fileList.push(file);
+      }
+    }
+    const fileFromDirectory = await fm.resolveFiles(directories);
+    fileList.push(...fileFromDirectory);
+    const validFiles = this.validate(fileList);
+    if (validFiles.length > 0) {
+      this.onAddFiles(validFiles);
+    }
   }
   handlePaste = ({ clipboardData }) => {
     if (clipboardData && clipboardData.files) {
@@ -70,20 +131,30 @@ export default class UploadZone extends Component {
   validate(files) {
     const { accept } = this.props;
     if (files.length === 0) return false;
-    const isFileTypeValid = !Array.from(files).some(file => !file.type.startsWith(accept));
-    if (!isFileTypeValid) {
-      notification.error({
+    const extensions = UploadZone.getAcceptExts(accept);
+    const validFiles = [];
+    const invalidFiles = [];
+    Array.from(files).forEach(file => {
+      if (extensions.includes(file.name.split('.').pop())) {
+        validFiles.push(file);
+      } else {
+        invalidFiles.push(file);
+      }
+    });
+    if (invalidFiles.length > 0) {
+      notification.warn({
         message: '不支持的文件类型',
+        description: invalidFiles.map(file => <p key={file.path}>{file.name}</p>),
       });
-      return false;
     }
-    return true;
+    return validFiles;
   }
   render() {
-    const { accept, multiple } = this.props;
+    const { height } = this.props;
     const { dragIsOver } = this.state;
     return (
       <div
+        ref={node => this.root = node}
         className={classnames(styles.UploadZone__wrapper, {
           [styles['UploadZone__wrapper--active']]: dragIsOver,
         })}
@@ -92,23 +163,16 @@ export default class UploadZone extends Component {
         onDragLeave={this.handleDragLeave}
         onDrop={this.handleDrop}
       >
-        <input
-          type="file"
-          id="fileInput"
-          accept={accept}
-          multiple={multiple}
-          onChange={this.handleChangeFiles}
-          style={{
-            display: 'none',
-          }}
-        />
-        <label
-          htmlFor="fileInput"
+        <button
           className={styles.UploadZone__trigger}
+          onClick={this.handleClickUpload}
+          style={{
+            height,
+          }}
         >
           <MdCloudUpload size={42} />
           <p>点击或拖拽上传 支持⌘(⌃) + V</p>
-        </label>
+        </button>
       </div>
     );
   }

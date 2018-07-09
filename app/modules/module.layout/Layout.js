@@ -6,6 +6,7 @@ import { shell } from 'electron';
 import { Layout, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import classnames from 'classnames';
 import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
@@ -73,7 +74,7 @@ class LayoutModule extends Component {
     );
   }
   render() {
-    const { navigate, location, children } = this.props;
+    const { location, navigate, children } = this.props;
     const layoutProps = {
       padding: 0,
       hasContent: true,
@@ -99,7 +100,9 @@ class LayoutModule extends Component {
         <LayoutComponent key="layout" {...layoutProps}>
           {children}
         </LayoutComponent>
-        <ConsoleModule />
+        <ConsoleModule className={classnames(styles['Layout__Console'], {
+          [styles['Layout__Console--visible']]: pageInfo && (pageInfo.to === 'project'),
+        })} />
         { this.renderInfo() }
       </Layout>
     );

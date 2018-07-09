@@ -21,6 +21,7 @@ const confirm = Modal.confirm;
 
 class ConsoleModule extends PureComponent {
   static propTypes = {
+    className: PropTypes.string,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     currentTerminalId: PropTypes.string,
@@ -170,7 +171,7 @@ class ConsoleModule extends PureComponent {
   }
 
   render() {
-    const { width, height, visible, toggleVisible } = this.props;
+    const { className, width, height, visible, toggleVisible } = this.props;
     const resizableProps = {
       size: {
         width,
@@ -195,7 +196,7 @@ class ConsoleModule extends PureComponent {
       }),
     };
     return (
-      <div className={styles.ConsoleModule}>
+      <div className={classnames(className, styles.ConsoleModule)}>
         <Button
           type="primary"
           icon="code"
@@ -246,4 +247,7 @@ const mapDispatchToProps = dispatch => ({
   stopBuilder: (...args) => dispatch(projectActions.service.stopBuilder(...args)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConsoleModule);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConsoleModule);

@@ -19,6 +19,7 @@ export default class File {
       type,
       path,
       size: stats.size,
+      lastModified: stats.mtime,
     });
   }
   constructor(config) {
@@ -26,5 +27,6 @@ export default class File {
     this.type = config.type;
     this.path = config.path;
     this.size = config.size;
+    this.lastModified = config.lastModified;
   }
 }

@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import filesize from 'filesize';
-import { Button, Dropdown, Icon, Menu } from 'antd';
+import { Button, Dropdown, Icon, Menu, Tag } from 'antd';
 
 import styles from './index.less';
 
@@ -22,6 +22,24 @@ export default class Preview extends PureComponent {
     indicatorLeft: 0,
     indicatorVisible: false,
   };
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyboardNav, false);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyboardNav, false);
+  }
+  handleKeyboardNav = e => {
+    switch (e.keyCode) {
+    case 37:
+      // right
+      this.props.onNext();
+      break;
+    case 39:
+      // left
+      this.props.onPrev();
+      break;
+    }
+  }
   showIndicator = () => {
     this.setState({
       indicatorVisible: true,
@@ -203,21 +221,27 @@ export default class Preview extends PureComponent {
               )
             }
           />
-          <span className={classnames(
-            styles.ImageProcess__PreviewLabel,
-            styles['ImageProcess__PreviewLabel--original'],
-          )}>
+          <Tag
+            className={classnames(
+              styles.ImageProcess__PreviewLabel,
+              styles['ImageProcess__PreviewLabel--original'],
+            )}
+            color="red"
+          >
             处理前: {filesize(originalImage.get('size', 0), { base: 10 })}
-          </span>
-          <span className={classnames(
-            styles.ImageProcess__PreviewLabel,
-            styles['ImageProcess__PreviewLabel--processed'],
-            {
-              [styles['ImageProcess__PreviewLabel--hide']]: !hasPreview,
-            },
-          )}>
+          </Tag>
+          <Tag
+            className={classnames(
+              styles.ImageProcess__PreviewLabel,
+              styles['ImageProcess__PreviewLabel--processed'],
+              {
+                [styles['ImageProcess__PreviewLabel--hide']]: !hasPreview,
+              },
+            )}
+            color="green"
+          >
           处理后: {filesize(processedImage.get('size', 0), { base: 10 })}
-          </span>
+          </Tag>
           <button
             className={styles.ImageProcess__RemovePreviewBtn}
             type="button"

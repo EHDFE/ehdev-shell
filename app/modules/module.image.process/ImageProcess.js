@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { Button, notification, Icon, Menu, Dropdown } from 'antd';
+import { notification, Icon, Menu, Dropdown } from 'antd';
 import { remote } from 'electron';
 import moment from 'moment';
 import UploadZone from '../../components/component.uploadZone/';
@@ -51,28 +51,6 @@ class ImageProcess extends PureComponent {
         this.props.addFile(file);
       }
     }
-  }
-  handleMultipleImport = () => {
-    dialog.showOpenDialog({
-      filters: [{
-        name: 'Images',
-        extensions: ['png', 'jpg', 'gif', 'webp'],
-      }],
-      properties: [
-        'openFile',
-        'openDirectory',
-        'multiSelections',
-      ],
-    }, filePaths => {
-      if (filePaths) {
-        fm.resolveFiles(filePaths)
-          .then(files => {
-            this.props.addFile(
-              files.filter(d => d.type.startsWith(ACCEPT_FILE_TYPE))
-            );
-          });
-      }
-    });
   }
   handleProcess = async () => {
     const { processors, setStatus, beforeMinify, minify } = this.props;
@@ -233,7 +211,7 @@ class ImageProcess extends PureComponent {
         >
           <div className={styles.ImageProcess__ProcessorTitle}>
             <h3>{processor}</h3>
-            <Icon type="ellipsis" />
+            <Icon type="setting" />
           </div>
         </Dropdown>
         <Processor
@@ -251,17 +229,10 @@ class ImageProcess extends PureComponent {
     return (
       <div className={styles.ImageProcess__FilePickerZone}>
         <UploadZone
+          height={'calc(100vh - 110px)'}
           onChange={this.handleChangeImage}
-          multiple={false}
+          multiple
         />
-        <div className={styles.ImageProcess__FilePickerText}>
-          或者
-        </div>
-        <Button
-          size="large"
-          className={styles.ImageProcess__FilePickerButton}
-          onClick={this.handleMultipleImport}
-        >批量导入</Button>
       </div>
     );
   }

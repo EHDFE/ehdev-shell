@@ -40,14 +40,21 @@ class UploadModule extends PureComponent {
         file,
       };
       if (file.type.startsWith('image/')) {
-        const fd = new FileReader();
-        fd.onload = e => {
+        if (file.path) {
           Object.assign(fileObj, {
-            url: e.target.result,
+            url: `file:${file.path}`,
           });
           this.props.addFile(fileObj);
-        };
-        fd.readAsDataURL(file);
+        } else {
+          const fd = new FileReader();
+          fd.onload = e => {
+            Object.assign(fileObj, {
+              url: e.target.result,
+            });
+            this.props.addFile(fileObj);
+          };
+          fd.readAsDataURL(file);
+        }
       } else {
         this.props.addFile(fileObj);
       }
@@ -77,7 +84,7 @@ class UploadModule extends PureComponent {
           <Col span={24}>
             <UploadZone
               onChange={this.handleFilesChange}
-              accept={''}
+              accept={'all'}
             />
           </Col>
         </Row>

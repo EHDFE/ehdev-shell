@@ -8,7 +8,7 @@ const configer = require('./models/configer/index');
 const common = require('./models/common/index');
 const uploadList = require('./models/upload/list');
 const dashboard = require('./models/dashboard/index');
-const imagemin = require('./models/tools/imagemin');
+const image = require('./models/tools/image');
 const reader = require('./models/reader/');
 
 const providers = require('./provider');
@@ -34,7 +34,7 @@ const apiService = {
   },
   dashboard,
   providers,
-  imagemin,
+  image,
   serviceStore,
   reader,
 };

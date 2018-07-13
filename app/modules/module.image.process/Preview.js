@@ -154,7 +154,7 @@ export default class Preview extends PureComponent {
                   },
                 )}
               >
-                <Media data={map.get('originalImage')} />
+                <Media data={map.get('originalImage')} useThumb />
                 { (map.get('status') === PROCESSED) && <Icon type="check-circle" /> }
               </figure>
             )).valueSeq().toArray()
@@ -165,6 +165,7 @@ export default class Preview extends PureComponent {
           height={62}
           onChange={insertImage}
           multiple
+          accept={['image', 'video']}
           content={<Icon type="plus" />}
         />
       </div>

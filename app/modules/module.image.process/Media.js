@@ -1,11 +1,17 @@
-export default ({ data, ...otherProps }) => {
+export default ({ data, useThumb, ...otherProps }) => {
   const type = data.get('type', '');
-  const url = data.get('url');
   let media;
+  let url;
+  if (useThumb) {
+    url = data.get('thumbUrl');
+  } else {
+    url = data.get('url');
+  }
+  const id = data.get('path');
   if (type.startsWith('video/')) {
     media = (
       <video
-        key={url}
+        key={id}
         autoPlay
         loop
         muted
@@ -16,7 +22,7 @@ export default ({ data, ...otherProps }) => {
       </video>
     );
   } else {
-    media = <img key={url} src={url} alt="" {...otherProps} />;
+    media = <img key={id} src={url} alt="" {...otherProps} />;
   }
 
   return media;

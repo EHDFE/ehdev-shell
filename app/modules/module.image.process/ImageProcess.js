@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { notification, Icon, Menu, Dropdown } from 'antd';
+import { notification, Icon, Menu, Dropdown, Spin } from 'antd';
 import { remote } from 'electron';
 import moment from 'moment';
 import UploadZone from '../../components/component.uploadZone/';
@@ -19,6 +19,8 @@ const { dialog } = remote;
 
 class ImageProcess extends PureComponent {
   static propTypes = {
+    pending: PropTypes.bool,
+    beforeAddFile: PropTypes.func,
     addFile: PropTypes.func,
     removeFile: PropTypes.func,
     minify: PropTypes.func,
@@ -46,9 +48,8 @@ class ImageProcess extends PureComponent {
     batchProcessModalVisible: false,
   }
   handleChangeImage = files => {
-    for (const file of files) {
-      this.props.addFile(file);
-    }
+    this.props.beforeAddFile();
+    this.props.addFile(files);
   }
   getCompareScore(currentImage) {
     const { images, getSsimScore } = this.props;
@@ -224,7 +225,7 @@ class ImageProcess extends PureComponent {
     );
   }
   render() {
-    const { images } = this.props;
+    const { images, pending } = this.props;
     const { currentImage, batchProcessModalVisible } = this.state;
     const inProgress = images.getIn([currentImage, 'status']) === IN_PROGRESS;
     let content;
@@ -261,9 +262,11 @@ class ImageProcess extends PureComponent {
     }
     return (
       <section className={styles.ImageProcess}>
-        <div className={styles.ImageProcess__Row}>
-          { content }
-        </div>
+        <Spin spinning={pending} tip={'导入中，请稍后！'}>
+          <div className={styles.ImageProcess__Row}>
+            { content }
+          </div>
+        </Spin>
       </section>
     );
   }
@@ -279,11 +282,13 @@ const mapStateToProps = (state) => createSelector(
       images,
       imageList: Object.keys(images.toObject()),
       processors,
+      pending: pageState.get('pending', false),
     };
   },
 );
 
 const mapDispatchToProps = dispatch => ({
+  beforeAddFile: () => dispatch(actions.beforeAdd()),
   addFile: files => dispatch(actions.add(files)),
   removeFile: filePath => dispatch(actions.remove(filePath)),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),

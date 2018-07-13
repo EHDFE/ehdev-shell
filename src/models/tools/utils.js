@@ -1,5 +1,5 @@
 const { execFile } = require('child_process');
-const { platform, arch } = require('os');
+const { platform } = require('os');
 const fs = require('fs');
 const path = require('path');
 const { app } = require('electron');
@@ -8,6 +8,8 @@ const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
 
 const appPath = app.getAppPath();
+
+exports.readFile = readFile;
 
 exports.getBinaryPath = (binary, tool_name) => {
   let binaryPath = [appPath, 'vendor'];

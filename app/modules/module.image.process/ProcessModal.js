@@ -130,6 +130,7 @@ class ProcessModal extends PureComponent {
           <Media
             className={styles['ProcessModal__ListItem--image']}
             data={data.get('originalImage')}
+            useThumb
           />
           <div className={styles['ProcessModal__ListItem--desc']}>
             <Progress percent={percent} />

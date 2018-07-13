@@ -26,15 +26,11 @@ module.exports = () => {
   ] = [
     {
       loader: 'css-loader',
-      options: {
-        minimize: !IS_DEV,
-      },
     },
     {
       loader: 'css-loader',
       options: {
         modules: true,
-        minimize: !IS_DEV,
         localIdentName: !IS_DEV ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:3]',
       },
     },
@@ -239,7 +235,7 @@ module.exports = () => {
     Object.assign(ret, {
       serve: {
         port,
-        dev: {
+        devMiddleware: {
           publicPath: '/',
           watchOptions: {
             aggregateTimeout: 300,
@@ -247,7 +243,7 @@ module.exports = () => {
             poll: 100
           },
         },
-        hot: {
+        hotClient: {
           allEntries: true,
           autoConfigure: true,
           hot: true,

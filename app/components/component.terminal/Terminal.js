@@ -103,7 +103,7 @@ export default class TerminalComponent extends PureComponent {
   fit(terminal, needMeasure) {
     if (this.props.active) {
       setTimeout(() => {
-        needMeasure && terminal.charMeasure.measure(terminal.options);
+        // needMeasure && terminal.charMeasure.measure(terminal.options);
         terminal.fit();
       }, 500);
     }

@@ -13,45 +13,104 @@
     flex: 1;
   }
   &__PreviewView {
+    position: relative;
     padding: 10px;
-    flex: 1 0 ~"calc(100% - 320px)";
+    flex: 0 0 ~"calc(100% - 320px)";
+    width: ~"calc(100% - 320px)";
     box-shadow: inset 0 0 4px 0px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
   }
   &__PreviewCtrl {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 
-    &--name {
-      flex: 1;
-      margin-bottom: 0;
-      height: 26px;
-      text-align: center;
-      word-wrap: break-word;
-      font-weight: 400;
-      font-size: 13px;
-      text-align: center;
-      line-height: 24px;
+    &--list {
+      margin-bottom: 8px;
+      width: ~"calc(100% - 76px)";
+      height: 64px;
     }
-    &--button {
-      background: none;
+
+    &--item {
+      position: relative;
+      margin: 0 5px;
+      height: 64px;
+      > img, > video {
+        // width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: grayscale(100%);
+      }
+      > i {
+        position: absolute;
+        right: 14px;
+        bottom: 4px;
+        color: @success-color;
+      }
+    }
+    &--active {
+      & img, & video {
+        filter: none;
+      }
+    }
+    &--insert {
+      width: 68px;
+    }
+  }
+  &__PreviewInfo {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 2px;
+    z-index: 2;
+    transform: translateY(-100%);
+    transition: transform ease-in-out 0.5s;
+
+    &--slideDown {
+      transform: translateY(0);
+
+      .ImageProcess__PreviewInfoTrigger {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    &Trigger {
+      position: absolute;
+      left: ~"calc(50% - 12px)";
+      bottom: -20px;
+      padding: 0;
+      width: 24px;
+      height: 20px;
+      background-color: rgba(255, 255, 255, 1);
+      backdrop-filter: blur(8px);
       border: 0 none;
+      font-size: 16px;
+      border-radius: 0 0 12px 12px;
+      outline: 0 none;
       cursor: pointer;
-      &:hover {
-        color: @primary-color;
-      }
-      &:focus {
-        outline: 0 none;
-      }
+      transition: background-color ease-in-out 0.5s;
+      line-height: 20px;
     }
-    &--backward {
 
+    &--list {
+      margin: 0;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      list-style: none;
     }
-    &--forward {
-
-    }
-    &--hide {
-      display: none;
+    &--item {
+      display: flex;
+      b {
+        margin-right: 8px;
+        flex: 0 0 42px;
+        width: 42px;
+        white-space: nowrap;
+        text-align-last: justify;
+      }
+      span {
+        word-break: break-all;
+      }
     }
   }
   &__EditorView {
@@ -98,12 +157,18 @@
   &__PreviewLabel {
     position: absolute;
     top: 4px;
+    z-index: 1;
     &--original {
       left: 0.5em;
     }
     &--processed {
       margin-right: 0;
       right: 0.5em;
+    }
+    &--score {
+      margin-right: 0;
+      right: 0.5em;
+      top: 30px;
     }
     &--hide {
       display: none;
@@ -129,20 +194,6 @@
     // &--processed {
     // }
   }
-  &__RemovePreviewBtn {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    border: 0 none;
-    color: #fff;
-    cursor: pointer;
-    transition: background ease-in-out 0.5s;
-    outline: 0 none;
-    &:hover {
-      background: rgba(0, 0, 0, 0.3);
-    }
-  }
   &__PreviewIndicator {
     position: absolute;
     width: 2px;
@@ -155,7 +206,7 @@
   }
   &__PreviewAction {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     > button {
       flex: 1;
       &:nth-child(2) {

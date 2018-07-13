@@ -17,7 +17,7 @@ export const PROCESSED = 'PROCESSED';
 
 export const actions = createActions({
   ADD: files => files,
-  REMOVE: filePath => filePath,
+  REMOVE: filePaths => filePaths,
   BEFORE_MINIFY: ids => ids,
   MINIFY: async (input, plugin, options) => {
     let result;
@@ -43,6 +43,17 @@ export const actions = createActions({
     id,
     config,
   }),
+  GET_SSIM_SCORE: async (input1, input2) => {
+    try {
+      const result = await IMAGE_MIN_API.getSSIMScore(input1, input2);
+      return {
+        id: input1,
+        score: result,
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
 });
 
 const imageProcessReducer = handleActions({
@@ -51,7 +62,10 @@ const imageProcessReducer = handleActions({
     return state
       .update('images', images => images.withMutations(map => {
         files.forEach(file => {
-          const dimensions = sizeOf(file.path);
+          let dimensions;
+          if (file.type.startsWith('image/')) {
+            dimensions = sizeOf(file.path);
+          }
           map.set(file.path, Map({
             originalImage: Map({
               name: file.name,
@@ -59,7 +73,7 @@ const imageProcessReducer = handleActions({
               url: `file://${file.path}`,
               size: file.size,
               type: file.type,
-              dimensions: Map({
+              dimensions: dimensions && Map({
                 width: dimensions.width,
                 height: dimensions.height,
               }),
@@ -81,9 +95,15 @@ const imageProcessReducer = handleActions({
       }));
   },
   REMOVE: (state, { payload }) => {
+    let filePaths;
+    if (Array.isArray(payload)) {
+      filePaths = payload;
+    } else {
+      filePaths = [ payload ];
+    }
     return state
-      .deleteIn(['images', payload])
-      .deleteIn(['processors', payload]);
+      .update('images', map => map.deleteAll(filePaths))
+      .update('processors', map => map.deleteAll(filePaths));
   },
   CHANGE_PROCESSOR: (state, { payload }) => {
     const { id, processor } = payload;
@@ -144,7 +164,12 @@ const imageProcessReducer = handleActions({
   SET_STATUS(state, { payload }) {
     const { id, status } = payload;
     return state.setIn(['images', id, 'status'], status);
-  }
+  },
+  GET_SSIM_SCORE(state, { error, payload }) {
+    if (error) return state;
+    const { id, score } = payload;
+    return state.setIn(['images', id, 'processedImage', 'SSIM'], score);
+  },
 }, defaultState);
 
 export default imageProcessReducer;

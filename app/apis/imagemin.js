@@ -9,9 +9,9 @@ const IMAGE_MIN_API = {
       throw e;
     }
   },
-  processBuffer: async (buffer) => {
+  getSSIMScore: async (input1, input2) => {
     try {
-      const res = await remoteAPI.imagemin.processBuffer(buffer);
+      const res = await remoteAPI.imagemin.getSSIMScore(input1, input2);
       return res;
     } catch (e) {
       throw e;

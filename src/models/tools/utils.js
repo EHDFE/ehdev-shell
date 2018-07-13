@@ -9,21 +9,25 @@ const readFile = promisify(fs.readFile);
 
 const appPath = app.getAppPath();
 
-exports.getBinaryPath = (binary) => {
-  let binaryPath = [appPath, 'vendor', binary];
+exports.getBinaryPath = (binary, tool_name) => {
+  let binaryPath = [appPath, 'vendor'];
   switch (platform()) {
   case 'darwin':
-    binaryPath.push('macos');
+    binaryPath.push('mac');
     break;
   case 'win32':
     binaryPath.push('win');
-    binaryPath.push(arch());
     break;
   default:
     binaryPath.push('linux');
     break;
   }
   binaryPath.push(binary);
+  if (tool_name) {
+    binaryPath.push(tool_name);
+  } else {
+    binaryPath.push(binary);
+  }
   return path.resolve(...binaryPath);
 };
 

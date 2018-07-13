@@ -1,7 +1,7 @@
 /**
  * Upload Zone Component
  */
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import MdCloudUpload from 'react-icons/lib/md/cloud-upload';
@@ -15,26 +15,33 @@ const { dialog } = remote;
 
 const ACCEPT_FILE_TYPES = new Map([
   ['image', ['png', 'gif', 'webp', 'jpg', 'bmp', 'svg']],
-  ['video', ['mkv', 'avi', 'flv', 'mp4', 'webm', 'svg']],
+  ['video', ['mkv', 'avi', 'flv', 'mp4', 'webm']],
   ['all', ['*']],
 ]);
 
 export default class UploadZone extends Component {
   static defaultProps = {
+    className: '',
     height: 140,
     // 允许的上传类型
     accept: 'image',
     onChange() {},
     multiple: true,
+    content: undefined,
   }
   static propTypes = {
+    className: PropTypes.string,
     height: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]),
-    accept: PropTypes.oneOf([...ACCEPT_FILE_TYPES.keys()]),
+    accept: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.oneOf([...ACCEPT_FILE_TYPES.keys()]),
+    ]),
     onChange: PropTypes.func,
     multiple: PropTypes.bool,
+    content: PropTypes.element,
   }
   static getAcceptExts(accept) {
     if (ACCEPT_FILE_TYPES.has(accept)) {
@@ -56,8 +63,11 @@ export default class UploadZone extends Component {
     const properties = [
       'openFile',
     ];
-    const extensions = UploadZone.getAcceptExts(accept);
-    const filter = { name: accept, extensions };
+    const acceptList = Array.isArray(accept) ? accept : [ accept ];
+    const filters = acceptList.map(accept => ({
+      name: accept,
+      extensions: UploadZone.getAcceptExts(accept),
+    }));
     if (multiple) {
       properties.push(
         'openDirectory',
@@ -65,9 +75,7 @@ export default class UploadZone extends Component {
       );
     }
     dialog.showOpenDialog({
-      filters: [
-        filter,
-      ],
+      filters,
       properties,
     }, filePaths => {
       if (filePaths) {
@@ -131,7 +139,11 @@ export default class UploadZone extends Component {
   validate(files) {
     const { accept } = this.props;
     if (files.length === 0) return false;
-    const extensions = UploadZone.getAcceptExts(accept);
+    if (accept === 'all') return files;
+    const acceptList = Array.isArray(accept) ? accept : [ accept ];
+    const extensions = acceptList.reduce((prev, accept) => {
+      return prev.concat(UploadZone.getAcceptExts(accept));
+    }, []);
     const validFiles = [];
     const invalidFiles = [];
     Array.from(files).forEach(file => {
@@ -150,12 +162,23 @@ export default class UploadZone extends Component {
     return validFiles;
   }
   render() {
-    const { height } = this.props;
+    const { className, height, content } = this.props;
     const { dragIsOver } = this.state;
+    let buttonContent;
+    if (content) {
+      buttonContent = content;
+    } else {
+      buttonContent = (
+        <Fragment>
+          <MdCloudUpload size={42} />
+          <p>点击或拖拽上传 支持⌘(⌃) + V</p>
+        </Fragment>
+      );
+    }
     return (
       <div
         ref={node => this.root = node}
-        className={classnames(styles.UploadZone__wrapper, {
+        className={classnames(className, styles.UploadZone__wrapper, {
           [styles['UploadZone__wrapper--active']]: dragIsOver,
         })}
         onDragEnter={this.handleDragEnter}
@@ -169,10 +192,7 @@ export default class UploadZone extends Component {
           style={{
             height,
           }}
-        >
-          <MdCloudUpload size={42} />
-          <p>点击或拖拽上传 支持⌘(⌃) + V</p>
-        </button>
+        >{buttonContent}</button>
       </div>
     );
   }

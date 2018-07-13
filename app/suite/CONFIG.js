@@ -18,6 +18,8 @@ const CONFIG = {
     transparent: isMac,
     webPreferences: {
       webSecurity: false,
+      experimentalFeatures: true,
+      experimentalCanvasFeatures: true,
     },
   },
 };

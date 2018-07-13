@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Transition from 'react-transition-group/Transition';
 import { getProcessorComponent } from './processorExport';
 import { actions, IN_PROGRESS, PROCESSED } from './store';
+import Media from './Media';
 
 import styles from './index.less';
 
@@ -126,9 +127,9 @@ class ProcessModal extends PureComponent {
             [styles['ProcessModal__ListItem--inedit']]: editId === id,
           })
         }>
-          <img
+          <Media
             className={styles['ProcessModal__ListItem--image']}
-            src={data.getIn(['originalImage', 'url'])} alt=""
+            data={data.get('originalImage')}
           />
           <div className={styles['ProcessModal__ListItem--desc']}>
             <Progress percent={percent} />

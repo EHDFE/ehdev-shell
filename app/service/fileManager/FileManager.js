@@ -1,11 +1,13 @@
 import fs from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
-import File from './File';
+import { extname, basename } from 'path';
+import fileType from 'file-type';
 
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 const writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
 
 export default class FileManager {
   async isDirectory(path) {
@@ -22,7 +24,29 @@ export default class FileManager {
           const filesInDirectory = await this.resolveFiles(paths);
           files.push(...filesInDirectory);
         } else {
-          files.push(File.from(path, stats));
+          const ext = extname(path);
+          const name = basename(path);
+          const fileBuffer = await readFile(path);
+          let type;
+          if (ext === '.svg') {
+            type = 'image/svg+xml';
+          } else {
+            const detection = fileType(fileBuffer);
+            type = detection.mime;
+          }
+          const ab = fileBuffer.buffer.slice(
+            fileBuffer.byteOffset,
+            fileBuffer.byteOffset + fileBuffer.byteLength
+          );
+          const file = new File([ab], name, {
+            type,
+            lastModified: stats.mtime,
+          });
+          Object.defineProperty(file, 'path', {
+            value: path,
+            enumerable: true,
+          });
+          files.push(file);
         }
       } catch (e) {
         // ignore this file

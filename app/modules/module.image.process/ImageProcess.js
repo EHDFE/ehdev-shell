@@ -16,7 +16,6 @@ import fm from '../../service/fileManager/';
 import styles from './index.less';
 
 const { dialog } = remote;
-const ACCEPT_FILE_TYPE = 'image/';
 
 class ImageProcess extends PureComponent {
   static propTypes = {
@@ -24,6 +23,7 @@ class ImageProcess extends PureComponent {
     removeFile: PropTypes.func,
     minify: PropTypes.func,
     beforeMinify: PropTypes.func,
+    getSsimScore: PropTypes.func,
     changeProcessor: PropTypes.func,
     updateProcessorConfig: PropTypes.func,
     setStatus: PropTypes.func,
@@ -47,15 +47,19 @@ class ImageProcess extends PureComponent {
   }
   handleChangeImage = files => {
     for (const file of files) {
-      if (file.type.startsWith(ACCEPT_FILE_TYPE)) {
-        this.props.addFile(file);
-      }
+      this.props.addFile(file);
     }
   }
+  getCompareScore(currentImage) {
+    const { images, getSsimScore } = this.props;
+    const processedImageBuffer = images.getIn([currentImage, 'processedImage', 'buffer']);
+    getSsimScore(currentImage, processedImageBuffer);
+  }
   handleProcess = async () => {
-    const { processors, setStatus, beforeMinify, minify } = this.props;
+    const { images, processors, setStatus, beforeMinify, minify } = this.props;
     const { currentImage } = this.state;
     const processor = processors.getIn([currentImage, 'processor']);
+    const type = images.getIn([currentImage, 'originalImage', 'type']);
     const config = processors.getIn([currentImage, 'config']);
     const defaultConfig = getDefaultProcessorConfig(processor);
     const options = Object.assign({}, defaultConfig, config);
@@ -69,6 +73,9 @@ class ImageProcess extends PureComponent {
       notification.success({
         message: '处理成功',
       });
+      if (type === 'image/jpg' || type === 'image/jpeg') {
+        this.getCompareScore(currentImage);
+      }
     } catch (e) {
       notification.error({
         message: '操作失败',
@@ -84,28 +91,7 @@ class ImageProcess extends PureComponent {
   handleRemoveImage = current => {
     this.props.removeFile(current);
   }
-  handleNext = () => {
-    const { imageList } = this.props;
-    const index = imageList.indexOf(this.state.currentImage);
-    let currentImage;
-    if (index < imageList.length - 1) {
-      currentImage = imageList[index + 1];
-    } else {
-      currentImage = imageList[0];
-    }
-    this.setState({
-      currentImage,
-    });
-  }
-  handlePrev = () => {
-    const { imageList } = this.props;
-    const index = imageList.indexOf(this.state.currentImage);
-    let currentImage;
-    if (index === 0) {
-      currentImage = imageList[imageList.length - 1];
-    } else {
-      currentImage = imageList[index - 1];
-    }
+  handleChangeCurrentImage = currentImage => {
     this.setState({
       currentImage,
     });
@@ -232,6 +218,7 @@ class ImageProcess extends PureComponent {
           height={'calc(100vh - 110px)'}
           onChange={this.handleChangeImage}
           multiple
+          accept={['image', 'video']}
         />
       </div>
     );
@@ -246,13 +233,15 @@ class ImageProcess extends PureComponent {
         <div className={styles.ImageProcess__PreviewView} key="preview">
           <PreviewComponent
             data={images}
+            list={images.keySeq()}
             processing={inProgress}
             current={currentImage}
             onRemove={this.handleRemoveImage}
             onStart={this.handleProcess}
-            onNext={this.handleNext}
-            onPrev={this.handlePrev}
+            onChange={this.handleChangeCurrentImage}
             onOpenBatchProcess={this.handleOpenProcessModal}
+            onBatchDownload={this.handleBatchDownload}
+            insertImage={this.handleChangeImage}
           />
         </div>,
         <div className={styles.ImageProcess__EditorView} key="editor">
@@ -298,6 +287,7 @@ const mapDispatchToProps = dispatch => ({
   addFile: files => dispatch(actions.add(files)),
   removeFile: filePath => dispatch(actions.remove(filePath)),
   minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
+  getSsimScore: (input1, input2) => dispatch(actions.getSsimScore(input1, input2)),
   setStatus: (id, status) => dispatch(actions.setStatus(id, status)),
   beforeMinify: ids => dispatch(actions.beforeMinify(ids)),
   changeProcessor: (id, processor) => dispatch(actions.changeProcessor(id, processor)),

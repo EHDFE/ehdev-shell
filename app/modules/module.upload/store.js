@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import { combineReducers } from 'redux-immutable';
 import { createActions, handleActions } from 'redux-actions';
 import { Map, Set } from 'immutable';
+import { notification } from 'antd';
 
 import UPLOAD_API from '../../apis/upload';
 
@@ -52,17 +53,25 @@ export const actions = createActions({
     // delete multiple files
     BATCH_DEL: ids => ({ ids }),
     UPLOAD: async (oldId, data) => {
-      const url = await UPLOAD_API.file.post(data.file);
-      const storageData = await UPLOAD_API.list.post([{
-        url,
-        name: data.file.name,
-        type: data.file.type,
-        lastModified: data.file.lastModified,
-      }]);
-      return {
-        oldId,
-        file: storageData[0],
-      };
+      const response = await UPLOAD_API.file.post(data.file);
+      if (response.success) {
+        const storageData = await UPLOAD_API.list.post([{
+          url: response.data,
+          name: data.file.name,
+          type: data.file.type,
+          lastModified: data.file.lastModified,
+        }]);
+        return {
+          oldId,
+          file: storageData[0],
+        };
+      } else {
+        notification.error({
+          message: '上传失败',
+          description: response.data,
+        });
+        return null;
+      }
     },
   },
 });
@@ -119,7 +128,7 @@ const fileReducer = handleActions({
     return state;
   },
   'FILES/UPLOAD': (state, { payload, error }) => {
-    if (error) return state;
+    if (error || !payload) return state;
     const newId = payload.file._id;
     return state
       .mergeIn(['fileMap'], {

@@ -60,10 +60,7 @@ const UPLOAD_API = {
           body: fd,
         });
         const data = await res.json();
-        if (data.success) {
-          return data.data;
-        }
-        return null;
+        return data;
       } catch (e) {
         throw e;
       }

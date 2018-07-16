@@ -26,6 +26,8 @@ const GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST = [
   'gif',
 ];
 
+const MAX_IMAGE_PIXEL_LIMIT = 1920 * 1080;
+
 const getFilePropertyFromBuffer = buffer => {
   const fileTypeResult = fileType(buffer);
   let type, ext;
@@ -86,16 +88,31 @@ export const actions = createActions({
   REMOVE: filePaths => filePaths,
   BEFORE_MINIFY: ids => ids,
   MINIFY: async (input, plugin, options) => {
-    let result;
+    let resultBuffer;
+    const payload = {
+      filePath: input,
+    };
     try {
-      result = await IMAGE_API.process(input, plugin, options);
+      resultBuffer = await IMAGE_API.process(input, plugin, options);
+      let { url, type, ext } = getFilePropertyFromBuffer(resultBuffer);
+      if (type.startsWith('image/') && !GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST.includes(ext)) {
+        const dimensions = sizeOf(resultBuffer);
+        if (dimensions.width * dimensions.height > MAX_IMAGE_PIXEL_LIMIT) {
+          const previewBuffer = await IMAGE_API.resize(resultBuffer, ...IMAGE_SIZE_DEFINE.get('preview'));
+          const blob = new Blob([previewBuffer], { type });
+          url = URL.createObjectURL(blob);
+        }
+      }
+      Object.assign(payload, {
+        resultBuffer,
+        url,
+        type,
+        ext,
+      });
     } catch (e) {
       throw e;
     }
-    return {
-      result,
-      filePath: input,
-    };
+    return payload;
   },
   SET_STATUS: (id, status) => ({
     id,
@@ -204,18 +221,19 @@ const imageProcessReducer = handleActions({
   MINIFY: (state, { payload, error }) => {
     if (error) return state;
     const {
-      result,
+      resultBuffer,
       filePath,
+      url,
+      type,
+      ext,
     } = payload;
-    const buffer = result;
-    const { url, type, ext } = getFilePropertyFromBuffer(buffer);
     return state.updateIn(
       ['images', filePath],
       map => map.set('processedImage', Map({
-        size: buffer.byteLength,
+        size: resultBuffer.byteLength,
         type,
         ext,
-        buffer,
+        buffer: resultBuffer,
         url,
         fileName: basename(filePath, `.${ext}`),
       })).set('status', PROCESSED)

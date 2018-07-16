@@ -12,6 +12,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const moment = require('moment');
 const history = require('connect-history-api-fallback');
 const convert = require('koa-connect');
+// const PrepackWebpackPlugin = require('prepack-webpack-plugin').default;
 
 const port = process.env.PORT || 1212;
 
@@ -115,6 +116,9 @@ module.exports = () => {
         analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
         openAnalyzer: process.env.OPEN_ANALYZER === 'true'
       }),
+      // new PrepackWebpackPlugin({
+      //   test: /app\.js/i,
+      // }),
     );
   }
 

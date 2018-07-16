@@ -1,0 +1,200 @@
+@import '../../theme/index.less';
+
+.Preview {
+  &__Container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__Figure {
+    position: relative;
+    flex: 1 0;
+    border: 1px solid #f0f0f0;
+    box-shadow: 2px 2px 3px -1px rgba(0, 0, 0, 0.4);
+
+    background: linear-gradient(45deg, rgba(0,0,0,0.0980392) 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.0980392) 75%, rgba(0,0,0,0.0980392) 0), linear-gradient(45deg, rgba(0,0,0,0.0980392) 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.0980392) 75%, rgba(0,0,0,0.0980392) 0), rgb(255, 255, 255);
+    background-position: 0 0, 20px 20px;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-size: 40px 40px;
+
+    overflow: hidden;
+  }
+
+  &__Action {
+    display: flex;
+    justify-content: space-between;
+    > button {
+      flex: 1;
+      &:nth-child(2) {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  &__Ctrl {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__CtrlList {
+    margin-bottom: 8px;
+    width: ~"calc(100% - 76px)";
+    height: 64px;
+  }
+
+  &__CtrlItem {
+    position: relative;
+    margin: 0 5px;
+    height: 64px;
+    > img, > video {
+      // width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(100%);
+    }
+    > i {
+      position: absolute;
+      right: 14px;
+      bottom: 4px;
+      color: @success-color;
+    }
+
+    &--active {
+      & img, & video {
+        filter: none;
+      }
+    }
+  }
+
+  &__CtrlInsert {
+    width: 68px;
+  }
+
+  &__Info {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 0;
+    z-index: 2;
+    transform: translateY(-100%);
+    transition: transform ease-in-out 0.5s;
+
+    &--slideDown {
+      transform: translateY(0);
+
+      .Preview__InfoTrigger {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    &Trigger {
+      position: absolute;
+      left: ~"calc(50% - 12px)";
+      bottom: -20px;
+      padding: 0;
+      width: 24px;
+      height: 20px;
+      background-color: rgba(255, 255, 255, 1);
+      backdrop-filter: blur(8px);
+      border: 0 none;
+      font-size: 16px;
+      border-radius: 0 0 12px 12px;
+      outline: 0 none;
+      cursor: pointer;
+      transition: background-color ease-in-out 0.5s;
+      line-height: 20px;
+    }
+  }
+
+  &__InfoList {
+    margin: 0;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    list-style: none;
+  }
+  &__InfoItem {
+    display: flex;
+    b {
+      margin-right: 8px;
+      flex: 0 0 42px;
+      width: 42px;
+      white-space: nowrap;
+      text-align-last: justify;
+    }
+    span {
+      word-break: break-all;
+    }
+  }
+
+  &__Image {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+
+    &--hide {
+      display: none;
+    }
+  }
+
+  &__Indicator {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    &--hide {
+      display: none;
+    }
+  }
+
+  &__Label {
+    position: absolute;
+    top: 4px;
+    z-index: 1;
+
+    &--original {
+      left: 0.5em;
+    }
+    &--processed {
+      margin-right: 0;
+      right: 0.5em;
+    }
+    &--score {
+      margin-right: 0;
+      right: 0.5em;
+      top: 30px;
+    }
+    &--hide {
+      display: none;
+    }
+  }
+
+  &__ZoomCtrl {
+    position: absolute;
+    bottom: 2px;
+    background: none;
+    border: 0 none;
+    outline: 0 none;
+    cursor: pointer;
+
+    &:hover {
+      color: @primary-color;
+    }
+
+    &--in {
+      right: 2px;
+    }
+    &--out {
+      right: 32px;
+    }
+  }
+}

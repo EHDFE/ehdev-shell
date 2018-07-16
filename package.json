@@ -114,6 +114,7 @@
     "mini-css-extract-plugin": "^0.4.1",
     "monaco-editor-webpack-plugin": "^1.4.0",
     "pre-commit": "^1.2.2",
+    "prepack-webpack-plugin": "^1.1.1",
     "redux-devtools": "^3.4.1",
     "redux-devtools-dispatch": "^2.2.1",
     "redux-devtools-dock-monitor": "^1.1.3",

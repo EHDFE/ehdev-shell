@@ -1,4 +1,4 @@
-export default ({ data, useThumb, ...otherProps }) => {
+export default ({ data, useThumb, mediaRef, ...otherProps }) => {
   const type = data.get('type', '');
   let media;
   let url;
@@ -16,13 +16,22 @@ export default ({ data, useThumb, ...otherProps }) => {
         loop
         muted
         playsInline
+        ref={mediaRef}
         {...otherProps}
       >
         <source src={url} type={type} />
       </video>
     );
   } else {
-    media = <img key={id} src={url} alt="" {...otherProps} />;
+    media = (
+      <img
+        key={id}
+        src={url}
+        alt=""
+        ref={mediaRef}
+        {...otherProps}
+      />
+    );
   }
 
   return media;

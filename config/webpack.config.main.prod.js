@@ -48,7 +48,7 @@ module.exports = {
     'cwebp-bin': 'cwebp-bin',
     'guetzli': 'guetzli',
     'zopflipng-bin': 'zopflipng-bin',
-    'tempfile': 'tempfile',
+    'sharp': 'sharp',
     // eslint: {
     //   commonjs2: 'eslint',
     // }

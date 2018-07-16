@@ -50,9 +50,14 @@ exports.getButteraugliScore = async () => {
 
 };
 
-exports.resize = async (inputPath, maxWidth = 1920, maxHeight = 1080) => {
+exports.resize = async (input, maxWidth = 1920, maxHeight = 1080) => {
   try {
-    const inputBuffer = await readFile(inputPath);
+    let inputBuffer;
+    if (Buffer.isBuffer(input)) {
+      inputBuffer = input;
+    } else {
+      inputBuffer = await readFile(input);
+    }
     return sharp(inputBuffer)
       .limitInputPixels(false)
       .sequentialRead(true)

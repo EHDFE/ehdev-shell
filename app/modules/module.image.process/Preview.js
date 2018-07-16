@@ -1,10 +1,12 @@
-import { PureComponent } from 'react';
+import { PureComponent, Fragment, createRef } from 'react';
 import { Map, Seq } from 'immutable';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import filesize from 'filesize';
 import { Button, Dropdown, Icon, Menu, Tag } from 'antd';
 import Slider from 'react-slick';
+import ZoomIn from 'react-icons/lib/md/zoom-in';
+import ZoomOut from 'react-icons/lib/md/zoom-out';
 import UploadZone from '../../components/component.uploadZone/';
 import { PROCESSED } from './store';
 import Media from './Media';
@@ -12,7 +14,7 @@ import Media from './Media';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import styles from './index.less';
+import styles from './preview.less';
 
 export default class Preview extends PureComponent {
   static propTypes = {
@@ -30,8 +32,15 @@ export default class Preview extends PureComponent {
   state = {
     indicatorLeft: 0,
     indicatorVisible: false,
+    clipLeft: 0,
     showLayer: false,
+    zoom: 1,
   };
+  constructor(props) {
+    super(props);
+    this.originalMedia = createRef();
+    this.previewNode = createRef();
+  }
   showIndicator = () => {
     this.setState({
       indicatorVisible: true,
@@ -43,9 +52,11 @@ export default class Preview extends PureComponent {
     });
   }
   moveIndicator = e => {
-    const rect = this.previewFigure.getBoundingClientRect();
+    const rect = this.previewNode.current.getBoundingClientRect();
+    const mediaRect = this.originalMedia.getBoundingClientRect();
     this.setState({
       indicatorLeft: e.clientX - rect.left,
+      clipLeft: e.clientX - mediaRect.left,
     });
   }
   handleSaveFile() {
@@ -89,6 +100,20 @@ export default class Preview extends PureComponent {
       this.props.onOpenBatchProcess();
     }
   }
+  handleZoomIn = () => {
+    this.setState(state => {
+      return {
+        zoom: state.zoom * 2,
+      };
+    });
+  }
+  handleZoomOut = () => {
+    this.setState(state => {
+      return {
+        zoom: state.zoom / 2,
+      };
+    });
+  }
   renderButtons(url) {
     const { data, processing } = this.props;
     let actions = [];
@@ -122,7 +147,7 @@ export default class Preview extends PureComponent {
     }
 
     return (
-      <div className={styles.ImageProcess__PreviewAction}>
+      <div className={styles.Preview__Action}>
         {actions}
       </div>
     );
@@ -130,7 +155,7 @@ export default class Preview extends PureComponent {
   renderController() {
     const { data, current, insertImage } = this.props;
     const sliderProps = {
-      className: classnames('slider', 'variable-width', styles['ImageProcess__PreviewCtrl--list']),
+      className: classnames('slider', 'variable-width', styles['Preview__CtrlList']),
       arrows: false,
       slidesToShow: 1,
       slidesToScroll: 1,
@@ -141,16 +166,16 @@ export default class Preview extends PureComponent {
       afterChange: this.handleSlideChange,
     };
     return (
-      <div className={styles.ImageProcess__PreviewCtrl}>
+      <div className={styles.Preview__Ctrl}>
         <Slider {...sliderProps}>
           {
             data.map((map, id) => (
               <figure
                 key={id}
                 className={classnames(
-                  styles['ImageProcess__PreviewCtrl--item'],
+                  styles['Preview__CtrlItem'],
                   {
-                    [styles['ImageProcess__PreviewCtrl--active']]: id === current,
+                    [styles['Preview__CtrlItem--active']]: id === current,
                   },
                 )}
               >
@@ -161,7 +186,7 @@ export default class Preview extends PureComponent {
           }
         </Slider>
         <UploadZone
-          className={styles['ImageProcess__PreviewCtrl--insert']}
+          className={styles['Preview__CtrlInsert']}
           height={62}
           onChange={insertImage}
           multiple
@@ -176,29 +201,29 @@ export default class Preview extends PureComponent {
     const height = originalImage.getIn(['dimensions', 'height']);
     const { showLayer } = this.state;
     return (
-      <div className={classnames(styles.ImageProcess__PreviewInfo, {
-        [styles['ImageProcess__PreviewInfo--slideDown']]: showLayer,
+      <div className={classnames(styles.Preview__Info, {
+        [styles['Preview__Info--slideDown']]: showLayer,
       })}>
         <button
-          className={styles.ImageProcess__PreviewInfoTrigger}
+          className={styles.Preview__InfoTrigger}
           onClick={this.handleToggleInfoLayer}
         >
           <Icon type={showLayer ? 'up' : 'down'} />
         </button>
-        <ul className={styles['ImageProcess__PreviewInfo--list']}>
-          <li className={styles['ImageProcess__PreviewInfo--item']}>
+        <ul className={styles['Preview__InfoList']}>
+          <li className={styles['Preview__InfoItem']}>
             <b>文件名</b>
             <span>{originalImage.get('name')}</span>
           </li>
           {
             width && (
-              <li className={styles['ImageProcess__PreviewInfo--item']}>
+              <li className={styles['Preview__InfoItem']}>
                 <b>尺寸</b>
                 <span>{width} x {height}</span>
               </li>
             )
           }
-          <li className={styles['ImageProcess__PreviewInfo--item']}>
+          <li className={styles['Preview__InfoItem']}>
             <b>大小</b>
             <span>{filesize(originalImage.get('size', 0), { base: 10 })}</span>
           </li>
@@ -206,15 +231,16 @@ export default class Preview extends PureComponent {
       </div>
     );
   }
-  renderProcessedPreview(processedImage, visible) {
+  renderProcessedPreview(processedImage, visible, style) {
     return (
       <Media
+        style={style}
         data={processedImage}
         className={classnames(
-          styles.ImageProcess__PreviewImage,
-          styles['ImageProcess__PreviewImage--processed'],
+          styles.Preview__Image,
+          styles['Preview__Image--processed'],
           {
-            [styles['ImageProcess__PreviewImage--hide']]: !visible,
+            [styles['Preview__Image--hide']]: !visible,
           }
         )}
       />
@@ -226,86 +252,122 @@ export default class Preview extends PureComponent {
         data={originalImage}
         style={style}
         className={classnames(
-          styles.ImageProcess__PreviewImage,
-          styles['ImageProcess__PreviewImage--original'],
+          styles.Preview__Image,
+          styles['Preview__Image--original'],
         )}
+        mediaRef={el => this.originalMedia = el}
       />
     );
   }
+  renderZoomControl() {
+    return (
+      <Fragment>
+        <button
+          className={classnames(
+            styles.Preview__ZoomCtrl,
+            styles['Preview__ZoomCtrl--in'],
+          )}
+          onClick={this.handleZoomIn}
+        >
+          <ZoomIn size={22} />
+        </button>
+        <button
+          className={classnames(
+            styles.Preview__ZoomCtrl,
+            styles['Preview__ZoomCtrl--out'],
+          )}
+          onClick={this.handleZoomOut}
+        >
+          <ZoomOut size={22} />
+        </button>
+      </Fragment>
+    );
+  }
+  renderLabels(processedImage, originalImage) {
+    const SSIM = processedImage.get('SSIM');
+    return (
+      <Fragment>
+        <Tag
+          className={classnames(
+            styles.Preview__Label,
+            styles['Preview__Label--original'],
+          )}
+          color="red"
+        >
+          处理前: {filesize(originalImage.get('size', 0), { base: 10 })}
+        </Tag>
+        <Tag
+          className={classnames(
+            styles.Preview__Label,
+            styles['Preview__Label--processed'],
+            {
+              [styles['Preview__Label--hide']]: !processedImage.get('url'),
+            },
+          )}
+          color="green"
+        >
+          处理后: {filesize(processedImage.get('size', 0), { base: 10 })}
+        </Tag>
+        {
+          SSIM && (
+            <Tag
+              className={classnames(
+                styles.Preview__Label,
+                styles['Preview__Label--score'],
+              )}
+              color="blue"
+            >
+              {SSIM}
+            </Tag>
+          )
+        }
+      </Fragment>
+    );
+  }
   render() {
-    const { indicatorLeft } = this.state;
+    const { indicatorLeft, clipLeft, zoom } = this.state;
     const { data, current } = this.props;
     const originalImage = data.getIn([current, 'originalImage']);
     const processedImage = data.getIn([current, 'processedImage']);
     const url = processedImage.get('url');
     const hasPreview = !!url;
-    const SSIM = processedImage.get('SSIM');
-    const originalImageStyle = {
+    const zoomStyle = {
+      width: `${zoom * 100}%`,
+      height: `${zoom * 100}%`,
     };
+    const originalImageStyle = Object.assign({}, zoomStyle);
     if (hasPreview) {
       Object.assign(originalImageStyle, {
-        clipPath: `inset(0 calc(100% - ${indicatorLeft}px) 0 0)`,
+        clipPath: `inset(0 calc(100% - ${clipLeft}px) 0 0)`,
       });
     }
+
     return (
-      <div className={styles.ImageProcess__Preview}>
+      <div className={styles.Preview__Container}>
         { this.renderController() }
         { this.renderInfoLayer(originalImage, processedImage) }
         <figure
-          ref={node => this.previewFigure = node}
-          className={styles.ImageProcess__PreviewWrap}
+          ref={this.previewNode}
+          className={styles.Preview__Figure}
           onMouseEnter={this.showIndicator}
           onMouseLeave={this.hideIndicator}
           onMouseMove={this.moveIndicator}
         >
-          { this.renderProcessedPreview(processedImage, hasPreview) }
+          { this.renderProcessedPreview(processedImage, hasPreview, zoomStyle) }
           { this.renderOriginalPreview(originalImage, originalImageStyle) }
+          { this.renderZoomControl() }
           <span
             style={{ left: `${indicatorLeft}px` }}
             className={
               classnames(
-                styles.ImageProcess__PreviewIndicator,
+                styles.Preview__Indicator,
                 {
-                  [styles['ImageProcess__PreviewIndicator--hide']]: !hasPreview,
+                  [styles['Preview__Indicator--hide']]: !hasPreview,
                 }
               )
             }
           />
-          <Tag
-            className={classnames(
-              styles.ImageProcess__PreviewLabel,
-              styles['ImageProcess__PreviewLabel--original'],
-            )}
-            color="red"
-          >
-            处理前: {filesize(originalImage.get('size', 0), { base: 10 })}
-          </Tag>
-          <Tag
-            className={classnames(
-              styles.ImageProcess__PreviewLabel,
-              styles['ImageProcess__PreviewLabel--processed'],
-              {
-                [styles['ImageProcess__PreviewLabel--hide']]: !hasPreview,
-              },
-            )}
-            color="green"
-          >
-            处理后: {filesize(processedImage.get('size', 0), { base: 10 })}
-          </Tag>
-          {
-            SSIM && (
-              <Tag
-                className={classnames(
-                  styles.ImageProcess__PreviewLabel,
-                  styles['ImageProcess__PreviewLabel--score'],
-                )}
-                color="blue"
-              >
-                {SSIM}
-              </Tag>
-            )
-          }
-
+          { this.renderLabels(processedImage, originalImage) }
         </figure>
         { this.renderButtons(url) }
       </div>

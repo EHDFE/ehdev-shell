@@ -182,7 +182,7 @@ class ImageProcess extends PureComponent {
     const processMenu = (
       <Menu {...menuProps}>
         {
-          availableProcessors.map(processor => (
+          availableProcessors && availableProcessors.map(processor => (
             <Menu.Item key={processor}>
               {processor}
             </Menu.Item>

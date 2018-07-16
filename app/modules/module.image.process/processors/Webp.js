@@ -41,7 +41,7 @@ export default class Webp extends PureComponent {
           {getFieldDecorator('preset', {
             initialValue: this.state.preset,
           })(
-            <Select>
+            <Select size="small">
               <Option value={'default'}>默认</Option>
               <Option value={'photo'}>照片</Option>
               <Option value={'picture'}>图片</Option>
@@ -100,6 +100,7 @@ export default class Webp extends PureComponent {
             initialValue: this.state.size,
           })(
             <InputNumber
+              size="small"
               min={1}
             />
           )} bytes
@@ -138,7 +139,7 @@ export default class Webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.autoFilter,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -165,7 +166,7 @@ export default class Webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.lossless,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem

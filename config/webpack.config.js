@@ -17,7 +17,8 @@ const port = process.env.PORT || 1212;
 
 module.exports = () => {
 
-  const IS_DEV = process.env.NODE_ENV === 'development';
+  const mode = process.env.WEBPACK_SERVE ? 'development' : 'production';
+  const IS_DEV = mode === 'development';
 
   const plugins = [];
   const [
@@ -118,13 +119,13 @@ module.exports = () => {
   }
 
   const ret = {
-    mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
+    mode,
     context: path.resolve(__dirname, '..'),
     entry: {
-      app: [
-        // '@babel/polyfill',
+      app: IS_DEV ? [
+        'webpack-hot-client/client',
         './app/index',
-      ],
+      ] : './app/index',
     },
     output: {
       path: path.resolve(__dirname, '../app/dist'),

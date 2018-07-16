@@ -34,7 +34,7 @@ export default class Gifsicle extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.loop,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -45,7 +45,7 @@ export default class Gifsicle extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.interlaced,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem

@@ -21,7 +21,8 @@ module.exports = async (input, opts) => {
 
   switch (opts.target) {
   case 'mp4':
-    // ignore here
+  // ignore here
+    args.push('-c:v', 'libx264');
     break;
   case 'webm':
     args.push('-c', 'vp9');

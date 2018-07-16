@@ -52,7 +52,7 @@ export default class Pngquant extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.nofs,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem

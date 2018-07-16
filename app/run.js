@@ -16,7 +16,7 @@ const render = (Component, store, persistor) => {
       <WindowManager key="windowManager" />,
     );
   }
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     contents.push(
       <DevTools key="devTool" />
     );

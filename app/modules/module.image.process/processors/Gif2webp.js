@@ -42,7 +42,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.lossy,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -53,7 +53,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.mixed,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -94,7 +94,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.minimize,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -105,7 +105,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.kmin,
           })(
-            <InputNumber />
+            <InputNumber size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -116,7 +116,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.kmax,
           })(
-            <InputNumber />
+            <InputNumber size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -139,7 +139,7 @@ export default class Gif2webp extends PureComponent {
           {getFieldDecorator('metadata', {
             initialValue: this.state.metadata,
           })(
-            <Select>
+            <Select size="small">
               <Option value="all">all</Option>
               <Option value="none">none</Option>
               <Option value="icc">icc</Option>
@@ -155,7 +155,7 @@ export default class Gif2webp extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.multiThreading,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
       </Fragment>

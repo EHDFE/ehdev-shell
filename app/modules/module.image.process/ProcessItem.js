@@ -1,6 +1,7 @@
 import { PureComponent } from 'react';
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { ProcessorContext } from './processorHoc';
 
 import styles from './index.less';
@@ -50,7 +51,10 @@ export default class ProcessItem extends PureComponent {
         {
           layout => (
             <FormItem
-              className={styles[`ProcessItem--${layout}`]}
+              className={classnames(
+                styles['ProcessItem__Group'],
+                styles[`ProcessItem--${layout}`],
+              )}
               {...props}
               {...formItemLayout[layout]}
             >

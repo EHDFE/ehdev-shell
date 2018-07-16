@@ -51,6 +51,7 @@ export default class Upng extends PureComponent {
             initialValue: initialWidth,
           })(
             <InputNumber
+              size="small"
               min={1}
               onChange={this.handleDimensionChange.bind(this, 'height', initialHeight / initialWidth)}
             />
@@ -63,6 +64,7 @@ export default class Upng extends PureComponent {
             initialValue: initialHeight,
           })(
             <InputNumber
+              size="small"
               min={1}
               onChange={this.handleDimensionChange.bind(this, 'width', initialWidth / initialHeight)}
             />

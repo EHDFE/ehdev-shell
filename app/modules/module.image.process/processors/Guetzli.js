@@ -45,7 +45,7 @@ export default class Guetzli extends PureComponent {
           {getFieldDecorator('memlimit', {
             initialValue: this.state.memlimit,
           })(
-            <InputNumber min={1} />
+            <InputNumber size="small" min={1} />
           )}
         </ProcessItem>
         <ProcessItem
@@ -55,7 +55,7 @@ export default class Guetzli extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.nomemlimit,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
       </Fragment>

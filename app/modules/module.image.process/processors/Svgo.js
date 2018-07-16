@@ -120,7 +120,7 @@ export default class Svgo extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state[key],
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
       );

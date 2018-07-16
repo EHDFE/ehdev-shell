@@ -66,7 +66,7 @@
     position: absolute;
     left: 2px;
     right: 2px;
-    top: 2px;
+    top: 0;
     z-index: 2;
     transform: translateY(-100%);
     transition: transform ease-in-out 0.5s;
@@ -231,6 +231,31 @@
 }
 
 .ProcessItem {
+  &__Group {
+    margin-bottom: 10px;
+
+    :global(.ant-slider-mark) {
+      :global(.ant-slider-mark-text) {
+        &:first-child {
+          margin-left: 0!important;
+          text-align: left;
+        }
+        &:last-child {
+          margin-left: -90%!important;
+          text-align: right;
+        }
+      }
+    }
+    :global(.ant-form-item-control) {
+      line-height: 2;
+    }
+    :global(.ant-form-item-label) {
+      line-height: 2.5;
+    }
+    :global(.ant-form-extra) {
+      font-size: 12px;
+    }
+  }
   &--horizontal {
     .ProcessItem__Label {
       padding-top: 8px;
@@ -260,6 +285,9 @@
     }
     &Tooltip {
       font-size: 12px;
+      font-style: normal;
+      color: #aaa;
+      // font-weight: 400;
     }
   }
 }

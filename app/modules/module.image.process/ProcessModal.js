@@ -181,7 +181,7 @@ class ProcessModal extends PureComponent {
           onClick={this.handleDownload}
           style={{ marginRight: 10 }}
         >
-          批量下载
+          全部保存
         </Button>
       );
     }

@@ -55,7 +55,7 @@ export default class Zopfli extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state['8bit'],
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -66,7 +66,7 @@ export default class Zopfli extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.transparent,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -77,7 +77,7 @@ export default class Zopfli extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.more,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
       </Fragment>

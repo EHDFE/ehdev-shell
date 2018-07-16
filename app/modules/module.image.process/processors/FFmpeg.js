@@ -63,7 +63,7 @@ export default class FFmpeg extends PureComponent {
           {getFieldDecorator('vframes', {
             initialValue: this.state.vframes,
           })(
-            <InputNumber min={0} />
+            <InputNumber size="small" min={0} />
           )}
         </ProcessItem>
         <ProcessItem
@@ -73,7 +73,7 @@ export default class FFmpeg extends PureComponent {
           {getFieldDecorator('frameRate', {
             initialValue: this.state.frameRate,
           })(
-            <InputNumber min={1} />
+            <InputNumber size="small" min={1} />
           )}
         </ProcessItem>
       </Fragment>

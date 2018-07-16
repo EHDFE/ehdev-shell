@@ -73,7 +73,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.progressive,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -84,7 +84,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.targa,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -98,7 +98,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.revert,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -113,7 +113,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.fastCrush,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -139,7 +139,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.trellis,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -150,7 +150,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.trellisDC,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -158,7 +158,7 @@ export default class Mozjpeg extends PureComponent {
           tooltip={'设置网格优化方法'}
         >
           {getFieldDecorator('tune', { initialValue: this.state.tune })(
-            <Select>
+            <Select size="small">
               <Option value="psnr">psnr</Option>
               <Option value="hvs-psnr">hvs-psnr</Option>
               <Option value="ssim">ssim</Option>
@@ -174,7 +174,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.overshoot,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -185,7 +185,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.arithmetic,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -193,7 +193,7 @@ export default class Mozjpeg extends PureComponent {
           tooltip={'设置 DCT 方法.'}
         >
           {getFieldDecorator('dct', { initialValue: this.state.dct })(
-            <Select>
+            <Select size="small">
               <Option value="int">integer DCT</Option>
               <Option value="fast">fast integer DCT (less accurate)</Option>
               <Option value="float">floating-point DCT</Option>
@@ -208,7 +208,7 @@ export default class Mozjpeg extends PureComponent {
             valuePropName: 'checked',
             initialValue: this.state.quantBaseline,
           })(
-            <Switch />
+            <Switch size="small" />
           )}
         </ProcessItem>
         <ProcessItem
@@ -216,7 +216,7 @@ export default class Mozjpeg extends PureComponent {
           tooltip={'使用预定义的量化表'}
         >
           {getFieldDecorator('quantTable', { initialValue: this.state.quantTable })(
-            <Select>
+            <Select size="small">
               <Option value={0}>JPEG Annex K</Option>
               <Option value={1}>Flat</Option>
               <Option value={2}>Custom, tuned for MS-SSIM</Option>

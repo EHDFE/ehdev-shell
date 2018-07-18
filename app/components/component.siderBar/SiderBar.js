@@ -5,8 +5,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Layout, Menu, Icon, Avatar } from 'antd';
+import { Layout, Menu, Icon, Avatar, Badge } from 'antd';
 import { Set } from 'immutable';
+import {
+  UPDATE_NOT_CHECKED,
+  UPDATE_CHECKING,
+  UPDATE_AVAILABLE,
+  UPDATE_NOT_AVAILABLE,
+  UPDATE_DOWNLOADING,
+  UPDATE_DOWNLOADED,
+  UPDATE_DOWNLOAD_ERROR,
+} from '../component.infoModal/STATUS';
 
 import styles from './index.less';
 
@@ -23,6 +32,15 @@ class SiderBar extends Component {
     showInfo: PropTypes.func,
     navigate: PropTypes.func,
     enabledModules: PropTypes.instanceOf(Set),
+    status: PropTypes.oneOf([
+      UPDATE_NOT_CHECKED,
+      UPDATE_CHECKING,
+      UPDATE_AVAILABLE,
+      UPDATE_NOT_AVAILABLE,
+      UPDATE_DOWNLOADING,
+      UPDATE_DOWNLOADED,
+      UPDATE_DOWNLOAD_ERROR,
+    ]),
   }
   state = {
     collapsed: true,
@@ -62,8 +80,9 @@ class SiderBar extends Component {
   }
   render() {
     const { collapsed } = this.state;
-    const { user, current, enabledModules } = this.props;
+    const { user, current, enabledModules, status } = this.props;
     const ENABLED_NAVS = GLOBAL_NAV_CONFIG.filter(d => enabledModules.has(d.to) || !d.configurable);
+    const showUpdateNotice = ![UPDATE_NOT_CHECKED, UPDATE_NOT_AVAILABLE, UPDATE_CHECKING].includes(status);
     return (
       <Sider
         className={styles.SiderBar}
@@ -97,12 +116,14 @@ class SiderBar extends Component {
               ))
             }
           </Menu>
-          <button
-            className={styles.SiderBar__InfoButton}
-            onClick={this.handleInfoClick}
-          >
-            <Icon type="info-circle-o" />
-          </button>
+          <Badge dot={showUpdateNotice}>
+            <button
+              className={styles.SiderBar__InfoButton}
+              onClick={this.handleInfoClick}
+            >
+              <Icon type="info-circle-o" />
+            </button>
+          </Badge>
         </div>
       </Sider>
     );

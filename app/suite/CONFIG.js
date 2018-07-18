@@ -1,5 +1,4 @@
-const { platform } = require('os');
-const isMac = platform() === 'darwin';
+const { isMac } = require('./util/env');
 
 const CONFIG = {
   WIDTH: 900,

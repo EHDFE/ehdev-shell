@@ -3,8 +3,8 @@
  * @author ryan.bian
  */
 const path = require('path');
-const { serviceStore } = require('../../service/index');
-const Commander = require('../../service/commander');
+const serviceStore = require('../command/serviceStore');
+const Commander = require('../command/commander');
 const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,

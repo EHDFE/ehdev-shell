@@ -2,13 +2,13 @@
  * Node commander executer
  */
 // const { spawn } = require('child_process');
-const { webContents, app } = require('electron');
-const { serviceStore } = require('./index');
 const WebSocket = require('ws');
-const pty = require('node-pty');
-const { findExecutable } = require('../utils/');
-const { isWindows } = require('../utils/env');
 const { execFile } = require('child_process');
+const pty = require('node-pty');
+const { webContents, app } = require('electron');
+const serviceStore = require('./serviceStore');
+const { findExecutable } = require('../../utils/');
+const { isWindows } = require('../../utils/env');
 
 const HOST = isWindows ? '127.0.0.1' : '0.0.0.0';
 const PORT = 8484;

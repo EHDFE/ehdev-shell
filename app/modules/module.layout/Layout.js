@@ -2,19 +2,28 @@
  * Layout Module
  * @author ryan.bian
  */
-import { shell } from 'electron';
-import { Layout, Modal } from 'antd';
+import Raven from 'raven-js';
+import { Layout } from 'antd';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import classnames from 'classnames';
 import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
+import InfoModal from '../../components/component.infoModal/';
 import ConsoleModule from '../module.console/';
 import { platform } from 'os';
-import pkg from '../../package.json';
+import updater from '../../apis/updater';
+import {
+  UPDATE_NOT_CHECKED,
+  UPDATE_CHECKING,
+  UPDATE_AVAILABLE,
+  UPDATE_NOT_AVAILABLE,
+  UPDATE_DOWNLOADING,
+  UPDATE_DOWNLOADED,
+  UPDATE_DOWNLOAD_ERROR,
+} from '../../components/component.infoModal/STATUS';
 import styles from './index.less';
-import AppIconPath from '../../../resources/icons/128x128.png';
 
 const PLATFORM = platform();
 
@@ -26,54 +35,58 @@ class LayoutModule extends Component {
   }
   state = {
     infoModalVisible: false,
+    status: UPDATE_NOT_CHECKED,
+    downloadProgress: 0,
   }
   static getPageInfo(pathname) {
     const matched = GLOBAL_NAV_CONFIG.find(d => `/${d.to}` === pathname);
     if (matched) return matched;
     return null;
   }
+  componentDidMount() {
+    updater.autoUpdater.on('error', error => {
+      Raven.captureException(error, {
+        logger: 'autoUpdater',
+      });
+      this.setState({
+        status: UPDATE_DOWNLOAD_ERROR,
+      });
+    });
+    updater.autoUpdater.on('checking-for-update', () => {
+      this.setState({
+        status: UPDATE_CHECKING,
+      });
+    });
+    updater.autoUpdater.on('update-available', info => {
+      this.setState({
+        status: UPDATE_AVAILABLE,
+      });
+    });
+    updater.autoUpdater.on('update-not-available', info => {
+      this.setState({
+        status: UPDATE_NOT_AVAILABLE,
+      });
+    });
+    updater.autoUpdater.on('download-progress', progress => {
+      this.setState({
+        status: UPDATE_DOWNLOADING,
+        downloadProgress: Math.round(progress.percent * 10) / 10,
+      });
+    });
+    updater.autoUpdater.on('update-downloaded', info => {
+      this.setState({
+        status: UPDATE_DOWNLOADED,
+      });
+    });
+    updater.checkForUpdate();
+  }
   showAppInfo = () => {
     this.setState({
       infoModalVisible: true,
     });
   }
-  handleOpenExternal(e) {
-    e.preventDefault();
-    shell.openExternal(e.currentTarget.getAttribute('href'));
-  }
-  renderInfo() {
-    const modalProps = {
-      visible: this.state.infoModalVisible,
-      footer: null,
-      onCancel: () => {
-        this.setState({
-          infoModalVisible: false,
-        });
-      },
-    };
-    return (
-      <Modal {...modalProps}>
-        <section className={styles.Layout__InfoContent}>
-          <picture>
-            <img src={AppIconPath} alt="Jarvis" width="64" height="64" />
-          </picture>
-          <h2>Jarvis</h2>
-          <p>版本：{pkg.version} ({process.env.BUILD_TIME})</p>
-          <p>
-            Release Notes：
-            <a href={`https://github.com/EHDFE/ehdev-shell/releases/tag/v${pkg.version}`} onClick={this.handleOpenExternal}>
-              {`v${pkg.version}`}
-            </a>
-          </p>
-          <p>
-            File Bug：
-            <a href="https://github.com/EHDFE/ehdev-shell/issues" onClick={this.handleOpenExternal}>issues</a>
-          </p>
-        </section>
-      </Modal>
-    );
-  }
   render() {
+    const { status, downloadProgress } = this.state;
     const { location, navigate, children } = this.props;
     const layoutProps = {
       padding: 0,
@@ -96,6 +109,7 @@ class LayoutModule extends Component {
           current={pageInfo ? pageInfo.to : null}
           showInfo={this.showAppInfo}
           navigate={navigate}
+          status={status}
         />
         <LayoutComponent key="layout" {...layoutProps}>
           {children}
@@ -103,7 +117,25 @@ class LayoutModule extends Component {
         <ConsoleModule className={classnames(styles['Layout__Console'], {
           [styles['Layout__Console--visible']]: pageInfo && (pageInfo.to === 'project'),
         })} />
-        { this.renderInfo() }
+        <InfoModal
+          status={status}
+          open={this.state.infoModalVisible}
+          percent={downloadProgress}
+          onClose={() => {
+            this.setState({
+              infoModalVisible: false,
+            });
+          }}
+          onRequestCheckUpdate={() => {
+            updater.checkForUpdate();
+          }}
+          onRequestDownload={() => {
+            updater.downloadUpdate();
+          }}
+          onRequestInstall={() => {
+            updater.install();
+          }}
+        />
       </Layout>
     );
   }

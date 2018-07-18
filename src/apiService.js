@@ -1,19 +1,19 @@
 /**
  * ApiService Class
  */
-const { setRoot, makeRecord, updateConfig } = require('./models/project/env');
-const npm = require('./models/project/npm');
-const service = require('./models/service/index');
-const configer = require('./models/configer/index');
-const common = require('./models/common/index');
-const uploadList = require('./models/upload/list');
-const dashboard = require('./models/dashboard/index');
-const image = require('./models/tools/image');
-const reader = require('./models/reader/');
+const { setRoot, makeRecord, updateConfig } = require('./controller/project/env');
+const npm = require('./controller/project/npm');
+const service = require('./controller/service/index');
+const configer = require('./controller/configer/index');
+const common = require('./controller/common/index');
+const uploadList = require('./controller/upload/list');
+const dashboard = require('./controller/dashboard/index');
+const image = require('./controller/tools/image');
+const reader = require('./controller/reader/');
 
 const providers = require('./provider');
 
-const { serviceStore } = require('./service/index');
+const serviceStore = require('./controller/command/serviceStore');
 
 const apiService = {
   root: {

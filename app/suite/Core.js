@@ -1,6 +1,5 @@
 const { BrowserWindow, ipcMain, app } = require('electron');
-
-const isDEV = process.env.NODE_ENV === 'development';
+const { isDEV } = require('./util/env');
 
 const HANDLERS = new Map([
   [

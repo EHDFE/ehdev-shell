@@ -5,7 +5,7 @@
 const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
-const Commander = require('../../service/commander');
+const Commander = require('../command/commander');
 const { hasDir, hasFile, readJSON } = require('../../utils/');
 const { ConfigerFolderPath, ConfigerFolderPackagePath } = require('../../utils/env');
 

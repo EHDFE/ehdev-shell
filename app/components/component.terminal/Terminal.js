@@ -81,7 +81,7 @@ export default class TerminalComponent extends PureComponent {
       lineHeight: 1.2,
       fontFamily: process.platform === 'darwin' ? DEFAULT_MAC_FONT_FAMILY : DEFAULT_WINDOWS_FONT_FAMILY,
       // cancelEvents: true,
-      // disableStdin: true,
+      disableStdin: true,
     });
     this._terminal.on('resize', size => {
       this.emitResize(size);
@@ -103,7 +103,7 @@ export default class TerminalComponent extends PureComponent {
   fit(terminal, needMeasure) {
     if (this.props.active) {
       setTimeout(() => {
-        // needMeasure && terminal.charMeasure.measure(terminal.options);
+        needMeasure && terminal._core.charMeasure.measure(terminal._core.options);
         terminal.fit();
       }, 500);
     }

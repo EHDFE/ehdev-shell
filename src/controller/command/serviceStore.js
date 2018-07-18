@@ -1,7 +1,7 @@
 /**
  * Service Base Class
  */
-const { killPid } = require('../utils/index');
+const { killPid } = require('../../utils/index');
 
 class ServiceStore {
   constructor() {
@@ -37,4 +37,4 @@ class ServiceStore {
   }
 }
 
-exports.serviceStore = new ServiceStore();
+module.exports = new ServiceStore();

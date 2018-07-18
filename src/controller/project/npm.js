@@ -4,7 +4,7 @@
  * TODO:
  * 1. support the global configeration: registry
  */
-const Commander = require('../../service/commander');
+const Commander = require('../command/commander');
 
 /**
  * install dependence

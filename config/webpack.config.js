@@ -9,6 +9,7 @@ const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plug
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ErrorOverlayWebpackPlugin = require('error-overlay-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const moment = require('moment');
 const history = require('connect-history-api-fallback');
 const convert = require('koa-connect');
@@ -232,6 +233,7 @@ module.exports = () => {
             ecma: 6,
           },
         }),
+        new OptimizeCSSAssetsPlugin(),
       ],
     },
   };

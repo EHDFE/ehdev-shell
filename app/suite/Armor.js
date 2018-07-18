@@ -1,7 +1,6 @@
 const { app } = require('electron');
 const getUnixShellEnvironment = require('./util/fix-path');
-
-const isDEV = process.env.NODE_ENV === 'development';
+const { isMac, isDEV } = require('./util/env');
 
 if (isDEV) {
   require('../../src/index');
@@ -53,7 +52,7 @@ class Armor {
   }
   beforeLoadCore() {
     return new Promise(resolve => {
-      if (process.platform === 'darwin') {
+      if (isMac) {
         getUnixShellEnvironment().then(shellEnv => {
           Object.assign(process.env, shellEnv);
           resolve();

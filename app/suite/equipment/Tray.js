@@ -1,10 +1,10 @@
-const platform = require('os').platform();
 const { Tray, nativeImage } = require('electron');
+const { isMac } = require('../util/env');
 
 let iconPath;
-if (platform === 'darwin') {
+if (isMac) {
   iconPath = require.resolve('../assets/tray.png');
-} else if (platform === 'win32') {
+} else {
   iconPath = require.resolve('../assets/origin.white.png');
 }
 

@@ -1,0 +1,63 @@
+.ProcessModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  :global(.ant-modal) {
+    top: 0;
+    padding-bottom: 0;
+  }
+
+  &__List {
+    outline: 0 none;
+  }
+
+  &__ListItem {
+    display: flex;
+    // margin-bottom: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    &--image {
+      flex: 0 0 64px;
+      margin-right: 10px;
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      background-color: #f5f5f5;
+    }
+    &--desc {
+      width: calc(100% - 74px);
+    }
+    &--name, &--meta {
+      margin: 0;
+    }
+    &--name {
+      margin-bottom: 4px;
+      color: #333;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &--meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #999;
+    }
+
+    &--editor {
+      padding: 20px;
+      width: 100%;
+      background-color: #fefefe;
+      box-sizing: border-box;
+    }
+  }
+
+  &__Ctrl {
+    display: flex;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+}

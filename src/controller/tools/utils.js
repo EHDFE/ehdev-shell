@@ -13,11 +13,13 @@ exports.readFile = readFile;
 
 exports.getBinaryPath = (binary, tool_name) => {
   let binaryPath = [appPath, 'vendor'];
+  let ext = '';
   switch (platform()) {
   case 'darwin':
     binaryPath.push('mac');
     break;
   case 'win32':
+    ext = '.exe';
     binaryPath.push('win');
     break;
   default:
@@ -26,9 +28,9 @@ exports.getBinaryPath = (binary, tool_name) => {
   }
   binaryPath.push(binary);
   if (tool_name) {
-    binaryPath.push(tool_name);
+    binaryPath.push(`${tool_name}${ext}`);
   } else {
-    binaryPath.push(binary);
+    binaryPath.push(`${binary}${ext}`);
   }
   return path.resolve(...binaryPath);
 };

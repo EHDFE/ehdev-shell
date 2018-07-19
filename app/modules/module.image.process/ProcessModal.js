@@ -1,17 +1,16 @@
-import { PureComponent, Fragment } from 'react';
-import { Modal, Progress, Button, Dropdown, Menu, Icon, Tag, Spin } from 'antd';
-import { Map } from 'immutable';
+import { PureComponent, createRef } from 'react';
+import { Modal, Progress, Button, Icon, Spin, Radio } from 'antd';
+import { Map, Seq } from 'immutable';
 import PropTypes from 'prop-types';
 import filesize from 'filesize';
 import classnames from 'classnames';
 import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
-import Transition from 'react-transition-group/Transition';
-import { getProcessorComponent } from './processorExport';
+import { List } from 'react-virtualized';
 import { actions, IN_PROGRESS, PROCESSED } from './store';
 import Media from './Media';
 
-import styles from './index.less';
+import styles from './processModal.less';
 
 const StaticModalProps = {
   title: '批量处理',
@@ -23,20 +22,11 @@ const StaticModalProps = {
 
 const IN_PROGRESS_ICON = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-const defaultEditorStyle = {
-  transition: 'background-color 300ms ease-in-out',
-  backgroundColor: '#fefefe',
-};
-const transitionStyles = {
-  entering: { backgroundColor: 'rgba(24, 144, 255, 0.2)' },
-  entered: { backgroundColor: '#fefefe' },
-};
-
 class ProcessModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
     processors: PropTypes.instanceOf(Map),
-    data: PropTypes.instanceOf(Map),
+    data: PropTypes.instanceOf(Seq.Indexed),
     onClose: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
     onBatchProcess: PropTypes.func.isRequired,
@@ -45,7 +35,10 @@ class ProcessModal extends PureComponent {
   }
   state = {
     processing: false,
-    editId: null,
+  }
+  constructor(props) {
+    super(props);
+    this.listInstance = createRef();
   }
   startBatchProcess = () => {
     this.setState({
@@ -65,71 +58,27 @@ class ProcessModal extends PureComponent {
   handleClose = () => {
     this.props.onClose();
   }
-  handleChangeProcessor(id, { key }) {
-    this.props.changeProcessor(id, key);
+  handleChangeProcessor(id, { target }) {
+    this.props.changeProcessor(id, target.value);
+    this.listInstance.current.forceUpdateGrid();
   }
-  handleToggleProcessorPanel(id) {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        editId: prevState.editId === id ? null : id,
-      };
-    });
-  }
-  renderItem(data, id) {
-    const { processors, updateProcessorConfig } = this.props;
-    const { editId } = this.state;
-    const status = data.get('status');
+  rowRenderer = ({ index, isScrolling, isVisible, key, style }) => {
+    const { data, processors } = this.props;
+    const [ id, item ] = data.get(index);
+    const status = item.get('status');
     const percent = status === PROCESSED ? 100 : 0;
     const spinning = status === IN_PROGRESS;
     const processor = processors.getIn([id, 'processor']);
     const availableProcessors = processors.getIn([id, 'availableProcessors']);
-    const config = processors.getIn([id, 'config']);
-    const menu = (
-      <Menu onClick={this.handleChangeProcessor.bind(this, id)}>
-        {availableProcessors.map(p =>
-          <Menu.Item key={p}>{p}</Menu.Item>
-        )}
-      </Menu>
-    );
-    const Processor = getProcessorComponent(processor);
-    const processorEditor = (
-      <Transition
-        in={editId === id}
-        mountOnEnter
-        unmountOnExit
-        timeout={300}
-      >
-        {state => (
-          <div
-            className={styles['ProcessModal__ListItem--editor']}
-            style={{
-              ...defaultEditorStyle,
-              ...transitionStyles[state],
-            }}
-          >
-            <Processor
-              data={data.get('originalImage')}
-              config={config}
-              layout="horizontal"
-              onChange={data => {
-                updateProcessorConfig(id, data);
-              }}
-            />
-          </div>
-        )}
-      </Transition>
-    );
     return (
-      <Spin key={id} spinning={spinning} indicator={IN_PROGRESS_ICON}>
-        <div className={
-          classnames(styles.ProcessModal__ListItem, {
-            [styles['ProcessModal__ListItem--inedit']]: editId === id,
-          })
-        }>
+      <Spin key={key} spinning={spinning} indicator={IN_PROGRESS_ICON}>
+        <div
+          className={classnames(styles.ProcessModal__ListItem)}
+          style={style}
+        >
           <Media
             className={styles['ProcessModal__ListItem--image']}
-            data={data.get('originalImage')}
+            data={item.get('originalImage')}
             useThumb
           />
           <div className={styles['ProcessModal__ListItem--desc']}>
@@ -137,16 +86,21 @@ class ProcessModal extends PureComponent {
             <h4 className={styles['ProcessModal__ListItem--name']} title={id}>{ id }</h4>
             <div className={styles['ProcessModal__ListItem--meta']}>
               <span>
-                {filesize(data.getIn(['originalImage', 'size'], 0), { base: 10 })}
+                {filesize(item.getIn(['originalImage', 'size'], 0), { base: 10 })}
               </span>
-              <Dropdown overlay={menu}>
-                <Tag color="#108ee9" onClick={this.handleToggleProcessorPanel.bind(this, id)}>
-                  <Fragment>{processor} <Icon type="setting" /></Fragment>
-                </Tag>
-              </Dropdown>
+              <Radio.Group
+                value={processor}
+                size="small"
+                onChange={this.handleChangeProcessor.bind(this, id)}
+              >
+                {
+                  availableProcessors.map(p =>
+                    <Radio.Button value={p} key={p}>{p}</Radio.Button>
+                  )
+                }
+              </Radio.Group>
             </div>
           </div>
-          { processorEditor }
         </div>
       </Spin>
     );
@@ -154,13 +108,15 @@ class ProcessModal extends PureComponent {
   renderContent() {
     const { data } = this.props;
     return (
-      <div className={styles.ProcessModal__List}>
-        {
-          data.map(
-            (map, id) => this.renderItem(map, id)
-          ).valueSeq().toArray()
-        }
-      </div>
+      <List
+        ref={this.listInstance}
+        width={550}
+        height={400}
+        className={styles.ProcessModal__List}
+        rowCount={data.size}
+        rowHeight={75}
+        rowRenderer={this.rowRenderer}
+      />
     );
   }
   renderCtrl() {
@@ -174,7 +130,7 @@ class ProcessModal extends PureComponent {
         loading={processing}
       >开始处理</Button>
     ];
-    if (!processing && data.some(v => v.get('status') === PROCESSED)) {
+    if (!processing && data.some(([id, v]) => v.get('status') === PROCESSED)) {
       ctrls.unshift(
         <Button
           key="download"
@@ -196,6 +152,7 @@ class ProcessModal extends PureComponent {
     const props = Object.assign({}, StaticModalProps, {
       visible,
       onCancel: this.handleClose,
+      wrapClassName: styles.ProcessModal,
     });
     return (
       <Modal {...props}>

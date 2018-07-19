@@ -251,7 +251,7 @@ class ImageProcess extends PureComponent {
         <ProcessModal
           key="modal"
           visible={batchProcessModalVisible}
-          data={images}
+          data={images.entrySeq()}
           onClose={this.handleCloseProcessModal}
           onDownload={this.handleBatchDownload}
           onBatchProcess={this.handleBatchProcess}

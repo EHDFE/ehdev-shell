@@ -14,7 +14,7 @@ import styles from './index.less';
 const { dialog } = remote;
 
 const ACCEPT_FILE_TYPES = new Map([
-  ['image', ['png', 'gif', 'webp', 'jpg', 'bmp', 'svg']],
+  ['image', ['png', 'gif', 'webp', 'jpg', 'jpeg', 'bmp', 'svg']],
   ['video', ['mkv', 'avi', 'flv', 'mp4', 'webm']],
   ['all', ['*']],
 ]);
@@ -147,7 +147,7 @@ export default class UploadZone extends Component {
     const validFiles = [];
     const invalidFiles = [];
     Array.from(files).forEach(file => {
-      if (extensions.includes(file.name.split('.').pop())) {
+      if (extensions.includes(file.name.split('.').pop().toLowerCase())) {
         validFiles.push(file);
       } else {
         invalidFiles.push(file);

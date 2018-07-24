@@ -98,7 +98,7 @@
     "electron-context-menu": "^0.10.0",
     "electron-log": "^2.2.16",
     "electron-rebuild": "^1.8.1",
-    "electron-updater": "^3.0.1",
+    "electron-updater": "^3.0.3",
     "error-overlay-webpack-plugin": "^0.1.5",
     "eslint": "^5.2.0",
     "eslint-plugin-import": "^2.13.0",

@@ -11,22 +11,50 @@ import {
   createMemorySource,
   createHistory,
 } from '@reach/router';
+import Loadable from 'react-loadable';
+import { Spin } from 'antd';
 import ErrorBoundary from './components/component.errorBoundary/';
 import './index.less?no-css-module';
-import CommandPalette from './modules/module.command.palette/';
-import ConfigerModule from './modules/module.configer/';
 import Controller from './modules/module.controller/';
 // Pages
 import DashboardModule from './modules/module.dashboard/';
-// import ImageModule from './modules/module.image/';
 import LayoutModule from './modules/module.layout/';
-import ProjectModule from './modules/module.project/';
-import QrCodeModule from './modules/module.qrcode/';
-import UploadModule from './modules/module.upload/';
 // import ReaderModule from './modules/module.reader/';
-import UserModule from './modules/module.user/';
-import ImageProcessModule from './modules/module.image.process/';
-import SettingModule from './modules/module.setting/';
+
+const loading = () => <Spin />;
+
+const CommandPalette = Loadable({
+  loader: () => import('./modules/module.command.palette/'),
+  loading,
+});
+const ProjectModule = Loadable({
+  loader: () => import('./modules/module.project/'),
+  loading,
+});
+const ConfigerModule = Loadable({
+  loader: () => import('./modules/module.configer/'),
+  loading,
+});
+const QrCodeModule = Loadable({
+  loader: () => import('./modules/module.qrcode/'),
+  loading,
+});
+const UploadModule = Loadable({
+  loader: () => import('./modules/module.upload/'),
+  loading,
+});
+const UserModule = Loadable({
+  loader: () => import('./modules/module.user/'),
+  loading,
+});
+const ImageProcessModule = Loadable({
+  loader: () => import('./modules/module.image.process/'),
+  loading,
+});
+const SettingModule = Loadable({
+  loader: () => import('./modules/module.setting/'),
+  loading,
+});
 
 moment.locale('zh-cn');
 

@@ -1,4 +1,4 @@
-import { PureComponent } from 'react';
+import { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { remote } from 'electron';
@@ -32,9 +32,9 @@ class Controller extends PureComponent {
   }
   render() {
     return (
-      <div>
+      <Fragment>
         { this.props.children }
-      </div>
+      </Fragment>
     );
   }
 }

@@ -89,7 +89,6 @@ class LayoutModule extends Component {
     const { status, downloadProgress } = this.state;
     const { location, navigate, children } = this.props;
     const layoutProps = {
-      padding: 0,
       hasContent: true,
     };
     const pageInfo = LayoutModule.getPageInfo(location.pathname);

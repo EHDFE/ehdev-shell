@@ -27,7 +27,7 @@
     "image-size": "^0.6.3",
     "immutable": "^4.0.0-rc.9",
     "is-svg": "^3.0.0",
-    "less": "^3.7.0",
+    "less": "^3.8.0",
     "less-loader": "^4.1.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
@@ -71,7 +71,7 @@
     "svgo": "^1.0.5",
     "tempfile": "^2.0.0",
     "tinycolor2": "^1.4.1",
-    "ws": "^5.2.2",
+    "ws": "^6.0.0",
     "xterm": "^3.5.1"
   },
   "devDependencies": {
@@ -100,7 +100,7 @@
     "electron-rebuild": "^1.8.1",
     "electron-updater": "^3.0.1",
     "error-overlay-webpack-plugin": "^0.1.5",
-    "eslint": "^5.1.0",
+    "eslint": "^5.2.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-promise": "^3.8.0",

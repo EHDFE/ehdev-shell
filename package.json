@@ -59,7 +59,7 @@
     "react-virtualized": "^9.20.1",
     "recompose": "^0.27.1",
     "redux": "^4.0.0",
-    "redux-actions": "^2.5.0",
+    "redux-actions": "^2.6.1",
     "redux-immutable": "^4.0.0",
     "redux-persist": "^5.10.0",
     "redux-persist-electron-storage": "^1.1.2",

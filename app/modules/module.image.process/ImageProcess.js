@@ -273,7 +273,7 @@ class ImageProcess extends PureComponent {
 }
 
 const pageSelector = state => state['page.image.process'];
-const mapStateToProps = (state) => createSelector(
+const mapStateToProps = state => createSelector(
   pageSelector,
   pageState => {
     const images = pageState.get('images', Map());

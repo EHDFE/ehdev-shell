@@ -15,6 +15,7 @@ const persistConfig = {
   blacklist: [
     'page.image.process',
     'page.reader',
+    'page.portal',
   ],
 };
 

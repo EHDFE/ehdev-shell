@@ -2,30 +2,29 @@
  * File Card Component
  * @author ryan.bian
  */
-import { Component, createRef } from 'react';
+import { PureComponent, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import { getIcon } from 'pretty-file-icons';
 
 import styles from './index.less';
 
-export default class FileCard extends Component {
+export default class FileCard extends PureComponent {
   static defaultProps = {
     name: null,
     url: null,
     type: undefined,
-    mask: [],
   }
   static propTypes = {
     name: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
+    url: PropTypes.string,
     type: PropTypes.string.isRequired,
-    mask: PropTypes.array,
+    children: PropTypes.any,
   }
   coverImage = createRef()
   componentDidMount() {
-    const { name, type } = this.props;
-    if (type.startsWith('image/')) return;
+    const { url, name, type } = this.props;
+    if (url && type.startsWith('image/')) return;
     const iconName = getIcon(name);
     import(`pretty-file-icons/svg/${iconName}.svg`)
       .then(res => {
@@ -58,15 +57,16 @@ export default class FileCard extends Component {
     const {
       name,
       type,
-      mask,
+      url,
+      children,
     } = this.props;
 
     return (
       <div className={styles.FileCard__block}>
         {
-          type.startsWith('image/') ? this.renderImage() : this.renderFileIcon(name)
+          type.startsWith('image/') && url ? this.renderImage() : this.renderFileIcon(name)
         }
-        <div className={styles.FileCard__mask}>{ mask }</div>
+        <div className={styles.FileCard__mask}>{ children }</div>
         <div className={styles.FileCard__meta}>
           <Tooltip title={name}>{name}</Tooltip>
         </div>

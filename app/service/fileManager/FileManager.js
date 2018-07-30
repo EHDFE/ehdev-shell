@@ -42,6 +42,7 @@ export default class FileManager {
             type,
             lastModified: stats.mtime,
           });
+          // 人为构造一个 file 对象
           Object.defineProperty(file, 'path', {
             value: path,
             enumerable: true,

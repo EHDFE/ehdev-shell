@@ -48,6 +48,13 @@ export const GLOBAL_NAV_CONFIG = [
   //   description: 'RSS 阅读器',
   // },
   {
+    to: 'portal',
+    icon: 'export',
+    text: '传送门',
+    configurable: true,
+    description: '传送任意文件到其它设备',
+  },
+  {
     to: 'user',
     icon: 'user',
     text: '个人中心',

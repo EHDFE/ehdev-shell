@@ -7,8 +7,6 @@ const fs = require('fs');
 const os = require('os');
 const { exec } = require('child_process');
 const crypto = require('crypto');
-const http = require('http');
-const https = require('https');
 const path = require('path');
 const QRCode = require('qrcode');
 const glob = require('glob');
@@ -19,7 +17,6 @@ const platform = os.platform();
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const stat = promisify(fs.stat);
-const mkdir = promisify(fs.mkdir);
 
 exports.glob = promisify(glob);
 
@@ -73,7 +70,7 @@ exports.writeJSON = async (file, json) => {
  * indicate whether a given path is a direcotry
  * @param {string} string - directory path
  */
-const hasDir = exports.hasDir = async path => {
+exports.hasDir = async path => {
   let isDirectory;
   try {
     const stats = await stat(path);
@@ -100,64 +97,6 @@ exports.hasFile = async path => {
 };
 
 /**
- * http.request
- * @param {string} options - request option
- */
-exports.httpGet = url => new Promise((resolve, reject) => {
-  const req = http.get(url, (res) => {
-    res.setEncoding('utf8');
-    let result = '';
-    res.on('data', (chunk) => {
-      result += chunk;
-    });
-    res.on('end', () => {
-      try {
-        resolve(JSON.parse(result));
-      } catch (e) {
-        reject(e);
-      }
-    });
-  });
-  req.on('error', (e) => {
-    reject(e);
-  });
-});
-
-const makeDir = async path => {
-  let dirExist = await hasDir(path);
-  if (!dirExist) {
-    return mkdir(path);
-  }
-  return dirExist;
-};
-
-const saveRemoteFile = (filePath, options) => new Promise((resolve, reject) => {
-  const req = https.request(options, (res) => {
-    res.pipe(fs.createWriteStream(filePath));
-    res.on('end', ()=>{
-      resolve();
-    });
-  });
-
-  req.on('error', (e) => {
-    reject(e);
-  });
-  req.end();
-});
-
-/**
- * save wallpaper
- */
-exports.saveImage = async (filePath, options) => {
-  try {
-    await makeDir(path.dirname(filePath));
-    return await saveRemoteFile(filePath, options);
-  } catch (e) {
-    throw Error(e);
-  }
-};
-
-/**
  * generate qrcode
  * @param {string} text
  * @param {object} options
@@ -171,11 +110,23 @@ exports.generateQRCode = (text, options) => new Promise((resolve, reject) => {
   });
 });
 
+
 /**
  * generate md5 code
  * @param {string} str
  */
 exports.md5 = str => crypto.createHash('md5').update(str).digest('hex');
+
+exports.md5File = filePath => new Promise((resolve) => {
+  const rs = fs.createReadStream(filePath);
+  const md5hash = crypto.createHash('md5');
+  rs.on('data', chunk => {
+    md5hash.update(chunk);
+  });
+  rs.on('end', () => {
+    resolve(md5hash.digest('hex'));
+  });
+});
 
 exports.killPid = (ps, pid) => new Promise((resolve, reject) => {
   if (platform === 'win32') {

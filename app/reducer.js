@@ -13,6 +13,7 @@ import { default as UserReducer } from './modules/module.user/store';
 import { default as ImageProcessReducer } from './modules/module.image.process/store';
 import { default as SettingReducer } from './modules/module.setting/store';
 import { default as ReaderReducer } from './modules/module.reader/store';
+import { default as PortalReducer } from './modules/module.portal/store';
 
 const reducer = combineReducers({
   'page.dashboard': DashboardReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   'page.setting': SettingReducer,
   'page.qrcode': QrcodeReducer,
   'page.image.process': ImageProcessReducer,
+  'page.portal': PortalReducer,
 });
 
 export default reducer;

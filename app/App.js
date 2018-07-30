@@ -43,6 +43,10 @@ const UploadModule = Loadable({
   loader: () => import('./modules/module.upload/'),
   loading,
 });
+const PortalModule = Loadable({
+  loader: () => import('./modules/module.portal/'),
+  loading,
+});
 const UserModule = Loadable({
   loader: () => import('./modules/module.user/'),
   loading,
@@ -82,6 +86,7 @@ const App = () => (
               <ConfigerModule path="/configer" />
               <QrCodeModule path="/qrcode" />
               <ImageProcessModule path="/images" />
+              <PortalModule path="/portal" />
               <UserModule path="/user" />
               <SettingModule path="/setting" />
             </Router>

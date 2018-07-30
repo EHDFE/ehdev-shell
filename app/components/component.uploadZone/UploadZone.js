@@ -28,6 +28,7 @@ export default class UploadZone extends Component {
     onChange() {},
     multiple: true,
     content: undefined,
+    disabled: false,
   }
   static propTypes = {
     className: PropTypes.string,
@@ -41,7 +42,11 @@ export default class UploadZone extends Component {
     ]),
     onChange: PropTypes.func,
     multiple: PropTypes.bool,
-    content: PropTypes.element,
+    disabled: PropTypes.bool,
+    content: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.element,
+    ]),
   }
   static getAcceptExts(accept) {
     if (ACCEPT_FILE_TYPES.has(accept)) {
@@ -59,7 +64,8 @@ export default class UploadZone extends Component {
     window.removeEventListener('paste', this.handlePaste, false);
   }
   handleClickUpload = () => {
-    const { accept, multiple } = this.props;
+    const { accept, multiple, disabled } = this.props;
+    if (disabled) return;
     const properties = [
       'openFile',
     ];

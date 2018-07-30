@@ -3,11 +3,11 @@
  * @author ryan.bian
  */
 // import classnames from 'classnames';
-import { Col, Modal, Row, notification } from 'antd';
+import { Modal, notification } from 'antd';
 import { Map } from 'immutable';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component, Fragment } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import MdContentCopy from 'react-icons/lib/md/content-copy';
 import MdDelete from 'react-icons/lib/md/delete';
@@ -135,20 +135,20 @@ export default class ListView extends Component {
   }
   renderGridView(data) {
     return (
-      <Row type="flex">
+      <div className={styles.ListView__GridContainer}>
         {
           data.map((d, id) =>
-            <Col xs={12} sm={8} lg={6} xl={4} xxl={3} key={id}>
-              <FileCard
-                url={d.url}
-                name={d.name}
-                type={d.type}
-                mask={this.renderItemActions(d, true)}
-              />
-            </Col>
+            <FileCard
+              key={id}
+              url={d.url}
+              name={d.name}
+              type={d.type}
+            >
+              { this.renderItemActions(d, true) }
+            </FileCard>
           ).valueSeq().toArray()
         }
-      </Row>
+      </div>
     );
   }
   renderListView(data) {
@@ -198,7 +198,7 @@ export default class ListView extends Component {
   render() {
     const { viewMode, data } = this.props;
     return (
-      <div>
+      <Fragment>
         {
           viewMode === 'grid' ?
             this.renderGridView(data) :
@@ -207,7 +207,7 @@ export default class ListView extends Component {
         {
           this.renderImagePreview()
         }
-      </div>
+      </Fragment>
     );
   }
 }

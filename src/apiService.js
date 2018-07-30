@@ -10,6 +10,7 @@ const uploadList = require('./controller/upload/list');
 const dashboard = require('./controller/dashboard/index');
 const image = require('./controller/tools/image');
 const reader = require('./controller/reader/');
+const portal = require('./controller/portal/');
 
 const providers = require('./provider');
 
@@ -37,6 +38,7 @@ const apiService = {
   image,
   serviceStore,
   reader,
+  portal,
 };
 
 module.exports = apiService;

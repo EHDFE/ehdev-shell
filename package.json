@@ -83,7 +83,7 @@
     "@babel/plugin-syntax-export-default-from": "^7.0.0-beta.54",
     "@babel/polyfill": "^7.0.0-beta.54",
     "@babel/preset-env": "^7.0.0-beta.54",
-    "@babel/preset-react": "^7.0.0-beta.54",
+    "@babel/preset-react": "^7.0.0-beta.55",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^8.0.0-beta.4",
     "babel-plugin-import": "^1.8.0",

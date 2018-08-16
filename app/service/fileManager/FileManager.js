@@ -32,7 +32,7 @@ export default class FileManager {
             type = 'image/svg+xml';
           } else {
             const detection = fileType(fileBuffer);
-            type = detection.mime;
+            type = detection ? detection.mime : 'unknown';
           }
           const ab = fileBuffer.buffer.slice(
             fileBuffer.byteOffset,

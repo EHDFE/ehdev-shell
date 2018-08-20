@@ -81,9 +81,7 @@ getProdConfig(projectConfig)
         }
         if (stats.hasErrors()) {
           // eslint-disable-next-line no-console
-          console.log(stats.toString({
-            colors: true,
-          }));
+          console.log(stats.toString('minimal'));
           noticeLog('BUILD', 'FAILED', 'error');
           return;
         }

@@ -61,68 +61,75 @@
 
   &__Tabs {
     position: absolute;
-    left: -29px;
-    top: 0;
-    bottom: 0;
+    left: 0;
+    top: -29px;
+    right: 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
     &Button {
       position: relative;
       display: flex;
-      flex-direction: column-reverse;
-      padding: 6px 4px 24px;
-      background-color: #e0e0e0;
+      flex-direction: row;
+      padding: 4px 6px;
+      background-color: #f0f0f0;
       border: 0 none;
       align-items: center;
-      border-radius: 8px 0 0 0;
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 ~"calc(100% - 20px)");
+      // clip-path: polygon(0 0, 100% 0, 100% ~"calc(100% - 20px)", 0 100%, 100% 100%);
       cursor: pointer;
       z-index: 1;
-      color: @text-color;
+      color: #aaa;
       overflow: hidden;
       outline: 0 none;
-      filter: drop-shadow(1px 0 2px rgba(0, 0, 0, 0.6));
       white-space: nowrap;
+      flex-wrap: nowrap;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
 
       &--active {
-        padding-top: 0;
         background-color: @primary-6;
         color: #fff;
         z-index: 2;
-        filter: drop-shadow(3px 3px 3px #000);
+
+        &:hover {
+          background-color: @primary-6;
+        }
 
         .ConsoleModule__TabsClose {
-          height: 24px;
+          width: 24px;
         }
       }
 
       &--running {
         background-color: @primary-1;
         color: @primary-7;
+
+        &:hover {
+          background-color: @primary-1;
+        }
       }
 
       &--activeRunning {
         background-color: @primary-6;
         color: #fff;
-      }
 
-      &:not(:first-child) {
-        margin-top: -24px;
+        &:hover {
+          background-color: @primary-6;
+        }
       }
     }
 
     &Close {
       flex-shrink: 0;
-      height: 0;
+      width: 0;
       overflow: hidden;
       transition: all @ease-out 0.375s;
     }
 
     &Title {
       flex: 1 1 auto;
-      writing-mode: vertical-lr;
-      transform: rotate(180deg);
       overflow: hidden;
     }
   }

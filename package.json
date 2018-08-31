@@ -1,6 +1,6 @@
 {
   "name": "ehdev-shell",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "An electron based developing tool for feds.",
   "sideEffects": false,
   "keywords": [
@@ -94,7 +94,7 @@
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
-    "electron": "^3.0.0-nightly.20180821",
+    "electron": "^3.0.0-beta.8",
     "electron-builder": "^20.28.3",
     "electron-context-menu": "^0.10.0",
     "electron-log": "^2.2.17",

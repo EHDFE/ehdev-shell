@@ -68,10 +68,7 @@ const getDevServerConfig = PROJECT_CONFIG => {
     overlay: true,
     historyApiFallback: PROJECT_CONFIG.historyApiFallback || false,
     proxy: Object.assign({}, PROJECT_CONFIG.proxy),
-    stats: {
-      colors: true,
-      errorDetails: true,
-    },
+    stats: 'minimal',
     noInfo: RuntimeConfig.noInfo,
     // open the browser automaticly
     open: true,

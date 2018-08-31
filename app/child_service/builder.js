@@ -77,19 +77,21 @@ getProdConfig(projectConfig)
           // eslint-disable-next-line no-console
           console.error(err);
           noticeLog('BUILD', 'FAILED', 'error');
-          return;
+          return false;
         }
         if (stats.hasErrors()) {
           // eslint-disable-next-line no-console
           console.log(stats.toString('minimal'));
           noticeLog('BUILD', 'FAILED', 'error');
-          return;
+          return false;
         }
         // eslint-disable-next-line no-console
         console.log('\n' + stats.toString({
           hash: false,
           chunks: false,
           children: false,
+          cached: false,
+          modules: false,
           colors: true,
         }));
 

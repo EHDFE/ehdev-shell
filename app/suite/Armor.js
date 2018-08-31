@@ -15,15 +15,20 @@ const TrayController = require('./equipment/Tray');
 
 class Armor {
   constructor() {
-    const isSecondInstance = app.makeSingleInstance(() => {
-      if (this.core.window) {
-        if (this.core.window.isMinimized()) this.core.window.restore();
-        this.core.window.focus();
-      }
-    });
-    if (isSecondInstance) {
+    const gotTheLock = app.requestSingleInstanceLock();
+
+    if (!gotTheLock) {
       app.quit();
       return;
+    } else {
+      app.on('second-instance', () => {
+        if (this.core.window) {
+          if (this.core.window.isMinimized()) {
+            this.core.window.restore();
+          }
+          this.core.window.focus();
+        }
+      });
     }
     this.willLoadCore()
       .then(() => {

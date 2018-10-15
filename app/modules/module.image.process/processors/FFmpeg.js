@@ -12,7 +12,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class FFmpeg extends PureComponent {
+class FFmpeg extends PureComponent {
   static processorName = 'ffmpeg'
   static propTypes = {
     form: PropTypes.object,
@@ -80,3 +80,5 @@ export default class FFmpeg extends PureComponent {
     );
   }
 }
+
+export default FFmpeg;

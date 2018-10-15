@@ -11,7 +11,7 @@ export const defaultConfig = {
 };
 
 @processorHoc('Guetzli 是一款高品质高压缩比的 JPEG 编码器，其生成的图片比接近质量的由 libjpeg 生成的图片体积小 20-30%')
-export default class Guetzli extends PureComponent {
+class Guetzli extends PureComponent {
   static processorName = 'guetzli'
   static propTypes = {
     form: PropTypes.object,
@@ -62,3 +62,5 @@ export default class Guetzli extends PureComponent {
     );
   }
 }
+
+export default Guetzli;

@@ -12,7 +12,7 @@ export const defaultConfig = {
 };
 
 @processorHoc('pngquant 通过把 png 转换成包含透明通道的8位图片来缩小文件体积（通常来说比24/32位图片要小60%～80%）')
-export default class Pngquant extends PureComponent {
+class Pngquant extends PureComponent {
   static processorName = 'pngquant'
   static propTypes = {
     form: PropTypes.object,
@@ -93,3 +93,5 @@ export default class Pngquant extends PureComponent {
     );
   }
 }
+
+export default Pngquant;

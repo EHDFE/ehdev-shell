@@ -20,7 +20,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Gif2webp extends PureComponent {
+class Gif2webp extends PureComponent {
   static processorName = 'gif2webp'
   static propTypes = {
     form: PropTypes.object,
@@ -162,3 +162,5 @@ export default class Gif2webp extends PureComponent {
     );
   }
 }
+
+export default Gif2webp;

@@ -21,7 +21,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Webp extends PureComponent {
+class Webp extends PureComponent {
   static processorName = 'webp'
   static propTypes = {
     form: PropTypes.object,
@@ -190,3 +190,5 @@ export default class Webp extends PureComponent {
     );
   }
 }
+
+export default Webp;

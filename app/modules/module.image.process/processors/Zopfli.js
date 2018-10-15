@@ -13,7 +13,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Zopfli extends PureComponent {
+class Zopfli extends PureComponent {
   static processorName = 'zopfli'
   static propTypes = {
     form: PropTypes.object,
@@ -84,3 +84,5 @@ export default class Zopfli extends PureComponent {
     );
   }
 }
+
+export default Zopfli;

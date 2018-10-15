@@ -9,7 +9,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Upng extends PureComponent {
+class Upng extends PureComponent {
   static processorName = 'upng'
   static propTypes = {
     form: PropTypes.object,
@@ -74,3 +74,5 @@ export default class Upng extends PureComponent {
     );
   }
 }
+
+export default Upng;

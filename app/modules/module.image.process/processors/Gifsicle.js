@@ -13,7 +13,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Gifsicle extends PureComponent {
+class Gifsicle extends PureComponent {
   static processorName = 'gifsicle'
   static propTypes = {
     form: PropTypes.object,
@@ -93,3 +93,5 @@ export default class Gifsicle extends PureComponent {
     );
   }
 }
+
+export default Gifsicle;

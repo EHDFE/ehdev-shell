@@ -23,7 +23,6 @@
     "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
     "constructor-super": "warn",
     "valid-typeof": "warn",
-    // "indent": ["error", 2],
     "quotes": ["error", "single"],
     "semi": "error",
     "comma-spacing": ["error"],
@@ -37,7 +36,6 @@
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "jsx-a11y/label-has-for": "off"
-
   },
   "plugins": [
     "import",
@@ -48,5 +46,10 @@
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react/recommended"
-  ]
+  ],
+  "settings": {
+    "react": {
+      "version": "16.5.2"
+    }
+  }
 }

@@ -69,6 +69,7 @@ const getDevServerConfig = PROJECT_CONFIG => {
     historyApiFallback: PROJECT_CONFIG.historyApiFallback || false,
     proxy: Object.assign({}, PROJECT_CONFIG.proxy),
     stats: 'minimal',
+    // stats: 'normal',
     noInfo: RuntimeConfig.noInfo,
     // open the browser automaticly
     open: true,

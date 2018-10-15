@@ -95,7 +95,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Svgo extends PureComponent {
+class Svgo extends PureComponent {
   static processorName = 'svgo'
   static propTypes = {
     form: PropTypes.object,
@@ -130,3 +130,5 @@ export default class Svgo extends PureComponent {
     );
   }
 }
+
+export default Svgo;

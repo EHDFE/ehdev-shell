@@ -31,7 +31,7 @@ export const defaultConfig = {
 };
 
 @processorHoc()
-export default class Mozjpeg extends PureComponent {
+class Mozjpeg extends PureComponent {
   static processorName = 'mozjpeg'
   static propTypes = {
     form: PropTypes.object,
@@ -243,3 +243,5 @@ export default class Mozjpeg extends PureComponent {
     );
   }
 }
+
+export default Mozjpeg;

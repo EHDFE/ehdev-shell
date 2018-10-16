@@ -47,8 +47,16 @@
 
   &__CtrlItem {
     position: relative;
-    margin: 0 5px;
+    padding: 0 5px;
     height: 64px;
+    overflow: hidden;
+
+    background: linear-gradient(45deg, rgba(0,0,0,0.0980392) 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.0980392) 75%, rgba(0,0,0,0.0980392) 0), linear-gradient(45deg, rgba(0,0,0,0.0980392) 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.0980392) 75%, rgba(0,0,0,0.0980392) 0), rgb(255, 255, 255);
+    background-position: 0 0, 10px 10px;
+    background-origin: padding-box;
+    background-clip: content-box;
+    background-size: 20px 20px;
+
     > img, > video {
       width: 100%;
       height: 100%;

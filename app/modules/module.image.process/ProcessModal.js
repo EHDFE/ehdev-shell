@@ -36,10 +36,7 @@ class ProcessModal extends PureComponent {
   state = {
     processing: false,
   }
-  constructor(props) {
-    super(props);
-    this.listInstance = createRef();
-  }
+  listInstance = createRef();
   startBatchProcess = () => {
     this.setState({
       processing: true,
@@ -51,6 +48,11 @@ class ProcessModal extends PureComponent {
           });
         });
     });
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.processing && !this.state.processing) {
+      this.listInstance.current && this.listInstance.current.forceUpdateGrid();
+    }
   }
   handleDownload = () => {
     this.props.onDownload();

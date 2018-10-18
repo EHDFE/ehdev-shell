@@ -2,7 +2,6 @@
  * ApiService Class
  */
 const { setRoot, makeRecord, updateConfig } = require('./controller/project/env');
-const npm = require('./controller/project/npm');
 const service = require('./controller/service/index');
 const configer = require('./controller/configer/index');
 const common = require('./controller/common/index');
@@ -24,7 +23,6 @@ const apiService = {
   config: {
     updateConfig,
   },
-  npm,
   service,
   configer,
   common,

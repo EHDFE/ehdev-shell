@@ -76,6 +76,7 @@ class Commander {
     );
     const [command, ...args] = commands.split(/\s+/);
     const spawnOptions = {
+      name: 'xterm-color',
       cwd: config.cwd,
       env: Object.assign({}, process.env, config.env, {
         FORCE_COLOR: true,

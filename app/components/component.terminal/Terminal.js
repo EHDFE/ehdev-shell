@@ -105,7 +105,7 @@ export default class TerminalComponent extends PureComponent {
       setTimeout(() => {
         needMeasure && terminal._core.charMeasure.measure(terminal._core.options);
         terminal.fit();
-      }, 500);
+      }, 100);
     }
   }
   emitResize(size) {

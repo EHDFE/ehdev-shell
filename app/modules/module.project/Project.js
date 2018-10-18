@@ -3,18 +3,16 @@
  * @author ryan.bian
  */
 import { ipcRenderer } from 'electron';
-import { Spin, Tabs, Button } from 'antd';
+import { Spin, Tabs } from 'antd';
 import { Map, Set } from 'immutable';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 // import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import DependencyManager from '../../components/component.dependencyManager/';
 import FolderPicker from '../../components/component.folderPicker/';
 import styles from './index.less';
 import ProjectAction from './partialComponent/Action';
-import Editor from '../../components/component.editor/';
 import Profile from './partialComponent/Profile';
 import RuntimeConfigModal from './partialComponent/RuntimeConfigModal';
 import { actions } from './store';
@@ -35,14 +33,11 @@ class ProjectModule extends PureComponent {
     currentService: PropTypes.instanceOf(Map),
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
-    saveConfig: PropTypes.func,
     setActive: PropTypes.func,
     startServer: PropTypes.func,
     stopServer: PropTypes.func,
     startBuilder: PropTypes.func,
     stopBuilder: PropTypes.func,
-    getOutdated: PropTypes.func,
-    getPkgInfo: PropTypes.func,
     updateServiceStatus: PropTypes.func,
     // getESlintResult: PropTypes.func,
     updateRuntimeConfig: PropTypes.func,
@@ -68,7 +63,6 @@ class ProjectModule extends PureComponent {
   componentDidUpdate(prevProps) {
     if (prevProps.rootPath !== this.props.rootPath) {
       this.props.getEnvData(this.props.rootPath);
-      this.props.getPkgInfo(this.props.rootPath);
     }
   }
   componentWillUnmount() {
@@ -84,7 +78,6 @@ class ProjectModule extends PureComponent {
     if (rootPath) {
       return Promise.all([
         this.props.getEnvData(rootPath),
-        this.props.getPkgInfo(rootPath),
       ]).then(()=> {
         if (hasLoading) {
           this.setState({
@@ -175,11 +168,6 @@ class ProjectModule extends PureComponent {
       runtimeConfigerVisible: true,
     });
   }
-  saveEditor = () => {
-    const { rootPath } = this.props;
-    const content = this.editor.getValue();
-    this.props.saveConfig(rootPath, content);
-  }
   renderProfile() {
     const { env, rootPath } = this.props;
     const profileProps = {
@@ -192,42 +180,6 @@ class ProjectModule extends PureComponent {
       description: env.getIn(['pkg', 'description']),
     };
     return <Profile {...profileProps} />;
-  }
-  renderConfig(width) {
-    const { env } = this.props;
-    const configRaw = env.get('configRaw');
-    const style = {
-      width,
-    };
-    return [
-      <div
-        key="action"
-        className={styles.Project__EditorAction}
-      >
-        <Button size="small" type="primary" onClick={this.saveEditor}>保存</Button>
-      </div>,
-      <div
-        key="editor"
-        className={styles.Project__EditorWrapper}
-        style={style}
-      >
-        <Editor
-          ref={comp => this.editor = comp}
-          language="json"
-          content={configRaw}
-        />
-      </div>
-    ];
-  }
-  renderPackageVersions() {
-    const  { env, rootPath } = this.props;
-    const props = {
-      pkgInfo: env.get('pkgInfo'),
-      pkg: env.get('pkg', Map()),
-      rootPath,
-      refresh: this.getInitData,
-    };
-    return <DependencyManager {...props} />;
   }
   renderActionBar() {
     const { currentService, env } = this.props;
@@ -309,16 +261,6 @@ class ProjectModule extends PureComponent {
                 { this.renderProfile() }
               </div>
             </TabPane>
-            { env.get('runnable') ? <TabPane tab="运行配置" key="config">
-              <div className={styles.Project__TabContent}>
-                { this.renderConfig(width) }
-              </div>
-            </TabPane> : null }
-            <TabPane tab="依赖管理" key="versions">
-              <div className={styles.Project__TabContent}>
-                { this.renderPackageVersions() }
-              </div>
-            </TabPane>
           </Tabs>
         </Spin>
         <RuntimeConfigModal {...runtimeConfigerProps} />
@@ -356,15 +298,12 @@ const mapStateToProps = (state) => createSelector(
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
-  saveConfig: (rootPath, content) => dispatch(actions.env.saveConfig(rootPath, content)),
   setActive: id => dispatch(consoleActions.setActive(id)),
   startServer: params => dispatch(actions.service.startServer(params, dispatch)),
   stopServer: (...args) => dispatch(actions.service.stopServer(...args)),
   startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
   stopBuilder: (...args) => dispatch(actions.service.stopBuilder(...args)),
   updateServiceStatus: (isRunning, pid, rootPath) => dispatch(actions.service.updateStatus(isRunning, pid, rootPath)),
-  getOutdated: packageName => dispatch(actions.env.getOutdated(packageName)),
-  getPkgInfo: rootPath => dispatch(actions.env.getPkginfo(rootPath)),
   // getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath)),
   updateRuntimeConfig: config => dispatch(actions.env.updateRuntimeConfig(config)),
 });

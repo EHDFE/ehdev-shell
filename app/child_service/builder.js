@@ -70,9 +70,16 @@ getProdConfig(projectConfig)
       });
       const compiler = Webpack(webpackConfig);
 
+      const ProgressPlugin = Webpack.ProgressPlugin;
+      new ProgressPlugin({
+        profile: true
+      }).apply(compiler);
+
       noticeLog('BUILD', 'START');
 
       compiler.run((err, stats) => {
+        compiler.purgeInputFileSystem();
+
         if (err) {
           // eslint-disable-next-line no-console
           console.error(err);

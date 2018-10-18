@@ -10,7 +10,6 @@ const context = require('../../context');
 const scmProvider = require('../../provider/scm');
 
 const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
 
 exports.setRoot = async rootPath => {
   const ret = {};
@@ -92,13 +91,4 @@ exports.makeRecord = async projectPath => {
         }
       });
   });
-};
-
-exports.updateConfig = async (rootPath, newConfig) => {
-  try {
-    await writeFile(path.join(rootPath, 'abc.json'), newConfig);
-    return '修改成功';
-  } catch (e) {
-    throw e;
-  }
 };

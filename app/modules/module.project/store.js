@@ -15,8 +15,6 @@ const defaultState = Map({
     rootPath: undefined,
     pkg: undefined,
     config: undefined,
-    configRaw: '',
-    pkgInfo: Map({}),
     runnable: false,
     useESlint: false,
     lintResult: List([]),
@@ -47,28 +45,7 @@ export const actions = createActions({
       return rootPath;
     },
     GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
-    SAVE_CONFIG: async (rootPath, content) => {
-      try {
-        await PROJECT_API.root.saveConfig({
-          rootPath,
-          content,
-        });
-        return {
-          rootPath,
-          content,
-        };
-      } catch (e) {
-        throw Error(e);
-      }
-    },
     UPDATE_RUNTIME_CONFIG: config => config,
-    GET_OUTDATED: async packageName => {
-      const data = await PROJECT_API.pkg.outdated(packageName);
-      return data;
-    },
-    GET_PKGINFO: async rootPath => {
-      return await PROJECT_API.pkg.getAllVersions(rootPath);
-    },
     // GET_LINT_RESULT: async rootPath => {
     //   return await COMMON_API.getESlintResult(rootPath);
     // },
@@ -144,21 +121,8 @@ const envReducer = handleActions({
     if (error) return state;
     return state.merge(fromJS(payload));
   },
-  'ENV/SAVE_CONFIG': (state, { payload, error }) => {
-    if (error) return state;
-    const { content } = payload;
-    return state.set('configRaw', content).set('config', JSON.parse(content));
-  },
   'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
     return state.mergeIn(['runtimeConfig'], fromJS(payload));
-  },
-  'ENV/GET_OUTDATED': (state, { payload, error }) => {
-    if (error) return state;
-    return state.set('packages', fromJS(payload));
-  },
-  'ENV/GET_PKGINFO': (state, { payload, error }) => {
-    if (error) return state;
-    return state.set('pkgInfo', fromJS(payload));
   },
   'ENV/GET_LINT_RESULT': (state, { payload, error }) => {
     if (error) return state;

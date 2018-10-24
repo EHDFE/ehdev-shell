@@ -23,7 +23,7 @@ const IconMistMoon = () => (
     <g
       className={classnames(
         styles.climacon_iconWrap,
-        styles['climacon_iconWrap-cloudFogMoon']
+        styles['climacon_iconWrap-cloudFogMoon'],
       )}
     >
       <g clipPath="url(#cloudFillClip)">
@@ -31,7 +31,7 @@ const IconMistMoon = () => (
           className={classnames(
             styles.climacon_wrapperComponent,
             styles['climacon_wrapperComponent-moon'],
-            styles['climacon_componentWrap-moon_cloud']
+            styles['climacon_componentWrap-moon_cloud'],
           )}
           clipPath="url(#moonCloudFillClip)"
         >
@@ -39,7 +39,7 @@ const IconMistMoon = () => (
             className={classnames(
               styles.climacon_component,
               styles['climacon_component-stroke'],
-              styles['climacon_component-stroke_sunBody']
+              styles['climacon_component-stroke_sunBody'],
             )}
             d="M61.023,50.641c-6.627,0-11.999-5.372-11.999-11.998c0-6.627,5.372-11.999,11.999-11.999c0.755,0,1.491,0.078,2.207,0.212c-0.132,0.576-0.208,1.173-0.208,1.788c0,4.418,3.582,7.999,8,7.999c0.614,0,1.212-0.076,1.788-0.208c0.133,0.717,0.211,1.452,0.211,2.208C73.021,45.269,67.649,50.641,61.023,50.641z"
           />
@@ -48,7 +48,7 @@ const IconMistMoon = () => (
       <g
         className={classnames(
           styles.climacon_wrapperComponent,
-          styles['climacon_wrapperComponent-Fog']
+          styles['climacon_wrapperComponent-Fog'],
         )}
       >
         <path
@@ -56,7 +56,7 @@ const IconMistMoon = () => (
             styles.climacon_component,
             styles['climacon_component-stroke'],
             styles['climacon_component-stroke_fogLine'],
-            styles['climacon_component-stroke_fogLine-top']
+            styles['climacon_component-stroke_fogLine-top'],
           )}
           d="M69.998,57.641H30.003c-1.104,0-2-0.895-2-2c0-1.104,0.896-2,2-2h39.995c1.104,0,2,0.896,2,2C71.998,56.746,71.104,57.641,69.998,57.641z"
         />
@@ -65,7 +65,7 @@ const IconMistMoon = () => (
             styles.climacon_component,
             styles['climacon_component-stroke'],
             styles['climacon_component-stroke_fogLine'],
-            styles['climacon_component-stroke_fogLine-middle']
+            styles['climacon_component-stroke_fogLine-middle'],
           )}
           d="M69.998,65.641H30.003c-1.104,0-2-0.896-2-2s0.896-2,2-2h39.995c1.104,0,2,0.896,2,2C71.998,64.744,71.104,65.641,69.998,65.641z"
         />
@@ -74,7 +74,7 @@ const IconMistMoon = () => (
             styles.climacon_component,
             styles['climacon_component-stroke'],
             styles['climacon_component-stroke_fogLine'],
-            styles['climacon_component-stroke_fogLine-bottom']
+            styles['climacon_component-stroke_fogLine-bottom'],
           )}
           d="M30.003,69.639h39.995c1.104,0,2,0.896,2,2c0,1.105-0.896,2-2,2H30.003c-1.104,0-2-0.895-2-2C28.003,70.535,28.898,69.639,30.003,69.639z"
         />
@@ -82,14 +82,14 @@ const IconMistMoon = () => (
       <g
         className={classnames(
           styles.climacon_wrapperComponent,
-          styles['climacon_wrapperComponent-cloud']
+          styles['climacon_wrapperComponent-cloud'],
         )}
       >
         <path
           className={classnames(
             styles.climacon_component,
             styles['climacon_component-stroke'],
-            styles['climacon_component-stroke_cloud']
+            styles['climacon_component-stroke_cloud'],
           )}
           d="M59.999,45.643c-1.601,0-3.083,0.48-4.333,1.291c-1.232-5.317-5.974-9.291-11.665-9.291c-6.626,0-11.998,5.373-11.998,12h-4c0-8.835,7.163-15.999,15.998-15.999c6.004,0,11.229,3.312,13.965,8.204c0.664-0.113,1.337-0.205,2.033-0.205c5.222,0,9.651,3.342,11.301,8h-4.381C65.535,47.253,62.958,45.643,59.999,45.643z"
         />

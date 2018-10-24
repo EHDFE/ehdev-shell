@@ -32,23 +32,25 @@ class ProcessModal extends PureComponent {
     onBatchProcess: PropTypes.func.isRequired,
     changeProcessor: PropTypes.func.isRequired,
     updateProcessorConfig: PropTypes.func.isRequired,
-  }
+  };
   state = {
     processing: false,
-  }
+  };
   listInstance = createRef();
   startBatchProcess = () => {
-    this.setState({
-      processing: true,
-    }, () => {
-      this.props.onBatchProcess()
-        .then(() => {
+    this.setState(
+      {
+        processing: true,
+      },
+      () => {
+        this.props.onBatchProcess().then(() => {
           this.setState({
             processing: false,
           });
         });
-    });
-  }
+      },
+    );
+  };
   componentDidUpdate(prevProps, prevState) {
     if (prevState.processing && !this.state.processing) {
       this.listInstance.current && this.listInstance.current.forceUpdateGrid();
@@ -56,17 +58,17 @@ class ProcessModal extends PureComponent {
   }
   handleDownload = () => {
     this.props.onDownload();
-  }
+  };
   handleClose = () => {
     this.props.onClose();
-  }
+  };
   handleChangeProcessor(id, { target }) {
     this.props.changeProcessor(id, target.value);
     this.listInstance.current.forceUpdateGrid();
   }
-  rowRenderer = ({ index, isScrolling, isVisible, key, style }) => {
+  rowRenderer = ({ index, key, style }) => {
     const { data, processors } = this.props;
-    const [ id, item ] = data.get(index);
+    const [id, item] = data.get(index);
     const status = item.get('status');
     const percent = status === PROCESSED ? 100 : 0;
     const spinning = status === IN_PROGRESS;
@@ -85,28 +87,32 @@ class ProcessModal extends PureComponent {
           />
           <div className={styles['ProcessModal__ListItem--desc']}>
             <Progress percent={percent} />
-            <h4 className={styles['ProcessModal__ListItem--name']} title={id}>{ id }</h4>
+            <h4 className={styles['ProcessModal__ListItem--name']} title={id}>
+              {id}
+            </h4>
             <div className={styles['ProcessModal__ListItem--meta']}>
               <span>
-                {filesize(item.getIn(['originalImage', 'size'], 0), { base: 10 })}
+                {filesize(item.getIn(['originalImage', 'size'], 0), {
+                  base: 10,
+                })}
               </span>
               <Radio.Group
                 value={processor}
                 size="small"
                 onChange={this.handleChangeProcessor.bind(this, id)}
               >
-                {
-                  availableProcessors.map(p =>
-                    <Radio.Button value={p} key={p}>{p}</Radio.Button>
-                  )
-                }
+                {availableProcessors.map(p => (
+                  <Radio.Button value={p} key={p}>
+                    {p}
+                  </Radio.Button>
+                ))}
               </Radio.Group>
             </div>
           </div>
         </div>
       </Spin>
     );
-  }
+  };
   renderContent() {
     const { data } = this.props;
     return (
@@ -130,7 +136,9 @@ class ProcessModal extends PureComponent {
         type="primary"
         onClick={this.startBatchProcess}
         loading={processing}
-      >开始处理</Button>
+      >
+        开始处理
+      </Button>,
     ];
     if (!processing && data.some(([id, v]) => v.get('status') === PROCESSED)) {
       ctrls.unshift(
@@ -140,14 +148,10 @@ class ProcessModal extends PureComponent {
           style={{ marginRight: 10 }}
         >
           全部保存
-        </Button>
+        </Button>,
       );
     }
-    return (
-      <div className={styles.ProcessModal__Ctrl}>
-        { ctrls }
-      </div>
-    );
+    return <div className={styles.ProcessModal__Ctrl}>{ctrls}</div>;
   }
   render() {
     const { visible } = this.props;
@@ -158,27 +162,27 @@ class ProcessModal extends PureComponent {
     });
     return (
       <Modal {...props}>
-        { this.renderContent() }
-        { this.renderCtrl() }
+        {this.renderContent()}
+        {this.renderCtrl()}
       </Modal>
     );
   }
 }
 
 const pageSelector = state => state['page.image.process'];
-const mapStateToProps = (state) => createSelector(
-  pageSelector,
-  pageState => {
+const mapStateToProps = state =>
+  createSelector(pageSelector, pageState => {
     const processors = pageState.get('processors', Map());
     return {
       processors,
     };
-  },
-);
+  });
 
 const mapDispatchToProps = dispatch => ({
-  changeProcessor: (id, processor) => dispatch(actions.changeProcessor(id, processor)),
-  updateProcessorConfig: (id, config) => dispatch(actions.updateProcessorConfig(id, config)),
+  changeProcessor: (id, processor) =>
+    dispatch(actions.changeProcessor(id, processor)),
+  updateProcessorConfig: (id, config) =>
+    dispatch(actions.updateProcessorConfig(id, config)),
 });
 
 export default connect(

@@ -24,7 +24,7 @@ const IconLightningMoon = () => (
     <g
       className={classnames(
         styles.climacon_iconWrap,
-        styles['climacon_iconWrap-cloudLightningMoon']
+        styles['climacon_iconWrap-cloudLightningMoon'],
       )}
     >
       <g clipPath="url(#cloudFillClip)">
@@ -32,7 +32,7 @@ const IconLightningMoon = () => (
           className={classnames(
             styles.climacon_wrapperComponent,
             styles['climacon_wrapperComponent-moon'],
-            styles['climacon_componentWrap-moon_cloud']
+            styles['climacon_componentWrap-moon_cloud'],
           )}
           clipPath="url(#moonCloudFillClip)"
         >
@@ -40,7 +40,7 @@ const IconLightningMoon = () => (
             className={classnames(
               styles.climacon_component,
               styles['climacon_component-stroke'],
-              styles['climacon_component-stroke_sunBody']
+              styles['climacon_component-stroke_sunBody'],
             )}
             d="M61.023,50.641c-6.627,0-11.999-5.372-11.999-11.998c0-6.627,5.372-11.999,11.999-11.999c0.755,0,1.491,0.078,2.207,0.212c-0.132,0.576-0.208,1.173-0.208,1.788c0,4.418,3.582,7.999,8,7.999c0.614,0,1.212-0.076,1.788-0.208c0.133,0.717,0.211,1.452,0.211,2.208C73.021,45.269,67.649,50.641,61.023,50.641z"
           />
@@ -49,14 +49,14 @@ const IconLightningMoon = () => (
       <g
         className={classnames(
           styles.climacon_wrapperComponent,
-          styles['climacon_wrapperComponent-lightning']
+          styles['climacon_wrapperComponent-lightning'],
         )}
       >
         <polygon
           className={classnames(
             styles.climacon_component,
             styles['climacon_component-stroke'],
-            styles['climacon_component-stroke_lightning']
+            styles['climacon_component-stroke_lightning'],
           )}
           points="48.001,51.641 57.999,51.641 52,61.641 58.999,61.641 46.001,77.639 49.601,65.641 43.001,65.641 "
         />
@@ -64,14 +64,14 @@ const IconLightningMoon = () => (
       <g
         className={classnames(
           styles.climacon_wrapperComponent,
-          styles['climacon_wrapperComponent-cloud']
+          styles['climacon_wrapperComponent-cloud'],
         )}
       >
         <path
           className={classnames(
             styles.climacon_component,
             styles['climacon_component-stroke'],
-            styles['climacon_component-stroke_cloud']
+            styles['climacon_component-stroke_cloud'],
           )}
           d="M59.999,65.641c-0.28,0-0.649,0-1.062,0l3.584-4.412c3.182-1.057,5.478-4.053,5.478-7.588c0-4.417-3.581-7.998-7.999-7.998c-1.602,0-3.083,0.48-4.333,1.29c-1.231-5.316-5.974-9.29-11.665-9.29c-6.626,0-11.998,5.372-11.998,12c0,5.446,3.632,10.039,8.604,11.503l-1.349,3.777c-6.52-2.021-11.255-8.098-11.255-15.282c0-8.835,7.163-15.999,15.998-15.999c6.004,0,11.229,3.312,13.965,8.204c0.664-0.114,1.338-0.205,2.033-0.205c6.627,0,11.999,5.371,11.999,11.999C71.999,60.268,66.626,65.641,59.999,65.641z"
         />

@@ -23,20 +23,17 @@ export default class ListView extends Component {
     data: Map({}),
     onUpload() {},
     onDelete() {},
-  }
+  };
   static propTypes = {
-    viewMode: PropTypes.oneOf([
-      'grid',
-      'list',
-    ]),
+    viewMode: PropTypes.oneOf(['grid', 'list']),
     data: PropTypes.instanceOf(Map),
     onUpload: PropTypes.func,
     onDelete: PropTypes.func,
-  }
+  };
   state = {
     previewModalVisible: false,
     previewDataId: null,
-  }
+  };
   /**
    * upload file
    */
@@ -45,7 +42,7 @@ export default class ListView extends Component {
     const id = e.currentTarget.dataset.id;
     const handleItem = data.find(d => d._id === id);
     this.props.onUpload(id, handleItem);
-  }
+  };
   /**
    * preview the file
    */
@@ -55,14 +52,14 @@ export default class ListView extends Component {
       previewDataId: id,
       previewModalVisible: true,
     });
-  }
+  };
   /**
    * delete the file
    */
   handleDelete = e => {
     const id = e.currentTarget.dataset.id;
     this.props.onDelete(id);
-  }
+  };
   /**
    * after copy url
    * show notification
@@ -73,8 +70,7 @@ export default class ListView extends Component {
     });
   }
   renderItemActions(item, asMask) {
-    const IconProps = {
-    };
+    const IconProps = {};
     if (asMask) {
       Object.assign(IconProps, {
         size: 24,
@@ -84,7 +80,7 @@ export default class ListView extends Component {
       });
     } else {
       Object.assign(IconProps, {
-        size: 18
+        size: 18,
       });
     }
     const actionButtons = [];
@@ -96,7 +92,7 @@ export default class ListView extends Component {
           onClick={this.handleUpload}
         >
           <MdFileUpload {...IconProps} />
-        </button>
+        </button>,
       );
     } else {
       actionButtons.push(
@@ -108,7 +104,7 @@ export default class ListView extends Component {
           <button onClick={this.handleCopyUrl}>
             <MdContentCopy {...IconProps} />
           </button>
-        </CopyToClipboard>
+        </CopyToClipboard>,
       );
     }
     if (item.type.startsWith('image/')) {
@@ -119,7 +115,7 @@ export default class ListView extends Component {
           onClick={this.handlePreview}
         >
           <MdRemoveRedEye {...IconProps} />
-        </button>
+        </button>,
       );
     }
     actionButtons.push(
@@ -129,46 +125,43 @@ export default class ListView extends Component {
         onClick={this.handleDelete}
       >
         <MdDelete {...IconProps} />
-      </button>
+      </button>,
     );
     return actionButtons;
   }
   renderGridView(data) {
     return (
       <div className={styles.ListView__GridContainer}>
-        {
-          data.map((d, id) =>
-            <FileCard
-              key={id}
-              url={d.url}
-              name={d.name}
-              type={d.type}
-            >
-              { this.renderItemActions(d, true) }
+        {data
+          .map((d, id) => (
+            <FileCard key={id} url={d.url} name={d.name} type={d.type}>
+              {this.renderItemActions(d, true)}
             </FileCard>
-          ).valueSeq().toArray()
-        }
+          ))
+          .valueSeq()
+          .toArray()}
       </div>
     );
   }
   renderListView(data) {
     return (
       <div className={styles.ListView__list}>
-        {
-          data.map((d, id) =>
+        {data
+          .map((d, id) => (
             <div className={styles.ListView__listItem} key={id}>
               <div>
-                <p className={styles.ListView__listName}>{ d.name }</p>
-                <p className={styles.ListView__listTime}>{ moment(d.lastModified).format('YYYY-MM-DD HH:mm') }</p>
+                <p className={styles.ListView__listName}>{d.name}</p>
+                <p className={styles.ListView__listTime}>
+                  {moment(d.lastModified).format('YYYY-MM-DD HH:mm')}
+                </p>
               </div>
               <div className={styles.ListView__listItemAction}>
-                {
-                  this.renderItemActions(d)
-                }
+                {this.renderItemActions(d)}
               </div>
             </div>
-          ).valueSeq().toArray()
-        }
+          ))
+          .valueSeq()
+          .toArray()}
       </div>
     );
   }
@@ -185,7 +178,7 @@ export default class ListView extends Component {
           previewModalVisible: false,
         });
       },
-      footer: null
+      footer: null,
     };
     return (
       <Modal {...modalProps}>
@@ -199,14 +192,10 @@ export default class ListView extends Component {
     const { viewMode, data } = this.props;
     return (
       <Fragment>
-        {
-          viewMode === 'grid' ?
-            this.renderGridView(data) :
-            this.renderListView(data)
-        }
-        {
-          this.renderImagePreview()
-        }
+        {viewMode === 'grid'
+          ? this.renderGridView(data)
+          : this.renderListView(data)}
+        {this.renderImagePreview()}
       </Fragment>
     );
   }

@@ -8,7 +8,7 @@ import { Icon } from 'antd';
 
 import styles from './profile.less';
 
-const Profile = (props) => {
+const Profile = props => {
   const {
     rootPath,
     name,
@@ -21,69 +21,71 @@ const Profile = (props) => {
   const items = [
     <div key="rootPath" className={styles.Profile__Item}>
       <div className={styles.Profile__ItemLabel}>
-        <Icon type="home" />根目录
+        <Icon type="home" />
+        根目录
       </div>
       <div className={styles.Profile__ItemContent}>{rootPath}</div>
-    </div>
+    </div>,
   ];
   if (isSvnProject || isGitProject) {
     items.push(
       <div key="scm" className={styles.Profile__Item}>
         <div className={styles.Profile__ItemLabel}>
-          <Icon type="fork" />版本管理
+          <Icon type="fork" />
+          版本管理
         </div>
         <div className={styles.Profile__ItemContent}>
           {isSvnProject && 'svn'}
           {isGitProject && 'git'}
         </div>
-      </div>
+      </div>,
     );
   }
   if (name) {
     items.push(
       <div key="name" className={styles.Profile__Item}>
         <div className={styles.Profile__ItemLabel}>
-          <Icon type="book" />项目名称
+          <Icon type="book" />
+          项目名称
         </div>
         <div className={styles.Profile__ItemContent}>{name}</div>
-      </div>
+      </div>,
     );
   }
   if (version) {
     items.push(
       <div key="version" className={styles.Profile__Item}>
         <div className={styles.Profile__ItemLabel}>
-          <Icon type="tag-o" />版本号
+          <Icon type="tag-o" />
+          版本号
         </div>
         <div className={styles.Profile__ItemContent}>{version}</div>
-      </div>
+      </div>,
     );
   }
   if (author) {
     items.push(
       <div key="author" className={styles.Profile__Item}>
         <div className={styles.Profile__ItemLabel}>
-          <Icon type="user" />作者
+          <Icon type="user" />
+          作者
         </div>
         <div className={styles.Profile__ItemContent}>{author}</div>
-      </div>
+      </div>,
     );
   }
   if (description) {
     items.push(
       <div key="description" className={styles.Profile__Item}>
         <div className={styles.Profile__ItemLabel}>
-          <Icon type="profile" />描述
+          <Icon type="profile" />
+          描述
         </div>
         <div className={styles.Profile__ItemContent}>{description}</div>
-      </div>
+      </div>,
     );
   }
-  return (
-    <section className={styles.Profile}>
-      { items }
-    </section>
-  );
+  return <section className={styles.Profile}>{items}</section>;
 };
 
 PropTypes.defaultProps = {

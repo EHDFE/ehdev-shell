@@ -75,52 +75,63 @@ export const actions = createActions({
   },
 });
 
-const localConfigerReducer = handleActions({
-  GET_CONFIGS: (state, { payload }) => {
-    const maps = {};
-    payload.forEach(d => {
-      maps[d.name] = d;
-    });
-    return state
-      .set('configIds', Set(payload.map(d => d.name)))
-      .set('configMap', fromJS(maps));
+const localConfigerReducer = handleActions(
+  {
+    GET_CONFIGS: (state, { payload }) => {
+      const maps = {};
+      payload.forEach(d => {
+        maps[d.name] = d;
+      });
+      return state
+        .set('configIds', Set(payload.map(d => d.name)))
+        .set('configMap', fromJS(maps));
+    },
+    ADD: state => {
+      return state;
+    },
+    UPLOAD: state => {
+      return state;
+    },
+    REMOVE: state => {
+      return state;
+    },
+    UPGRADE: state => {
+      return state;
+    },
+    GET_PKG_VERSIONS: (state, { payload }) => {
+      const { versions, name } = payload;
+      return state.setIn(['configMap', name, 'versions'], fromJS(versions));
+    },
   },
-  ADD: (state, { payload }) => {
-    return state;
-  },
-  UPLOAD: (state, { payload }) => {
-    return state;
-  },
-  REMOVE: (state, { payload }) => {
-    return state;
-  },
-  UPGRADE: (state, { payload }) => {
-    return state;
-  },
-  GET_PKG_VERSIONS: (state, { payload }) => {
-    const { versions, name } = payload;
-    return state.setIn(['configMap', name, 'versions'], fromJS(versions));
-  },
-}, defaultState.get('local'));
+  defaultState.get('local'),
+);
 
-const remoteConfigerReducer = handleActions({
-  GET_REMOTE_CONFIGS: (state, { payload }) => {
-    const maps = {};
-    const validConfigs = Array.isArray(payload) ? payload.filter(d => d.name.startsWith('ehdev-configer-')) : [];
-    validConfigs.forEach(d => {
-      maps[d.name] = d;
-    });
-    return state
-      .set('configIds', Set(validConfigs.map(d => d.name)))
-      .set('configMap', fromJS(maps));
+const remoteConfigerReducer = handleActions(
+  {
+    GET_REMOTE_CONFIGS: (state, { payload }) => {
+      const maps = {};
+      const validConfigs = Array.isArray(payload)
+        ? payload.filter(d => d.name.startsWith('ehdev-configer-'))
+        : [];
+      validConfigs.forEach(d => {
+        maps[d.name] = d;
+      });
+      return state
+        .set('configIds', Set(validConfigs.map(d => d.name)))
+        .set('configMap', fromJS(maps));
+    },
   },
-}, defaultState.get('remote'));
+  defaultState.get('remote'),
+);
 
-const progressReducer = handleActions({
-  SET_PENDING: (state, { payload }) => {
-    return state.set('pending', payload);
+const progressReducer = handleActions(
+  {
+    SET_PENDING: (state, { payload }) => {
+      return state.set('pending', payload);
+    },
   },
-}, defaultState.get('progress'));
+  defaultState.get('progress'),
+);
 
 export default combineReducers({
   remote: remoteConfigerReducer,

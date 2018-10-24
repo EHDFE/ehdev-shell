@@ -19,7 +19,9 @@ export const actions = createActions({
     const fileList = PORTAL_API.getPool();
     const state = PORTAL_API.getState();
     try {
-      const fileEntityList = await fileManager.resolveFiles(fileList.map(d => d[1]));
+      const fileEntityList = await fileManager.resolveFiles(
+        fileList.map(d => d[1]),
+      );
       const fileMap = {};
       fileList.forEach((group, i) => {
         Object.assign(fileMap, {
@@ -79,55 +81,54 @@ export const actions = createActions({
   },
 });
 
-const reducer = handleActions({
-  INIT_PORTAL(originState, { error, payload }) {
-    if (error) return state;
-    const { fileMap, state } = payload;
-    return originState
-      .set('host', state.host)
-      .set('running', state.running)
-      .mergeDeepIn(['files'], fileMap);
-  },
-  ADD_PORTAL(state, { payload, error }) {
-    if (error) return state;
-    const { ids, fileList } = payload;
-    const incrementFiles = {};
-    fileList.forEach((file, idx) => {
-      Object.assign(incrementFiles, {
-        [ids[idx]]: Map({
-          file,
-        }),
-      });
-    });
-    return state.mergeDeepIn(['files'], incrementFiles);
-  },
-  REMOVE_PORTAL(state, { payload, error }) {
-    if (error) return state;
-    const { id } = payload;
-    return state.deleteIn(['files', id]);
-  },
-  START_SERVER(state, { payload, error }) {
-    if (error) return state;
-    return state
-      .set('running', true)
-      .set('host', payload);
-  },
-  STOP_SERVER(state, { payload, error }) {
-    if (error) return state;
-    return state
-      .set('running', false)
-      .set('host', undefined);
-  },
-  GENERATE_QRCODE(state, { payload, error }) {
-    if (error) return state;
-    return state.update('files', files => {
-      return files.withMutations(map => {
-        Object.keys(payload).forEach(id => {
-          map.setIn([id, 'qrcode'], payload[id]);
+const reducer = handleActions(
+  {
+    INIT_PORTAL(originState, { error, payload }) {
+      if (error) return state;
+      const { fileMap, state } = payload;
+      return originState
+        .set('host', state.host)
+        .set('running', state.running)
+        .mergeDeepIn(['files'], fileMap);
+    },
+    ADD_PORTAL(state, { payload, error }) {
+      if (error) return state;
+      const { ids, fileList } = payload;
+      const incrementFiles = {};
+      fileList.forEach((file, idx) => {
+        Object.assign(incrementFiles, {
+          [ids[idx]]: Map({
+            file,
+          }),
         });
       });
-    });
+      return state.mergeDeepIn(['files'], incrementFiles);
+    },
+    REMOVE_PORTAL(state, { payload, error }) {
+      if (error) return state;
+      const { id } = payload;
+      return state.deleteIn(['files', id]);
+    },
+    START_SERVER(state, { payload, error }) {
+      if (error) return state;
+      return state.set('running', true).set('host', payload);
+    },
+    STOP_SERVER(state, { payload, error }) {
+      if (error) return state;
+      return state.set('running', false).set('host', undefined);
+    },
+    GENERATE_QRCODE(state, { payload, error }) {
+      if (error) return state;
+      return state.update('files', files => {
+        return files.withMutations(map => {
+          Object.keys(payload).forEach(id => {
+            map.setIn([id, 'qrcode'], payload[id]);
+          });
+        });
+      });
+    },
   },
-}, defaultState);
+  defaultState,
+);
 
 export default reducer;

@@ -31,9 +31,7 @@ const CONFIGER_API = {
       throw e;
     }
   },
-  async upload(files) {
-
-  },
+  async upload() {},
   async remove(configerName) {
     if (!configerName) return Promise.reject('no config name provided!');
     try {
@@ -63,7 +61,7 @@ const CONFIGER_API = {
     } catch (e) {
       throw e;
     }
-  }
+  },
 };
 
 export default CONFIGER_API;

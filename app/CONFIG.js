@@ -21,7 +21,7 @@ export const GLOBAL_NAV_CONFIG = [
   },
   {
     to: 'configer',
-    icon: 'api',
+    icon: 'deployment-unit',
     text: '引擎库',
     configurable: true,
     description: '管理项目的运行依赖的引擎，结合项目使用',
@@ -49,7 +49,7 @@ export const GLOBAL_NAV_CONFIG = [
   // },
   {
     to: 'portal',
-    icon: 'export',
+    icon: 'thunderbolt',
     text: '传送门',
     configurable: true,
     description: '传送任意文件到其它设备',
@@ -80,4 +80,5 @@ export const GREETING_WORDS = new Map([
 
 export const WEATHER_APPID = 'b8fbb9f6ccb49e615a21bae76f87738d';
 
-export const RAVEN_ID = 'https://d2e7d99b1c414fe0ab0b02b67f17c1c8@sentry.io/247420';
+export const RAVEN_ID =
+  'https://d2e7d99b1c414fe0ab0b02b67f17c1c8@sentry.io/247420';

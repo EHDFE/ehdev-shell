@@ -1,19 +1,21 @@
 /**
  * ApiService Class
  */
-const { setRoot, makeRecord, updateConfig } = require('./controller/project/env');
+const {
+  setRoot,
+  makeRecord,
+  updateConfig,
+} = require('./controller/project/env');
 const service = require('./controller/service/index');
 const configer = require('./controller/configer/index');
 const common = require('./controller/common/index');
 const uploadList = require('./controller/upload/list');
 const dashboard = require('./controller/dashboard/index');
 const image = require('./controller/tools/image');
-const reader = require('./controller/reader/');
 const portal = require('./controller/portal/');
+const PTY = require('./controller/pty/');
 
 const providers = require('./provider');
-
-const serviceStore = require('./controller/command/serviceStore');
 
 const apiService = {
   root: {
@@ -34,9 +36,8 @@ const apiService = {
   dashboard,
   providers,
   image,
-  serviceStore,
-  reader,
   portal,
+  pty: PTY,
 };
 
 module.exports = apiService;

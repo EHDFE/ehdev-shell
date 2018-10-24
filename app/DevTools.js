@@ -9,8 +9,7 @@ import { createDevTools } from 'redux-devtools';
 import DockMonitor from 'redux-devtools-dock-monitor';
 import Dispatcher from 'redux-devtools-dispatch';
 
-const actionCreators = {
-};
+const actionCreators = {};
 
 // <LogMonitor />
 const DevTools = createDevTools(
@@ -21,7 +20,7 @@ const DevTools = createDevTools(
     defaultIsVisible={false}
   >
     <Dispatcher actionCreators={actionCreators} />
-  </DockMonitor>
+  </DockMonitor>,
 );
 
 export default DevTools;

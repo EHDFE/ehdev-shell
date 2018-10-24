@@ -17,35 +17,33 @@ export default class PicOptions extends Component {
   static defaultProps = {
     onChange() {},
     genParams: {},
-  }
+  };
   static propTypes = {
     onChange: PropTypes.func,
     genParams: PropTypes.object,
-  }
+  };
   /**
    * 选择品质
    */
-  onQualityChange = (value) => {
+  onQualityChange = value => {
     this.props.onChange({
-      quality: value
+      quality: value,
     });
   };
   /**
    * 选择输出格式
    */
-  onFormatChange = (e) => {
-
+  onFormatChange = e => {
     this.props.onChange({
-      format: e.target.value
+      format: e.target.value,
     });
   };
   /**
    * 选择生产webp
    */
-  onToWebpChange = (checked) => {
-
+  onToWebpChange = checked => {
     this.props.onChange({
-      webp: checked
+      webp: checked,
     });
   };
   /**
@@ -56,7 +54,6 @@ export default class PicOptions extends Component {
     const { doGenerate, fileList, gConfig } = genParams;
 
     doGenerate(fileList, Object.assign({}, gConfig));
-
   };
   /**
    * 输出路径
@@ -72,17 +69,17 @@ export default class PicOptions extends Component {
         //选择操作，此处是打开文件夹
         properties: ['openDirectory'],
         //过滤条件
-        filters: [{ name: 'All', extensions: ['*'] }]
+        filters: [{ name: 'All', extensions: ['*'] }],
       },
-      (res) => {
+      res => {
         //回调函数内容，此处是将路径内容显示在input框内
         if (!res) return;
         this.props.onChange({
-          output: res[0]
+          output: res[0],
         });
-      }
+      },
     );
-  }
+  };
 
   renderQuality() {
     const { genParams } = this.props;
@@ -90,7 +87,7 @@ export default class PicOptions extends Component {
     const marks = {
       10: '10%',
       50: '50%',
-      100: '100%'
+      100: '100%',
     };
     return (
       <Row className={styles.PicOptions__row}>
@@ -101,7 +98,8 @@ export default class PicOptions extends Component {
             marks={marks}
             step={5}
             value={gConfig.quality}
-            onChange={this.onQualityChange} />
+            onChange={this.onQualityChange}
+          />
         </div>
       </Row>
     );
@@ -113,11 +111,15 @@ export default class PicOptions extends Component {
       <Row className={styles.PicOptions__row}>
         <div className={styles.PicOptions__label}>导出格式:</div>
         <div className={styles.PicOptions__input}>
-          <RadioGroup onChange={this.onFormatChange} value={gConfig.format} size='small'>
-            <RadioButton value='jpg'>jpg</RadioButton>
-            <RadioButton value='png'>png</RadioButton>
-            <RadioButton value='webp'>webp</RadioButton>
-            <RadioButton value=''>默认</RadioButton>
+          <RadioGroup
+            onChange={this.onFormatChange}
+            value={gConfig.format}
+            size="small"
+          >
+            <RadioButton value="jpg">jpg</RadioButton>
+            <RadioButton value="png">png</RadioButton>
+            <RadioButton value="webp">webp</RadioButton>
+            <RadioButton value="">默认</RadioButton>
           </RadioGroup>
         </div>
       </Row>
@@ -142,13 +144,13 @@ export default class PicOptions extends Component {
 
     if (fileList.length === 0 || gConfig.output === '') {
       return (
-        <Button type='danger' ghost disabled>
-            生成图片
+        <Button type="danger" ghost disabled>
+          生成图片
         </Button>
       );
     } else {
       return (
-        <Button type='danger' ghost onClick={this.handleGenerate}>
+        <Button type="danger" ghost onClick={this.handleGenerate}>
           生成图片
         </Button>
       );
@@ -168,8 +170,8 @@ export default class PicOptions extends Component {
           <Input
             value={gConfig.output}
             onClick={this.handleOutput}
-            placeholder='输出目录'
-            prefix={<Icon type='folder-open' />}
+            placeholder="输出目录"
+            prefix={<Icon type="folder-open" />}
           />
         </div>
         <div className={styles.PicOptions__row}>{this.renderGenBtn()}</div>

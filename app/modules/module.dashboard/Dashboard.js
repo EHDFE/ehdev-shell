@@ -52,7 +52,7 @@ class DashboardModule extends Component {
     this.props.setProjectRoot(rootPath);
     const { history } = this.props;
     history.push('/project');
-  }
+  };
   renderInfoBar() {
     const { userName, base } = this.props;
     let weatherBlock = [];
@@ -67,7 +67,7 @@ class DashboardModule extends Component {
         weatherBlock.push(
           <p key={'tempture'} className={styles.Dashboard__WeatherTempture}>
             {weather.main.temp} °C
-          </p>
+          </p>,
         );
       }
     }
@@ -91,7 +91,7 @@ class DashboardModule extends Component {
       <Card
         className={classnames(
           styles.Dashboard__Summary,
-          styles.Dashboard__SummaryProject
+          styles.Dashboard__SummaryProject,
         )}
         key={'projects'}
       >
@@ -99,7 +99,7 @@ class DashboardModule extends Component {
         <em
           className={classnames(
             styles.Dashboard__SummaryCount,
-            styles.Dashboard__SummaryProjectCount
+            styles.Dashboard__SummaryProjectCount,
           )}
         >
           {base.get('projectsCount')}
@@ -108,7 +108,7 @@ class DashboardModule extends Component {
       <Card
         className={classnames(
           styles.Dashboard__Summary,
-          styles.Dashboard__SummaryAssets
+          styles.Dashboard__SummaryAssets,
         )}
         key={'assets'}
       >
@@ -116,7 +116,7 @@ class DashboardModule extends Component {
         <em
           className={classnames(
             styles.Dashboard__SummaryCount,
-            styles.Dashboard__SummaryAssetsCount
+            styles.Dashboard__SummaryAssetsCount,
           )}
         >
           {base.get('assetsCount')}
@@ -133,14 +133,14 @@ class DashboardModule extends Component {
         <em
           className={classnames(
             styles.Dashboard__SummaryCount,
-            styles.Dashboard__SummaryBuildCount
+            styles.Dashboard__SummaryBuildCount,
           )}
         >
           {statistic.reduce((p, d) => {
             return p + d.get('buildCount', 0);
           }, 0)}
         </em>
-      </Card>
+      </Card>,
     ];
     return cards;
   }
@@ -192,13 +192,14 @@ class DashboardModule extends Component {
 
 const dashboardPageSelector = state => state['page.dashboard'];
 const userPageSelector = state => state['page.user'];
-const baseSelector = createSelector(dashboardPageSelector, state => state.get('base'));
-const projectsSelector = createSelector(
-  dashboardPageSelector,
-  state => state.get('projects')
+const baseSelector = createSelector(dashboardPageSelector, state =>
+  state.get('base'),
+);
+const projectsSelector = createSelector(dashboardPageSelector, state =>
+  state.get('projects'),
 );
 
-const mapStateToProps = state =>
+const mapStateToProps = () =>
   createSelector(
     baseSelector,
     projectsSelector,
@@ -207,17 +208,18 @@ const mapStateToProps = state =>
       base,
       statistic: projects.get('statistic', List([])),
       userName: user.get('name'),
-    })
+    }),
   );
 const mapDispatchToProps = dispatch => ({
   getWeather: () => dispatch(actions.base.getWeather()),
   getDate: () => dispatch(actions.base.getDate()),
   getProjectList: () => dispatch(actions.projects.getList()),
   getOverall: () => dispatch(actions.base.getOverall()),
-  setProjectRoot: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
+  setProjectRoot: rootPath =>
+    dispatch(projectActions.env.setRootPath(rootPath)),
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(DashboardModule);

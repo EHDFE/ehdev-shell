@@ -21,27 +21,28 @@ export default class FolderPicker extends Component {
     value: '',
     onChange() {},
     children: undefined,
-  }
+  };
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     children: PropTypes.any,
-  }
+  };
   handleClick = () => {
-    dialog.showOpenDialog({
-      properties: [
-        'openDirectory',
-      ],
-    }, (filePaths) => {
-      if (Array.isArray(filePaths)) {
-        this.props.onChange(filePaths[0]);
-      }
-    });
+    dialog.showOpenDialog(
+      {
+        properties: ['openDirectory'],
+      },
+      filePaths => {
+        if (Array.isArray(filePaths)) {
+          this.props.onChange(filePaths[0]);
+        }
+      },
+    );
   };
   openFileExplorer = () => {
     const { value } = this.props;
     shell.showItemInFolder(value);
-  }
+  };
   renderContent() {
     const { value, children } = this.props;
     const menuItems = [
@@ -54,11 +55,7 @@ export default class FolderPicker extends Component {
           });
         }}
       >
-        <button
-          className={styles.FolderPicker__PopoverButton}
-        >
-          复制路径
-        </button>
+        <button className={styles.FolderPicker__PopoverButton}>复制路径</button>
       </CopyToClipboard>,
       <button
         className={styles.FolderPicker__PopoverButton}
@@ -80,9 +77,7 @@ export default class FolderPicker extends Component {
         placement={'bottomLeft'}
         title={'快捷操作'}
         content={
-          <div className={styles.FolderPicker__Popover}>
-            { menuItems }
-          </div>
+          <div className={styles.FolderPicker__Popover}>{menuItems}</div>
         }
       >
         {children}
@@ -94,28 +89,24 @@ export default class FolderPicker extends Component {
     return (
       <div className={styles.FolderPicker}>
         <RepoIcon size={26} />
-        {
-          !value ? (
+        {!value ? (
+          <button
+            className={styles.FolderPicker__AddButton}
+            onClick={this.handleClick}
+          >
+            <PlusIcon size={26} />
+          </button>
+        ) : (
+          <Fragment>
+            {this.renderContent()}
             <button
-              className={styles.FolderPicker__AddButton}
+              className={styles.FolderPicker__Icon}
               onClick={this.handleClick}
             >
-              <PlusIcon size={26} />
+              <Icon type="reload" />
             </button>
-          ) : (
-            <Fragment>
-              {this.renderContent()}
-              <button
-                className={styles.FolderPicker__Icon}
-                onClick={this.handleClick}
-              >
-                <Icon
-                  type="reload"
-                />
-              </button>
-            </Fragment>
-          )
-        }
+          </Fragment>
+        )}
       </div>
     );
   }

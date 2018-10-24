@@ -35,10 +35,7 @@ class SettingModule extends PureComponent {
   renderModuleCard(data) {
     const { enabledModules } = this.props;
     return (
-      <div
-        key={data.to}
-        className={styles.Setting__ModuleCard}
-      >
+      <div key={data.to} className={styles.Setting__ModuleCard}>
         <h4 className={styles.Setting__ModuleCardName}>{data.text}</h4>
         <Switch
           className={styles.Setting__ModuleCardToggle}
@@ -53,30 +50,20 @@ class SettingModule extends PureComponent {
   renderModuleCards() {
     return (
       <section className={styles.Setting__ModuleSelect}>
-        {
-          CONFIGURABLE_CONFIG.map(d => (
-            this.renderModuleCard(d)
-          ))
-        }
+        {CONFIGURABLE_CONFIG.map(d => this.renderModuleCard(d))}
       </section>
     );
   }
   render() {
-    return (
-      <div className={styles.Setting}>
-        { this.renderModuleCards() }
-      </div>
-    );
+    return <div className={styles.Setting}>{this.renderModuleCards()}</div>;
   }
 }
 
 const settingSelector = state => state['page.setting'];
-const mapStateToProps = state => createSelector(
-  settingSelector,
-  pageState => ({
+const mapStateToProps = state =>
+  createSelector(settingSelector, pageState => ({
     enabledModules: pageState.get('enabledModules'),
-  }),
-);
+  }));
 
 const mapDispatchToProps = dispatch => ({
   enableModule: name => dispatch(actions.enableModule(name)),

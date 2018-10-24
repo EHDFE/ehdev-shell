@@ -9,7 +9,6 @@ import MdAutorenew from 'react-icons/lib/md/autorenew';
 import IconMoreVert from 'react-icons/lib/md/more-vert';
 import styles from '../index.less';
 
-
 export default class ProjectAction extends PureComponent {
   static defaultProps = {
     currentService: Map(),
@@ -21,7 +20,7 @@ export default class ProjectAction extends PureComponent {
     handleStopService() {},
     handleStartDllBuilder() {},
     onClickRuntimeConfiger() {},
-  }
+  };
   static propTypes = {
     currentService: PropTypes.instanceOf(Map),
     runnable: PropTypes.bool,
@@ -32,26 +31,26 @@ export default class ProjectAction extends PureComponent {
     handleStopService: PropTypes.func,
     handleStartDllBuilder: PropTypes.func,
     onClickRuntimeConfiger: PropTypes.func,
-  }
-  getInitData = (tag) => {
+  };
+  getInitData = tag => {
     this.props.getInitData(tag);
-  }
+  };
   handleStartServer = () => {
     this.props.handleStartServer();
-  }
+  };
   handleStartBuilder = () => {
     this.props.handleStartBuilder();
-  }
+  };
   handleStopService = e => {
     const { type, pid } = e.target.dataset;
     this.props.handleStopService(type, pid);
-  }
+  };
   handleStartDllBuilder = () => {
     this.props.handleStartDllBuilder();
-  }
+  };
   onClickRuntimeConfiger = () => {
     this.props.onClickRuntimeConfiger();
-  }
+  };
   renderServerButton(isRunning, isServer) {
     const { currentService } = this.props;
     let btn;
@@ -70,10 +69,7 @@ export default class ProjectAction extends PureComponent {
       );
     } else {
       btn = (
-        <div
-          key="start-server"
-          className={styles['Project__ActionBarGrid']}
-        >
+        <div key="start-server" className={styles['Project__ActionBarGrid']}>
           <button
             className={styles.Project__ActionBarButton}
             disabled={isRunning}
@@ -137,8 +133,11 @@ export default class ProjectAction extends PureComponent {
       );
       if (dllEnable) {
         btn = (
-          <div key="start-build-group" className={styles['Project__ActionBarGrid']}>
-            { btn }
+          <div
+            key="start-build-group"
+            className={styles['Project__ActionBarGrid']}
+          >
+            {btn}
             <Dropdown
               trigger={['click']}
               placement="bottomRight"
@@ -155,7 +154,8 @@ export default class ProjectAction extends PureComponent {
                     </button>
                   </Menu.Item>
                 </Menu>
-              }>
+              }
+            >
               <IconMoreVert className={styles['Project__ActionBarMore']} />
             </Dropdown>
           </div>
@@ -173,10 +173,12 @@ export default class ProjectAction extends PureComponent {
       <button
         className={styles.Project__ActionBarButton}
         key={'update'}
-        onClick={()=>{this.getInitData('refresh');}}
+        onClick={() => {
+          this.getInitData('refresh');
+        }}
       >
         <MdAutorenew size={22} />
-          刷新
+        刷新
       </button>
     );
     if (runnable) {
@@ -186,9 +188,7 @@ export default class ProjectAction extends PureComponent {
       ];
       actions.push(refreshButton);
     } else {
-      actions = [
-        refreshButton
-      ];
+      actions = [refreshButton];
     }
     return <div className={styles.Project__ActionBar}>{actions}</div>;
   }

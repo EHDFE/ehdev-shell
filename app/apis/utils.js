@@ -1,7 +1,7 @@
 /**
  * @author ryan.bian
  */
-import { message, notification  } from 'antd';
+import { message, notification } from 'antd';
 import { remote } from 'electron';
 
 /**
@@ -12,11 +12,14 @@ import { remote } from 'electron';
  * @param {boolean} config.successNotification - show notification when success
  * @param {string} config.successMsg - success message's content
  */
-export const handleResponse = async (response, config = {
-  errorNotification: true,
-  successNotification: false,
-  successMsg: 'Successful!',
-}) => {
+export const handleResponse = async (
+  response,
+  config = {
+    errorNotification: true,
+    successNotification: false,
+    successMsg: 'Successful!',
+  },
+) => {
   let result;
   try {
     result = await response.json();
@@ -25,12 +28,14 @@ export const handleResponse = async (response, config = {
     throw Error(e);
   }
   if (!result.success) {
-    config.errorNotification && notification['error']({
-      message: 'ERROR MSG',
-      description: typeof result.errorMsg === 'object' ?
-        JSON.stringify(result.errorMsg) : result.errorMsg,
-    }
-    );
+    config.errorNotification &&
+      notification['error']({
+        message: 'ERROR MSG',
+        description:
+          typeof result.errorMsg === 'object'
+            ? JSON.stringify(result.errorMsg)
+            : result.errorMsg,
+      });
     throw Error(result.errorMsg);
   }
   config.successNotification && message.success(config.successMsg);
@@ -42,7 +47,6 @@ export const handleResponse = async (response, config = {
  * @param {Object} params
  */
 export const serialize = params => new URLSearchParams(Object.entries(params));
-
 
 let remoteAPI;
 if (process.env.NODE_ENV === 'production') {

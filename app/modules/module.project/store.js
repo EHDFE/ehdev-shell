@@ -1,34 +1,29 @@
-
 /**
  * Project Store
  * @author ryan.bian
  */
-import { List, Map, Set, fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 import { createActions, handleActions } from 'redux-actions';
-import { combineReducers } from 'redux-immutable';
 import { notification } from 'antd';
 import PROJECT_API from '../../apis/project';
 import SERVICE_API from '../../apis/service';
 
-const defaultState = Map({
-  env: Map({
-    rootPath: undefined,
-    pkg: undefined,
-    config: undefined,
-    runnable: false,
-    useESlint: false,
-    lintResult: List([]),
-    runtimeConfig: Map({
-      port: 3000,
-      https: false,
-      noInfo: true,
-      analyzer: false,
-    }),
+const defaultEnvState = Map({
+  rootPath: undefined,
+  pkg: undefined,
+  config: undefined,
+  runnable: false,
+  runtimeConfig: Map({
+    port: 3000,
+    https: false,
+    noInfo: true,
+    analyzer: false,
   }),
-  service: Map({
-    pids: Set([]),
-    instances: Map({}),
-  }),
+});
+
+const defaultServiceState = Map({
+  instances: Map({}),
+  serviceRootPath: undefined,
 });
 
 export const actions = createActions({
@@ -46,155 +41,95 @@ export const actions = createActions({
     },
     GET_ENV: async rootPath => await PROJECT_API.root.post(rootPath),
     UPDATE_RUNTIME_CONFIG: config => config,
-    // GET_LINT_RESULT: async rootPath => {
-    //   return await COMMON_API.getESlintResult(rootPath);
-    // },
   },
   SERVICE: {
-    START_SERVER: async (params, dispatch) => {
-      const { projectName } = params;
-      const { pid } = await SERVICE_API.server.start(params);
+    START: async (serviceType, params) => {
+      const { projectName, root } = params;
+      const { ppid } = await SERVICE_API[serviceType].start(params);
       return {
-        pid,
-        rootPath: params.root,
-        type: 'server',
+        ppid,
+        rootPath: root,
+        type: serviceType,
         projectName,
       };
     },
-    STOP_SERVER: async (pid, stopped, params) => {
-      if (!stopped) {
-        try {
-          await SERVICE_API.server.stop(+pid);
-          return {
-            pid: +pid,
-            ...params,
-          };
-        } catch (e) {
-          throw e;
-        }
-      }
-      return { pid };
-    },
-    START_BUILDER: async (params, dispatch) => {
-      const { projectName } = params;
-      const { pid } = await SERVICE_API.builder.start(params);
+    STOP: async (serviceType, params) => {
+      const { ppid, root } = params;
+      await SERVICE_API[serviceType].stop(ppid);
       return {
-        pid,
-        rootPath: params.root,
-        type: 'builder',
-        projectName,
+        ppid,
+        rootPath: root,
       };
     },
-    STOP_BUILDER: async (pid, stopped, params) => {
-      if (!stopped) {
-        try {
-          await SERVICE_API.builder.stop(+pid);
-          return {
-            pid: +pid,
-            ...params,
-          };
-        } catch (e) {
-          throw e;
-        }
-      }
-      return { pid };
+    CLOSE_PROJECT: async (rootPath, ppid) => {
+      await SERVICE_API.closePty(ppid);
+      return {
+        ppid,
+        rootPath,
+      };
     },
-    CLOSE_SERVICE: rootPath => rootPath,
-    UPDATE_STATUS: (isRunning, pid, rootPath) => ({
-      isRunning,
-      pid,
-      rootPath,
-    })
   },
 });
 
 /**
  * project's running environment
  */
-const envReducer = handleActions({
-  'ENV/SET_ROOT_PATH': (state, { payload, error }) => {
-    if (error) return state;
-    return state
-      .set('rootPath', payload);
+export const envReducer = handleActions(
+  {
+    'ENV/SET_ROOT_PATH': (state, { payload, error }) => {
+      if (error) return state;
+      return state.set('rootPath', payload);
+    },
+    'ENV/GET_ENV': (state, { payload, error }) => {
+      if (error) return state;
+      return state.merge(fromJS(payload));
+    },
+    'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
+      return state.mergeIn(['runtimeConfig'], fromJS(payload));
+    },
   },
-  'ENV/GET_ENV': (state, { payload, error }) => {
-    if (error) return state;
-    return state.merge(fromJS(payload));
-  },
-  'ENV/UPDATE_RUNTIME_CONFIG': (state, { payload }) => {
-    return state.mergeIn(['runtimeConfig'], fromJS(payload));
-  },
-  'ENV/GET_LINT_RESULT': (state, { payload, error }) => {
-    if (error) return state;
-    return state.mergeIn(['lintResult'], fromJS(payload));
-  }
-}, defaultState.get('env'));
+  defaultEnvState,
+);
 
 /**
  * project's runner reducer
  */
-const serviceReducer = handleActions({
-  'SERVICE/START_SERVER': (state, { payload, error }) => {
-    if (error) return state;
-    const { pid, rootPath, type, projectName } = payload;
-    if (state.hasIn(['pids', pid])) return state;
-    return state
-      .update('pids', set => set.add(pid))
-      .mergeIn(['instances', rootPath], Map({
-        pid,
-        type,
-        rootPath,
-        projectName,
-        running: true,
-      }));
+export const serviceReducer = handleActions(
+  {
+    'SERVICE/START': (state, { payload, error }) => {
+      if (error) return state;
+      const { ppid, rootPath, type, projectName } = payload;
+      if (state.hasIn(['instances', rootPath])) {
+        return state.updateIn(['instances', rootPath], map => {
+          return map.set('running', true).set('type', type);
+        });
+      }
+      return state
+        .setIn(
+          ['instances', rootPath],
+          Map({
+            ppid,
+            type,
+            projectName,
+            rootPath,
+            running: true,
+          }),
+        )
+        .set('serviceRootPath', rootPath);
+    },
+    'SERVICE/STOP': (state, { payload, error }) => {
+      if (error) return state;
+      const { rootPath } = payload;
+      return state
+        .updateIn(['instances', rootPath], map => {
+          return map.set('running', false).set('type', null);
+        })
+        .set('serviceRootPath', rootPath);
+    },
+    'SERVICE/CLOSE_PROJECT': (state, { payload }) => {
+      const { rootPath } = payload;
+      return state.deleteIn(['instances', rootPath]);
+    },
   },
-  'SERVICE/STOP_SERVER': (state, { payload, error }) => {
-    if (error) return state;
-    const { pid, rootPath } = payload;
-    return state
-      .update('pids', set => set.remove(pid))
-      .updateIn(['instances', rootPath], map => map.withMutations(map => map.delete('pid').set('running', false)));
-  },
-  'SERVICE/START_BUILDER': (state, { payload, error }) => {
-    if (error) return state;
-    const { pid, rootPath, type, projectName } = payload;
-    if (state.hasIn(['pids', pid])) return state;
-    return state
-      .update('pids', set => set.add(pid))
-      .mergeIn(['instances', rootPath], Map({
-        pid,
-        type,
-        rootPath,
-        projectName,
-        running: true,
-      }));
-  },
-  'SERVICE/STOP_BUILDER': (state, { payload, error }) => {
-    if (error) return state;
-    const { pid, rootPath } = payload;
-    return state
-      .update('pids', set => set.remove(pid))
-      .updateIn(['instances', rootPath], map => map.withMutations(map => map.delete('pid').set('running', false)));
-  },
-  'SERVICE/CLOSE_SERVICE': (state, { payload }) => {
-    return state.deleteIn(['instances', payload]);
-  },
-  'SERVICE/UPDATE_STATUS': (state, { payload }) => {
-    const { isRunning, pid, rootPath } = payload;
-    let nextState;
-    if (!isRunning) {
-      nextState = state.update('pids', set => set.remove(pid));
-    }
-    return nextState
-      .updateIn(
-        ['instances', rootPath],
-        Map({}),
-        map => map.withMutations(map => map.set('running', isRunning))
-      );
-  },
-}, defaultState.get('service'));
-
-export default combineReducers({
-  env: envReducer,
-  service: serviceReducer,
-});
+  defaultServiceState,
+);

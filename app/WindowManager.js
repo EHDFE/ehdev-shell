@@ -42,7 +42,6 @@ const WindowManager = () => (
   />
 );
 
-WindowManager.propTypes = {
-};
+WindowManager.propTypes = {};
 
 export default WindowManager;

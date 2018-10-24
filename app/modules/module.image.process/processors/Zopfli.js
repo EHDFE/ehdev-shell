@@ -14,15 +14,15 @@ export const defaultConfig = {
 
 @processorHoc()
 class Zopfli extends PureComponent {
-  static processorName = 'zopfli'
+  static processorName = 'zopfli';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     // <ProcessItem
     //   label={'迭代次数'}
@@ -47,27 +47,17 @@ class Zopfli extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     return (
       <Fragment>
-        <ProcessItem
-          label={'8bit'}
-          tooltip={'转换成每通道8位的图像'}
-        >
+        <ProcessItem label={'8bit'} tooltip={'转换成每通道8位的图像'}>
           {getFieldDecorator('8bit', {
             valuePropName: 'checked',
             initialValue: this.state['8bit'],
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'透明'}
-          extra={'允许修改完全透明像素的色值'}
-        >
+        <ProcessItem label={'透明'} extra={'允许修改完全透明像素的色值'}>
           {getFieldDecorator('transparent', {
             valuePropName: 'checked',
             initialValue: this.state.transparent,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'压榨模式'}
@@ -76,9 +66,7 @@ class Zopfli extends PureComponent {
           {getFieldDecorator('more', {
             valuePropName: 'checked',
             initialValue: this.state.more,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
       </Fragment>
     );

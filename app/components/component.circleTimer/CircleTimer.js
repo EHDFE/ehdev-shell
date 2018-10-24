@@ -18,14 +18,14 @@ class CircleTimer extends PureComponent {
     width: 200,
     status: 'active',
     onTimeUp() {},
-  }
+  };
   static propTypes = {
     id: PropTypes.string,
     duration: PropTypes.number,
     width: PropTypes.number,
     status: PropTypes.oneOf(['success', 'exception', 'active']),
     onTimeUp: PropTypes.func,
-  }
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -64,21 +64,27 @@ class CircleTimer extends PureComponent {
     const diff = now - this.startTime;
     if (diff <= this.durationMilliseconds) {
       const duration = moment.duration(this.durationMilliseconds - diff);
-      this.setState({
-        percent: Math.round(100 * diff / this.durationMilliseconds),
-        content: duration.format('mm:ss', { trim: false }),
-      }, () => {
-        this.countTimer = setTimeout(() => {
-          this.updateState();
-        }, 1000);
-      });
+      this.setState(
+        {
+          percent: Math.round((100 * diff) / this.durationMilliseconds),
+          content: duration.format('mm:ss', { trim: false }),
+        },
+        () => {
+          this.countTimer = setTimeout(() => {
+            this.updateState();
+          }, 1000);
+        },
+      );
     } else {
-      this.setState({
-        percent: 100,
-        content: '00:00',
-      }, () => {
-        this.props.onTimeUp();
-      });
+      this.setState(
+        {
+          percent: 100,
+          content: '00:00',
+        },
+        () => {
+          this.props.onTimeUp();
+        },
+      );
     }
   }
   render() {

@@ -14,13 +14,16 @@ export const actions = createActions({
   DISABLE_MODULE: name => name,
 });
 
-const reducer = handleActions({
-  ENABLE_MODULE(state, { payload }) {
-    return state.update('enabledModules', Set(), set => set.add(payload));
+const reducer = handleActions(
+  {
+    ENABLE_MODULE(state, { payload }) {
+      return state.update('enabledModules', Set(), set => set.add(payload));
+    },
+    DISABLE_MODULE(state, { payload }) {
+      return state.update('enabledModules', Set(), set => set.remove(payload));
+    },
   },
-  DISABLE_MODULE(state, { payload }) {
-    return state.update('enabledModules', Set(), set => set.remove(payload));
-  },
-}, defaultState);
+  defaultState,
+);
 
 export default reducer;

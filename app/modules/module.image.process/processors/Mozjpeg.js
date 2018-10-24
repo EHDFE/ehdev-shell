@@ -32,22 +32,20 @@ export const defaultConfig = {
 
 @processorHoc()
 class Mozjpeg extends PureComponent {
-  static processorName = 'mozjpeg'
+  static processorName = 'mozjpeg';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Fragment>
-        <ProcessItem
-          label={'品质'}
-        >
+        <ProcessItem label={'品质'}>
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
           })(
@@ -58,23 +56,25 @@ class Mozjpeg extends PureComponent {
                 { value: 0, label: '低' },
                 { value: 100, label: '高' },
               )}
-            />
+            />,
           )}
         </ProcessItem>
         <ProcessItem
           label={'渐进式'}
           extra={[
-            <div key={'true'}>true: 渐进式图片(先显示一个轮廓，后渐渐清晰)</div>,
-            <div key={'false'}>false 基线图片，逐行扫描（图片从上到下，逐行显示）</div>,
+            <div key={'true'}>
+              true: 渐进式图片(先显示一个轮廓，后渐渐清晰)
+            </div>,
+            <div key={'false'}>
+              false 基线图片，逐行扫描（图片从上到下，逐行显示）
+            </div>,
             <div key={'recomend'}>推荐开启</div>,
           ]}
         >
           {getFieldDecorator('progressive', {
             valuePropName: 'checked',
             initialValue: this.state.progressive,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'targa'}
@@ -83,9 +83,7 @@ class Mozjpeg extends PureComponent {
           {getFieldDecorator('targa', {
             valuePropName: 'checked',
             initialValue: this.state.targa,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'标准模式'}
@@ -97,24 +95,24 @@ class Mozjpeg extends PureComponent {
           {getFieldDecorator('revert', {
             valuePropName: 'checked',
             initialValue: this.state.revert,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'fastCrush'}
           tooltip={'禁用逐行扫描优化'}
           extra={[
-            <div key={'true'}>true: 使用逐行扫描优化（progressive为false时有效）</div>,
-            <div key={'false'}>false: 禁用逐行扫描优化（在渐进式图片有效）</div>,
+            <div key={'true'}>
+              true: 使用逐行扫描优化（progressive为false时有效）
+            </div>,
+            <div key={'false'}>
+              false: 禁用逐行扫描优化（在渐进式图片有效）
+            </div>,
           ]}
         >
           {getFieldDecorator('fastCrush', {
             valuePropName: 'checked',
             initialValue: this.state.fastCrush,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'DC 扫描'}
@@ -128,42 +126,29 @@ class Mozjpeg extends PureComponent {
               max={2}
               min={0}
               tipFormatter={value => dcScanExplain.get(value)}
-            />
+            />,
           )}
         </ProcessItem>
-        <ProcessItem
-          label={'网格'}
-          tooltip={'网格优化'}
-        >
+        <ProcessItem label={'网格'} tooltip={'网格优化'}>
           {getFieldDecorator('trellis', {
             valuePropName: 'checked',
             initialValue: this.state.trellis,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'DC 网格'}
-          tooltip={'DC系数的网格优化'}
-        >
+        <ProcessItem label={'DC 网格'} tooltip={'DC系数的网格优化'}>
           {getFieldDecorator('trellisDC', {
             valuePropName: 'checked',
             initialValue: this.state.trellisDC,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'tune'}
-          tooltip={'设置网格优化方法'}
-        >
+        <ProcessItem label={'tune'} tooltip={'设置网格优化方法'}>
           {getFieldDecorator('tune', { initialValue: this.state.tune })(
             <Select size="small">
               <Option value="psnr">psnr</Option>
               <Option value="hvs-psnr">hvs-psnr</Option>
               <Option value="ssim">ssim</Option>
               <Option value="ms-ssim">ms-ssim</Option>
-            </Select>
+            </Select>,
           )}
         </ProcessItem>
         <ProcessItem
@@ -173,31 +158,21 @@ class Mozjpeg extends PureComponent {
           {getFieldDecorator('overshoot', {
             valuePropName: 'checked',
             initialValue: this.state.overshoot,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'算术编码'}
-          tooltip={'使用算术编码'}
-        >
+        <ProcessItem label={'算术编码'} tooltip={'使用算术编码'}>
           {getFieldDecorator('arithmetic', {
             valuePropName: 'checked',
             initialValue: this.state.arithmetic,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'dct'}
-          tooltip={'设置 DCT 方法.'}
-        >
+        <ProcessItem label={'dct'} tooltip={'设置 DCT 方法.'}>
           {getFieldDecorator('dct', { initialValue: this.state.dct })(
             <Select size="small">
               <Option value="int">integer DCT</Option>
               <Option value="fast">fast integer DCT (less accurate)</Option>
               <Option value="float">floating-point DCT</Option>
-            </Select>
+            </Select>,
           )}
         </ProcessItem>
         <ProcessItem
@@ -207,37 +182,28 @@ class Mozjpeg extends PureComponent {
           {getFieldDecorator('quantBaseline', {
             valuePropName: 'checked',
             initialValue: this.state.quantBaseline,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'量化表'}
-          tooltip={'使用预定义的量化表'}
-        >
-          {getFieldDecorator('quantTable', { initialValue: this.state.quantTable })(
+        <ProcessItem label={'量化表'} tooltip={'使用预定义的量化表'}>
+          {getFieldDecorator('quantTable', {
+            initialValue: this.state.quantTable,
+          })(
             <Select size="small">
               <Option value={0}>JPEG Annex K</Option>
               <Option value={1}>Flat</Option>
               <Option value={2}>Custom, tuned for MS-SSIM</Option>
               <Option value={3}>ImageMagick table by N. Robidoux</Option>
               <Option value={4}>Custom, tuned for PSNR-HVS</Option>
-              <Option value={5}>Table from paper by Klein, Silverstein and Carney</Option>
-            </Select>
+              <Option value={5}>
+                Table from paper by Klein, Silverstein and Carney
+              </Option>
+            </Select>,
           )}
         </ProcessItem>
-        <ProcessItem
-          label={'平滑度'}
-          tooltip={'设置平滑度'}
-        >
+        <ProcessItem label={'平滑度'} tooltip={'设置平滑度'}>
           {getFieldDecorator('smooth', {
             initialValue: this.state.smooth,
-          })(
-            <Slider
-              max={100}
-              min={0}
-            />
-          )}
+          })(<Slider max={100} min={0} />)}
         </ProcessItem>
       </Fragment>
     );

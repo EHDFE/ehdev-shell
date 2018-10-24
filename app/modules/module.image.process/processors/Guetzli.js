@@ -10,17 +10,19 @@ export const defaultConfig = {
   nomemlimit: undefined,
 };
 
-@processorHoc('Guetzli 是一款高品质高压缩比的 JPEG 编码器，其生成的图片比接近质量的由 libjpeg 生成的图片体积小 20-30%')
+@processorHoc(
+  'Guetzli 是一款高品质高压缩比的 JPEG 编码器，其生成的图片比接近质量的由 libjpeg 生成的图片体积小 20-30%',
+)
 class Guetzli extends PureComponent {
-  static processorName = 'guetzli'
+  static processorName = 'guetzli';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -32,31 +34,18 @@ class Guetzli extends PureComponent {
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
-          })(
-            <Slider
-              max={100}
-              min={0}
-            />
-          )}
+          })(<Slider max={100} min={0} />)}
         </ProcessItem>
-        <ProcessItem
-          label={'内存使用限制'}
-        >
+        <ProcessItem label={'内存使用限制'}>
           {getFieldDecorator('memlimit', {
             initialValue: this.state.memlimit,
-          })(
-            <InputNumber size="small" min={1} />
-          )}
+          })(<InputNumber size="small" min={1} />)}
         </ProcessItem>
-        <ProcessItem
-          label={'不限制内存使用'}
-        >
+        <ProcessItem label={'不限制内存使用'}>
           {getFieldDecorator('nomemlimit', {
             valuePropName: 'checked',
             initialValue: this.state.nomemlimit,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
       </Fragment>
     );

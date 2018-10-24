@@ -1,5 +1,2 @@
 export { default } from './Console';
-export {
-  default as ConsoleReducer,
-  actions
-} from './store';
+export { default as ConsoleReducer, actions } from './store';

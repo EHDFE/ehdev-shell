@@ -45,12 +45,12 @@ export default class Preview extends PureComponent {
     this.setState({
       indicatorVisible: true,
     });
-  }
+  };
   hideIndicator = () => {
     this.setState({
       indicatorVisible: false,
     });
-  }
+  };
   moveIndicator = e => {
     const rect = this.previewNode.current.getBoundingClientRect();
     const mediaRect = this.originalMedia.getBoundingClientRect();
@@ -58,7 +58,7 @@ export default class Preview extends PureComponent {
       indicatorLeft: e.clientX - rect.left,
       clipLeft: e.clientX - mediaRect.left,
     });
-  }
+  };
   handleSaveFile() {
     const { data, current } = this.props;
     const originalImage = data.getIn([current, 'originalImage']);
@@ -67,7 +67,10 @@ export default class Preview extends PureComponent {
     if (!url) return false;
     const node = document.createElement('a');
     const originalFileName = originalImage.get('name');
-    const downloadFileName = `${originalFileName.replace(/\.[^.]*$/, '')}.optimized.${processedImage.get('ext')}`;
+    const downloadFileName = `${originalFileName.replace(
+      /\.[^.]*$/,
+      '',
+    )}.optimized.${processedImage.get('ext')}`;
     node.setAttribute('href', url);
     node.setAttribute('download', downloadFileName);
     node.click();
@@ -75,12 +78,12 @@ export default class Preview extends PureComponent {
   handleSlideChange = current => {
     const { list, onChange } = this.props;
     onChange(list.get(current));
-  }
+  };
   handleToggleInfoLayer = () => {
     this.setState(state => ({
       showLayer: !state.showLayer,
     }));
-  }
+  };
   handleAction = ({ target }) => {
     const key = target.dataset.key;
     if (key === 'download') {
@@ -90,7 +93,7 @@ export default class Preview extends PureComponent {
     } else {
       this.props.onStart();
     }
-  }
+  };
   handleBatchAction = ({ key }) => {
     if (key === 'download') {
       this.props.onBatchDownload();
@@ -99,29 +102,47 @@ export default class Preview extends PureComponent {
     } else {
       this.props.onOpenBatchProcess();
     }
-  }
+  };
   handleZoomIn = () => {
     this.setState(state => {
       return {
         zoom: state.zoom * 2,
       };
     });
-  }
+  };
   handleZoomOut = () => {
     this.setState(state => {
       return {
         zoom: state.zoom / 2,
       };
     });
-  }
+  };
   renderButtons(url) {
     const { data, processing } = this.props;
     let actions = [];
     let actionGroup = (
       <Button.Group key={'action'}>
-        <Button loading={processing} onClick={this.handleAction} data-key={'process'}>处理</Button>
-        <Button loading={processing} onClick={this.handleAction} data-key={'download'}>保存</Button>
-        <Button loading={processing} onClick={this.handleAction} data-key={'delete'}>删除</Button>
+        <Button
+          loading={processing}
+          onClick={this.handleAction}
+          data-key={'process'}
+        >
+          处理
+        </Button>
+        <Button
+          loading={processing}
+          onClick={this.handleAction}
+          data-key={'download'}
+        >
+          保存
+        </Button>
+        <Button
+          loading={processing}
+          onClick={this.handleAction}
+          data-key={'delete'}
+        >
+          删除
+        </Button>
       </Button.Group>
     );
     actions.push(actionGroup);
@@ -146,16 +167,16 @@ export default class Preview extends PureComponent {
       actions.push(batchAction);
     }
 
-    return (
-      <div className={styles.Preview__Action}>
-        {actions}
-      </div>
-    );
+    return <div className={styles.Preview__Action}>{actions}</div>;
   }
   renderController() {
     const { data, current, insertImage } = this.props;
     const sliderProps = {
-      className: classnames('slider', 'variable-width', styles['Preview__CtrlList']),
+      className: classnames(
+        'slider',
+        'variable-width',
+        styles['Preview__CtrlList'],
+      ),
       arrows: false,
       slidesToShow: 1,
       slidesToScroll: 1,
@@ -168,22 +189,22 @@ export default class Preview extends PureComponent {
     return (
       <div className={styles.Preview__Ctrl}>
         <Slider {...sliderProps}>
-          {
-            data.map((map, id) => (
+          {data
+            .map((map, id) => (
               <figure
                 key={id}
-                className={classnames(
-                  styles['Preview__CtrlItem'],
-                  {
-                    [styles['Preview__CtrlItem--active']]: id === current,
-                  },
-                )}
+                className={classnames(styles['Preview__CtrlItem'], {
+                  [styles['Preview__CtrlItem--active']]: id === current,
+                })}
               >
                 <Media data={map.get('originalImage')} useThumb />
-                { (map.get('status') === PROCESSED) && <Icon type="check-circle" /> }
+                {map.get('status') === PROCESSED && (
+                  <Icon type="check-circle" />
+                )}
               </figure>
-            )).valueSeq().toArray()
-          }
+            ))
+            .valueSeq()
+            .toArray()}
         </Slider>
         <UploadZone
           className={styles['Preview__CtrlInsert']}
@@ -201,9 +222,11 @@ export default class Preview extends PureComponent {
     const height = originalImage.getIn(['dimensions', 'height']);
     const { showLayer } = this.state;
     return (
-      <div className={classnames(styles.Preview__Info, {
-        [styles['Preview__Info--slideDown']]: showLayer,
-      })}>
+      <div
+        className={classnames(styles.Preview__Info, {
+          [styles['Preview__Info--slideDown']]: showLayer,
+        })}
+      >
         <button
           className={styles.Preview__InfoTrigger}
           onClick={this.handleToggleInfoLayer}
@@ -215,14 +238,14 @@ export default class Preview extends PureComponent {
             <b>文件名</b>
             <span>{originalImage.get('name')}</span>
           </li>
-          {
-            width && (
-              <li className={styles['Preview__InfoItem']}>
-                <b>尺寸</b>
-                <span>{width} x {height}</span>
-              </li>
-            )
-          }
+          {width && (
+            <li className={styles['Preview__InfoItem']}>
+              <b>尺寸</b>
+              <span>
+                {width} x {height}
+              </span>
+            </li>
+          )}
           <li className={styles['Preview__InfoItem']}>
             <b>大小</b>
             <span>{filesize(originalImage.get('size', 0), { base: 10 })}</span>
@@ -241,7 +264,7 @@ export default class Preview extends PureComponent {
           styles['Preview__Image--processed'],
           {
             [styles['Preview__Image--hide']]: !visible,
-          }
+          },
         )}
       />
     );
@@ -255,7 +278,7 @@ export default class Preview extends PureComponent {
           styles.Preview__Image,
           styles['Preview__Image--original'],
         )}
-        mediaRef={el => this.originalMedia = el}
+        mediaRef={el => (this.originalMedia = el)}
       />
     );
   }
@@ -308,19 +331,17 @@ export default class Preview extends PureComponent {
         >
           处理后: {filesize(processedImage.get('size', 0), { base: 10 })}
         </Tag>
-        {
-          SSIM && (
-            <Tag
-              className={classnames(
-                styles.Preview__Label,
-                styles['Preview__Label--score'],
-              )}
-              color="blue"
-            >
-              {SSIM}
-            </Tag>
-          )
-        }
+        {SSIM && (
+          <Tag
+            className={classnames(
+              styles.Preview__Label,
+              styles['Preview__Label--score'],
+            )}
+            color="blue"
+          >
+            {SSIM}
+          </Tag>
+        )}
       </Fragment>
     );
   }
@@ -344,8 +365,8 @@ export default class Preview extends PureComponent {
 
     return (
       <div className={styles.Preview__Container}>
-        { this.renderController() }
-        { this.renderInfoLayer(originalImage, processedImage) }
+        {this.renderController()}
+        {this.renderInfoLayer(originalImage, processedImage)}
         <figure
           ref={this.previewNode}
           className={styles.Preview__Figure}
@@ -353,23 +374,18 @@ export default class Preview extends PureComponent {
           onMouseLeave={this.hideIndicator}
           onMouseMove={this.moveIndicator}
         >
-          { this.renderProcessedPreview(processedImage, hasPreview, zoomStyle) }
-          { this.renderOriginalPreview(originalImage, originalImageStyle) }
-          { this.renderZoomControl() }
+          {this.renderProcessedPreview(processedImage, hasPreview, zoomStyle)}
+          {this.renderOriginalPreview(originalImage, originalImageStyle)}
+          {this.renderZoomControl()}
           <span
             style={{ left: `${indicatorLeft}px` }}
-            className={
-              classnames(
-                styles.Preview__Indicator,
-                {
-                  [styles['Preview__Indicator--hide']]: !hasPreview,
-                }
-              )
-            }
+            className={classnames(styles.Preview__Indicator, {
+              [styles['Preview__Indicator--hide']]: !hasPreview,
+            })}
           />
-          { this.renderLabels(processedImage, originalImage) }
+          {this.renderLabels(processedImage, originalImage)}
         </figure>
-        { this.renderButtons(url) }
+        {this.renderButtons(url)}
       </div>
     );
   }

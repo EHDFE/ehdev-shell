@@ -15,15 +15,16 @@ class Controller extends PureComponent {
   componentDidMount() {
     this.removeAllListeners = commandManager.addListeners({
       'project:open': () => {
-        remote.dialog.showOpenDialog({
-          properties: [
-            'openDirectory',
-          ],
-        }, filePaths => {
-          if (filePaths && filePaths.length > 0) {
-            this.props.setProjectRoot(filePaths[0]);
-          }
-        });
+        remote.dialog.showOpenDialog(
+          {
+            properties: ['openDirectory'],
+          },
+          filePaths => {
+            if (filePaths && filePaths.length > 0) {
+              this.props.setProjectRoot(filePaths[0]);
+            }
+          },
+        );
       },
     });
   }
@@ -31,17 +32,11 @@ class Controller extends PureComponent {
     this.removeAllListeners();
   }
   render() {
-    return (
-      <Fragment>
-        { this.props.children }
-      </Fragment>
-    );
+    return <Fragment>{this.props.children}</Fragment>;
   }
 }
 
-const mapStateToProps = state => ({
-
-});
+const mapStateToProps = () => ({});
 const mapDispatchToProps = dispatch => ({
   setProjectRoot: rootPath => dispatch(projectAction.env.setRootPath(rootPath)),
 });

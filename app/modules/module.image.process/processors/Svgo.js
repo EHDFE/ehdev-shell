@@ -32,7 +32,10 @@ const SVGO_OPTIONS = new Map([
   ['removeUnusedNS', '删除无用的命名空间声明'],
   ['cleanupIDs', '删除无用 ID, 使用更简短的 ID'],
   ['cleanupNumericValues', '四舍五入数值到固定的精度，移除默认的px单位'], // params
-  ['cleanupListOfValues', '四舍五入属性中的数值(如 viewBox 或 enable-background)'],
+  [
+    'cleanupListOfValues',
+    '四舍五入属性中的数值(如 viewBox 或 enable-background)',
+  ],
   ['moveElemsAttrsToGroup', '移动元素属性们到外面包裹的组元素上'],
   ['moveGroupAttrsToElems', '移动一些组属性到内容元素上'],
   ['collapseGroups', '合并无用的组'],
@@ -96,38 +99,29 @@ export const defaultConfig = {
 
 @processorHoc()
 class Svgo extends PureComponent {
-  static processorName = 'svgo'
+  static processorName = 'svgo';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     const configs = [];
     SVGO_OPTIONS.forEach((value, key) => {
       configs.push(
-        <ProcessItem
-          key={key}
-          label={key}
-          extra={value}
-          align={'vertical'}
-        >
+        <ProcessItem key={key} label={key} extra={value} align={'vertical'}>
           {getFieldDecorator(key, {
             valuePropName: 'checked',
             initialValue: this.state[key],
-          })(
-            <Switch size="small" />
-          )}
-        </ProcessItem>
+          })(<Switch size="small" />)}
+        </ProcessItem>,
       );
     });
-    return (
-      <Fragment>{configs}</Fragment>
-    );
+    return <Fragment>{configs}</Fragment>;
   }
 }
 

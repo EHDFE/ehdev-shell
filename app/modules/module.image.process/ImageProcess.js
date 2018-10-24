@@ -10,7 +10,10 @@ import moment from 'moment';
 import UploadZone from '../../components/component.uploadZone/';
 import PreviewComponent from './Preview';
 import ProcessModal from './ProcessModal';
-import { getProcessorComponent, getDefaultProcessorConfig } from './processorExport';
+import {
+  getProcessorComponent,
+  getDefaultProcessorConfig,
+} from './processorExport';
 import { actions, IN_PROGRESS, PROCESSED, UNPROCESSED } from './store';
 import fm from '../../service/fileManager/';
 import styles from './index.less';
@@ -35,8 +38,10 @@ class ImageProcess extends PureComponent {
   };
   static getDerivedStateFromProps(props, state) {
     if (props.images.equals(state.images)) return null;
-    const currentImage = state.currentImage && props.imageList.includes(state.currentImage) ?
-      state.currentImage : props.imageList[0];
+    const currentImage =
+      state.currentImage && props.imageList.includes(state.currentImage)
+        ? state.currentImage
+        : props.imageList[0];
     return {
       images: props.images,
       currentImage,
@@ -46,14 +51,18 @@ class ImageProcess extends PureComponent {
     currentImage: null,
     images: new Map(),
     batchProcessModalVisible: false,
-  }
+  };
   handleChangeImage = files => {
     this.props.beforeAddFile();
     this.props.addFile(files);
-  }
+  };
   getCompareScore(currentImage) {
     const { images, getSsimScore } = this.props;
-    const processedImageBuffer = images.getIn([currentImage, 'processedImage', 'buffer']);
+    const processedImageBuffer = images.getIn([
+      currentImage,
+      'processedImage',
+      'buffer',
+    ]);
     getSsimScore(currentImage, processedImageBuffer);
   }
   handleProcess = async () => {
@@ -66,11 +75,7 @@ class ImageProcess extends PureComponent {
     const options = Object.assign({}, defaultConfig, config);
     try {
       beforeMinify([currentImage]);
-      await minify(
-        currentImage,
-        processor,
-        options,
-      );
+      await minify(currentImage, processor, options);
       notification.success({
         message: '处理成功',
       });
@@ -84,19 +89,19 @@ class ImageProcess extends PureComponent {
       });
       setStatus(currentImage, UNPROCESSED);
     }
-  }
+  };
   handleChangeProcessor = ({ key }) => {
     const { currentImage } = this.state;
     this.props.changeProcessor(currentImage, key);
-  }
+  };
   handleRemoveImage = current => {
     this.props.removeFile(current);
-  }
+  };
   handleChangeCurrentImage = currentImage => {
     this.setState({
       currentImage,
     });
-  }
+  };
   handleBatchProcess = async () => {
     const { images, processors, minify, beforeMinify, setStatus } = this.props;
     beforeMinify(Array.from(images.keys()));
@@ -107,11 +112,7 @@ class ImageProcess extends PureComponent {
       const defaultConfig = getDefaultProcessorConfig(processor);
       // console.log(id, processor, config, defaultConfig);
       try {
-        await minify(
-          id,
-          processor,
-          Object.assign({}, defaultConfig, config),
-        );
+        await minify(id, processor, Object.assign({}, defaultConfig, config));
       } catch (e) {
         notification.error({
           message: '操作失败',
@@ -121,81 +122,79 @@ class ImageProcess extends PureComponent {
       }
     }
     return true;
-  }
+  };
   handleBatchDownload = async () => {
-    dialog.showOpenDialog({
-      properties: [
-        'openDirectory',
-        'createDirectory',
-      ],
-    }, filePaths => {
-      if (Array.isArray(filePaths) && filePaths.length > 0) {
-        // save to filePath
-        const { images } = this.props;
-        const dir = filePaths[0];
-        const files = images
-          .filter(map => map.get('status') === PROCESSED)
-          .toList()
-          .map(m => m.get('processedImage'))
-          .values();
-        const suffix = moment().format('YYYY_MM_DD_HH_mm_ss');
-        for (const file of files) {
-          const savePath = path.join(dir, `${file.get('fileName')}.${suffix}.${file.get('ext')}`);
-          try {
-            fm.saveFile(
-              savePath,
-              file.get('buffer')
+    dialog.showOpenDialog(
+      {
+        properties: ['openDirectory', 'createDirectory'],
+      },
+      filePaths => {
+        if (Array.isArray(filePaths) && filePaths.length > 0) {
+          // save to filePath
+          const { images } = this.props;
+          const dir = filePaths[0];
+          const files = images
+            .filter(map => map.get('status') === PROCESSED)
+            .toList()
+            .map(m => m.get('processedImage'))
+            .values();
+          const suffix = moment().format('YYYY_MM_DD_HH_mm_ss');
+          for (const file of files) {
+            const savePath = path.join(
+              dir,
+              `${file.get('fileName')}.${suffix}.${file.get('ext')}`,
             );
-          } catch (e) {
-            notification.error({
-              message: `下载失败: ${savePath}`,
-              description: e.message,
-            });
+            try {
+              fm.saveFile(savePath, file.get('buffer'));
+            } catch (e) {
+              notification.error({
+                message: `下载失败: ${savePath}`,
+                description: e.message,
+              });
+            }
           }
+          notification.success({
+            message: '批量下载完成',
+          });
         }
-        notification.success({
-          message: '批量下载完成',
-        });
-      }
-    });
-  }
+      },
+    );
+  };
   handleCloseProcessModal = () => {
     this.setState({
       batchProcessModalVisible: false,
     });
-  }
+  };
   handleOpenProcessModal = () => {
     this.setState({
       batchProcessModalVisible: true,
     });
-  }
+  };
   renderProcessorPane() {
     const { images, processors, updateProcessorConfig } = this.props;
     const { currentImage } = this.state;
     const originalImage = images.getIn([currentImage, 'originalImage']);
     const processor = processors.getIn([currentImage, 'processor']);
-    const availableProcessors = processors.getIn([currentImage, 'availableProcessors']);
+    const availableProcessors = processors.getIn([
+      currentImage,
+      'availableProcessors',
+    ]);
     const config = processors.getIn([currentImage, 'config']);
     const menuProps = {
       onClick: this.handleChangeProcessor,
     };
     const processMenu = (
       <Menu {...menuProps}>
-        {
-          availableProcessors && availableProcessors.map(processor => (
-            <Menu.Item key={processor}>
-              {processor}
-            </Menu.Item>
-          ))
-        }
+        {availableProcessors &&
+          availableProcessors.map(processor => (
+            <Menu.Item key={processor}>{processor}</Menu.Item>
+          ))}
       </Menu>
     );
     const Processor = getProcessorComponent(processor);
     return (
       <Fragment>
-        <Dropdown
-          overlay={processMenu}
-        >
+        <Dropdown overlay={processMenu}>
           <div className={styles.ImageProcess__ProcessorTitle}>
             <h3>{processor}</h3>
             <Icon type="setting" />
@@ -246,7 +245,7 @@ class ImageProcess extends PureComponent {
           />
         </div>,
         <div className={styles.ImageProcess__EditorView} key="editor">
-          { this.renderProcessorPane() }
+          {this.renderProcessorPane()}
         </div>,
         <ProcessModal
           key="modal"
@@ -255,7 +254,7 @@ class ImageProcess extends PureComponent {
           onClose={this.handleCloseProcessModal}
           onDownload={this.handleBatchDownload}
           onBatchProcess={this.handleBatchProcess}
-        />
+        />,
       ];
     } else {
       content = this.renderUploadZone();
@@ -263,9 +262,7 @@ class ImageProcess extends PureComponent {
     return (
       <section className={styles.ImageProcess}>
         <Spin spinning={pending} tip={'导入中，请稍后！'}>
-          <div className={styles.ImageProcess__Row}>
-            { content }
-          </div>
+          <div className={styles.ImageProcess__Row}>{content}</div>
         </Spin>
       </section>
     );
@@ -273,9 +270,8 @@ class ImageProcess extends PureComponent {
 }
 
 const pageSelector = state => state['page.image.process'];
-const mapStateToProps = state => createSelector(
-  pageSelector,
-  pageState => {
+const mapStateToProps = () =>
+  createSelector(pageSelector, pageState => {
     const images = pageState.get('images', Map());
     const processors = pageState.get('processors', Map());
     return {
@@ -284,19 +280,22 @@ const mapStateToProps = state => createSelector(
       processors,
       pending: pageState.get('pending', false),
     };
-  },
-);
+  });
 
 const mapDispatchToProps = dispatch => ({
   beforeAddFile: () => dispatch(actions.beforeAdd()),
   addFile: files => dispatch(actions.add(files)),
   removeFile: filePath => dispatch(actions.remove(filePath)),
-  minify: (input, plugin, options) => dispatch(actions.minify(input, plugin, options)),
-  getSsimScore: (input1, input2) => dispatch(actions.getSsimScore(input1, input2)),
+  minify: (input, plugin, options) =>
+    dispatch(actions.minify(input, plugin, options)),
+  getSsimScore: (input1, input2) =>
+    dispatch(actions.getSsimScore(input1, input2)),
   setStatus: (id, status) => dispatch(actions.setStatus(id, status)),
   beforeMinify: ids => dispatch(actions.beforeMinify(ids)),
-  changeProcessor: (id, processor) => dispatch(actions.changeProcessor(id, processor)),
-  updateProcessorConfig: (id, config) => dispatch(actions.updateProcessorConfig(id, config)),
+  changeProcessor: (id, processor) =>
+    dispatch(actions.changeProcessor(id, processor)),
+  updateProcessorConfig: (id, config) =>
+    dispatch(actions.updateProcessorConfig(id, config)),
 });
 
 export default connect(

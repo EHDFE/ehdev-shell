@@ -11,7 +11,7 @@ import IconClose from 'react-icons/lib/fa/close';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import Resizable from 're-resizable';
-import Terminal from '../../components/component.terminal/';
+import Terminal from '../../components/component.original.terminal/';
 import commandManager from '../../service/command';
 import { actions as projectActions } from '../module.project/store';
 import styles from './index.less';
@@ -35,7 +35,7 @@ class ConsoleModule extends PureComponent {
     onResize: PropTypes.func,
     stopServer: PropTypes.func,
     stopBuilder: PropTypes.func,
-  }
+  };
 
   componentDidMount() {
     this.removeAllListeners = commandManager.addListeners({
@@ -58,11 +58,8 @@ class ConsoleModule extends PureComponent {
 
   handleResize = (e, direction, ref, delta) => {
     const { width, height } = this.props;
-    this.props.onResize(
-      width + delta.width,
-      height + delta.height,
-    );
-  }
+    this.props.onResize(width + delta.width, height + delta.height);
+  };
 
   handleActive(rootPath, instance, e) {
     const target = e.target;
@@ -105,7 +102,7 @@ class ConsoleModule extends PureComponent {
       },
     });
   }
-  handleToggleProject(root, e) {
+  handleToggleProject(root) {
     if (root) {
       this.props.setRootPath(root);
     }
@@ -114,22 +111,19 @@ class ConsoleModule extends PureComponent {
     const { currentTerminalId, pids, instances } = this.props;
     return (
       <aside className={styles.ConsoleModule__Tabs}>
-        {
-          instances.map((d, rootPath) => {
+        {instances
+          .map((d, rootPath) => {
             const pid = d.get('pid');
             return (
               <button
                 key={rootPath}
-                className={
-                  classnames(
-                    styles.ConsoleModule__TabsButton,
-                    {
-                      [styles['ConsoleModule__TabsButton--activeRunning']]: (rootPath === currentTerminalId) && pids.has(pid),
-                      [styles['ConsoleModule__TabsButton--active']]: rootPath === currentTerminalId,
-                      [styles['ConsoleModule__TabsButton--running']]: pids.has(pid),
-                    },
-                  )
-                }
+                className={classnames(styles.ConsoleModule__TabsButton, {
+                  [styles['ConsoleModule__TabsButton--activeRunning']]:
+                    rootPath === currentTerminalId && pids.has(pid),
+                  [styles['ConsoleModule__TabsButton--active']]:
+                    rootPath === currentTerminalId,
+                  [styles['ConsoleModule__TabsButton--running']]: pids.has(pid),
+                })}
                 onClick={this.handleActive.bind(this, rootPath, d)}
                 onDoubleClick={this.handleToggleProject.bind(this, rootPath)}
               >
@@ -141,8 +135,8 @@ class ConsoleModule extends PureComponent {
                 </span>
               </button>
             );
-          }).valueSeq()
-        }
+          })
+          .valueSeq()}
       </aside>
     );
   }
@@ -150,23 +144,20 @@ class ConsoleModule extends PureComponent {
   renderTerminals() {
     const { currentTerminalId, instances, width, height, visible } = this.props;
     return (
-      <section
-        className={styles.ConsoleModule__Terminals}
-      >
-        {
-          instances.map((d, rootPath) => (
+      <section className={styles.ConsoleModule__Terminals}>
+        {instances
+          .map((d, rootPath) => (
             <Terminal
               width={width}
               height={height}
               key={rootPath}
               messageId={rootPath}
               pid={d.get('pid')}
-              active={(rootPath === currentTerminalId) && visible}
+              active={rootPath === currentTerminalId && visible}
             />
-          )).valueSeq()
-        }
+          ))
+          .valueSeq()}
       </section>
-
     );
   }
 
@@ -205,8 +196,8 @@ class ConsoleModule extends PureComponent {
           onClick={toggleVisible}
         />
         <Resizable {...resizableProps}>
-          { this.renderTabs() }
-          { this.renderTerminals() }
+          {this.renderTabs()}
+          {this.renderTerminals()}
         </Resizable>
       </div>
     );
@@ -214,40 +205,36 @@ class ConsoleModule extends PureComponent {
 }
 
 const consolePageSelector = state => state['page.console'];
-const consoleSelector = createSelector(
-  consolePageSelector,
-  pageState => {
-    return {
-      currentTerminalId: pageState.get('activeId'),
-      visible: pageState.get('visible'),
-      width: pageState.get('width'),
-      height: pageState.get('height'),
-    };
-  }
-);
+const consoleSelector = createSelector(consolePageSelector, pageState => {
+  return {
+    currentTerminalId: pageState.get('activeId'),
+    visible: pageState.get('visible'),
+    width: pageState.get('width'),
+    height: pageState.get('height'),
+  };
+});
 const serviceSelector = state => state['page.project'].get('service');
 
-const mapStateToProps = (state) => createSelector(
-  consoleSelector,
-  serviceSelector,
-  (consoleState, service) => ({
+const mapStateToProps = () =>
+  createSelector(consoleSelector, serviceSelector, (consoleState, service) => ({
     ...consoleState,
     pids: service.get('pids'),
     instances: service.get('instances'),
-  }),
-);
+  }));
 
 const mapDispatchToProps = dispatch => ({
-  closeTerm: rootPath => dispatch(projectActions.service.closeService(rootPath)),
+  closeTerm: rootPath =>
+    dispatch(projectActions.service.closeService(rootPath)),
   setActive: id => dispatch(actions.setActive(id)),
   onResize: (width, height) => dispatch(actions.resize(width, height)),
   toggleVisible: () => dispatch(actions.toggleVisible()),
   setRootPath: rootPath => dispatch(projectActions.env.setRootPath(rootPath)),
   stopServer: (...args) => dispatch(projectActions.service.stopServer(...args)),
-  stopBuilder: (...args) => dispatch(projectActions.service.stopBuilder(...args)),
+  stopBuilder: (...args) =>
+    dispatch(projectActions.service.stopBuilder(...args)),
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ConsoleModule);

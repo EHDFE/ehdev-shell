@@ -17,17 +17,25 @@ document.addEventListener('drop', e => {
   e.preventDefault();
 });
 
-window.addEventListener('click', e => {
-  if (e.target.tagName.toLowerCase() === 'a' &&
-    e.target.getAttribute('target') === '_blank') {
-    e.preventDefault();
-    shell.openExternal(e.target.getAttribute('href'));
-  }
-}, false);
+window.addEventListener(
+  'click',
+  e => {
+    if (
+      e.target.tagName.toLowerCase() === 'a' &&
+      e.target.getAttribute('target') === '_blank'
+    ) {
+      e.preventDefault();
+      shell.openExternal(e.target.getAttribute('href'));
+    }
+  },
+  false,
+);
 
 ipcRenderer.on('CORE:BEFORE_CLOSE', () => {
   const state = store.getState();
-  const instances = state['page.project'].getIn(['service', 'instances']).toJS();
+  const instances = state['page.project']
+    .getIn(['service', 'instances'])
+    .toJS();
   ipcRenderer.send('CORE:BEFORE_CLOSE:REPLY', instances);
 });
 
@@ -47,7 +55,7 @@ ipcRenderer.on('CORE:SERVICE_NOT_END', () => {
     },
     onCancel() {
       confirmRef = null;
-    }
+    },
   });
 });
 
@@ -62,4 +70,3 @@ ipcRenderer.on('CORE:CLOSE_SERVICE_FAILED', (e, msg) => {
 reporter(store, () => {
   render(App, store, persistor);
 });
-

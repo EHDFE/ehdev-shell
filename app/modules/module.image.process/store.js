@@ -21,10 +21,7 @@ const IMAGE_SIZE_DEFINE = new window.Map([
   ['preview', [1920, 1080]],
 ]);
 
-const GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST = [
-  'svg',
-  'gif',
-];
+const GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST = ['svg', 'gif'];
 
 const MAX_IMAGE_PIXEL_LIMIT = 1920 * 1080;
 
@@ -59,13 +56,23 @@ export const actions = createActions({
       };
       if (file.type.startsWith('image/')) {
         const dimensions = sizeOf(file.path);
-        const thumbBuffer = await IMAGE_API.resize(file.path, ...IMAGE_SIZE_DEFINE.get('thumb'));
+        const thumbBuffer = await IMAGE_API.resize(
+          file.path,
+          ...IMAGE_SIZE_DEFINE.get('thumb'),
+        );
         const thumbProp = getFilePropertyFromBuffer(thumbBuffer);
         let previewUrl;
-        if (GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST.some(ext => file.type.includes(ext))) {
+        if (
+          GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST.some(ext =>
+            file.type.includes(ext),
+          )
+        ) {
           previewUrl = `file://${file.path}`;
         } else {
-          const previewBuffer = await IMAGE_API.resize(file.path, ...IMAGE_SIZE_DEFINE.get('preview'));
+          const previewBuffer = await IMAGE_API.resize(
+            file.path,
+            ...IMAGE_SIZE_DEFINE.get('preview'),
+          );
           const previewProp = getFilePropertyFromBuffer(previewBuffer);
           previewUrl = previewProp.url;
         }
@@ -95,10 +102,16 @@ export const actions = createActions({
     try {
       resultBuffer = await IMAGE_API.process(input, plugin, options);
       let { url, type, ext } = getFilePropertyFromBuffer(resultBuffer);
-      if (type.startsWith('image/') && !GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST.includes(ext)) {
+      if (
+        type.startsWith('image/') &&
+        !GENERATE_PREVIEW_IMAGE_EXCLUDE_LIST.includes(ext)
+      ) {
         const dimensions = sizeOf(resultBuffer);
         if (dimensions.width * dimensions.height > MAX_IMAGE_PIXEL_LIMIT) {
-          const previewBuffer = await IMAGE_API.resize(resultBuffer, ...IMAGE_SIZE_DEFINE.get('preview'));
+          const previewBuffer = await IMAGE_API.resize(
+            resultBuffer,
+            ...IMAGE_SIZE_DEFINE.get('preview'),
+          );
           const blob = new Blob([previewBuffer], { type });
           url = URL.createObjectURL(blob);
         }
@@ -136,118 +149,127 @@ export const actions = createActions({
     } catch (e) {
       throw e;
     }
-  }
+  },
 });
 
-const imageProcessReducer = handleActions({
-  BEFORE_ADD: state => {
-    return state.set('pending', true);
-  },
-  ADD: (state, { error, payload }) => {
-    if (error) return payload;
-    const fileList = payload;
-    return state
-      .update('images', images => images.withMutations(map => {
-        fileList.forEach(entity => {
-          const { file, dimensions } = entity;
-          map.set(file.path, Map({
-            originalImage: Map({
-              name: file.name,
-              path: file.path,
-              url: entity.previewUrl,
-              thumbUrl: entity.thumbUrl,
-              size: file.size,
-              type: file.type,
-              dimensions: dimensions && Map({
-                width: dimensions.width,
-                height: dimensions.height,
-              }),
-            }),
-            processedImage: Map(),
-            status: UNPROCESSED,
-          }));
-        });
-      }))
-      .update('processors', processors => processors.withMutations(map => {
-        fileList.forEach(entity => {
-          const { file } = entity;
-          const availableProcessors = getAvailableProcessors(file.type);
-          map.set(file.path, Map({
-            processor: availableProcessors.get(0, null),
-            availableProcessors,
-            config: {},
-          }));
-        });
-      }))
-      .set('pending', false);
-  },
-  REMOVE: (state, { payload }) => {
-    let filePaths;
-    if (Array.isArray(payload)) {
-      filePaths = payload;
-    } else {
-      filePaths = [ payload ];
-    }
-    return state
-      .update('images', map => map.deleteAll(filePaths))
-      .update('processors', map => map.deleteAll(filePaths));
-  },
-  CHANGE_PROCESSOR: (state, { payload }) => {
-    const { id, processor } = payload;
-    return state.updateIn(
-      ['processors', id],
-      map => map.set(
-        'processor', processor
-      ).set('config', {})
-    );
-  },
-  UPDATE_PROCESSOR_CONFIG: (state, { payload }) => {
-    const { id, config } = payload;
-    return state.updateIn(
-      ['processors', id, 'config'],
-      oldConfig => Object.assign(oldConfig, config)
-    );
-  },
-  BEFORE_MINIFY: (state, { payload }) => {
-    const ids = payload;
-    return state.update('images', images => {
-      return images.withMutations(map => {
-        ids.forEach(id => {
-          map.setIn([id, 'status'], IN_PROGRESS);
+const imageProcessReducer = handleActions(
+  {
+    BEFORE_ADD: state => {
+      return state.set('pending', true);
+    },
+    ADD: (state, { error, payload }) => {
+      if (error) return payload;
+      const fileList = payload;
+      return state
+        .update('images', images =>
+          images.withMutations(map => {
+            fileList.forEach(entity => {
+              const { file, dimensions } = entity;
+              map.set(
+                file.path,
+                Map({
+                  originalImage: Map({
+                    name: file.name,
+                    path: file.path,
+                    url: entity.previewUrl,
+                    thumbUrl: entity.thumbUrl,
+                    size: file.size,
+                    type: file.type,
+                    dimensions:
+                      dimensions &&
+                      Map({
+                        width: dimensions.width,
+                        height: dimensions.height,
+                      }),
+                  }),
+                  processedImage: Map(),
+                  status: UNPROCESSED,
+                }),
+              );
+            });
+          }),
+        )
+        .update('processors', processors =>
+          processors.withMutations(map => {
+            fileList.forEach(entity => {
+              const { file } = entity;
+              const availableProcessors = getAvailableProcessors(file.type);
+              map.set(
+                file.path,
+                Map({
+                  processor: availableProcessors.get(0, null),
+                  availableProcessors,
+                  config: {},
+                }),
+              );
+            });
+          }),
+        )
+        .set('pending', false);
+    },
+    REMOVE: (state, { payload }) => {
+      let filePaths;
+      if (Array.isArray(payload)) {
+        filePaths = payload;
+      } else {
+        filePaths = [payload];
+      }
+      return state
+        .update('images', map => map.deleteAll(filePaths))
+        .update('processors', map => map.deleteAll(filePaths));
+    },
+    CHANGE_PROCESSOR: (state, { payload }) => {
+      const { id, processor } = payload;
+      return state.updateIn(['processors', id], map =>
+        map.set('processor', processor).set('config', {}),
+      );
+    },
+    UPDATE_PROCESSOR_CONFIG: (state, { payload }) => {
+      const { id, config } = payload;
+      return state.updateIn(['processors', id, 'config'], oldConfig =>
+        Object.assign(oldConfig, config),
+      );
+    },
+    BEFORE_MINIFY: (state, { payload }) => {
+      const ids = payload;
+      return state.update('images', images => {
+        return images.withMutations(map => {
+          ids.forEach(id => {
+            map.setIn([id, 'status'], IN_PROGRESS);
+          });
         });
       });
-    });
+    },
+    MINIFY: (state, { payload, error }) => {
+      if (error) return state;
+      const { resultBuffer, filePath, url, type, ext } = payload;
+      return state.updateIn(['images', filePath], map =>
+        map
+          .set(
+            'processedImage',
+            Map({
+              size: resultBuffer.byteLength,
+              type,
+              ext,
+              buffer: resultBuffer,
+              url,
+              fileName: basename(filePath, `.${ext}`),
+            }),
+          )
+          .set('status', PROCESSED),
+      );
+    },
+    SET_STATUS(state, { payload }) {
+      const { id, status } = payload;
+      return state.setIn(['images', id, 'status'], status);
+    },
+    GET_SSIM_SCORE(state, { error, payload }) {
+      if (error) return state;
+      const { id, score } = payload;
+      return state.setIn(['images', id, 'processedImage', 'SSIM'], score);
+    },
   },
-  MINIFY: (state, { payload, error }) => {
-    if (error) return state;
-    const {
-      resultBuffer,
-      filePath,
-      url,
-      type,
-      ext,
-    } = payload;
-    return state.updateIn(
-      ['images', filePath],
-      map => map.set('processedImage', Map({
-        size: resultBuffer.byteLength,
-        type,
-        ext,
-        buffer: resultBuffer,
-        url,
-        fileName: basename(filePath, `.${ext}`),
-      })).set('status', PROCESSED)
-    );
-  },
-  SET_STATUS(state, { payload }) {
-    const { id, status } = payload;
-    return state.setIn(['images', id, 'status'], status);
-  },
-  GET_SSIM_SCORE(state, { error, payload }) {
-    if (error) return state;
-    const { id, score } = payload;
-    return state.setIn(['images', id, 'processedImage', 'SSIM'], score);
-  },
-}, defaultState);
+  defaultState,
+);
 
 export default imageProcessReducer;

@@ -13,7 +13,7 @@ const DASHBOARD_API = {
       } catch (e) {
         throw e;
       }
-    }
+    },
   },
   overall: {
     async get() {
@@ -23,7 +23,7 @@ const DASHBOARD_API = {
       } catch (e) {
         throw e;
       }
-    }
+    },
   },
   // wallPaper: {
   //   async get(date) {

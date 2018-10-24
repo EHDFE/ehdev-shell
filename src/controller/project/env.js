@@ -3,24 +3,18 @@
  * @author ryan.bian
  */
 const path = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
-const { readJSON, glob } = require('../../utils/');
+const { readJSON } = require('../../utils/');
 const context = require('../../context');
 const scmProvider = require('../../provider/scm');
-
-const readFile = promisify(fs.readFile);
 
 exports.setRoot = async rootPath => {
   const ret = {};
   const configPath = path.join(rootPath, 'abc.json');
   try {
     const projectConfig = await readJSON(configPath);
-    const configRaw = await readFile(configPath, 'utf-8');
     Object.assign(ret, {
       runnable: true,
       config: projectConfig,
-      configRaw,
     });
   } catch (e) {
     Object.assign(ret, {
@@ -29,9 +23,7 @@ exports.setRoot = async rootPath => {
     });
   }
   try {
-    const pkg = await readJSON(
-      path.join(rootPath, 'package.json')
-    );
+    const pkg = await readJSON(path.join(rootPath, 'package.json'));
     Object.assign(ret, {
       pkg,
     });
@@ -41,13 +33,8 @@ exports.setRoot = async rootPath => {
     });
   }
   try {
-    const files = await glob('.eslintrc*', {
-      cwd: rootPath,
-      nodir: true,
-    });
     const scmInfo = await scmProvider.detect(rootPath);
     Object.assign(ret, {
-      useESlint: files.length > 0,
       scmInfo,
     });
   } catch (e) {
@@ -60,9 +47,7 @@ exports.makeRecord = async projectPath => {
   // insert project to db
   let pkg;
   try {
-    pkg = await readJSON(
-      path.join(projectPath, 'package.json')
-    );
+    pkg = await readJSON(path.join(projectPath, 'package.json'));
   } catch (e) {
     throw e;
   }
@@ -89,6 +74,7 @@ exports.makeRecord = async projectPath => {
             newDoc,
           });
         }
-      });
+      },
+    );
   });
 };

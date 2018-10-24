@@ -5,13 +5,13 @@
 import Raven from 'raven-js';
 import { Layout } from 'antd';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import classnames from 'classnames';
+import { PureComponent } from 'react';
+// import classnames from 'classnames';
 import { GLOBAL_NAV_CONFIG } from '../../CONFIG';
 import LayoutComponent from '../../components/component.layout/';
 import SiderBar from '../../components/component.siderBar/';
 import InfoModal from '../../components/component.infoModal/';
-import ConsoleModule from '../module.console/';
+import SplitPane from '../module.split.pane';
 import { platform } from 'os';
 import updater from '../../apis/updater';
 import {
@@ -27,17 +27,17 @@ import styles from './index.less';
 
 const PLATFORM = platform();
 
-class LayoutModule extends Component {
+class LayoutModule extends PureComponent {
   static propTypes = {
     children: PropTypes.any,
     location: PropTypes.object,
     navigate: PropTypes.func,
-  }
+  };
   state = {
     infoModalVisible: false,
     status: UPDATE_NOT_CHECKED,
     downloadProgress: 0,
-  }
+  };
   static getPageInfo(pathname) {
     const matched = GLOBAL_NAV_CONFIG.find(d => `/${d.to}` === pathname);
     if (matched) return matched;
@@ -84,22 +84,16 @@ class LayoutModule extends Component {
     this.setState({
       infoModalVisible: true,
     });
-  }
+  };
   render() {
     const { status, downloadProgress } = this.state;
     const { location, navigate, children } = this.props;
-    const layoutProps = {
-      hasContent: true,
-    };
+    const layoutProps = {};
     const pageInfo = LayoutModule.getPageInfo(location.pathname);
     if (pageInfo) {
       Object.assign(layoutProps, {
         title: pageInfo.text,
         icon: pageInfo.icon,
-      });
-    } else {
-      Object.assign(layoutProps, {
-        hasContent: false,
       });
     }
     return (
@@ -110,12 +104,9 @@ class LayoutModule extends Component {
           navigate={navigate}
           status={status}
         />
-        <LayoutComponent key="layout" {...layoutProps}>
-          {children}
+        <LayoutComponent {...layoutProps}>
+          <SplitPane>{children}</SplitPane>
         </LayoutComponent>
-        <ConsoleModule className={classnames(styles['Layout__Console'], {
-          [styles['Layout__Console--visible']]: pageInfo && (pageInfo.to === 'project'),
-        })} />
         <InfoModal
           status={status}
           open={this.state.infoModalVisible}
@@ -139,6 +130,5 @@ class LayoutModule extends Component {
     );
   }
 }
-
 
 export default LayoutModule;

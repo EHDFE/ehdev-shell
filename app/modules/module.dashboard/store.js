@@ -9,7 +9,6 @@ import { combineReducers } from 'redux-immutable';
 import { WEATHER_APPID } from '../../CONFIG';
 import DASHBOARD_API from '../../apis/dashboard';
 
-
 const defaultState = Map({
   base: Map({
     assetsCount: 0,
@@ -23,7 +22,9 @@ const defaultState = Map({
 export const actions = createActions({
   BASE: {
     GET_WEATHER: async () => {
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=1808926&units=metric&APPID=${WEATHER_APPID}`);
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?id=1808926&units=metric&APPID=${WEATHER_APPID}`,
+      );
       let result;
       try {
         result = await response.json();
@@ -40,10 +41,7 @@ export const actions = createActions({
       };
     },
     GET_OVERALL: async () => {
-      const {
-        assetsCount,
-        projectsCount,
-      } = await DASHBOARD_API.overall.get();
+      const { assetsCount, projectsCount } = await DASHBOARD_API.overall.get();
       return {
         assetsCount,
         projectsCount,
@@ -58,26 +56,32 @@ export const actions = createActions({
   },
 });
 
-const baseReducer = handleActions({
-  'BASE/GET_OVERALL': (state, { payload, error }) => {
-    if (error) return state;
-    return state.merge(payload);
+const baseReducer = handleActions(
+  {
+    'BASE/GET_OVERALL': (state, { payload, error }) => {
+      if (error) return state;
+      return state.merge(payload);
+    },
+    'BASE/GET_WEATHER': (state, { payload, error }) => {
+      if (error) return state;
+      return state.set('weather', payload);
+    },
+    'BASE/GET_DATE': (state, { payload }) => {
+      const { weekday, date } = payload;
+      return state.set('weekday', weekday).set('date', date);
+    },
   },
-  'BASE/GET_WEATHER': (state, { payload, error }) => {
-    if (error) return state;
-    return state.set('weather', payload);
-  },
-  'BASE/GET_DATE': (state, { payload }) => {
-    const { weekday, date } = payload;
-    return state.set('weekday', weekday).set('date', date);
-  },
-}, defaultState.get('base'));
+  defaultState.get('base'),
+);
 
-const projectsReducer = handleActions({
-  'PROJECTS/GET_LIST': (state, { payload }) => {
-    return state.set('statistic', fromJS(payload));
-  }
-}, defaultState.get('projects'));
+const projectsReducer = handleActions(
+  {
+    'PROJECTS/GET_LIST': (state, { payload }) => {
+      return state.set('statistic', fromJS(payload));
+    },
+  },
+  defaultState.get('projects'),
+);
 
 export default combineReducers({
   base: baseReducer,

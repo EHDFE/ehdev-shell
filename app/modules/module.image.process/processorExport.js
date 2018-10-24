@@ -1,7 +1,11 @@
 import { Map, List } from 'immutable';
 
-import Pngquant, { defaultConfig as PngquantConfig } from './processors/Pngquant';
-import Gifsicle, { defaultConfig as GifsicleConfig } from './processors/Gifsicle';
+import Pngquant, {
+  defaultConfig as PngquantConfig,
+} from './processors/Pngquant';
+import Gifsicle, {
+  defaultConfig as GifsicleConfig,
+} from './processors/Gifsicle';
 import Mozjpeg, { defaultConfig as MozjpegConfig } from './processors/Mozjpeg';
 import Webp, { defaultConfig as WebpConfig } from './processors/Webp';
 import Guetzli, { defaultConfig as GuetzliConfig } from './processors/Guetzli';
@@ -39,7 +43,8 @@ const PROESSOR_DEFAULT_CONFIG = {
   FFmpeg: FFmpegConfig,
 };
 
-export const getProcessorComponent = processor => PROCESSOR_COMPONENT_MAP[processor];
+export const getProcessorComponent = processor =>
+  PROCESSOR_COMPONENT_MAP[processor];
 
 export const getAvailableProcessors = mimeType => {
   if (PROCESSOR_MAP.has(mimeType)) return PROCESSOR_MAP.get(mimeType, List());
@@ -47,4 +52,5 @@ export const getAvailableProcessors = mimeType => {
   return PROCESSOR_MAP.get(fuzzyMimeType, List());
 };
 
-export const getDefaultProcessorConfig = processor => PROESSOR_DEFAULT_CONFIG[processor];
+export const getDefaultProcessorConfig = processor =>
+  PROESSOR_DEFAULT_CONFIG[processor];

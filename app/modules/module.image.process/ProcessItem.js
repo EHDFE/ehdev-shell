@@ -25,14 +25,14 @@ export default class ProcessItem extends PureComponent {
     label: '',
     tooltip: '',
     extra: '',
-  }
+  };
   static propTypes = {
     label: PropTypes.string.isRequired,
     tooltip: PropTypes.string,
     extra: PropTypes.any,
     children: PropTypes.any,
-  }
-  render () {
+  };
+  render() {
     const { label, tooltip, extra, children } = this.props;
     const props = {
       extra,
@@ -42,26 +42,26 @@ export default class ProcessItem extends PureComponent {
       label: (
         <span className={styles.ProcessItem__Label}>
           <s>{label}</s>
-          { tooltip && <i className={styles.ProcessItem__LabelTooltip}>{tooltip}</i> }
+          {tooltip && (
+            <i className={styles.ProcessItem__LabelTooltip}>{tooltip}</i>
+          )}
         </span>
       ),
     });
     return (
       <ProcessorContext.Consumer>
-        {
-          layout => (
-            <FormItem
-              className={classnames(
-                styles['ProcessItem__Group'],
-                styles[`ProcessItem--${layout}`],
-              )}
-              {...props}
-              {...formItemLayout[layout]}
-            >
-              { children }
-            </FormItem>
-          )
-        }
+        {layout => (
+          <FormItem
+            className={classnames(
+              styles['ProcessItem__Group'],
+              styles[`ProcessItem--${layout}`],
+            )}
+            {...props}
+            {...formItemLayout[layout]}
+          >
+            {children}
+          </FormItem>
+        )}
       </ProcessorContext.Consumer>
     );
   }

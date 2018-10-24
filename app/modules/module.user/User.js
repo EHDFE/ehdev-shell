@@ -38,7 +38,7 @@ function beforeUpload(file) {
 class User extends Component {
   state = {
     imgUrl: '',
-  }
+  };
   uploadAvatar = info => {
     if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, imgUrl => {
@@ -101,7 +101,7 @@ class User extends Component {
               <FormItem {...formItemLayout} label="你在哪里">
                 {getFieldDecorator('address', {
                   initialValue: user.get('address'),
-                })(<CityPicker placeholder='请选择所在城市'/>)}
+                })(<CityPicker placeholder="请选择所在城市" />)}
               </FormItem>
 
               <FormItem {...formItemLayout} label="你想说的">
@@ -115,7 +115,6 @@ class User extends Component {
                   更新个人信息
                 </Button>
               </FormItem>
-
             </Col>
             <Col span={8}>
               <FormItem help="点击上传新头像" style={{ textAlign: 'center' }}>
@@ -144,7 +143,7 @@ class User extends Component {
                         className={styles.User__avatar_uploader_trigger}
                       />
                     )}
-                  </Upload>
+                  </Upload>,
                 )}
               </FormItem>
             </Col>

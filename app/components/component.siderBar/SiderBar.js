@@ -25,7 +25,7 @@ const { Sider } = Layout;
 const { Item } = Menu;
 
 class SiderBar extends Component {
-  static __ANT_LAYOUT_SIDER = true
+  static __ANT_LAYOUT_SIDER = true;
   static propTypes = {
     current: PropTypes.string,
     user: PropTypes.object,
@@ -41,24 +41,24 @@ class SiderBar extends Component {
       UPDATE_DOWNLOADED,
       UPDATE_DOWNLOAD_ERROR,
     ]),
-  }
+  };
   state = {
     collapsed: true,
-  }
-  onCollapse = (collapsed) => {
+  };
+  onCollapse = collapsed => {
     this.setState({
       collapsed,
     });
-  }
+  };
   onSelectMenu = ({ key }) => {
     this.props.navigate(`/${key}`);
-  }
+  };
   backToHome = () => {
     this.props.navigate('/');
-  }
+  };
   handleInfoClick = () => {
     this.props.showInfo();
-  }
+  };
   renderTrigger() {
     const { collapsed } = this.state;
     let iconType;
@@ -81,8 +81,14 @@ class SiderBar extends Component {
   render() {
     const { collapsed } = this.state;
     const { user, current, enabledModules, status } = this.props;
-    const ENABLED_NAVS = GLOBAL_NAV_CONFIG.filter(d => enabledModules.has(d.to) || !d.configurable);
-    const showUpdateNotice = ![UPDATE_NOT_CHECKED, UPDATE_NOT_AVAILABLE, UPDATE_CHECKING].includes(status);
+    const ENABLED_NAVS = GLOBAL_NAV_CONFIG.filter(
+      d => enabledModules.has(d.to) || !d.configurable,
+    );
+    const showUpdateNotice = ![
+      UPDATE_NOT_CHECKED,
+      UPDATE_NOT_AVAILABLE,
+      UPDATE_CHECKING,
+    ].includes(status);
     return (
       <Sider
         className={styles.SiderBar}
@@ -97,7 +103,11 @@ class SiderBar extends Component {
           className={styles.SiderBar__avatar}
           onClick={this.backToHome}
         >
-          <Avatar src={user.get('avatar')} icon="user" size={collapsed ? 'default' : 'large'} />
+          <Avatar
+            src={user.get('avatar')}
+            icon="user"
+            size={collapsed ? 'default' : 'large'}
+          />
         </button>
         <div className={styles.SiderBar__Content}>
           <Menu
@@ -107,14 +117,12 @@ class SiderBar extends Component {
             theme={'dark'}
             className={styles.SiderBar__Menu}
           >
-            {
-              ENABLED_NAVS.map(d => (
-                <Item key={d.to}>
-                  <Icon type={d.icon} />
-                  <span>{d.text}</span>
-                </Item>
-              ))
-            }
+            {ENABLED_NAVS.map(d => (
+              <Item key={d.to}>
+                <Icon type={d.icon} />
+                <span>{d.text}</span>
+              </Item>
+            ))}
           </Menu>
           <Badge dot={showUpdateNotice}>
             <button

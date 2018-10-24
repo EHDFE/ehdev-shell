@@ -35,7 +35,7 @@ class MenuController {
             label: 'Release Notes',
             click() {
               shell.openExternal(
-                'https://github.com/EHDFE/ehdev-shell/releases'
+                'https://github.com/EHDFE/ehdev-shell/releases',
               );
             },
           },
@@ -51,13 +51,17 @@ class MenuController {
       },
     ];
     if (process.env.NODE_DEV === 'development') {
-      template[0].submenu.unshift({
-        role: 'reload',
-      }, {
-        role: 'forcereload',
-      }, {
-        type: 'separator'
-      });
+      template[0].submenu.unshift(
+        {
+          role: 'reload',
+        },
+        {
+          role: 'forcereload',
+        },
+        {
+          type: 'separator',
+        },
+      );
     }
     if (process.platform === 'darwin') {
       template.unshift({
@@ -79,9 +83,7 @@ class MenuController {
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
   }
-  destroy() {
-    
-  }
+  destroy() {}
 }
 
 module.exports = MenuController;

@@ -27,10 +27,10 @@ class UploadModule extends PureComponent {
     upload: PropTypes.func,
     addFile: PropTypes.func,
     delFile: PropTypes.func,
-  }
+  };
   handleChangeListType = e => {
     this.props.setListType(e.target.value);
-  }
+  };
   handleFilesChange = files => {
     for (const file of files) {
       const fileObj = {
@@ -59,14 +59,9 @@ class UploadModule extends PureComponent {
         this.props.addFile(fileObj);
       }
     }
-  }
+  };
   renderListView() {
-    const {
-      fileList,
-      listType,
-      upload,
-      delFile
-    } = this.props;
+    const { fileList, listType, upload, delFile } = this.props;
     return (
       <ListView
         data={fileList}
@@ -82,10 +77,7 @@ class UploadModule extends PureComponent {
       <div>
         <Row>
           <Col span={24}>
-            <UploadZone
-              onChange={this.handleFilesChange}
-              accept={'all'}
-            />
+            <UploadZone onChange={this.handleFilesChange} accept={'all'} />
           </Col>
         </Row>
         <Row>
@@ -97,49 +89,51 @@ class UploadModule extends PureComponent {
                 onChange={this.handleChangeListType}
               >
                 <RadioButton value="grid">
-                  <MdViewModule size={18} style={{
-                    transform: 'translateY(-1px)',
-                  }} />
+                  <MdViewModule
+                    size={18}
+                    style={{
+                      transform: 'translateY(-1px)',
+                    }}
+                  />
                 </RadioButton>
                 <RadioButton value="list">
-                  <MdViewHeadline size={18} style={{
-                    transform: 'translateY(-1px)',
-                  }} />
+                  <MdViewHeadline
+                    size={18}
+                    style={{
+                      transform: 'translateY(-1px)',
+                    }}
+                  />
                 </RadioButton>
               </RadioGroup>
             </div>
           </Col>
         </Row>
-        { this.renderListView() }
+        {this.renderListView()}
       </div>
     );
   }
 }
 
 const uploadPageSelector = state => state['page.upload'];
-const listTypeSelector = createSelector(
-  uploadPageSelector,
-  pageState => pageState.getIn(['layout', 'listType']),
+const listTypeSelector = createSelector(uploadPageSelector, pageState =>
+  pageState.getIn(['layout', 'listType']),
 );
-const fileListSelector = createSelector(
-  uploadPageSelector,
-  pageState => pageState
-    .getIn(['files', 'fileMap'])
-    .sortBy(d => d.lastModified, (a, b) => {
+const fileListSelector = createSelector(uploadPageSelector, pageState =>
+  pageState.getIn(['files', 'fileMap']).sortBy(
+    d => d.lastModified,
+    (a, b) => {
       if (a < b) return 1;
       if (a > b) return -1;
       if (a === b) return 0;
-    }),
+    },
+  ),
 );
 
-const mapStateToProps = (state, ownProps) => createSelector(
-  listTypeSelector,
-  fileListSelector,
-  (listType, fileList) => ({
+const mapStateToProps = (state, ownProps) =>
+  createSelector(listTypeSelector, fileListSelector, (listType, fileList) => ({
     listType,
     fileList,
-  })
-)(state);
+  }))(state);
 
 let dispatched = false;
 

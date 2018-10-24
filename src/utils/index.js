@@ -5,21 +5,21 @@
 const { promisify } = require('util');
 const fs = require('fs');
 const os = require('os');
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
 const crypto = require('crypto');
 const path = require('path');
 const QRCode = require('qrcode');
 const glob = require('glob');
 const isString = require('lodash/isString');
-
-const platform = os.platform();
+const psTree = promisify(require('ps-tree'));
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const stat = promisify(fs.stat);
 
-exports.glob = promisify(glob);
+const { isWindows } = require('./env');
 
+exports.glob = promisify(glob);
 
 /**
  * transform response format
@@ -101,56 +101,49 @@ exports.hasFile = async path => {
  * @param {string} text
  * @param {object} options
  */
-exports.generateQRCode = (text, options) => new Promise((resolve, reject) => {
-  QRCode.toDataURL(text, options, (err, url) => {
-    if (err) {
-      return reject(err);
-    }
-    resolve(url);
+exports.generateQRCode = (text, options) =>
+  new Promise((resolve, reject) => {
+    QRCode.toDataURL(text, options, (err, url) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(url);
+    });
   });
-});
-
 
 /**
  * generate md5 code
  * @param {string} str
  */
-exports.md5 = str => crypto.createHash('md5').update(str).digest('hex');
+exports.md5 = str =>
+  crypto
+    .createHash('md5')
+    .update(str)
+    .digest('hex');
 
-exports.md5File = filePath => new Promise((resolve) => {
-  const rs = fs.createReadStream(filePath);
-  const md5hash = crypto.createHash('md5');
-  rs.on('data', chunk => {
-    md5hash.update(chunk);
-  });
-  rs.on('end', () => {
-    resolve(md5hash.digest('hex'));
-  });
-});
-
-exports.killPid = (ps, pid) => new Promise((resolve, reject) => {
-  if (platform === 'win32') {
-    // windows
-    exec(`taskkill /pid ${pid} /T /F`, err => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve();
+exports.md5File = filePath =>
+  new Promise(resolve => {
+    const rs = fs.createReadStream(filePath);
+    const md5hash = crypto.createHash('md5');
+    rs.on('data', chunk => {
+      md5hash.update(chunk);
     });
+    rs.on('end', () => {
+      resolve(md5hash.digest('hex'));
+    });
+  });
+
+const killPid = pid => {
+  if (isWindows) {
+    // windows
+    execSync(`taskkill /PID ${pid} /T /F`);
   } else {
-    // unix
-    try {
-      ps.kill('SIGTERM');
-      resolve();
-    } catch (e) {
-      return reject(new Error(e));
-    }
+    execSync(`kill ${pid}`);
   }
-});
+};
 
 exports.getLocalIP = () => {
-  const ifs = require('os').networkInterfaces();
+  const ifs = os.networkInterfaces();
   return Object.keys(ifs)
     .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
     .filter(x => x)[0].address;
@@ -210,4 +203,57 @@ exports.findExecutable = (command, cwd, options) => {
     }
   }
   return path.join(cwd, command);
+};
+
+exports.killTask = async ppid => {
+  try {
+    const children = await psTree(ppid);
+    for (const ps of children) {
+      killPid(ps.PID);
+    }
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+const getWindowsShell = () => process.env['comspec'] || 'cmd.exe';
+
+let _TERMINAL_DEFAULT_SHELL_UNIX_LIKE;
+const getTerminalDefaultShellUnixLike = () => {
+  if (!_TERMINAL_DEFAULT_SHELL_UNIX_LIKE) {
+    let unixLikeTerminal = 'sh';
+    if (!isWindows && process.env.SHELL) {
+      unixLikeTerminal = process.env.SHELL;
+      // Some systems have $SHELL set to /bin/false which breaks the terminal
+      if (unixLikeTerminal === '/bin/false') {
+        unixLikeTerminal = '/bin/bash';
+      }
+    }
+    _TERMINAL_DEFAULT_SHELL_UNIX_LIKE = unixLikeTerminal;
+  }
+  return _TERMINAL_DEFAULT_SHELL_UNIX_LIKE;
+};
+
+let _TERMINAL_DEFAULT_SHELL_WINDOWS;
+const getTerminalDefaultShellWindows = () => {
+  if (!_TERMINAL_DEFAULT_SHELL_WINDOWS) {
+    const isAtLeastWindows10 = isWindows && parseFloat(os.release()) >= 10;
+    const is32ProcessOn64Windows = process.env.hasOwnProperty(
+      'PROCESSOR_ARCHITEW6432',
+    );
+    const powerShellPath = `${process.env.windir}\\${
+      is32ProcessOn64Windows ? 'Sysnative' : 'System32'
+    }\\WindowsPowerShell\\v1.0\\powershell.exe`;
+    _TERMINAL_DEFAULT_SHELL_WINDOWS = isAtLeastWindows10
+      ? powerShellPath
+      : getWindowsShell();
+  }
+  return _TERMINAL_DEFAULT_SHELL_WINDOWS;
+};
+
+exports.getDefaultShell = () => {
+  if (isWindows) {
+    return getTerminalDefaultShellWindows();
+  }
+  return getTerminalDefaultShellUnixLike();
 };

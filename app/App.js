@@ -19,7 +19,6 @@ import Controller from './modules/module.controller/';
 // Pages
 import DashboardModule from './modules/module.dashboard/';
 import LayoutModule from './modules/module.layout/';
-// import ReaderModule from './modules/module.reader/';
 
 const loading = () => <Spin />;
 
@@ -74,11 +73,8 @@ const App = () => (
   <ErrorBoundary>
     <Controller>
       <LocationProvider history={history}>
-        { ({ navigate, location }) => (
-          <LayoutModule
-            navigate={navigate}
-            location={location}
-          >
+        {({ navigate, location }) => (
+          <LayoutModule navigate={navigate} location={location}>
             <Router basepath="/" location={location}>
               <DashboardModule path="/" default />
               <UploadModule path="/upload" />
@@ -97,6 +93,5 @@ const App = () => (
     </Controller>
   </ErrorBoundary>
 );
-// <Route path="/images" component={ImageModule}></Route>
 
 export default hot(module)(App);

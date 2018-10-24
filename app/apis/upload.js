@@ -6,10 +6,12 @@ import { remoteAPI } from './utils';
 
 const UPLOAD_API = {
   list: {
-    async get(params = {
-      start: 0,
-      limit: 100,
-    }) {
+    async get(
+      params = {
+        start: 0,
+        limit: 100,
+      },
+    ) {
       try {
         const res = await remoteAPI.upload.getList(params);
         return res;
@@ -48,7 +50,7 @@ const UPLOAD_API = {
       //   method: 'delete',
       // });
       // return handleResponse(res);
-    }
+    },
   },
   file: {
     async post(file) {

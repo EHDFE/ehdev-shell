@@ -7,8 +7,7 @@ import { Component } from 'react';
 import styles from './index.less';
 
 export default class ErrorBoundary extends Component {
-
-  state = { hasError: false }
+  state = { hasError: false };
 
   componentDidCatch(error, info) {
     // Display fallback UI
@@ -26,24 +25,18 @@ export default class ErrorBoundary extends Component {
       const { error, info } = this.state;
       return (
         <div className={styles.ErrorBoundary}>
-          <div className={styles.ErrorBoundary__overlay}></div>
+          <div className={styles.ErrorBoundary__overlay} />
           <div className={styles.ErrorBoundary__terminal}>
             <h1>
               Error&nbsp;
-              <span className={styles.ErrorBoundary__errorcode}></span>
+              <span className={styles.ErrorBoundary__errorcode} />
             </h1>
+            <p className={styles.ErrorBoundary__output}>{error.message}</p>
+            <p className={styles.ErrorBoundary__output}>{error.stack}</p>
             <p className={styles.ErrorBoundary__output}>
-              { error.message }
+              {info.componentStack}
             </p>
-            <p className={styles.ErrorBoundary__output}>
-              { error.stack }
-            </p>
-            <p className={styles.ErrorBoundary__output}>
-              { info.componentStack }
-            </p>
-            <p className={styles.ErrorBoundary__output}>
-              Good luck
-            </p>
+            <p className={styles.ErrorBoundary__output}>Good luck</p>
           </div>
         </div>
       );

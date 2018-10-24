@@ -82,7 +82,7 @@ function apply(terminalConstructor) {
   terminalConstructor.prototype.attach = function(
     socket,
     bidirectional,
-    buffered
+    buffered,
   ) {
     attach(this, socket, bidirectional, buffered);
   };

@@ -4,8 +4,6 @@
  */
 // import styles from './index.less';
 
-const Page = ({ children }) => (
-  [ children ]
-);
+const Page = ({ children }) => [children];
 
 export default Page;

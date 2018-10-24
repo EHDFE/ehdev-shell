@@ -14,53 +14,35 @@ export const defaultConfig = {
 
 @processorHoc()
 class Gifsicle extends PureComponent {
-  static processorName = 'gifsicle'
+  static processorName = 'gifsicle';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Fragment>
-        <ProcessItem
-          label={'循环播放'}
-        >
+        <ProcessItem label={'循环播放'}>
           {getFieldDecorator('loop', {
             valuePropName: 'checked',
             initialValue: this.state.loop,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'交错'}
-          tooltip={'渐进渲染的 gif 图片'}
-        >
+        <ProcessItem label={'交错'} tooltip={'渐进渲染的 gif 图片'}>
           {getFieldDecorator('interlaced', {
             valuePropName: 'checked',
             initialValue: this.state.interlaced,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
-        <ProcessItem
-          label={'lossy'}
-          extra={'压缩率'}
-        >
+        <ProcessItem label={'lossy'} extra={'压缩率'}>
           {getFieldDecorator('lossy', {
             initialValue: this.state.lossy,
-          })(
-            <Slider
-              max={200}
-              min={30}
-              step={1}
-            />
-          )}
+          })(<Slider max={200} min={30} step={1} />)}
         </ProcessItem>
         <ProcessItem
           label={'优化级别'}
@@ -68,13 +50,7 @@ class Gifsicle extends PureComponent {
         >
           {getFieldDecorator('optimizationLevel', {
             initialValue: this.state.optimizationLevel,
-          })(
-            <Slider
-              max={3}
-              min={1}
-              step={1}
-            />
-          )}
+          })(<Slider max={3} min={1} step={1} />)}
         </ProcessItem>
         <ProcessItem
           label={'颜色数'}
@@ -82,12 +58,7 @@ class Gifsicle extends PureComponent {
         >
           {getFieldDecorator('colors', {
             initialValue: this.state.colors,
-          })(
-            <Slider
-              max={256}
-              min={2}
-            />
-          )}
+          })(<Slider max={256} min={2} />)}
         </ProcessItem>
       </Fragment>
     );

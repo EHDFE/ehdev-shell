@@ -53,11 +53,10 @@ export default class CommandManager {
     };
   }
   addListeners(listenerMap) {
-    const channels = Object.keys(listenerMap)
-      .map(command => {
-        this.addListener(command, listenerMap[command]);
-        return `[COMMAND]:${command}`;
-      });
+    const channels = Object.keys(listenerMap).map(command => {
+      this.addListener(command, listenerMap[command]);
+      return `[COMMAND]:${command}`;
+    });
     return () => {
       this.emitter.removeAllListeners(channels);
     };

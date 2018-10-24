@@ -17,7 +17,7 @@ export const markGenerator = (from, to) => ({
       color: '#52c41a',
     },
     label: to.label,
-  }
+  },
 });
 
 const processorHoc = desc => Processor => {
@@ -33,13 +33,13 @@ const processorHoc = desc => Processor => {
     },
   })
   class ProcessorWrapper extends PureComponent {
-    static processorName = Processor.processorName
+    static processorName = Processor.processorName;
     static propTypes = {
       form: PropTypes.object,
       className: PropTypes.string,
       config: PropTypes.object,
       layout: PropTypes.string,
-    }
+    };
     render() {
       const { form, config, className, layout, ...otherProps } = this.props;
       return (
@@ -52,11 +52,7 @@ const processorHoc = desc => Processor => {
           >
             <Form>
               {desc && <Alert message={desc} type="info" />}
-              <Processor
-                form={form}
-                config={config}
-                {...otherProps}
-              />
+              <Processor form={form} config={config} {...otherProps} />
             </Form>
           </ScrollArea>
         </ProcessorContext.Provider>

@@ -4,7 +4,7 @@
  */
 import { ipcRenderer } from 'electron';
 import { Spin, Tabs } from 'antd';
-import { Map, Set } from 'immutable';
+import { Map } from 'immutable';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 // import classnames from 'classnames';
@@ -25,35 +25,29 @@ class ProjectModule extends PureComponent {
     runtimeConfig: {
       port: 3000,
     },
-  }
+  };
   static propTypes = {
     env: PropTypes.instanceOf(Map),
-    pids: PropTypes.instanceOf(Set),
     rootPath: PropTypes.string,
     currentService: PropTypes.instanceOf(Map),
     getEnvData: PropTypes.func,
     setRootPath: PropTypes.func,
     setActive: PropTypes.func,
-    startServer: PropTypes.func,
-    stopServer: PropTypes.func,
-    startBuilder: PropTypes.func,
-    stopBuilder: PropTypes.func,
-    updateServiceStatus: PropTypes.func,
-    // getESlintResult: PropTypes.func,
+    startService: PropTypes.func,
+    stopService: PropTypes.func,
     updateRuntimeConfig: PropTypes.func,
-    // pkgInfo: PropTypes.object,
-  }
+  };
   state = {
     defaultActiveKey: 'profile',
     loading: false,
     runtimeConfigerVisible: false,
     width: 0,
-  }
+  };
   componentDidMount() {
     this.getInitData();
     ipcRenderer.removeAllListeners('SERVICE_STOPPED');
     ipcRenderer.on('SERVICE_STOPPED', (event, { pid, rootPath }) => {
-      this.updateServiceStatus(false, pid, rootPath);
+      // TODO: SERVICE_STOPPED
     });
     window.addEventListener('resize', this.handleResize, false);
     this.setState({
@@ -71,33 +65,32 @@ class ProjectModule extends PureComponent {
   getInitData = hasLoading => {
     if (hasLoading) {
       this.setState({
-        loading: true
+        loading: true,
       });
     }
     const { rootPath } = this.props;
     if (rootPath) {
-      return Promise.all([
-        this.props.getEnvData(rootPath),
-      ]).then(()=> {
+      return Promise.all([this.props.getEnvData(rootPath)]).then(() => {
         if (hasLoading) {
           this.setState({
-            loading: false
+            loading: false,
           });
         }
       });
     }
     return Promise.resolve();
-  }
+  };
   handleResize = () => {
     const rect = this.root.getBoundingClientRect();
     this.setState({
       width: rect.width,
     });
-  }
+  };
   handleStartServer = () => {
-    const { env, rootPath } = this.props;
+    const { env, rootPath, currentService } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
-    this.props.startServer({
+    this.props.startService('server', {
+      ppid: currentService.get('ppid'),
       root: rootPath,
       port: env.getIn(['runtimeConfig', 'port']),
       projectName,
@@ -105,50 +98,43 @@ class ProjectModule extends PureComponent {
       runtimeConfig: env.get('runtimeConfig').toJS(),
     });
     this.props.setActive(rootPath);
-  }
+  };
   handleStartBuilder = () => {
-    const { env, rootPath } = this.props;
+    const { env, rootPath, currentService } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
-    this.props.startBuilder({
+    this.props.startService('builder', {
+      ppid: currentService.get('ppid'),
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
       runtimeConfig: env.get('runtimeConfig').toJS(),
     });
     this.props.setActive(rootPath);
-  }
+  };
   handleStartDllBuilder = () => {
-    const { env, rootPath } = this.props;
+    const { env, rootPath, currentService } = this.props;
     const projectName = env.getIn(['pkg', 'name']);
-    this.props.startBuilder({
+    this.props.startService('builder', {
+      ppid: currentService.get('ppid'),
       root: rootPath,
       projectName,
       configerName: `ehdev-configer-${env.getIn(['config', 'type'])}`,
-      runtimeConfig: Object.assign({
-        isDll: true,
-      }, env.get('runtimeConfig').toJS()),
+      runtimeConfig: Object.assign(
+        {
+          isDll: true,
+        },
+        env.get('runtimeConfig').toJS(),
+      ),
     });
     this.props.setActive(rootPath);
-  }
-  handleStopService = (type, pid) => {
-    const { env, rootPath } = this.props;
-    const projectName = env.getIn(['pkg', 'name']);
-    if (type === 'server') {
-      this.props.stopServer(pid, false, {
-        rootPath,
-        projectName,
-      });
-    } else if (type === 'builder') {
-      this.props.stopBuilder(pid, false, {
-        rootPath,
-        projectName,
-      });
-    }
-  }
-  // handleUpdateEslint = () => {
-  //   const { rootPath } = this.props;
-  //   this.props.getESlintResult(rootPath);
-  // }
+  };
+  handleStopService = type => {
+    const { rootPath, currentService } = this.props;
+    this.props.stopService(type, {
+      ppid: currentService.get('ppid'),
+      root: rootPath,
+    });
+  };
   hanleCloseRuntimeConfiger = configData => {
     if (configData) {
       this.props.updateRuntimeConfig(configData);
@@ -156,18 +142,12 @@ class ProjectModule extends PureComponent {
     this.setState({
       runtimeConfigerVisible: false,
     });
-  }
-  updateServiceStatus(isRunning, pid, rootPath) {
-    const { pids } = this.props;
-    if (pids.includes(pid)) {
-      this.props.updateServiceStatus(isRunning, pid, rootPath);
-    }
-  }
+  };
   showRuntimeConfiger = () => {
     this.setState({
       runtimeConfigerVisible: true,
     });
-  }
+  };
   renderProfile() {
     const { env, rootPath } = this.props;
     const profileProps = {
@@ -196,15 +176,11 @@ class ProjectModule extends PureComponent {
     };
     return <ProjectAction {...props} />;
   }
-  // renderLintResult() {
-  //   const { rootPath, lintResult } = this.props;
-  //   return <EslintResult rootPath={rootPath} data={lintResult} />;
-  // }
-  tabKey = (key) => {
+  tabKey = key => {
     this.setState({
-      defaultActiveKey: key
+      defaultActiveKey: key,
     });
-  }
+  };
   render() {
     const { env, setRootPath } = this.props;
     const { runtimeConfigerVisible, width } = this.state;
@@ -214,30 +190,9 @@ class ProjectModule extends PureComponent {
       closeWithData: this.hanleCloseRuntimeConfiger,
       formData: env.get('runtimeConfig'),
     };
-    // {
-    //   useESlint ?
-    //     <TabPane
-    //       tab={
-    //         [
-    //           '代码质量',
-    //           <button
-    //             className={styles.Project__EslintBtn}
-    //             onClick={this.handleUpdateEslint}
-    //             key="refresh"
-    //           >
-    //             <Icon type="reload" />
-    //           </button>,
-    //         ]
-    //       }
-    //       key="eslint"
-    //     >
-    //       { this.renderLintResult() }
-    //     </TabPane> :
-    //     null
-    // }
     return (
       <div
-        ref={node => this.root = node}
+        ref={node => (this.root = node)}
         width={width}
         className={styles.Project__Layout}
       >
@@ -249,16 +204,23 @@ class ProjectModule extends PureComponent {
             value={env.get('rootPath')}
           >
             <h3 className={styles.Project__ProjectName}>
-              { env.getIn(['pkg', 'name'], '请选择项目') }
+              {env.getIn(['pkg', 'name'], '请选择项目')}
             </h3>
           </FolderPicker>
-          { this.renderActionBar() }
+          {this.renderActionBar()}
         </div>
-        <Spin className={styles.Project__ContentSpin} spinning={this.state.loading}>
-          <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.tabKey} animated={false}>
+        <Spin
+          className={styles.Project__ContentSpin}
+          spinning={this.state.loading}
+        >
+          <Tabs
+            defaultActiveKey={this.state.defaultActiveKey}
+            onChange={this.tabKey}
+            animated={false}
+          >
             <TabPane tab="基础信息" key="profile">
               <div className={styles.Project__TabContent}>
-                { this.renderProfile() }
+                {this.renderProfile()}
               </div>
             </TabPane>
           </Tabs>
@@ -269,43 +231,28 @@ class ProjectModule extends PureComponent {
   }
 }
 
-const projectPageSelector = state => state['page.project'];
-const envSelector = createSelector(
-  projectPageSelector,
-  pageState => pageState.get('env'),
-);
-const serviceSelector = createSelector(
-  projectPageSelector,
-  pageState => ({
-    pids: pageState.getIn(['service', 'pids'], Set([])),
-    instances: pageState.getIn(['service', 'instances']),
-  }),
-);
-
-const mapStateToProps = (state) => createSelector(
-  envSelector,
-  serviceSelector,
-  (env, service) => {
+const envSelector = state => state['page.project.env'];
+const serviceSelector = state => state['page.project.service'];
+const mapStateToProps = () =>
+  createSelector(envSelector, serviceSelector, (env, service) => {
     const rootPath = env.get('rootPath');
     return {
       env,
-      pids: service.pids,
       rootPath,
-      currentService: service.instances.get(rootPath),
+      currentService: service.getIn(['instances', rootPath], Map()),
     };
-  },
-);
+  });
+
 const mapDispatchToProps = dispatch => ({
   setRootPath: rootPath => dispatch(actions.env.setRootPath(rootPath)),
   getEnvData: rootPath => dispatch(actions.env.getEnv(rootPath)),
   setActive: id => dispatch(consoleActions.setActive(id)),
-  startServer: params => dispatch(actions.service.startServer(params, dispatch)),
-  stopServer: (...args) => dispatch(actions.service.stopServer(...args)),
-  startBuilder: params => dispatch(actions.service.startBuilder(params, dispatch)),
-  stopBuilder: (...args) => dispatch(actions.service.stopBuilder(...args)),
-  updateServiceStatus: (isRunning, pid, rootPath) => dispatch(actions.service.updateStatus(isRunning, pid, rootPath)),
-  // getESlintResult: rootPath => dispatch(actions.env.getLintResult(rootPath)),
-  updateRuntimeConfig: config => dispatch(actions.env.updateRuntimeConfig(config)),
+  startService: (serviceType, params) =>
+    dispatch(actions.service.start(serviceType, params)),
+  stopService: (serviceType, params) =>
+    dispatch(actions.service.stop(serviceType, params)),
+  updateRuntimeConfig: config =>
+    dispatch(actions.env.updateRuntimeConfig(config)),
 });
 
 export default connect(

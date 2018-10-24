@@ -33,14 +33,14 @@ class Armor {
     this.willLoadCore()
       .then(() => {
         app.on('ready', () => {
-          this.beforeLoadCore()
-            .then(() => {
-              this.loadCore();
-              this.addEquipment(MenuController);
-              this.addEquipment(TrayController);
-            });
+          this.beforeLoadCore().then(() => {
+            this.loadCore();
+            this.addEquipment(MenuController);
+            this.addEquipment(TrayController);
+          });
         });
-      }).catch(core => {
+      })
+      .catch(core => {
         core.show().focus();
         app.quit();
       });
@@ -119,4 +119,3 @@ class Armor {
 }
 
 module.exports = Armor;
-

@@ -47,15 +47,15 @@ export default class InfoModal extends PureComponent {
     onRequestDownload: PropTypes.func,
     onRequestInstall: PropTypes.func,
     percent: PropTypes.number,
-  }
+  };
   handleOpenExternal = e => {
     e.preventDefault();
     shell.openExternal(e.currentTarget.getAttribute('href'));
-  }
+  };
   onCheckUpdate = () => {
     if (this.props.status === UPDATE_CHECKING) return;
     this.props.onRequestCheckUpdate();
-  }
+  };
   renderUpdateCtrls() {
     const { status } = this.props;
     const content = [];
@@ -68,7 +68,9 @@ export default class InfoModal extends PureComponent {
             key="checkUpdate"
             onClick={this.onCheckUpdate}
             loading={status === UPDATE_CHECKING}
-          >Check Update</Button>
+          >
+            Check Update
+          </Button>,
         );
         break;
       case UPDATE_AVAILABLE:
@@ -78,25 +80,32 @@ export default class InfoModal extends PureComponent {
             key="download"
             onClick={this.props.onRequestDownload}
             loading={status === UPDATE_CHECKING}
-          >Download New Release</Button>
+          >
+            Download New Release
+          </Button>,
         );
         if (status === UPDATE_DOWNLOAD_ERROR) {
-          const version = updater.autoUpdater.updateInfo && updater.autoUpdater.updateInfo.version;
-          const downloadLink = version ?
+          const version =
+            updater.autoUpdater.updateInfo &&
+            updater.autoUpdater.updateInfo.version;
+          const downloadLink = version ? (
             <a
               key="link"
               href={`https://github.com/EHDFE/ehdev-shell/releases/tag/v${version}`}
               onClick={this.handleOpenExternal}
-            >更新</a>
-          : <a
+            >
+              更新
+            </a>
+          ) : (
+            <a
               key="link"
               href={'https://github.com/EHDFE/ehdev-shell/releases'}
               onClick={this.handleOpenExternal}
-            >更新</a>;
-          const tip = [
-            '下载失败，建议前往官网下载',
-            downloadLink,
-          ];
+            >
+              更新
+            </a>
+          );
+          const tip = ['下载失败，建议前往官网下载', downloadLink];
           content.push(
             <Alert
               key="alert"
@@ -104,30 +113,27 @@ export default class InfoModal extends PureComponent {
               message={tip}
               showIcon
               style={{ marginTop: 10 }}
-            />
+            />,
           );
         }
         break;
       case UPDATE_DOWNLOADING:
         content.push(
-          <Button key="downloading" loading={true}>Downloading</Button>,
-          <Progress key="progress" percent={this.props.percent} />
+          <Button key="downloading" loading={true}>
+            Downloading
+          </Button>,
+          <Progress key="progress" percent={this.props.percent} />,
         );
         break;
       case UPDATE_DOWNLOADED:
         content.push(
-          <Button
-            key="install"
-            onClick={this.props.onRequestInstall}
-          >Install</Button>
+          <Button key="install" onClick={this.props.onRequestInstall}>
+            Install
+          </Button>,
         );
         break;
     }
-    return (
-      <div>
-        { content }
-      </div>
-    );
+    return <div>{content}</div>;
   }
   render() {
     const modalProps = {
@@ -140,23 +146,36 @@ export default class InfoModal extends PureComponent {
     return (
       <Modal {...modalProps}>
         <section className={styles.Info__Content}>
-        <picture>
-          <img src={AppIconPath} alt="Jarvis" width="64" height="64" />
-        </picture>
-        <h2>Jarvis</h2>
-        <p>版本：{pkg.version} ({process.env.BUILD_TIME})</p>
-        <p>
-          Release Notes：
-          <a href={`https://github.com/EHDFE/ehdev-shell/releases/tag/v${pkg.version}`} onClick={this.handleOpenExternal}>
-            {`v${pkg.version}`}
-          </a>
-        </p>
-        <p>
-          File Bug：
-          <a href="https://github.com/EHDFE/ehdev-shell/issues" onClick={this.handleOpenExternal}>issues</a>
-        </p>
-        { this.renderUpdateCtrls() }
-      </section>
+          <picture>
+            <img src={AppIconPath} alt="Jarvis" width="64" height="64" />
+          </picture>
+          <h2>Jarvis</h2>
+          <p>
+            版本：
+            {pkg.version} ({process.env.BUILD_TIME})
+          </p>
+          <p>
+            Release Notes：
+            <a
+              href={`https://github.com/EHDFE/ehdev-shell/releases/tag/v${
+                pkg.version
+              }`}
+              onClick={this.handleOpenExternal}
+            >
+              {`v${pkg.version}`}
+            </a>
+          </p>
+          <p>
+            File Bug：
+            <a
+              href="https://github.com/EHDFE/ehdev-shell/issues"
+              onClick={this.handleOpenExternal}
+            >
+              issues
+            </a>
+          </p>
+          {this.renderUpdateCtrls()}
+        </section>
       </Modal>
     );
   }

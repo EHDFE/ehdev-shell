@@ -9,14 +9,16 @@ const getUnixShellEnvironment = () => {
 
     const env = Object.assign({}, process.env, {
       ELECTRON_RUN_AS_NODE: '1',
-      ELECTRON_NO_ATTACH_CONSOLE: '1'
+      ELECTRON_NO_ATTACH_CONSOLE: '1',
     });
 
-    const command = `'${process.execPath}' -p '"${mark}" + JSON.stringify(process.env) + "${mark}"'`;
+    const command = `'${
+      process.execPath
+    }' -p '"${mark}" + JSON.stringify(process.env) + "${mark}"'`;
     const child = spawn(process.env.SHELL, ['-ilc', command], {
       detached: true,
       stdio: ['ignore', 'pipe', process.stderr],
-      env
+      env,
     });
 
     const buffers = [];

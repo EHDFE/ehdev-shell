@@ -11,23 +11,22 @@ const IconMoon = () => (
   <svg
     version="1.1"
     id="moon"
-    className={classnames(
-      styles.climacon,
-      styles.climacon_moon
-    )}
+    className={classnames(styles.climacon, styles.climacon_moon)}
     viewBox="15 15 70 70"
   >
     <clipPath id="moonFillClip">
       <path d="M15,15v70h70V15H15z M50,57.999c-4.418,0-7.999-3.582-7.999-7.999c0-3.803,2.655-6.979,6.211-7.792c0.903,4.854,4.726,8.676,9.579,9.58C56.979,55.344,53.802,57.999,50,57.999z" />
     </clipPath>
-    <g className={classnames(
-      styles.climacon_iconWrap,
-      styles['climacon_iconWrap-moon']
-    )}>
+    <g
+      className={classnames(
+        styles.climacon_iconWrap,
+        styles['climacon_iconWrap-moon'],
+      )}
+    >
       <g
         className={classnames(
           styles.climacon_componentWrap,
-          styles['climacon_componentWrap-moon']
+          styles['climacon_componentWrap-moon'],
         )}
         clipPath="url(#moonFillClip)"
       >

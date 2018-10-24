@@ -41,6 +41,9 @@ const SERVICE_API = {
       }
     },
   },
+  async closePty(ppid) {
+    return await remoteAPI.service.closePty(ppid);
+  },
 };
 
 export default SERVICE_API;

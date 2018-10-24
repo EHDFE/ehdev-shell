@@ -17,15 +17,30 @@ const IconSun = () => (
     <clipPath id="sunFillClip">
       <path d="M0,0v100h100V0H0z M50.001,57.999c-4.417,0-8-3.582-8-7.999c0-4.418,3.582-7.999,8-7.999s7.998,3.581,7.998,7.999C57.999,54.417,54.418,57.999,50.001,57.999z" />
     </clipPath>
-    <g className={classnames(styles.climacon_iconWrap, styles['climacon_iconWrap-sun'])}>
-      <g className={classnames(styles.climacon_componentWrap, styles['climacon_componentWrap-sun'])}>
-        <g className={classnames(styles.climacon_componentWrap, styles['climacon_componentWrap-sunSpoke'])}>
+    <g
+      className={classnames(
+        styles.climacon_iconWrap,
+        styles['climacon_iconWrap-sun'],
+      )}
+    >
+      <g
+        className={classnames(
+          styles.climacon_componentWrap,
+          styles['climacon_componentWrap-sun'],
+        )}
+      >
+        <g
+          className={classnames(
+            styles.climacon_componentWrap,
+            styles['climacon_componentWrap-sunSpoke'],
+          )}
+        >
           <path
             className={classnames(
               styles.climacon_component,
               styles['climacon_component-stroke'],
               styles['climacon_component-stroke_sunSpoke'],
-              styles['climacon_component-stroke_sunSpoke-east']
+              styles['climacon_component-stroke_sunSpoke-east'],
             )}
             d="M72.03,51.999h-3.998c-1.105,0-2-0.896-2-1.999s0.895-2,2-2h3.998c1.104,0,2,0.896,2,2S73.136,51.999,72.03,51.999z"
           />
@@ -34,7 +49,7 @@ const IconSun = () => (
               styles.climacon_component,
               styles['climacon_component-stroke'],
               styles['climacon_component-stroke_sunSpoke'],
-              styles['climacon_component-stroke_sunSpoke-northEast']
+              styles['climacon_component-stroke_sunSpoke-northEast'],
             )}
             d="M64.175,38.688c-0.781,0.781-2.049,0.781-2.828,0c-0.781-0.781-0.781-2.047,0-2.828l2.828-2.828c0.779-0.781,2.047-0.781,2.828,0c0.779,0.781,0.779,2.047,0,2.828L64.175,38.688z"
           />
@@ -43,7 +58,7 @@ const IconSun = () => (
               styles.climacon_component,
               styles['climacon_component-stroke'],
               styles['climacon_component-stroke_sunSpoke'],
-              styles['climacon_component-stroke_sunSpoke-north']
+              styles['climacon_component-stroke_sunSpoke-north'],
             )}
             d="M50.034,34.002c-1.105,0-2-0.896-2-2v-3.999c0-1.104,0.895-2,2-2c1.104,0,2,0.896,2,2v3.999C52.034,33.106,51.136,34.002,50.034,34.002z"
           />
@@ -52,7 +67,7 @@ const IconSun = () => (
               styles.climacon_component,
               styles['climacon_component-stroke'],
               styles['climacon_component-stroke_sunSpoke'],
-              styles['climacon_component-stroke_sunSpoke-northWest']
+              styles['climacon_component-stroke_sunSpoke-northWest'],
             )}
             d="M35.893,38.688l-2.827-2.828c-0.781-0.781-0.781-2.047,0-2.828c0.78-0.781,2.047-0.781,2.827,0l2.827,2.828c0.781,0.781,0.781,2.047,0,2.828C37.94,39.469,36.674,39.469,35.893,38.688z"
           />
@@ -96,7 +111,7 @@ const IconSun = () => (
         <g
           className={classnames(
             styles.climacon_componentWrap,
-            styles.climacon_componentWrap_sunBody
+            styles.climacon_componentWrap_sunBody,
           )}
           clipPath="url(#sunFillClip)"
         >
@@ -104,7 +119,7 @@ const IconSun = () => (
             className={classnames(
               styles.climacon_component,
               styles['climacon_component-stroke'],
-              styles['climacon_component-stroke_sunBody']
+              styles['climacon_component-stroke_sunBody'],
             )}
             cx="50.034"
             cy="50"

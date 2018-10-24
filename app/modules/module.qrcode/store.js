@@ -9,7 +9,7 @@ import COMMON_API from '../../apis/common';
 const defaultState = Map({});
 
 export const actions = createActions({
-  GENERATE: async (text) => {
+  GENERATE: async text => {
     const { url } = await COMMON_API.getQrCode(text);
     return {
       url,
@@ -17,11 +17,14 @@ export const actions = createActions({
   },
 });
 
-const reducer = handleActions({
-  GENERATE: (state, { payload, error }) => {
-    if (error) return state;
-    return state.set('url', payload.url);
+const reducer = handleActions(
+  {
+    GENERATE: (state, { payload, error }) => {
+      if (error) return state;
+      return state.set('url', payload.url);
+    },
   },
-}, defaultState);
+  defaultState,
+);
 
 export default reducer;

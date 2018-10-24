@@ -13,22 +13,20 @@ export const defaultConfig = {
 
 @processorHoc()
 class FFmpeg extends PureComponent {
-  static processorName = 'ffmpeg'
+  static processorName = 'ffmpeg';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Fragment>
-        <ProcessItem
-          label={'输出类型'}
-        >
+        <ProcessItem label={'输出类型'}>
           {getFieldDecorator('target', {
             initialValue: this.state.target,
           })(
@@ -36,7 +34,7 @@ class FFmpeg extends PureComponent {
               <Radio value={'mp4'}>mp4</Radio>
               <Radio value={'webm'}>webm</Radio>
               <Radio value={'gif'}>gif</Radio>
-            </Radio.Group>
+            </Radio.Group>,
           )}
         </ProcessItem>
         <ProcessItem
@@ -53,28 +51,18 @@ class FFmpeg extends PureComponent {
                 { value: 0, label: '高' },
                 { value: 51, label: '低' },
               )}
-            />
+            />,
           )}
         </ProcessItem>
-        <ProcessItem
-          label={'帧数'}
-          tooltip={'帧数为0时，输出所有帧'}
-        >
+        <ProcessItem label={'帧数'} tooltip={'帧数为0时，输出所有帧'}>
           {getFieldDecorator('vframes', {
             initialValue: this.state.vframes,
-          })(
-            <InputNumber size="small" min={0} />
-          )}
+          })(<InputNumber size="small" min={0} />)}
         </ProcessItem>
-        <ProcessItem
-          label={'输出帧率'}
-          tooltip={'帧数为0时，不指定输出帧率'}
-        >
+        <ProcessItem label={'输出帧率'} tooltip={'帧数为0时，不指定输出帧率'}>
           {getFieldDecorator('frameRate', {
             initialValue: this.state.frameRate,
-          })(
-            <InputNumber size="small" min={1} />
-          )}
+          })(<InputNumber size="small" min={1} />)}
         </ProcessItem>
       </Fragment>
     );

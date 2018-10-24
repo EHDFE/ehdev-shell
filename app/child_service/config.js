@@ -5,13 +5,41 @@ const path = require('path');
 const fs = require('fs');
 const del = require('del');
 const selfsigned = require('selfsigned');
-const SHELL_NODE_MODULES_PATH = process.env.SHELL_NODE_MODULES_PATH;
-const chalk = require(path.join(SHELL_NODE_MODULES_PATH, 'chalk'));
 const defaultsDeep = require('lodash/defaultsDeep');
 
+const argv = process.argv.slice(2);
+const ENV_CONFIG = {
+  port: 3000,
+  https: false,
+  noInfo: true,
+};
+argv.forEach(item => {
+  let [key, value] = item.slice(2).split('=');
+  if (value === 'false') value = false;
+  if (value === 'true') value = true;
+  Object.assign(ENV_CONFIG, {
+    [key]: value,
+  });
+});
+
+Object.assign(process.env, {
+  SHELL_NODE_MODULES_PATH: ENV_CONFIG.SHELL_NODE_MODULES_PATH,
+  CONFIGER_FOLDER_PATH: ENV_CONFIG.CONFIGER_FOLDER_PATH,
+});
+
+exports.ENV_CONFIG = ENV_CONFIG;
+
+const chalk = require(path.join(ENV_CONFIG.SHELL_NODE_MODULES_PATH, 'chalk'));
+
 // const ExtractTextPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'extract-text-webpack-plugin'));
-const CleanWebpackPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'clean-webpack-plugin'));
-const UglifyJsPlugin = exports.UglifyJsPlugin = require(path.join(SHELL_NODE_MODULES_PATH, 'uglifyjs-webpack-plugin'));
+const CleanWebpackPlugin = require(path.join(
+  ENV_CONFIG.SHELL_NODE_MODULES_PATH,
+  'clean-webpack-plugin',
+));
+const UglifyJsPlugin = (exports.UglifyJsPlugin = require(path.join(
+  ENV_CONFIG.SHELL_NODE_MODULES_PATH,
+  'uglifyjs-webpack-plugin',
+)));
 
 const defaultUglifyOptions = {
   cache: false,
@@ -35,34 +63,51 @@ const defaultUglifyOptions = {
   },
 };
 
-const getUglifyJsOptions = exports.getUglifyJsOptions = projectConfig => {
-  const options = defaultsDeep(defaultUglifyOptions, {
-    uglifyOptions: {
-      ie8: !!projectConfig.supportIE8,
+const getUglifyJsOptions = (exports.getUglifyJsOptions = projectConfig => {
+  const options = defaultsDeep(
+    defaultUglifyOptions,
+    {
+      uglifyOptions: {
+        ie8: !!projectConfig.supportIE8,
+      },
     },
-  }, projectConfig.uglifyConfig || {});
+    projectConfig.uglifyConfig || {},
+  );
   return options;
-};
+});
 
 // webpack path
-const Webpack = exports.Webpack = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack'));
-exports.WebpackDevServer = require(path.join(SHELL_NODE_MODULES_PATH, 'webpack-dev-server'));
+const Webpack = (exports.Webpack = require(path.join(
+  ENV_CONFIG.SHELL_NODE_MODULES_PATH,
+  'webpack',
+)));
+exports.WebpackDevServer = require(path.join(
+  ENV_CONFIG.SHELL_NODE_MODULES_PATH,
+  'webpack-dev-server',
+));
 
 // project paths
-const PROJECT_ROOT = exports.PROJECT_ROOT = process.cwd();
+const PROJECT_ROOT = (exports.PROJECT_ROOT = process.cwd());
 
 // configer info
-const ConfigerFolder = process.env.CONFIGER_FOLDER_PATH;
-const ConfigerName = process.env.CONFIGER_NAME;
-const ConfigPath = path.join(ConfigerFolder, `node_modules/${ConfigerName}`);
+const ConfigPath = path.join(
+  ENV_CONFIG.CONFIGER_FOLDER_PATH,
+  `node_modules/${ENV_CONFIG.configerName}`,
+);
 
 const projectConfig = require(`${PROJECT_ROOT}/abc.json`);
-const { DEFAULT_PROJECT_CONFIG, getDevConfig, getProdConfig } = require(ConfigPath);
-
-exports.ConfigerFolderPath = ConfigerFolder;
+const {
+  DEFAULT_PROJECT_CONFIG,
+  getDevConfig,
+  getProdConfig,
+} = require(ConfigPath);
 
 // project config
-exports.projectConfig = Object.assign({}, DEFAULT_PROJECT_CONFIG, projectConfig);
+exports.projectConfig = Object.assign(
+  {},
+  DEFAULT_PROJECT_CONFIG,
+  projectConfig,
+);
 exports.getDevConfig = getDevConfig;
 exports.getProdConfig = getProdConfig;
 
@@ -75,9 +120,7 @@ exports.getProvidePlugin = projectConfig => {
 // exports dll config
 exports.dllConfigParser = projectConfig => {
   if (!projectConfig.dll || !projectConfig.dll.enable) return false;
-  const {
-    include,
-  } = projectConfig.dll;
+  const { include } = projectConfig.dll;
   const manifestPath = path.resolve(PROJECT_ROOT, 'src/manifest.json');
   const dllConfig = {
     mode: 'production',
@@ -92,9 +135,7 @@ exports.dllConfigParser = projectConfig => {
     },
     devtool: 'source-map',
     plugins: [
-      new CleanWebpackPlugin([
-        'src/dll'
-      ], {
+      new CleanWebpackPlugin(['src/dll'], {
         root: PROJECT_ROOT,
         verbose: true,
         dry: false,
@@ -106,7 +147,7 @@ exports.dllConfigParser = projectConfig => {
       }),
       new Webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-        'process.env.DEBUG': JSON.stringify(process.env.DEBUG)
+        'process.env.DEBUG': JSON.stringify(process.env.DEBUG),
       }),
       new Webpack.HashedModuleIdsPlugin(),
       new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -118,10 +159,11 @@ exports.dllConfigParser = projectConfig => {
   };
   return {
     config: dllConfig,
-    getPlugin: () => new Webpack.DllReferencePlugin({
-      context: PROJECT_ROOT,
-      manifest: require(manifestPath),
-    }),
+    getPlugin: () =>
+      new Webpack.DllReferencePlugin({
+        context: PROJECT_ROOT,
+        manifest: require(manifestPath),
+      }),
   };
 };
 
@@ -137,9 +179,7 @@ exports.noticeLog = (action, content, type = 'log') => {
   const message = chalk[color](content);
   const time = `[${new Date().toLocaleString()}]`;
   // eslint-disable-next-line no-console
-  console.log(
-    `\n${chalk.gray(time)} ${action}: ${message}`
-  );
+  console.log(`\n${chalk.gray(time)} ${action}: ${message}`);
 };
 
 exports.getLocalIP = () => {
@@ -178,51 +218,55 @@ const getHttpsConfig = sslPath => {
       algorithm: 'sha256',
       days: 30,
       keySize: 2048,
-      extensions: [{
-        name: 'basicConstraints',
-        cA: true
-      }, {
-        name: 'keyUsage',
-        keyCertSign: true,
-        digitalSignature: true,
-        nonRepudiation: true,
-        keyEncipherment: true,
-        dataEncipherment: true
-      }, {
-        name: 'subjectAltName',
-        altNames: [
-          {
-            // type 2 is DNS
-            type: 2,
-            value: 'localhost'
-          },
-          {
-            type: 2,
-            value: 'localhost.localdomain'
-          },
-          {
-            type: 2,
-            value: 'lvh.me'
-          },
-          {
-            type: 2,
-            value: '*.lvh.me'
-          },
-          {
-            type: 2,
-            value: '[::1]'
-          },
-          {
-            // type 7 is IP
-            type: 7,
-            ip: '127.0.0.1'
-          },
-          {
-            type: 7,
-            ip: 'fe80::1'
-          }
-        ]
-      }]
+      extensions: [
+        {
+          name: 'basicConstraints',
+          cA: true,
+        },
+        {
+          name: 'keyUsage',
+          keyCertSign: true,
+          digitalSignature: true,
+          nonRepudiation: true,
+          keyEncipherment: true,
+          dataEncipherment: true,
+        },
+        {
+          name: 'subjectAltName',
+          altNames: [
+            {
+              // type 2 is DNS
+              type: 2,
+              value: 'localhost',
+            },
+            {
+              type: 2,
+              value: 'localhost.localdomain',
+            },
+            {
+              type: 2,
+              value: 'lvh.me',
+            },
+            {
+              type: 2,
+              value: '*.lvh.me',
+            },
+            {
+              type: 2,
+              value: '[::1]',
+            },
+            {
+              // type 7 is IP
+              type: 7,
+              ip: '127.0.0.1',
+            },
+            {
+              type: 7,
+              ip: 'fe80::1',
+            },
+          ],
+        },
+      ],
     });
 
     fs.writeFileSync(certPath, pems.private + pems.cert, { encoding: 'utf-8' });

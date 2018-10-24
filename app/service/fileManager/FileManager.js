@@ -36,7 +36,7 @@ export default class FileManager {
           }
           const ab = fileBuffer.buffer.slice(
             fileBuffer.byteOffset,
-            fileBuffer.byteOffset + fileBuffer.byteLength
+            fileBuffer.byteOffset + fileBuffer.byteLength,
           );
           const file = new File([ab], name, {
             type,

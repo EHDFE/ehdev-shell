@@ -5,17 +5,16 @@ import { Map } from 'immutable';
 import processorHoc from '../processorHoc';
 import ProcessItem from '../ProcessItem';
 
-export const defaultConfig = {
-};
+export const defaultConfig = {};
 
 @processorHoc()
 class Upng extends PureComponent {
-  static processorName = 'upng'
+  static processorName = 'upng';
   static propTypes = {
     form: PropTypes.object,
     data: PropTypes.instanceOf(Map),
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
@@ -34,40 +33,40 @@ class Upng extends PureComponent {
     const initialHeight = data.getIn(['dimensions', 'height']);
     return (
       <Fragment>
-        <ProcessItem
-          label={'保持比例'}
-        >
+        <ProcessItem label={'保持比例'}>
           {getFieldDecorator('keepRatio', {
             valuePropName: 'checked',
             initialValue: true,
-          })(
-            <Switch  />
-          )}
+          })(<Switch />)}
         </ProcessItem>
-        <ProcessItem
-          label={'宽度'}
-        >
+        <ProcessItem label={'宽度'}>
           {getFieldDecorator('width', {
             initialValue: initialWidth,
           })(
             <InputNumber
               size="small"
               min={1}
-              onChange={this.handleDimensionChange.bind(this, 'height', initialHeight / initialWidth)}
-            />
+              onChange={this.handleDimensionChange.bind(
+                this,
+                'height',
+                initialHeight / initialWidth,
+              )}
+            />,
           )}
         </ProcessItem>
-        <ProcessItem
-          label={'高度'}
-        >
+        <ProcessItem label={'高度'}>
           {getFieldDecorator('height', {
             initialValue: initialHeight,
           })(
             <InputNumber
               size="small"
               min={1}
-              onChange={this.handleDimensionChange.bind(this, 'width', initialWidth / initialHeight)}
-            />
+              onChange={this.handleDimensionChange.bind(
+                this,
+                'width',
+                initialWidth / initialHeight,
+              )}
+            />,
           )}
         </ProcessItem>
       </Fragment>

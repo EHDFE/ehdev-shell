@@ -19,10 +19,17 @@ const DIMENSION_MAP = {
 const chartOptions = {
   tooltip: {
     trigger: 'axis',
-    showContent: false
+    showContent: false,
   },
   xAxis: { gridIndex: 0, minInterval: 1, name: '次数' },
-  yAxis: { type: 'category', axisLabel: { inside: false }, inverse: true, name: '项目', nameLocation: 'start', nameGap: 5 },
+  yAxis: {
+    type: 'category',
+    axisLabel: { inside: false },
+    inverse: true,
+    name: '项目',
+    nameLocation: 'start',
+    nameGap: 5,
+  },
   grid: { top: 20, left: '10%', right: '50%' },
   series: [
     {
@@ -47,7 +54,7 @@ const chartOptions = {
 class AnalysisCard extends PureComponent {
   static propTypes = {
     data: PropTypes.instanceOf(List).isRequired,
-  }
+  };
   componentDidMount() {
     this.chart = echarts.init(this.chartNode, 'clair');
     this.chart.setOption(chartOptions);
@@ -63,7 +70,10 @@ class AnalysisCard extends PureComponent {
               id: 'pie',
               label: {
                 formatter(params) {
-                  return [DIMENSION_MAP[params.name], params.data[dimension]].join(': ');
+                  return [
+                    DIMENSION_MAP[params.name],
+                    params.data[dimension],
+                  ].join(': ');
                 },
               },
               encode: {
@@ -89,28 +99,29 @@ class AnalysisCard extends PureComponent {
   }
   handleResize = throttle(() => {
     this.chart.resize();
-  }, 100)
+  }, 100);
   updateDataView(props) {
     const { data } = props;
     const source = [['name'], ['count'], ['serverCount'], ['buildCount']];
-    data.groupBy(x => x.get('name'))
-      .forEach((map, name) => {
-        const mergedResult = map.reduce((p, c) => {
-          return p.withMutations(m => {
-            m
-              .set('count', m.get('count', 0) + c.get('count', 0))
-              .set('serverCount', m.get('serverCount', 0) + c.get('serverCount', 0))
-              .set('buildCount', m.get('buildCount', 0) + c.get('buildCount', 0));
-          });
-        }, Map({ name }));
-        source[0].push(mergedResult.get('name'));
-        source[1].push(mergedResult.get('count'));
-        source[2].push(mergedResult.get('serverCount'));
-        source[3].push(mergedResult.get('buildCount'));
-      });
+    data.groupBy(x => x.get('name')).forEach((map, name) => {
+      const mergedResult = map.reduce((p, c) => {
+        return p.withMutations(m => {
+          m.set('count', m.get('count', 0) + c.get('count', 0))
+            .set(
+              'serverCount',
+              m.get('serverCount', 0) + c.get('serverCount', 0),
+            )
+            .set('buildCount', m.get('buildCount', 0) + c.get('buildCount', 0));
+        });
+      }, Map({ name }));
+      source[0].push(mergedResult.get('name'));
+      source[1].push(mergedResult.get('count'));
+      source[2].push(mergedResult.get('serverCount'));
+      source[3].push(mergedResult.get('buildCount'));
+    });
     this.chart.setOption({
       dataset: {
-        source: source
+        source: source,
       },
       series: {
         id: 'pie',
@@ -130,7 +141,7 @@ class AnalysisCard extends PureComponent {
     return (
       <div
         className={styles.AnalysisCard__Chart}
-        ref={node => this.chartNode = node}
+        ref={node => (this.chartNode = node)}
       />
     );
   }
@@ -138,7 +149,7 @@ class AnalysisCard extends PureComponent {
     return (
       <Card className={styles.AnalysisCard}>
         <h3>统计</h3>
-        { this.renderChart() }
+        {this.renderChart()}
       </Card>
     );
   }

@@ -1,0 +1,66 @@
+/*
+ * SplitPane style
+ */
+@import '../../theme/index.less';
+
+.SplitPane {
+  height: 100%;
+
+  &__Content {
+    overflow: auto;
+  }
+
+  &__ConsoleWrapper {
+  }
+  :global {
+    .ConsoleTabs.ant-tabs {
+      @height: 28px;
+      .ant-tabs-bar {
+        .ant-tabs-extra-content {
+          line-height: @height + 2;
+        }
+        .ant-tabs-nav-container {
+          height: @height + 2;
+          .ant-tabs-tab {
+            line-height: @height;
+          }
+        }
+      }
+    }
+  }
+
+  &__Resize {
+    &--resizing {
+      .SplitPane__ResizeHandler {
+        background-color: @primary-1;
+        border-top: 1px dashed @primary-2;
+      }
+    }
+    &Handler {
+      opacity: 0.5;
+      &:hover {
+        background-color: @primary-1;
+        border-top: 1px dashed @primary-2;
+      }
+    }
+  }
+
+  &__CollapseCtrl {
+    background: none;
+    border: 0 none;
+    outline: 0 none;
+    cursor: pointer;
+
+    &:hover {
+      > i {
+        color: @primary-color;
+      }
+    }
+  }
+
+  &__Terminal {
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+}

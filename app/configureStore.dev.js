@@ -12,11 +12,7 @@ const persistConfig = {
   key: 'App',
   storage: createElectronStorage(),
   transforms: [immutableTransform()],
-  blacklist: [
-    'page.image.process',
-    'page.reader',
-    'page.portal',
-  ],
+  blacklist: ['page.image.process', 'page.portal', 'page.project.service'],
 };
 
 const logger = createLogger({
@@ -39,17 +35,14 @@ const logger = createLogger({
   },
 });
 
-const monitorReducer = (state = {}, action) => state;
+const monitorReducer = (state = {}) => state;
 
 const enhancer = compose(
-  applyMiddleware(
-    promiseMiddleware,
-    logger,
-  ),
+  applyMiddleware(promiseMiddleware, logger),
   DevTools.instrument(monitorReducer, {
     maxAge: 50,
     shouldCatchErrors: true,
-  })
+  }),
 );
 
 const persistedReducer = persistReducer(persistConfig, reducer);

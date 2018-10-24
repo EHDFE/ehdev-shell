@@ -18,22 +18,25 @@ const defaultState = Map({
 /**
  * Console's action
  */
-export const actions = createActions({
-  CREATE: id => ({
-    id,
-  }),
-  SET_ACTIVE: id => id,
-  RESIZE: (width, height) => ({
-    width,
-    height,
-  }),
-  SET_VISIBLE: () => ({
-    visible: true,
-  }),
-  SET_INVISIBLE: () => ({
-    visible: false,
-  }),
-}, 'TOGGLE_VISIBLE');
+export const actions = createActions(
+  {
+    CREATE: id => ({
+      id,
+    }),
+    SET_ACTIVE: id => id,
+    RESIZE: (width, height) => ({
+      width,
+      height,
+    }),
+    SET_VISIBLE: () => ({
+      visible: true,
+    }),
+    SET_INVISIBLE: () => ({
+      visible: false,
+    }),
+  },
+  'TOGGLE_VISIBLE',
+);
 
 /**
  * Console's  reducer
@@ -50,17 +53,17 @@ const consoleReducer = handleActions(
       const { width, height } = payload;
       return state.set('width', width).set('height', height);
     },
-    TOGGLE_VISIBLE: (state) => {
+    TOGGLE_VISIBLE: state => {
       return state.set('visible', !state.get('visible'));
     },
-    SET_VISIBLE: (state) => {
+    SET_VISIBLE: state => {
       return state.set('visible', true);
     },
-    SET_INVISIBLE: (state) => {
+    SET_INVISIBLE: state => {
       return state.set('visible', false);
     },
   },
-  defaultState
+  defaultState,
 );
 
 export default consoleReducer;

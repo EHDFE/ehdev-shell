@@ -11,10 +11,7 @@ const IconCloudMoon = () => (
   <svg
     version="1.1"
     id="cloudMoon"
-    className={classnames(
-      styles.climacon,
-      styles['climacon_cloudMoon']
-    )}
+    className={classnames(styles.climacon, styles['climacon_cloudMoon'])}
     viewBox="15 15 70 70"
   >
     <clipPath id="cloudFillClip">
@@ -23,16 +20,18 @@ const IconCloudMoon = () => (
     <clipPath id="moonCloudFillClip">
       <path d="M0,0v100h100V0H0z M60.943,46.641c-4.418,0-7.999-3.582-7.999-7.999c0-3.803,2.655-6.979,6.211-7.792c0.903,4.854,4.726,8.676,9.579,9.58C67.922,43.986,64.745,46.641,60.943,46.641z" />
     </clipPath>
-    <g className={classnames(
-      styles.climacon_iconWrap,
-      styles['climacon_iconWrap-cloudMoon']
-    )}>
+    <g
+      className={classnames(
+        styles.climacon_iconWrap,
+        styles['climacon_iconWrap-cloudMoon'],
+      )}
+    >
       <g clipPath="url(#cloudFillClip)">
         <g
           className={classnames(
             styles.climacon_wrapperComponent,
             styles['climacon_wrapperComponent-moon'],
-            styles['climacon_componentWrap-moon_cloud']
+            styles['climacon_componentWrap-moon_cloud'],
           )}
           clipPath="url(#moonCloudFillClip)"
         >
@@ -40,7 +39,7 @@ const IconCloudMoon = () => (
             className={classnames(
               styles.climacon_component,
               styles['climacon_component-stroke'],
-              styles['climacon_component-stroke_moon']
+              styles['climacon_component-stroke_moon'],
             )}
             d="M61.023,50.641c-6.627,0-11.999-5.372-11.999-11.998c0-6.627,5.372-11.999,11.999-11.999c0.755,0,1.491,0.078,2.207,0.212c-0.132,0.576-0.208,1.173-0.208,1.788c0,4.418,3.582,7.999,8,7.999c0.614,0,1.212-0.076,1.788-0.208c0.133,0.717,0.211,1.452,0.211,2.208C73.021,45.269,67.649,50.641,61.023,50.641z"
           />
@@ -49,7 +48,7 @@ const IconCloudMoon = () => (
       <g
         className={classnames(
           styles.climacon_wrapperComponent,
-          styles['climacon_wrapperComponent-cloud']
+          styles['climacon_wrapperComponent-cloud'],
         )}
         clipPath="url(#cloudFillClip)"
       >
@@ -57,7 +56,7 @@ const IconCloudMoon = () => (
           className={classnames(
             styles.climacon_component,
             styles['climacon_component-stroke'],
-            styles['climacon_component-stroke_cloud']
+            styles['climacon_component-stroke_cloud'],
           )}
           d="M44.033,65.641c-8.836,0-15.999-7.162-15.999-15.998c0-8.835,7.163-15.998,15.999-15.998c6.006,0,11.233,3.312,13.969,8.203c0.664-0.113,1.338-0.205,2.033-0.205c6.627,0,11.998,5.373,11.998,12c0,6.625-5.371,11.998-11.998,11.998C57.26,65.641,47.23,65.641,44.033,65.641z"
         />

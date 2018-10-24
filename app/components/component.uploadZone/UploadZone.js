@@ -29,13 +29,10 @@ export default class UploadZone extends Component {
     multiple: true,
     content: undefined,
     disabled: false,
-  }
+  };
   static propTypes = {
     className: PropTypes.string,
-    height: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     accept: PropTypes.oneOfType([
       PropTypes.array,
       PropTypes.oneOf([...ACCEPT_FILE_TYPES.keys()]),
@@ -43,11 +40,8 @@ export default class UploadZone extends Component {
     onChange: PropTypes.func,
     multiple: PropTypes.bool,
     disabled: PropTypes.bool,
-    content: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.element,
-    ]),
-  }
+    content: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  };
   static getAcceptExts(accept) {
     if (ACCEPT_FILE_TYPES.has(accept)) {
       return ACCEPT_FILE_TYPES.get(accept);
@@ -56,7 +50,7 @@ export default class UploadZone extends Component {
   }
   state = {
     dragIsOver: false,
-  }
+  };
   componentDidMount() {
     window.addEventListener('paste', this.handlePaste, false);
   }
@@ -66,51 +60,48 @@ export default class UploadZone extends Component {
   handleClickUpload = () => {
     const { accept, multiple, disabled } = this.props;
     if (disabled) return;
-    const properties = [
-      'openFile',
-    ];
-    const acceptList = Array.isArray(accept) ? accept : [ accept ];
+    const properties = ['openFile'];
+    const acceptList = Array.isArray(accept) ? accept : [accept];
     const filters = acceptList.map(accept => ({
       name: accept,
       extensions: UploadZone.getAcceptExts(accept),
     }));
     if (multiple) {
-      properties.push(
-        'openDirectory',
-        'multiSelections',
-      );
+      properties.push('openDirectory', 'multiSelections');
     }
-    dialog.showOpenDialog({
-      filters,
-      properties,
-    }, filePaths => {
-      if (filePaths) {
-        fm.resolveFiles(filePaths)
-          .then(files => {
+    dialog.showOpenDialog(
+      {
+        filters,
+        properties,
+      },
+      filePaths => {
+        if (filePaths) {
+          fm.resolveFiles(filePaths).then(files => {
             const validFiles = this.validate(files);
             if (validFiles.length > 0) {
               this.onAddFiles(validFiles);
             }
           });
-      }
-    });
-  }
+        }
+      },
+    );
+  };
   handleDragEnter = e => {
     e.preventDefault();
     this.setState({
       dragIsOver: true,
     });
-  }
+  };
   handleDragOver = e => {
     e.preventDefault();
-  }
+  };
   handleDragLeave = e => {
     e.preventDefault();
     if (this.root.contains(e.relatedTarget)) return;
     this.setState({
       dragIsOver: false,
     });
-  }
+  };
   handleDrop = async e => {
     e.preventDefault();
     const { files } = e.dataTransfer;
@@ -132,13 +123,13 @@ export default class UploadZone extends Component {
     if (validFiles.length > 0) {
       this.onAddFiles(validFiles);
     }
-  }
+  };
   handlePaste = ({ clipboardData }) => {
     if (clipboardData && clipboardData.files) {
       if (!this.validate(clipboardData.files)) return;
       this.onAddFiles(clipboardData.files);
     }
-  }
+  };
   onAddFiles(files) {
     this.props.onChange(files);
   }
@@ -146,14 +137,21 @@ export default class UploadZone extends Component {
     const { accept } = this.props;
     if (files.length === 0) return false;
     if (accept === 'all') return files;
-    const acceptList = Array.isArray(accept) ? accept : [ accept ];
+    const acceptList = Array.isArray(accept) ? accept : [accept];
     const extensions = acceptList.reduce((prev, accept) => {
       return prev.concat(UploadZone.getAcceptExts(accept));
     }, []);
     const validFiles = [];
     const invalidFiles = [];
     Array.from(files).forEach(file => {
-      if (extensions.includes(file.name.split('.').pop().toLowerCase())) {
+      if (
+        extensions.includes(
+          file.name
+            .split('.')
+            .pop()
+            .toLowerCase(),
+        )
+      ) {
         validFiles.push(file);
       } else {
         invalidFiles.push(file);
@@ -162,7 +160,9 @@ export default class UploadZone extends Component {
     if (invalidFiles.length > 0) {
       notification.warn({
         message: '不支持的文件类型',
-        description: invalidFiles.map(file => <p key={file.path}>{file.name}</p>),
+        description: invalidFiles.map(file => (
+          <p key={file.path}>{file.name}</p>
+        )),
       });
     }
     return validFiles;
@@ -183,7 +183,7 @@ export default class UploadZone extends Component {
     }
     return (
       <div
-        ref={node => this.root = node}
+        ref={node => (this.root = node)}
         className={classnames(className, styles.UploadZone__wrapper, {
           [styles['UploadZone__wrapper--active']]: dragIsOver,
         })}
@@ -198,7 +198,9 @@ export default class UploadZone extends Component {
           style={{
             height,
           }}
-        >{buttonContent}</button>
+        >
+          {buttonContent}
+        </button>
       </div>
     );
   }

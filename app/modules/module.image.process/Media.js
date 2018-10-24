@@ -23,15 +23,7 @@ export default ({ data, useThumb, mediaRef, ...otherProps }) => {
       </video>
     );
   } else {
-    media = (
-      <img
-        key={id}
-        src={url}
-        alt=""
-        ref={mediaRef}
-        {...otherProps}
-      />
-    );
+    media = <img key={id} src={url} alt="" ref={mediaRef} {...otherProps} />;
   }
 
   return media;

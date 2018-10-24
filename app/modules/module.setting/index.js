@@ -1,5 +1,2 @@
 export { default } from './Setting';
-export {
-  default as SettingReducer,
-  actions
-} from './store';
+export { default as SettingReducer, actions } from './store';

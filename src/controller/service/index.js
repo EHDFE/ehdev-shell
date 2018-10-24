@@ -3,14 +3,12 @@
  * @author ryan.bian
  */
 const path = require('path');
-const serviceStore = require('../command/serviceStore');
-const Commander = require('../command/commander');
 const {
   ConfigerFolderPath,
   SHELL_NODE_MODULES_PATH,
   APP_PATH,
 } = require('../../utils/env');
-const { readJSON, getLocalIP } = require('../../utils');
+const { getLocalIP, readJSON, killTask } = require('../../utils');
 const context = require('../../context');
 const notification = require('../../provider/notification/');
 
@@ -20,29 +18,45 @@ const dllBuilderScriptPath = path.join(APP_PATH, './child_service/dllBuilder');
 
 const nodeExecuteName = 'node';
 
-exports.startServer = async (config) => {
-  const { root, configerName, runtimeConfig } = config;
+const PTY = require('../pty/');
+
+const initPty = options => new PTY(options);
+
+const createExecuteArguments = config => {
+  return Object.keys(config)
+    .map(key => {
+      let value = config[key];
+      if (typeof value === 'string') {
+        value = value.replace(/\s/g, '\\ ');
+      }
+      return [`--${key}`, value].join('=');
+    })
+    .join(' ');
+};
+
+const DEFAULT_ARGUMENT = {
+  SHELL_NODE_MODULES_PATH,
+  CONFIGER_FOLDER_PATH: ConfigerFolderPath,
+};
+
+exports.startServer = async config => {
+  const { root, configerName, runtimeConfig, ppid } = config;
   const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = await Commander.run(`${nodeExecuteName} ${serverScriptPath}`, {
-    cwd: root,
-    parseResult: false,
-    outputToTermnal: true,
-    env: {
-      SHELL_NODE_MODULES_PATH,
-      CONFIGER_FOLDER_PATH: ConfigerFolderPath,
-      CONFIGER_NAME: configerName,
-      NODE_ENV: 'development',
-      PATH: process.env.PATH,
-      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
-    },
-    args: {
-      projectName: pkg.name,
-    },
-  }, () => {
-    notification({
-      title: '服务已停止',
-    }).show();
+  let pty;
+  if (ppid && PTY.pool.has(ppid)) {
+    pty = PTY.pool.get(ppid);
+  } else {
+    pty = initPty({
+      cwd: root,
+    });
+  }
+  const argv = createExecuteArguments({
+    ...DEFAULT_ARGUMENT,
+    ...runtimeConfig,
+    configerName,
+    env: 'development',
   });
+  pty.write(`${nodeExecuteName} ${serverScriptPath} ${argv}\n`);
   notification({
     title: '启动开发服务',
   }).show();
@@ -55,55 +69,43 @@ exports.startServer = async (config) => {
         serverCount: 1,
       },
     },
-    { upsert: true }
+    { upsert: true },
   );
   const ip = getLocalIP();
   return {
-    pid,
+    ppid: pty.process.pid,
     ip,
   };
 };
 
-exports.stop = async (pid) => {
-  if (!serviceStore.has(pid)) {
-    return `process:${pid} is not running.`;
-  } else {
-    serviceStore.kill(pid).then(() => {
-      serviceStore.delete(pid);
-    });
-    return null;
-  }
+exports.stop = async ppid => {
+  return await killTask(ppid);
 };
 
-exports.startBuilder = async (config) => {
-  const { root, configerName, runtimeConfig } = config;
+exports.startBuilder = async config => {
+  const { root, configerName, runtimeConfig, ppid } = config;
+  const pkg = await readJSON(`${root}/package.json`);
+  let pty;
+  if (ppid && PTY.pool.has(ppid)) {
+    pty = PTY.pool.get(ppid);
+  } else {
+    pty = initPty({
+      cwd: root,
+    });
+  }
+  const argv = createExecuteArguments({
+    ...DEFAULT_ARGUMENT,
+    ...runtimeConfig,
+    configerName,
+    env: 'production',
+  });
   let command;
   if (runtimeConfig.isDll) {
-    command = `${nodeExecuteName} ${dllBuilderScriptPath}`;
+    command = `${nodeExecuteName} ${dllBuilderScriptPath} ${argv}\n`;
   } else {
-    command = `${nodeExecuteName} ${builderScriptPath}`;
+    command = `${nodeExecuteName} ${builderScriptPath} ${argv}\n`;
   }
-  const pkg = await readJSON(`${root}/package.json`);
-  const { pid } = await Commander.run(command, {
-    cwd: root,
-    parseResult: false,
-    outputToTermnal: true,
-    env: {
-      SHELL_NODE_MODULES_PATH,
-      CONFIGER_FOLDER_PATH: ConfigerFolderPath,
-      CONFIGER_NAME: configerName,
-      NODE_ENV: 'production',
-      PATH: process.env.PATH,
-      RUNTIME_CONFIG: JSON.stringify(runtimeConfig),
-    },
-    args: {
-      projectName: pkg.name,
-    },
-  }, () => {
-    notification({
-      title: '构建已停止',
-    }).show();
-  });
+  pty.write(command);
   notification({
     title: '开始构建',
   }).show();
@@ -116,9 +118,15 @@ exports.startBuilder = async (config) => {
         buildCount: 1,
       },
     },
-    { upsert: true }
+    { upsert: true },
   );
   return {
-    pid,
+    ppid: pty.process.pid,
   };
+};
+
+exports.closePty = async ppid => {
+  if (!PTY.pool.has(ppid)) return true;
+  const pty = PTY.pool.get(ppid);
+  return await pty.exit();
 };

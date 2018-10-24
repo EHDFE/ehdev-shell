@@ -3,33 +3,45 @@ const { isDEV } = require('./util/env');
 
 const HANDLERS = new Map([
   [
-    'CORE:BEFORE_CLOSE:REPLY', function(e, instances) {
-      if (Object.keys(instances).map(p => instances[p]).filter(d => d.running).length > 0 || this.serviceStore.store.size > 0) {
+    'CORE:BEFORE_CLOSE:REPLY',
+    function(e, instances) {
+      if (
+        Object.keys(instances)
+          .map(p => instances[p])
+          .filter(d => d.running).length > 0 ||
+        this.serviceStore.store.size > 0
+      ) {
         this.send('CORE:SERVICE_NOT_END');
       } else {
         BrowserWindow.getAllWindows().forEach(win => {
           win.destroy();
         });
       }
-    }
+    },
   ],
   [
-    'CORE:SERVICE_NOT_END:CLOSE', function(e) {
-      this.serviceStore.stopAllService()
+    'CORE:SERVICE_NOT_END:CLOSE',
+    function(e) {
+      this.serviceStore
+        .stopAllService()
         .then(resList => {
           // give renderer some times to update state
           setTimeout(() => {
             app.quit();
           }, 500);
-        }).catch(err => {
+        })
+        .catch(err => {
           if (typeof err === 'string') {
             this.send('CORE:CLOSE_SERVICE_FAILED', err);
           } else {
-            this.send('CORE:CLOSE_SERVICE_FAILED', err.message || err.toString());
+            this.send(
+              'CORE:CLOSE_SERVICE_FAILED',
+              err.message || err.toString(),
+            );
           }
         });
-    }
-  ]
+    },
+  ],
 ]);
 
 class Core {
@@ -44,7 +56,7 @@ class Core {
       this.send('CORE:UNRESPONSIVE');
     });
     this.window.on('close', this.beforeClose);
-    this.window.on('closed', () =>{
+    this.window.on('closed', () => {
       this.destroy();
     });
 

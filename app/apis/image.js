@@ -17,7 +17,8 @@ const IMAGE_API = {
       throw e;
     }
   },
-  resize: async (inputPath, maxWidth, maxHeight) => await remoteAPI.image.resize(inputPath, maxWidth, maxHeight),
+  resize: async (inputPath, maxWidth, maxHeight) =>
+    await remoteAPI.image.resize(inputPath, maxWidth, maxHeight),
 };
 
 export default IMAGE_API;

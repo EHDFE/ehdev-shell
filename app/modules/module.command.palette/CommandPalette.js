@@ -29,18 +29,18 @@ class CommandPalette extends PureComponent {
   static defaultProps = {
     setProjectRoot() {},
     projectHistory: List([]),
-  }
+  };
   static propTypes = {
     setProjectRoot: PropTypes.func,
     projectHistory: PropTypes.instanceOf(List),
-  }
+  };
   state = {
     active: false,
     focusIndex: 0,
     search: '>',
     mode: 'command',
     data: List([]),
-  }
+  };
   componentDidMount() {
     this.getRegistedCommands();
     this.bindGlobalEvents();
@@ -70,85 +70,86 @@ class CommandPalette extends PureComponent {
   }
   handleItemClick = e => {
     let clickNode = e.target;
-    while (
-      clickNode !== this.dropdownNode
-      && !clickNode.dataset.content
-    ) {
+    while (clickNode !== this.dropdownNode && !clickNode.dataset.content) {
       clickNode = clickNode.parentElement;
     }
     if (clickNode.dataset.content) {
       this.handleConfirm(clickNode.dataset.content);
     }
-  }
+  };
   handleKeyboardEvents = e => {
     const { active } = this.state;
     const keyCode = e.keyCode;
     let matchNode;
     switch (keyCode) {
-    case 13:
-      // enter
-      if (active) {
-        e.preventDefault();
-        matchNode = this.dropdownNode.querySelector(`.${styles.CommandPalette__Item}[data-index="${[this.state.focusIndex]}"]`);
-        if (matchNode) {
-          this.handleConfirm(matchNode.dataset.content);
+      case 13:
+        // enter
+        if (active) {
+          e.preventDefault();
+          matchNode = this.dropdownNode.querySelector(
+            `.${styles.CommandPalette__Item}[data-index="${[
+              this.state.focusIndex,
+            ]}"]`,
+          );
+          if (matchNode) {
+            this.handleConfirm(matchNode.dataset.content);
+          }
         }
-      }
-      break;
-    case 27:
-      // esc
-      if (active) {
-        e.preventDefault();
-        this.hide();
-      }
-      break;
-    case 40:
-      // arrow down
-      if (active) {
-        e.preventDefault();
-        this.moveDown();
-      }
-      break;
-    case 38:
-      // arrow up
-      if (active) {
-        e.preventDefault();
-        this.moveUp();
-      }
-      break;
-    case 80:
-      // p
-      if (EnvUtils.isMac && e.metaKey || !EnvUtils.isMac && e.ctrlKey) {
-        if (e.shiftKey) {
-          // commander + shift + p in Mac
-          // ctrl + shift + p in windows
-          // open commands
-          this.setState({
-            active: true,
-            search: '>',
-            mode: 'command',
-            focusIndex: 0,
-          });
-        } else {
-          // open recently project
-          this.setState({
-            active: true,
-            search: '',
-            mode: 'recents',
-            focusIndex: 0,
-          });
+        break;
+      case 27:
+        // esc
+        if (active) {
+          e.preventDefault();
+          this.hide();
         }
-      }
-      break;
-    default:
-      break;
+        break;
+      case 40:
+        // arrow down
+        if (active) {
+          e.preventDefault();
+          this.moveDown();
+        }
+        break;
+      case 38:
+        // arrow up
+        if (active) {
+          e.preventDefault();
+          this.moveUp();
+        }
+        break;
+      case 80:
+        // p
+        if ((EnvUtils.isMac && e.metaKey) || (!EnvUtils.isMac && e.ctrlKey)) {
+          if (e.shiftKey) {
+            // commander + shift + p in Mac
+            // ctrl + shift + p in windows
+            // open commands
+            this.setState({
+              active: true,
+              search: '>',
+              mode: 'command',
+              focusIndex: 0,
+            });
+          } else {
+            // open recently project
+            this.setState({
+              active: true,
+              search: '',
+              mode: 'recents',
+              focusIndex: 0,
+            });
+          }
+        }
+        break;
+      default:
+        break;
     }
-  }
+  };
   handleCloseMask = e => {
     if (e.target === this.maskNode) {
       this.hide();
     }
-  }
+  };
   handleConfirm(command) {
     const { mode } = this.state;
     if (mode === 'command') {
@@ -171,20 +172,25 @@ class CommandPalette extends PureComponent {
       mode,
       focusIndex: 0,
     });
-  }
+  };
   setFocus(index) {
-    this.setState({
-      focusIndex: index,
-    }, () => {
-      const { scrollTop } = this.scrollBar.getValues();
-      const viewHeight = this.scrollBar.getClientHeight();
-      const ACTIVE_ITEM_OFFSET = ITEM_HEIGHT * index;
-      if (ACTIVE_ITEM_OFFSET + ITEM_HEIGHT >= viewHeight + scrollTop) {
-        this.scrollBar.scrollTop(ACTIVE_ITEM_OFFSET + ITEM_HEIGHT - viewHeight);
-      } else if (ACTIVE_ITEM_OFFSET <= scrollTop) {
-        this.scrollBar.scrollTop(ACTIVE_ITEM_OFFSET);
-      }
-    });
+    this.setState(
+      {
+        focusIndex: index,
+      },
+      () => {
+        const { scrollTop } = this.scrollBar.getValues();
+        const viewHeight = this.scrollBar.getClientHeight();
+        const ACTIVE_ITEM_OFFSET = ITEM_HEIGHT * index;
+        if (ACTIVE_ITEM_OFFSET + ITEM_HEIGHT >= viewHeight + scrollTop) {
+          this.scrollBar.scrollTop(
+            ACTIVE_ITEM_OFFSET + ITEM_HEIGHT - viewHeight,
+          );
+        } else if (ACTIVE_ITEM_OFFSET <= scrollTop) {
+          this.scrollBar.scrollTop(ACTIVE_ITEM_OFFSET);
+        }
+      },
+    );
   }
   moveDown() {
     const { focusIndex, mode } = this.state;
@@ -227,7 +233,7 @@ class CommandPalette extends PureComponent {
     return (
       <div className={classnames(styles.CommandPalette__Body)}>
         <input
-          ref={node => this.inputField = node}
+          ref={node => (this.inputField = node)}
           className={classnames(styles.CommandPalette__InputField)}
           type="text"
           onChange={this.handleSearchUpdate}
@@ -247,56 +253,52 @@ class CommandPalette extends PureComponent {
       data = this.props.projectHistory.toJS();
     }
     if (searchKeys.length > 0) {
-      matchResult = filter(
-        data,
-        searchKeys,
-        {
-          ...SEARCH_FILTER_CONFIG,
-        },
-      ).map(d => Object.assign({}, d, {
-        name: wrap(d.name, searchKeys),
-      }));
+      matchResult = filter(data, searchKeys, {
+        ...SEARCH_FILTER_CONFIG,
+      }).map(d =>
+        Object.assign({}, d, {
+          name: wrap(d.name, searchKeys),
+        }),
+      );
     } else {
       matchResult = data;
     }
     return (
       <div
-        ref={node => this.dropdownNode = node}
+        ref={node => (this.dropdownNode = node)}
         className={classnames(styles.CommandPalette__Dropdown)}
       >
         <Scrollbars
-          ref={node => this.scrollBar = node}
+          ref={node => (this.scrollBar = node)}
           style={{ width: 500 }}
           autoHeight
           autoHeightMax={DISPLAY_ITEMS_CONTAINER_HEIGHT}
           hideTracksWhenNotNeeded
           autoHide
         >
-          {
-            matchResult.map((d, i) => (
+          {matchResult.map((d, i) => (
+            <div
+              key={d.id}
+              data-index={i}
+              data-content={d.content}
+              className={classnames(styles.CommandPalette__Item, {
+                [styles['CommandPalette__Item--focus']]: focusIndex === i,
+              })}
+            >
               <div
-                key={d.id}
-                data-index={i}
-                data-content={d.content}
-                className={classnames(styles.CommandPalette__Item, {
-                  [styles['CommandPalette__Item--focus']]: focusIndex === i,
-                })}
-              >
-                <div
-                  className={styles.CommandPalette__CommandName}
-                  dangerouslySetInnerHTML={{
-                    __html: d.name,
-                  }}
-                />
-                <div
-                  className={styles.CommandPalette__Shortcut}
-                  dangerouslySetInnerHTML={{
-                    __html: d.shortcut,
-                  }}
-                />
-              </div>
-            ))
-          }
+                className={styles.CommandPalette__CommandName}
+                dangerouslySetInnerHTML={{
+                  __html: d.name,
+                }}
+              />
+              <div
+                className={styles.CommandPalette__Shortcut}
+                dangerouslySetInnerHTML={{
+                  __html: d.shortcut,
+                }}
+              />
+            </div>
+          ))}
         </Scrollbars>
       </div>
     );
@@ -305,17 +307,14 @@ class CommandPalette extends PureComponent {
     const { active } = this.state;
     return (
       <div
-        className={classnames(
-          styles['CommandPalette__Mask'],
-          {
-            [styles['CommandPalette--active']]: active,
-          }
-        )}
-        ref={node => this.maskNode = node}
+        className={classnames(styles['CommandPalette__Mask'], {
+          [styles['CommandPalette--active']]: active,
+        })}
+        ref={node => (this.maskNode = node)}
       >
         <div className={styles.CommandPalette__Ctrl}>
-          { this.renderBody() }
-          { this.renderDropdown() }
+          {this.renderBody()}
+          {this.renderDropdown()}
         </div>
       </div>
     );
@@ -323,9 +322,9 @@ class CommandPalette extends PureComponent {
 }
 
 const recentSelector = state => state['page.dashboard'];
-const recentProjects = createSelector(
-  recentSelector,
-  state => state.getIn(['projects', 'statistic'], List())
+const recentProjects = createSelector(recentSelector, state =>
+  state
+    .getIn(['projects', 'statistic'], List())
     .sort((a, b) => {
       return a.get('lastTime') > b.get('lastTime') ? 1 : -1;
     })
@@ -334,7 +333,7 @@ const recentProjects = createSelector(
       lastTime: d.get('lastTime'),
       id: d.get('_id'),
       content: d.get('projectPath'),
-    }))
+    })),
 );
 
 const mapStateToProps = state => ({

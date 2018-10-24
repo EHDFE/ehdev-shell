@@ -20,7 +20,7 @@ const { Option } = Select;
 class ImportForm extends Component {
   static propTypes = {
     remoteConfigs: PropTypes.instanceOf(Set),
-  }
+  };
   render() {
     const { remoteConfigs } = this.props;
     // eslint-disable-next-line react/prop-types
@@ -31,72 +31,55 @@ class ImportForm extends Component {
     };
     const uploadProps = {};
     return (
-      <Form
-        layout="horizontal"
-      >
-        <FormItem
-          label="添加模式"
-          {...formItemLayout}
-        >
-          {
-            getFieldDecorator('importMethod', {
-              initialValue: 'select',
-              exclusive: true,
-            })(
-              <Radio.Group>
-                <Radio.Button value="select">选择</Radio.Button>
-                <Radio.Button value="upload">导入</Radio.Button>
-              </Radio.Group>
-            )
-          }
+      <Form layout="horizontal">
+        <FormItem label="添加模式" {...formItemLayout}>
+          {getFieldDecorator('importMethod', {
+            initialValue: 'select',
+            exclusive: true,
+          })(
+            <Radio.Group>
+              <Radio.Button value="select">选择</Radio.Button>
+              <Radio.Button value="upload">导入</Radio.Button>
+            </Radio.Group>,
+          )}
         </FormItem>
-        {
-          getFieldValue('importMethod') === 'select' &&
-            <FormItem
-              label="选择引擎"
-              {...formItemLayout}
-            >
-              {
-                getFieldDecorator('configName', {
-                  rules: [{
-                    required: true,
-                    message: '请选择一个有效引擎',
-                  }],
-                })(
-                  <Select>
-                    {
-                      remoteConfigs.map(
-                        name => <Option key={name}>{name}</Option>
-                      )
-                    }
-                  </Select>
-                )
-              }
-            </FormItem>
-        }
-        {
-          getFieldValue('importMethod') === 'upload' &&
-            <FormItem
-              label="导入tgz包"
-              {...formItemLayout}
-            >
-              {
-                getFieldDecorator('configEntity', {
-                  rules: [{
-                    required: true,
-                    message: '请添加一个tgz包',
-                  }],
-                })(
-                  <Upload {...uploadProps}>
-                    <Button>
-                      <Icon type="upload" />
-                      点此上传
-                    </Button>
-                  </Upload>
-                )
-              }
-            </FormItem>
-        }
+        {getFieldValue('importMethod') === 'select' && (
+          <FormItem label="选择引擎" {...formItemLayout}>
+            {getFieldDecorator('configName', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择一个有效引擎',
+                },
+              ],
+            })(
+              <Select>
+                {remoteConfigs.map(name => (
+                  <Option key={name}>{name}</Option>
+                ))}
+              </Select>,
+            )}
+          </FormItem>
+        )}
+        {getFieldValue('importMethod') === 'upload' && (
+          <FormItem label="导入tgz包" {...formItemLayout}>
+            {getFieldDecorator('configEntity', {
+              rules: [
+                {
+                  required: true,
+                  message: '请添加一个tgz包',
+                },
+              ],
+            })(
+              <Upload {...uploadProps}>
+                <Button>
+                  <Icon type="upload" />
+                  点此上传
+                </Button>
+              </Upload>,
+            )}
+          </FormItem>
+        )}
       </Form>
     );
   }
@@ -107,19 +90,19 @@ export default class ConfigImportor extends Component {
     visible: false,
     onCancel() {},
     onConfirm() {},
-  }
+  };
   static propTypes = {
     visible: PropTypes.bool,
     onCancel: PropTypes.func,
     onConfirm: PropTypes.func,
-  }
+  };
   handleSubmit = () => {
     this.form.validateFields((errors, values) => {
       if (!errors) {
         this.props.onConfirm(values);
       }
     });
-  }
+  };
   render() {
     const { visible } = this.props;
     const modalProps = {
@@ -130,7 +113,7 @@ export default class ConfigImportor extends Component {
     };
     return (
       <Modal {...modalProps}>
-        <ImportForm ref={node => this.form = node} />
+        <ImportForm ref={node => (this.form = node)} />
       </Modal>
     );
   }

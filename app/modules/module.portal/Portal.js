@@ -25,7 +25,7 @@ class Portal extends PureComponent {
   };
   state = {
     view: {},
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     const { view } = state;
     const { fileList } = props;
@@ -41,30 +41,27 @@ class Portal extends PureComponent {
   }
   constructor(props) {
     super(props);
-    this.props.initPortal()
-      .then(({ payload }) => {
-        this.updateQrcode(Object.keys(payload.fileMap));
-      });
+    this.props.initPortal().then(({ payload }) => {
+      this.updateQrcode(Object.keys(payload.fileMap));
+    });
   }
   handleStartServer = () => {
-    this.props.startServer()
-      .then(() => {
-        this.updateQrcode(this.props.fileList.keySeq().toArray());
-        notification.info({
-          message: '传送门已开启',
-          description: '使用手机扫描二维码开始下载',
-        });
+    this.props.startServer().then(() => {
+      this.updateQrcode(this.props.fileList.keySeq().toArray());
+      notification.info({
+        message: '传送门已开启',
+        description: '使用手机扫描二维码开始下载',
       });
-  }
+    });
+  };
   handleStopServer = () => {
-    this.props.stopServer()
-      .then(() => {
-        notification.info({
-          message: '传送门已关闭',
-          description: '🎃',
-        });
+    this.props.stopServer().then(() => {
+      notification.info({
+        message: '传送门已关闭',
+        description: '🎃',
       });
-  }
+    });
+  };
   handleAddFile = async files => {
     const { add } = this.props;
     try {
@@ -76,11 +73,11 @@ class Portal extends PureComponent {
         description: e.toString(),
       });
     }
-  }
+  };
   handleDelFile = async e => {
     const { remove } = this.props;
     await remove(e.currentTarget.dataset.id);
-  }
+  };
   handleViewModeToggle = e => {
     const id = e.currentTarget.dataset.id;
     const { view } = this.state;
@@ -89,7 +86,7 @@ class Portal extends PureComponent {
         [id]: !view[id],
       }),
     });
-  }
+  };
   async updateQrcode(ids) {
     if (ids.length === 0) return;
     const { serverHost, generateQrcode } = this.props;
@@ -117,14 +114,12 @@ class Portal extends PureComponent {
           disabled={!serverRunning}
         />
         <div className={styles.Portal__Action}>
-          <Button
-            disabled={serverRunning}
-            onClick={this.handleStartServer}
-          >启动服务</Button>
-          <Button
-            disabled={!serverRunning}
-            onClick={this.handleStopServer}
-          >停止服务</Button>
+          <Button disabled={serverRunning} onClick={this.handleStartServer}>
+            启动服务
+          </Button>
+          <Button disabled={!serverRunning} onClick={this.handleStopServer}>
+            停止服务
+          </Button>
         </div>
       </div>
     );
@@ -134,75 +129,68 @@ class Portal extends PureComponent {
     const { view } = this.state;
     return (
       <div className={styles.Portal__List}>
-        {fileList.map((item, id) => {
-          const file = item.get('file');
-          return (
-            <div
-              key={id}
-              className={styles.Portal__Item}
-            >
-              <FileCard
-                type={file.type}
-                name={file.name}
-              >
-                <div className={styles.Portal__QrcodeLayer}>
-                  <div className={styles.Portal__QrcodeMask}>
-                    <button
-                      className={styles.Portal__QrcodeBtn}
-                      type="button"
-                      data-id={id}
-                      onClick={this.handleViewModeToggle}
-                    >
-                      {
-                        view[id] ? <Icon type="qrcode" /> : <Icon type="paper-clip" />
-                      }
-                    </button>
-                    <button
-                      className={styles.Portal__QrcodeBtn}
-                      type="button"
-                      data-id={id}
-                      onClick={this.handleDelFile}
-                    >
-                      <Icon type="close" />
-                    </button>
-                  </div>
-                  <img
-                    className={classnames(
-                      styles.Portal__QrcodeImage,
-                      {
+        {fileList
+          .map((item, id) => {
+            const file = item.get('file');
+            return (
+              <div key={id} className={styles.Portal__Item}>
+                <FileCard type={file.type} name={file.name}>
+                  <div className={styles.Portal__QrcodeLayer}>
+                    <div className={styles.Portal__QrcodeMask}>
+                      <button
+                        className={styles.Portal__QrcodeBtn}
+                        type="button"
+                        data-id={id}
+                        onClick={this.handleViewModeToggle}
+                      >
+                        {view[id] ? (
+                          <Icon type="qrcode" />
+                        ) : (
+                          <Icon type="paper-clip" />
+                        )}
+                      </button>
+                      <button
+                        className={styles.Portal__QrcodeBtn}
+                        type="button"
+                        data-id={id}
+                        onClick={this.handleDelFile}
+                      >
+                        <Icon type="close" />
+                      </button>
+                    </div>
+                    <img
+                      className={classnames(styles.Portal__QrcodeImage, {
                         [styles['Portal__QrcodeImage--hide']]: view[id],
-                      },
-                    )}
-                    src={item.get('qrcode')}
-                    alt={file.name}
-                  />
-                </div>
-              </FileCard>
-            </div>
-          );
-        }).valueSeq()}
+                      })}
+                      src={item.get('qrcode')}
+                      alt={file.name}
+                    />
+                  </div>
+                </FileCard>
+              </div>
+            );
+          })
+          .valueSeq()}
       </div>
     );
   }
   render() {
     return (
       <div className={styles.Portal}>
-        { this.renderCtrl() }
-        { this.renderList() }
+        {this.renderCtrl()}
+        {this.renderList()}
       </div>
     );
   }
 }
 
 const pageSelector = state => state['page.portal'];
-const mapStateToProps = state => createSelector(
-  pageSelector,
-  pageState => ({
+const mapStateToProps = state =>
+  createSelector(pageSelector, pageState => ({
     serverHost: pageState.get('host'),
     serverRunning: pageState.get('running'),
     fileList: pageState.get('files'),
-  }),
-);
+  }));
 
 const mapDispatchToProps = dispatch => ({
   initPortal: () => dispatch(actions.initPortal()),

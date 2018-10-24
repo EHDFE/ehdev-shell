@@ -8,26 +8,20 @@ import WindowManager from './WindowManager';
 import EnvUtils from './utils/env';
 
 const render = (Component, store, persistor) => {
-  const contents = [
-    <Component key="component" />,
-  ];
+  const contents = [<Component key="component" />];
   if (!EnvUtils.isMac) {
-    contents.push(
-      <WindowManager key="windowManager" />,
-    );
+    contents.push(<WindowManager key="windowManager" />);
   }
   if (process.env.NODE_ENV === 'development') {
-    contents.push(
-      <DevTools key="devTool" />
-    );
+    contents.push(<DevTools key="devTool" />);
   }
   ReactDOM.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        { contents }
+        {contents}
       </PersistGate>
     </Provider>,
-    document.getElementById('root')
+    document.getElementById('root'),
   );
 };
 

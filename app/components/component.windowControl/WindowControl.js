@@ -11,21 +11,21 @@ import FullscreenIcon from 'react-icons/lib/md/crop-din';
 import CloseIcon from 'react-icons/lib/md/close';
 
 const IconProps = {
-  size: 28
+  size: 28,
 };
 
 const WindowControl = ({
   onRequestClose,
   onRequestMinimize,
   onRequestMaximize,
-  onRequestToggleVisible,
+  // onRequestToggleVisible,
 }) => {
   return (
     <div className={styles.WindowControl}>
       <button
         className={classnames(
           styles.WindowControl__Button,
-          styles['WindowControl__Button--minimize']
+          styles['WindowControl__Button--minimize'],
         )}
         onClick={onRequestMinimize}
       >
@@ -34,7 +34,7 @@ const WindowControl = ({
       <button
         className={classnames(
           styles.WindowControl__Button,
-          styles['WindowControl__Button--fullscreen']
+          styles['WindowControl__Button--fullscreen'],
         )}
         onClick={onRequestMaximize}
       >
@@ -43,7 +43,7 @@ const WindowControl = ({
       <button
         className={classnames(
           styles.WindowControl__Button,
-          styles['WindowControl__Button--close']
+          styles['WindowControl__Button--close'],
         )}
         onClick={onRequestClose}
       >
@@ -53,8 +53,7 @@ const WindowControl = ({
   );
 };
 
-WindowControl.defaultProps = {
-};
+WindowControl.defaultProps = {};
 
 WindowControl.propTypes = {
   onRequestClose: PropTypes.func,

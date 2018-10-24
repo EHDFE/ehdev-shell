@@ -21,15 +21,15 @@ export const defaultConfig = {
 
 @processorHoc()
 class Gif2webp extends PureComponent {
-  static processorName = 'gif2webp'
+  static processorName = 'gif2webp';
   static propTypes = {
     form: PropTypes.object,
     config: PropTypes.object,
-  }
+  };
   static getDerivedStateFromProps(props, state) {
     return Object.assign(state, props.config);
   }
-  state = defaultConfig
+  state = defaultConfig;
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -41,20 +41,18 @@ class Gif2webp extends PureComponent {
           {getFieldDecorator('lossy', {
             valuePropName: 'checked',
             initialValue: this.state.lossy,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'mixed'}
-          tooltip={'For each frame in the image, pick lossy or lossless compression heuristically.'}
+          tooltip={
+            'For each frame in the image, pick lossy or lossless compression heuristically.'
+          }
         >
           {getFieldDecorator('mixed', {
             valuePropName: 'checked',
             initialValue: this.state.mixed,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'quality'}
@@ -62,16 +60,13 @@ class Gif2webp extends PureComponent {
         >
           {getFieldDecorator('quality', {
             initialValue: this.state.quality,
-          })(
-            <Slider
-              max={100}
-              min={0}
-            />
-          )}
+          })(<Slider max={100} min={0} />)}
         </ProcessItem>
         <ProcessItem
           label={'method'}
-          tooltip={'Specify the compression method to use, between 0 (fastest) and 6 (slowest).'}
+          tooltip={
+            'Specify the compression method to use, between 0 (fastest) and 6 (slowest).'
+          }
         >
           {getFieldDecorator('method', {
             initialValue: this.state.method,
@@ -83,7 +78,7 @@ class Gif2webp extends PureComponent {
                 { value: 0, label: 'fastest' },
                 { value: 6, label: 'slowest' },
               )}
-            />
+            />,
           )}
         </ProcessItem>
         <ProcessItem
@@ -93,9 +88,7 @@ class Gif2webp extends PureComponent {
           {getFieldDecorator('minimize', {
             valuePropName: 'checked',
             initialValue: this.state.minimize,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'kmin'}
@@ -104,9 +97,7 @@ class Gif2webp extends PureComponent {
           {getFieldDecorator('kmin', {
             valuePropName: 'checked',
             initialValue: this.state.kmin,
-          })(
-            <InputNumber size="small" />
-          )}
+          })(<InputNumber size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'kmax'}
@@ -115,9 +106,7 @@ class Gif2webp extends PureComponent {
           {getFieldDecorator('kmax', {
             valuePropName: 'checked',
             initialValue: this.state.kmax,
-          })(
-            <InputNumber size="small" />
-          )}
+          })(<InputNumber size="small" />)}
         </ProcessItem>
         <ProcessItem
           label={'filter'}
@@ -125,16 +114,13 @@ class Gif2webp extends PureComponent {
         >
           {getFieldDecorator('filter', {
             initialValue: this.state.filter,
-          })(
-            <Slider
-              max={100}
-              min={0}
-            />
-          )}
+          })(<Slider max={100} min={0} />)}
         </ProcessItem>
         <ProcessItem
           label={'metadata'}
-          tooltip={'Comma separated list of metadata to copy from the input to the output if present.'}
+          tooltip={
+            'Comma separated list of metadata to copy from the input to the output if present.'
+          }
         >
           {getFieldDecorator('metadata', {
             initialValue: this.state.metadata,
@@ -144,7 +130,7 @@ class Gif2webp extends PureComponent {
               <Option value="none">none</Option>
               <Option value="icc">icc</Option>
               <Option value="xmp">xmp</Option>
-            </Select>
+            </Select>,
           )}
         </ProcessItem>
         <ProcessItem
@@ -154,9 +140,7 @@ class Gif2webp extends PureComponent {
           {getFieldDecorator('multiThreading', {
             valuePropName: 'checked',
             initialValue: this.state.multiThreading,
-          })(
-            <Switch size="small" />
-          )}
+          })(<Switch size="small" />)}
         </ProcessItem>
       </Fragment>
     );

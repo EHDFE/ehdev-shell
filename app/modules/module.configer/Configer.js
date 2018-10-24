@@ -1,7 +1,16 @@
 /**
  * Configer Page Module
  */
-import { Badge, Button, Icon, Modal, Popconfirm, Select, Table, Tooltip } from 'antd';
+import {
+  Badge,
+  Button,
+  Icon,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Tooltip,
+} from 'antd';
 import classnames from 'classnames';
 import { Map } from 'immutable';
 import PropTypes from 'prop-types';
@@ -14,7 +23,6 @@ import Page from '../../components/component.page/';
 import ConfigImportor from './ConfigImportor';
 import styles from './index.less';
 import { actions } from './store';
-
 
 const { Option } = Select;
 
@@ -30,13 +38,13 @@ class ConfigerModule extends Component {
     upgradeConfig: PropTypes.func,
     removeConfig: PropTypes.func,
     getConfigerVersions: PropTypes.func,
-  }
+  };
   state = {
     importVisible: false,
     markSource: '',
     markVisible: false,
     versionEditorStatus: {},
-  }
+  };
   constructor(props) {
     super(props);
     props.getConfigs();
@@ -50,33 +58,33 @@ class ConfigerModule extends Component {
     this.setState({
       importVisible: false,
     });
-  }
+  };
   handleCloseImportor = () => {
     this.setState({
       importVisible: false,
     });
-  }
+  };
   handleUpgrade = e => {
     const { name, version } = e.target.dataset;
     this.props.upgradeConfig(name, version);
-  }
+  };
   showConfigImporter = () => {
     this.setState({
       importVisible: true,
     });
-  }
+  };
   showReadme = e => {
     const { name } = e.target.dataset;
     const { localConfigs } = this.props;
     const readme = localConfigs.getIn([name, 'readme']);
     this.showMarkModal(readme);
-  }
+  };
   showHistory = e => {
     const { name } = e.target.dataset;
     const { localConfigs } = this.props;
     const history = localConfigs.getIn([name, 'history']);
     this.showMarkModal(history);
-  }
+  };
   showMarkModal(content) {
     this.setState({
       markVisible: true,
@@ -87,7 +95,7 @@ class ConfigerModule extends Component {
     this.setState({
       markVisible: false,
     });
-  }
+  };
   renderVersionGrid = (text, record) => {
     const { versionEditorStatus } = this.state;
     const ret = [];
@@ -111,26 +119,34 @@ class ConfigerModule extends Component {
           size="small"
           className={styles['Configer__Selector--wrapper']}
         >
-          {
-            record.versions && record.versions.map(d =>
+          {record.versions &&
+            record.versions.map(d => (
               <Option value={d.version} key={d.version}>
-                <p className={styles['Configer__Selector--version']}>{d.version}</p>
-                {d.tag ? <p className={styles['Configer__Selector--tag']}>{d.tag}</p> : ''}
+                <p className={styles['Configer__Selector--version']}>
+                  {d.version}
+                </p>
+                {d.tag ? (
+                  <p className={styles['Configer__Selector--tag']}>{d.tag}</p>
+                ) : (
+                  ''
+                )}
               </Option>
-            )
-          }
-        </Select>
+            ))}
+        </Select>,
       );
       ret.push(
         <Button.Group key="action" size="small">
           <Button
             onClick={() => {
-              this.props.upgradeConfig(record.name, versionEditorStatus[record.name]);
+              this.props.upgradeConfig(
+                record.name,
+                versionEditorStatus[record.name],
+              );
               this.setState({
                 versionEditorStatus: {
                   ...versionEditorStatus,
                   [record.name]: false,
-                }
+                },
               });
             }}
           >
@@ -142,22 +158,20 @@ class ConfigerModule extends Component {
                 versionEditorStatus: {
                   ...versionEditorStatus,
                   [record.name]: false,
-                }
+                },
               });
             }}
           >
             <Icon type="close" />
           </Button>
-        </Button.Group>
+        </Button.Group>,
       );
     } else {
       if (record.upgradable) {
         ret.push(
           <Tooltip key="notify" title={record.latestVersion}>
-            <Badge dot>
-              {text}
-            </Badge>
-          </Tooltip>
+            <Badge dot>{text}</Badge>
+          </Tooltip>,
         );
       } else {
         ret.push(<span key="version">{text}</span>);
@@ -171,14 +185,14 @@ class ConfigerModule extends Component {
               versionEditorStatus: {
                 ...versionEditorStatus,
                 [record.name]: record.version,
-              }
+              },
             });
           }}
-        />
+        />,
       );
     }
     return ret;
-  }
+  };
   renderConfigList() {
     const { pending, localConfigs } = this.props;
     const props = {
@@ -190,20 +204,14 @@ class ConfigerModule extends Component {
           dataIndex: 'name',
           render: (text, record) => {
             return [
-              <h5
-                key="name"
-                className={styles['Configer__Item--name']}
-              >
+              <h5 key="name" className={styles['Configer__Item--name']}>
                 {text}
               </h5>,
-              <p
-                key="description"
-                className={styles['Configer__Item--desc']}
-              >
+              <p key="description" className={styles['Configer__Item--desc']}>
                 {record.description}
               </p>,
             ];
-          }
+          },
         },
         {
           title: '版本',
@@ -220,13 +228,17 @@ class ConfigerModule extends Component {
                 key="readme"
                 data-name={record.name}
                 onClick={this.showReadme}
-              >查看说明</button>,
+              >
+                查看说明
+              </button>,
               <button
                 className={styles['Configer__Item--action']}
                 data-name={record.name}
                 onClick={this.showHistory}
                 key="history"
-              >版本历史</button>,
+              >
+                版本历史
+              </button>,
             ];
             if (record.upgradable) {
               btns.push(
@@ -236,7 +248,9 @@ class ConfigerModule extends Component {
                   data-version={record.latestVersion}
                   data-name={record.name}
                   onClick={this.handleUpgrade}
-                >升级</button>
+                >
+                  升级
+                </button>,
               );
             }
             return (
@@ -252,19 +266,26 @@ class ConfigerModule extends Component {
                       styles['Configer__Item--action'],
                       styles['Configer__Item--delete'],
                     )}
-                  >删除</button>
+                  >
+                    删除
+                  </button>
                 </Popconfirm>
               </div>
             );
-          }
+          },
         },
       ],
-      dataSource: localConfigs.toList().toJS().map(d => Object.assign(d, {
-        key: d.name,
-      })),
+      dataSource: localConfigs
+        .toList()
+        .toJS()
+        .map(d =>
+          Object.assign(d, {
+            key: d.name,
+          }),
+        ),
       locale: {
         emptyText: '当前没有可用的项目引擎',
-      }
+      },
     };
     return <Table {...props} />;
   }
@@ -273,9 +294,11 @@ class ConfigerModule extends Component {
     return (
       <Page>
         <div className={styles.Configer__ActionBar}>
-          <Button type="primary" onClick={this.showConfigImporter}>添加引擎</Button>
+          <Button type="primary" onClick={this.showConfigImporter}>
+            添加引擎
+          </Button>
         </div>
-        { this.renderConfigList() }
+        {this.renderConfigList()}
         <ConfigImportor
           visible={this.state.importVisible}
           onCancel={this.handleCloseImportor}
@@ -295,7 +318,9 @@ class ConfigerModule extends Component {
 }
 
 const pageSelector = state => state['page.configer'];
-const selectRemoteConfigs = createSelector(pageSelector, state => state.getIn(['remote', 'configMap']));
+const selectRemoteConfigs = createSelector(pageSelector, state =>
+  state.getIn(['remote', 'configMap']),
+);
 const selectLocalConfigs = createSelector(pageSelector, state => {
   const remoteConfigMap = state.getIn(['remote', 'configMap']);
   return state.getIn(['local', 'configMap']).map((v, k) => {
@@ -314,10 +339,9 @@ const selectLocalConfigs = createSelector(pageSelector, state => {
 const mapStateToProps = state => ({
   remoteConfigs: selectRemoteConfigs(state),
   localConfigs: selectLocalConfigs(state),
-  pending: createSelector(
-    pageSelector,
-    s => s.getIn(['progress', 'pending']),
-  )(state),
+  pending: createSelector(pageSelector, s => s.getIn(['progress', 'pending']))(
+    state,
+  ),
 });
 const mapDispatchToProps = dispatch => ({
   getConfigs: () => dispatch(actions.getConfigs()),
@@ -325,7 +349,8 @@ const mapDispatchToProps = dispatch => ({
   addConfig: configName => dispatch(actions.add(configName, dispatch)),
   uploadConfig: () => dispatch(actions.upload()),
   removeConfig: name => dispatch(actions.remove(name, dispatch)),
-  upgradeConfig: (name, version) => dispatch(actions.upgrade(name, version, dispatch)),
+  upgradeConfig: (name, version) =>
+    dispatch(actions.upgrade(name, version, dispatch)),
   getConfigerVersions: name => dispatch(actions.getPkgVersions(name)),
 });
 

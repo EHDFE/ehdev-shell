@@ -11,7 +11,7 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FEHDFE%2Fehdev-shell?ref=badge_shield)
 
 ## Introduction
-Javis aims to provide an easy to use gui tool for developers.
+Javis aims to provide an easy using gui tool for developers.
 
 ![image](https://user-images.githubusercontent.com/1787187/42255258-6950a76c-7f7d-11e8-987c-527e52a7ab67.png)
 ![image](https://user-images.githubusercontent.com/1787187/48038283-f4a5da00-e1aa-11e8-9866-c290cb9c3317.png)

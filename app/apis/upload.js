@@ -55,7 +55,7 @@ const UPLOAD_API = {
       const fd = new FormData();
       fd.append('file', file);
       try {
-        const res = await fetch('http://image.tf56.com/fastdfsWeb/upload', {
+        const res = await fetch('uploadUrl', {
           method: 'post',
           body: fd,
         });

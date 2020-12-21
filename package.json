@@ -35,7 +35,7 @@
     "monaco-editor": "^0.14.3",
     "mousetrap": "^1.6.2",
     "nedb": "^1.8.0",
-    "node-notifier": "^5.2.1",
+    "node-notifier": "^8.0.1",
     "pretty-file-icons": "^2.2.1",
     "prop-types": "^15.6.2",
     "qrcode": "^1.2.2",

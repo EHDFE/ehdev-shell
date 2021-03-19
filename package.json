@@ -26,7 +26,7 @@
     "fuzzaldrin-plus": "^0.6.0",
     "image-size": "^0.6.3",
     "immutable": "^4.0.0-rc.9",
-    "is-svg": "^3.0.0",
+    "is-svg": "^4.2.2",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "lodash": "^4.17.10",

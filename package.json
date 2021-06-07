@@ -72,7 +72,7 @@
     "svgo": "^1.0.5",
     "tempfile": "^2.0.0",
     "tinycolor2": "^1.4.1",
-    "ws": "^6.0.0",
+    "ws": "^7.4.6",
     "xterm": "^3.6.0"
   },
   "devDependencies": {
